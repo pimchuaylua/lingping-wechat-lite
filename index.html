@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Lingping Club</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <style>
+        :root {
+            --theme: #FFB050;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+            color: #333;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        .header {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 12px 0 6px;
+        }
+
+        .sub {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 16px;
+        }
+
+        .date-filter {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+
+        .date-btn {
+            padding: 8px 12px;
+            border-radius: 20px;
+            background: #eee;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .date-btn.active {
+            background: var(--theme);
+            color: #fff;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .event-info {
+            flex: 1;
+        }
+
+        .event-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .event-desc {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 6px;
+        }
+
+        .event-time {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .status {
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            background: #eee;
+            color: #666;
+        }
+
+        .status.available {
+            background: rgba(255, 176, 80, 0.2);
+            color: #9a5b00;
+        }
+
+        .status.full {
+            background: #fdecea;
+            color: #b42318;
+        }
+
+        .book-btn {
+            border: none;
+            border-radius: 16px;
+            padding: 6px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            background: var(--theme);
+            color: #fff;
+        }
+
+        .book-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .empty {
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<!-- FIRST -->
+<script src="config.js"></script>
+
+<body>
+    <div class="container">
+        <div class="header">👋 Welcome to Lingping Club</div>
+        <div class="sub">
+            A gentle English corner connecting people around the world.
+        </div>
+
+        <div class="date-filter" id="dateFilter"></div>
+        <div id="eventList"></div>
+    </div>
+
+    <script>
+        /***************
+         * CONFIG
+         ***************/
+        const { BASE_URL, API_KEY } = window.CONFIG;
+        const USER_ID = ""; // current user id
+
+        /***************
+         * DATE HELPERS
+         ***************/
+        function formatDate(date) {
+            return date.toISOString().split("T")[0];
+        }
+
+        function getNext7Days() {
+            const days = [];
+            const today = new Date();
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(today);
+                d.setDate(today.getDate() + i);
+                days.push(formatDate(d));
+            }
+            return days;
+        }
+
+        /***************
+         * API CALLS
+         ***************/
+        async function getReadingSessions(fromDate, toDate) {
+            console.log("Fetching reading sessions...");
+
+            const params = new URLSearchParams({
+                fromDate,
+                toDate,
+                level: "67eab5b337cd4b56a080743f"
+            });
+
+            const res = await fetch(
+                `${BASE_URL}/reading-sessions?${params.toString()}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-KEY": API_KEY
+                    }
+                }
+            );
+
+            if (!res.ok) {
+                throw new Error("Failed to load sessions");
+            }
+
+            const json = await res.json();
+            console.log("Raw API response:", json);
+
+            return json.data; // ✅ IMPORTANT
+        }
+
+
+        async function bookSession(sessionId) {
+            const res = await fetch(`${BASE_URL}/bookings/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                },
+                body: JSON.stringify({
+                    userId: USER_ID,
+                    sessionId,
+                    numberOfSeats: 1
+                })
+            });
+
+            if (!res.ok) throw new Error("Booking failed");
+            return res.json();
+        }
+
+        /***************
+         * UI LOGIC
+         ***************/
+        const dates = getNext7Days();
+        let activeDate = dates[0];
+        let sessions = [];
+
+        const dateFilter = document.getElementById("dateFilter");
+        const eventList = document.getElementById("eventList");
+
+        function renderDates() {
+            dateFilter.innerHTML = "";
+            dates.forEach(date => {
+                const btn = document.createElement("div");
+                btn.className = "date-btn" + (date === activeDate ? " active" : "");
+                btn.innerText = date;
+                btn.onclick = () => {
+                    activeDate = date;
+                    renderDates();
+                    renderEvents();
+                };
+                dateFilter.appendChild(btn);
+            });
+        }
+
+        function renderEvents() {
+            const filtered = sessions.filter(s => s.date === activeDate);
+            eventList.innerHTML = "";
+
+            if (!filtered.length) {
+                eventList.innerHTML = `<div class="empty">No sessions</div>`;
+                return;
+            }
+
+            filtered.forEach(s => {
+                const card = document.createElement("div");
+                card.className = "card";
+
+                card.innerHTML = `
+    <div class="event-info">
+      <div class="event-title">${s.title}</div>
+      <div class="event-desc">${s.description}</div>
+      <div class="event-time">${s.time}</div>
+
+      <!-- ✅ Hosts line -->
+      <div class="event-time">Hosts: ${s.hosts}</div>
+    </div>
+
+    <div class="right">
+      <div class="status ${s.isFull ? "full" : "available"}">
+        ${s.isFull ? "Full" : `Available (${s.seatsLeft})`}
+      </div>
+      <button class="book-btn" ${s.isFull ? "disabled" : ""}>
+        Book
+      </button>
+    </div>
+  `;
+
+                eventList.appendChild(card);
+            });
+
+        }
+
+
+        /***************
+         * INIT
+         ***************/
+        async function init() {
+            renderDates();
+
+            try {
+                const rawSessions = await getReadingSessions(dates[0], dates[6]);
+
+                console.log("Raw sessions:", rawSessions);
+
+                sessions = rawSessions.map(s => {
+                    const start = new Date(s.startTime);
+                    const end = new Date(start.getTime() + s.durationMins * 60000);
+
+                    // ✅ Extract host names safely
+                    const hostNames = (s.hosts && s.hosts.length > 0)
+                        ? s.hosts.map(h => h.name).join(", ")
+                        : "TBA";
+
+                    return {
+                        id: s._id,
+
+                        // ⚠️ safer local date (avoid UTC mismatch)
+                        date:
+                            start.getFullYear() + "-" +
+                            String(start.getMonth() + 1).padStart(2, "0") + "-" +
+                            String(start.getDate()).padStart(2, "0"),
+
+                        time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+                        title: s.title,
+                        description: s.shortDescription,
+
+                        hosts: hostNames,          // ✅ NEW
+                        isFull: s.isFull,
+                        seatsLeft: s.numberOfSeatsLeft,
+                        level: s.level
+                    };
+                });
+
+                console.log("Mapped sessions:", sessions);
+                renderEvents();
+            } catch (e) {
+                console.error(e);
+                eventList.innerHTML = `<div class="empty">Failed to load sessions</div>`;
+            }
+        }
+
+
+
+        init();
+    </script>
+</body>
+
+</html>
