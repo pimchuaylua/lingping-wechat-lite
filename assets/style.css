@@ -14,6 +14,7 @@ body {
 
 .container {
     max-width: 480px;
+    width: 100%;
     background: #fff;
     border-radius: 12px;
     padding: 24px;
@@ -27,9 +28,12 @@ body {
     margin-bottom: 16px;
 }
 
+/* Vertical navigation buttons */
 .main-nav {
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
+    /* stack buttons vertically */
+    gap: 12px;
     margin-bottom: 24px;
 }
 
@@ -37,10 +41,13 @@ body {
     text-decoration: none;
     color: #fff;
     background: var(--theme);
-    padding: 8px 12px;
-    border-radius: 8px;
+    padding: 12px 0;
+    border-radius: 12px;
     font-weight: 500;
     transition: background 0.3s;
+    text-align: center;
+    width: 100%;
+    /* full width */
 }
 
 .main-nav a:hover {
