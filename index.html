@@ -38,6 +38,29 @@
             margin-bottom: 16px;
         }
 
+        /* 🔹 Topics */
+        .topics {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .topic {
+            padding: 6px 12px;
+            border-radius: 16px;
+            border: 1px solid #eee;
+            background: #fff;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .topic.active {
+            background: var(--theme);
+            color: #fff;
+            border-color: var(--theme);
+        }
+
         .date-filter {
             display: flex;
             gap: 8px;
@@ -121,7 +144,7 @@
             padding: 6px 14px;
             font-size: 13px;
             cursor: pointer;
-            background: var(--theme);
+            background: #ccc;
             color: #fff;
         }
 
@@ -138,14 +161,24 @@
         }
     </style>
 </head>
-<!-- FIRST -->
+
 <script src="config.js"></script>
 
 <body>
     <div class="container">
-        <div class="header">👋 Welcome to Lingping Club</div>
+        <div class="header">Lingping Club | Online</div>
         <div class="sub">
-            A gentle English corner connecting people around the world.
+            A community of curious minds exploring the world through languages, cultures and shared perspectives.
+        </div>
+
+        <!-- 🔹 Topics -->
+        <div class="topics">
+            <div class="topic active" data-topic="">All</div>
+            <div class="topic" data-topic="english">English Corner</div>
+            <div class="topic" data-topic="thai">Thai</div>
+            <div class="topic" data-topic="chinese">Chinese</div>
+            <div class="topic" data-topic="book">Book Club</div>
+            <div class="topic" data-topic="movie">Movie</div>
         </div>
 
         <div class="date-filter" id="dateFilter"></div>
@@ -153,17 +186,20 @@
     </div>
 
     <script>
-        /***************
-         * CONFIG
-         ***************/
         const { BASE_URL, API_KEY } = window.CONFIG;
-        const USER_ID = ""; // current user id
+        const USER_ID = "";
 
-        /***************
-         * DATE HELPERS
-         ***************/
         function formatDate(date) {
             return date.toISOString().split("T")[0];
+        }
+
+        function formatPrettyDate(dateStr) {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString("en-US", {
+                weekday: "short",
+                day: "numeric",
+                month: "short"
+            });
         }
 
         function getNext7Days() {
@@ -177,62 +213,27 @@
             return days;
         }
 
-        /***************
-         * API CALLS
-         ***************/
         async function getReadingSessions(fromDate, toDate) {
-            console.log("Fetching reading sessions...");
-
             const params = new URLSearchParams({
                 fromDate,
                 toDate,
                 level: "67eab5b337cd4b56a080743f"
             });
 
-            const res = await fetch(
-                `${BASE_URL}/reading-sessions?${params.toString()}`,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-API-KEY": API_KEY
-                    }
-                }
-            );
-
-            if (!res.ok) {
-                throw new Error("Failed to load sessions");
-            }
-
-            const json = await res.json();
-            console.log("Raw API response:", json);
-
-            return json.data; // ✅ IMPORTANT
-        }
-
-
-        async function bookSession(sessionId) {
-            const res = await fetch(`${BASE_URL}/bookings/`, {
-                method: "POST",
+            const res = await fetch(`${BASE_URL}/reading-sessions?${params}`, {
                 headers: {
                     "Content-Type": "application/json",
                     "X-API-KEY": API_KEY
-                },
-                body: JSON.stringify({
-                    userId: USER_ID,
-                    sessionId,
-                    numberOfSeats: 1
-                })
+                }
             });
 
-            if (!res.ok) throw new Error("Booking failed");
-            return res.json();
+            const json = await res.json();
+            return json.data;
         }
 
-        /***************
-         * UI LOGIC
-         ***************/
         const dates = getNext7Days();
         let activeDate = dates[0];
+        let selectedTopic = "";
         let sessions = [];
 
         const dateFilter = document.getElementById("dateFilter");
@@ -246,6 +247,9 @@
                 btn.innerText = date;
                 btn.onclick = () => {
                     activeDate = date;
+                    selectedTopic = "";
+                    document.querySelectorAll(".topic").forEach(t => t.classList.remove("active"));
+                    document.querySelector('.topic[data-topic=""]').classList.add("active");
                     renderDates();
                     renderEvents();
                 };
@@ -254,7 +258,18 @@
         }
 
         function renderEvents() {
-            const filtered = sessions.filter(s => s.date === activeDate);
+            let filtered = [...sessions];
+
+            if (selectedTopic) {
+                filtered = filtered.filter(s =>
+                    s.title.toLowerCase().includes(selectedTopic)
+                );
+            }
+
+            if (activeDate && !selectedTopic) {
+                filtered = filtered.filter(s => s.date === activeDate);
+            }
+
             eventList.innerHTML = "";
 
             if (!filtered.length) {
@@ -265,82 +280,72 @@
             filtered.forEach(s => {
                 const card = document.createElement("div");
                 card.className = "card";
+                card.style.cursor = "pointer";
 
                 card.innerHTML = `
-    <div class="event-info">
-      <div class="event-title">${s.title}</div>
-      <div class="event-desc">${s.description}</div>
-      <div class="event-time">${s.time}</div>
+            <div class="event-info">
+                <div class="event-title">${s.title}</div>
+                <div class="event-desc">${s.description}</div>
+                <div class="event-time">${formatPrettyDate(s.date)} · ${s.time}</div>
+                <div class="event-time">Hosts: ${s.hosts}</div>
+            </div>
 
-      <!-- ✅ Hosts line -->
-      <div class="event-time">Hosts: ${s.hosts}</div>
-    </div>
+            <div class="right">
+                <div class="status ${s.isFull ? "full" : "available"}">
+                ${s.isFull ? "Full" : `Available (${s.seatsLeft})`}
+                </div>
+                <button class="book-btn" ${s.isFull ? "disabled" : ""}>Book</button>
+            </div>
+            `;
 
-    <div class="right">
-      <div class="status ${s.isFull ? "full" : "available"}">
-        ${s.isFull ? "Full" : `Available (${s.seatsLeft})`}
-      </div>
-      <button class="book-btn" ${s.isFull ? "disabled" : ""}>
-        Book
-      </button>
-    </div>
-  `;
+                card.onclick = () => {
+                    // Save session data to localStorage and open detail page
+                    localStorage.setItem("selectedSession", JSON.stringify(s));
+                    window.location.href = "event-detail.html";
+                };
 
                 eventList.appendChild(card);
             });
 
         }
 
+        document.querySelectorAll(".topic").forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll(".topic").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                selectedTopic = btn.dataset.topic;
+                activeDate = null;
+                renderDates();
+                renderEvents();
+            };
+        });
 
-        /***************
-         * INIT
-         ***************/
         async function init() {
             renderDates();
 
-            try {
-                const rawSessions = await getReadingSessions(dates[0], dates[6]);
+            const raw = await getReadingSessions(dates[0], dates[6]);
 
-                console.log("Raw sessions:", rawSessions);
+            sessions = raw.map(s => {
+                const start = new Date(s.startTime);
+                const end = new Date(start.getTime() + s.durationMins * 60000);
+                const hosts = s.hosts?.length ? s.hosts.map(h => h.name).join(", ") : "TBA";
 
-                sessions = rawSessions.map(s => {
-                    const start = new Date(s.startTime);
-                    const end = new Date(start.getTime() + s.durationMins * 60000);
+                return {
+                    id: s._id,
+                    date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
+                    time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+                    title: s.title,
+                    description: s.shortDescription,
+                    fullDescription: s.fullDescription,
+                    hosts,
+                    isFull: s.isFull,
+                    seatsLeft: s.numberOfSeatsLeft,
+                    photoUrl: s.photoUrl
+                };
+            });
 
-                    // ✅ Extract host names safely
-                    const hostNames = (s.hosts && s.hosts.length > 0)
-                        ? s.hosts.map(h => h.name).join(", ")
-                        : "TBA";
-
-                    return {
-                        id: s._id,
-
-                        // ⚠️ safer local date (avoid UTC mismatch)
-                        date:
-                            start.getFullYear() + "-" +
-                            String(start.getMonth() + 1).padStart(2, "0") + "-" +
-                            String(start.getDate()).padStart(2, "0"),
-
-                        time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
-                        title: s.title,
-                        description: s.shortDescription,
-
-                        hosts: hostNames,          // ✅ NEW
-                        isFull: s.isFull,
-                        seatsLeft: s.numberOfSeatsLeft,
-                        level: s.level
-                    };
-                });
-
-                console.log("Mapped sessions:", sessions);
-                renderEvents();
-            } catch (e) {
-                console.error(e);
-                eventList.innerHTML = `<div class="empty">Failed to load sessions</div>`;
-            }
+            renderEvents();
         }
-
-
 
         init();
     </script>
