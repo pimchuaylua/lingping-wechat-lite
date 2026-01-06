@@ -1,0 +1,54 @@
+:root {
+    --theme: #FFB050;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    background: #f5f5f5;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 480px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.page-title {
+    text-align: center;
+    font-size: 26px;
+    color: var(--theme);
+    margin-bottom: 16px;
+}
+
+.main-nav {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 24px;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: #fff;
+    background: var(--theme);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background 0.3s;
+}
+
+.main-nav a:hover {
+    background: #e6a441;
+}
+
+.content {
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: justify;
+}
