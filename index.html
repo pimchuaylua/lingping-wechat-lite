@@ -189,10 +189,6 @@
         const { BASE_URL, API_KEY } = window.CONFIG;
         const USER_ID = "";
 
-        function formatDate(date) {
-            return date.toISOString().split("T")[0];
-        }
-
         function formatPrettyDate(dateStr) {
             const d = new Date(dateStr);
             return d.toLocaleDateString("en-US", {
@@ -208,16 +204,47 @@
             for (let i = 0; i < 7; i++) {
                 const d = new Date(today);
                 d.setDate(today.getDate() + i);
-                days.push(formatDate(d));
+                days.push({
+                    date: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`, // API
+                    display: d.toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" }) // Button
+                });
             }
             return days;
+        }
+
+        const dates = getNext7Days();
+        let activeDate = dates[0].date; // Correct property
+
+        let selectedTopic = "";
+        let sessions = [];
+
+        const dateFilter = document.getElementById("dateFilter");
+        const eventList = document.getElementById("eventList");
+
+        function renderDates() {
+            dateFilter.innerHTML = "";
+            dates.forEach(d => {
+                const isActive = activeDate === d.date;
+                const btn = document.createElement("div");
+                btn.className = "date-btn" + (isActive ? " active" : "");
+                btn.innerText = d.display;
+                btn.onclick = () => {
+                    activeDate = d.date;
+                    selectedTopic = "";
+                    document.querySelectorAll(".topic").forEach(t => t.classList.remove("active"));
+                    document.querySelector('.topic[data-topic=""]').classList.add("active");
+                    renderDates();
+                    renderEvents();
+                };
+                dateFilter.appendChild(btn);
+            });
         }
 
         async function getReadingSessions(fromDate, toDate) {
             const params = new URLSearchParams({
                 fromDate,
                 toDate,
-                level: "67eab5b337cd4b56a080743f"
+                level: "695c763e2d652e065db71030"
             });
 
             const res = await fetch(`${BASE_URL}/reading-sessions?${params}`, {
@@ -229,32 +256,6 @@
 
             const json = await res.json();
             return json.data;
-        }
-
-        const dates = getNext7Days();
-        let activeDate = dates[0];
-        let selectedTopic = "";
-        let sessions = [];
-
-        const dateFilter = document.getElementById("dateFilter");
-        const eventList = document.getElementById("eventList");
-
-        function renderDates() {
-            dateFilter.innerHTML = "";
-            dates.forEach(date => {
-                const btn = document.createElement("div");
-                btn.className = "date-btn" + (date === activeDate ? " active" : "");
-                btn.innerText = date;
-                btn.onclick = () => {
-                    activeDate = date;
-                    selectedTopic = "";
-                    document.querySelectorAll(".topic").forEach(t => t.classList.remove("active"));
-                    document.querySelector('.topic[data-topic=""]').classList.add("active");
-                    renderDates();
-                    renderEvents();
-                };
-                dateFilter.appendChild(btn);
-            });
         }
 
         function renderEvents() {
@@ -283,30 +284,27 @@
                 card.style.cursor = "pointer";
 
                 card.innerHTML = `
-            <div class="event-info">
-                <div class="event-title">${s.title}</div>
-                <div class="event-desc">${s.description}</div>
-                <div class="event-time">${formatPrettyDate(s.date)} · ${s.time}</div>
-                <div class="event-time">Hosts: ${s.hosts}</div>
-            </div>
-
-            <div class="right">
-                <div class="status ${s.isFull ? "full" : "available"}">
-                ${s.isFull ? "Full" : `Available (${s.seatsLeft})`}
-                </div>
-                <button class="book-btn" ${s.isFull ? "disabled" : ""}>Book</button>
-            </div>
-            `;
+                    <div class="event-info">
+                        <div class="event-title">${s.title}</div>
+                        <div class="event-desc">${s.description}</div>
+                        <div class="event-time">${formatPrettyDate(s.date)} · ${s.time}</div>
+                        <div class="event-time">Hosts: ${s.hosts}</div>
+                    </div>
+                    <div class="right">
+                        <div class="status ${s.isFull ? "full" : "available"}">
+                            ${s.isFull ? "Full" : `Available (${s.seatsLeft})`}
+                        </div>
+                        <button class="book-btn" ${s.isFull ? "disabled" : ""}>Book</button>
+                    </div>
+                `;
 
                 card.onclick = () => {
-                    // Save session data to localStorage and open detail page
                     localStorage.setItem("selectedSession", JSON.stringify(s));
                     window.location.href = "event-detail.html";
                 };
 
                 eventList.appendChild(card);
             });
-
         }
 
         document.querySelectorAll(".topic").forEach(btn => {
@@ -323,7 +321,7 @@
         async function init() {
             renderDates();
 
-            const raw = await getReadingSessions(dates[0], dates[6]);
+            const raw = await getReadingSessions(dates[0].date, dates[dates.length - 1].date);
 
             sessions = raw.map(s => {
                 const start = new Date(s.startTime);

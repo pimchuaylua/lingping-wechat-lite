@@ -24,31 +24,18 @@
         img {
             width: 100%;
             border-radius: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         h1 {
             font-size: 22px;
-            margin-bottom: 12px;
-        }
-
-        .section {
-            background: #f9f9f9;
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 6px;
         }
 
         .sub {
             font-size: 14px;
             color: #666;
-            margin-bottom: 6px;
-        }
-
-        .link-number {
-            text-decoration: underline;
-            color: #007bff;
-            cursor: pointer;
+            margin-bottom: 12px;
         }
 
         .copy-btn {
@@ -61,20 +48,28 @@
             background: #eee;
         }
 
+        a {
+            color: #FFB050;
+            text-decoration: none;
+        }
+
         .back-btn {
             display: inline-block;
             margin-bottom: 12px;
-            padding: 6px 12px;
-            background: #eee;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
+            font-size: 14px;
             cursor: pointer;
+            color: #007bff;
+            text-decoration: underline;
         }
 
-        .back-btn:hover {
-            background: #ddd;
+        .description p {
+            margin: 8px 0;
+        }
+
+        .section {
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+            margin-top: 12px;
         }
     </style>
 </head>
@@ -91,51 +86,37 @@
         if (!s) {
             container.innerHTML = "<p>Session not found.</p>";
         } else {
+            // Convert line breaks to <p> for full description
+            const fullDescHTML = (s.fullDescription || s.description)
+                .split("\n")
+                .map(line => `<p>${line}</p>`)
+                .join("");
+
             container.innerHTML = `
-                <a class="back-btn" onclick="window.history.back()">← Back</a>
-
-                <img src="${s.photoUrl || 'https://via.placeholder.com/480x200'}" alt="Session Photo">
-                <h1>${s.title}</h1>
-
-                <div class="section">
-                    <div class="sub">${formatPrettyDate(s.date)} · ${s.time}</div>
-                    <div class="sub">Host(s): ${s.hosts}</div>
-                </div>
-
-                <div class="section">
-                    <p>${s.fullDescription || s.description}</p>
-                </div>
-
-                <div class="section">
-                    <div class="sub">Platform: Tencent</div>
-                    <div class="sub">
-                        Meeting number: 
-                        <span id="meetingNumber" class="link-number" onclick="copyNumber()">
-                            745-0780-4846
-                        </span>
-                        <span class="copy-btn" onclick="copyNumber()">📋</span>
-                    </div>
-                </div>
-            `;
+          <div class="back-btn" onclick="history.back()">← Back</div>
+          <img src="${s.photoUrl || 'https://via.placeholder.com/480x200'}" alt="Session Photo">
+          <h1>${s.title}</h1>
+          <div class="sub">${formatPrettyDate(s.date)} · ${s.time}</div>
+          <div class="sub">Host(s): ${s.hosts}</div>
+          <div class="description">${fullDescHTML}</div>
+          <div class="section">
+            <div class="sub">Platform: Tencent</div>
+            <div class="sub">
+                Meeting number: 
+                <span id="meetingNumber" 
+                    style="text-decoration: underline; color: #007bff; cursor: pointer;"
+                    onclick="copyNumber()">
+                    745-0780-4846
+                </span>
+                <span class="copy-btn" onclick="copyNumber()">📋</span>
+            </div>
+          </div>
+        `;
         }
 
         function copyNumber() {
             const text = document.getElementById("meetingNumber").innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                const toast = document.createElement("div");
-                toast.innerText = "Copied!";
-                toast.style.position = "fixed";
-                toast.style.bottom = "20px";
-                toast.style.left = "50%";
-                toast.style.transform = "translateX(-50%)";
-                toast.style.background = "#007bff";
-                toast.style.color = "#fff";
-                toast.style.padding = "8px 16px";
-                toast.style.borderRadius = "20px";
-                toast.style.zIndex = 9999;
-                document.body.appendChild(toast);
-                setTimeout(() => document.body.removeChild(toast), 1500);
-            });
+            navigator.clipboard.writeText(text).then(() => alert("Copied!"));
         }
 
         function formatPrettyDate(dateStr) {
