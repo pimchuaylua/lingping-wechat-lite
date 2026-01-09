@@ -228,7 +228,9 @@
         const USER_ID = "";
 
         function formatPrettyDate(dateStr) {
-            const d = new Date(dateStr);
+            const [year, month, day] = dateStr.split("-").map(Number);
+            const d = new Date(year, month - 1, day); // LOCAL date, no timezone shift
+
             return d.toLocaleDateString("en-US", {
                 weekday: "short",
                 day: "numeric",
@@ -326,6 +328,7 @@
                         <div class="event-title">${s.title}</div>
                         <div class="event-desc">${s.description}</div>
                         <div class="event-time">${formatPrettyDate(s.date)} · ${s.time}</div>
+
                         <div class="event-time">Hosts: ${s.hosts}</div>
                     </div>
                     <div class="right">
