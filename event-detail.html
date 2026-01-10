@@ -6,6 +6,7 @@
     <title>Session Detail</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="config.js"></script>
+    <script src="js/booking.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
@@ -95,7 +96,7 @@
     <div class="container" id="sessionContainer">Loading...</div>
 
     <div class="book-bar">
-        <button class="book-btn" onclick="startBooking()">Book Session</button>
+        <button class="book-btn" onclick="bookSession({ sessionId: s.id })">Book Session</button>
     </div>
 
     <script>
@@ -126,72 +127,6 @@
                     <div class="sub">Meeting number: 745-0780-4846</div>
                 </div>
             `;
-        }
-
-        async function startBooking() {
-            const username = prompt("Enter your username to book:");
-            if (!username) return;
-
-            try {
-                // 1️⃣ Login
-                const loginRes = await fetch(LOGIN_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-API-KEY": API_KEY
-                    },
-                    body: JSON.stringify({
-                        username: username,
-                        password: "lingpingreading33"
-                    })
-                });
-
-                if (!loginRes.ok) {
-                    throw new Error("Login failed. Please check your username.");
-                }
-
-                const loginData = await loginRes.json();
-
-                // 2️⃣ Validate userId
-                const userId = loginData?.data?.userId;
-
-                if (!userId) {
-                    throw new Error("Invalid username. Please check and try again.");
-                }
-
-                // (optional) store login for this session
-                localStorage.setItem("lingpingUserId", userId);
-
-                // 3️⃣ Book session
-                const bookRes = await fetch(BOOK_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-API-KEY": API_KEY
-                    },
-                    body: JSON.stringify({
-                        userId: userId,
-                        sessionId: s.id,
-                        numberOfSeats: 1
-                    })
-                });
-
-                const bookData = await bookRes.json();
-
-                if (!bookRes.ok) {
-                    const errorMessage =
-                        bookData?.result?.originalError ||
-                        bookData?.message ||
-                        "Booking failed. Please try again.";
-
-                    throw new Error(errorMessage);
-                }
-
-                alert("🎉 Booking confirmed! See you soon.");
-
-            } catch (err) {
-                alert(err.message);
-            }
         }
 
         function formatPrettyDate(dateStr) {
