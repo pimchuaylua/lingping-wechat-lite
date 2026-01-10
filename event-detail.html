@@ -5,12 +5,14 @@
     <meta charset="UTF-8">
     <title>Session Detail</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="config.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
             margin: 0;
             background: #f5f5f5;
             color: #333;
+            padding-bottom: 80px;
         }
 
         .container {
@@ -38,21 +40,6 @@
             margin-bottom: 12px;
         }
 
-        .copy-btn {
-            margin-left: 8px;
-            cursor: pointer;
-            font-size: 12px;
-            padding: 4px 6px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            background: #eee;
-        }
-
-        a {
-            color: #FFB050;
-            text-decoration: none;
-        }
-
         .back-btn {
             display: inline-block;
             margin-bottom: 12px;
@@ -71,57 +58,142 @@
             padding-top: 12px;
             margin-top: 12px;
         }
+
+        /* Book button */
+        .book-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-top: 1px solid #eee;
+            padding: 12px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .book-btn {
+            width: 100%;
+            max-width: 480px;
+            background: #FFB050;
+            color: #fff;
+            font-size: 16px;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .book-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container" id="sessionContainer">
-        Loading...
+    <div class="container" id="sessionContainer">Loading...</div>
+
+    <div class="book-bar">
+        <button class="book-btn" onclick="startBooking()">Book Session</button>
     </div>
 
     <script>
+        const { BASE_URL, API_KEY } = window.CONFIG;
+        const LOGIN_URL = BASE_URL + "/auth/login";
+        const BOOK_URL = BASE_URL + "/bookings/";
+
         const container = document.getElementById("sessionContainer");
         const s = JSON.parse(localStorage.getItem("selectedSession"));
 
         if (!s) {
             container.innerHTML = "<p>Session not found.</p>";
         } else {
-            // Convert line breaks to <p> for full description
             const fullDescHTML = (s.fullDescription || s.description)
                 .split("\n")
                 .map(line => `<p>${line}</p>`)
                 .join("");
 
             container.innerHTML = `
-          <div class="back-btn" onclick="history.back()">← Back</div>
-          <img src="${s.photoUrl || 'https://via.placeholder.com/480x200'}" alt="Session Photo">
-          <h1>${s.title}</h1>
-          <div class="sub">${formatPrettyDate(s.date)} · ${s.time}</div>
-          <div class="sub">Host(s): ${s.hosts}</div>
-          <div class="description">${fullDescHTML}</div>
-          <div class="section">
-            <div class="sub">Platform: Tencent</div>
-            <div class="sub">
-                Meeting number: 
-                <span id="meetingNumber" 
-                    style="text-decoration: underline; color: #007bff; cursor: pointer;"
-                    onclick="copyNumber()">
-                    745-0780-4846
-                </span>
-                <span class="copy-btn" onclick="copyNumber()">📋</span>
-            </div>
-          </div>
-        `;
+                <div class="back-btn" onclick="history.back()">← Back</div>
+                <img src="${s.photoUrl || 'https://via.placeholder.com/480x200'}">
+                <h1>${s.title}</h1>
+                <div class="sub">${formatPrettyDate(s.date)} · ${s.time}</div>
+                <div class="sub">Host(s): ${s.hosts}</div>
+                <div class="description">${fullDescHTML}</div>
+                <div class="section">
+                    <div class="sub">Platform: Tencent</div>
+                    <div class="sub">Meeting number: 745-0780-4846</div>
+                </div>
+            `;
         }
 
-        function copyNumber() {
-            const text = document.getElementById("meetingNumber").innerText;
-            navigator.clipboard.writeText(text).then(() => alert("Copied!"));
+        async function startBooking() {
+            const username = prompt("Enter your username to book:");
+            if (!username) return;
+
+            try {
+                // 1️⃣ Login
+                const loginRes = await fetch(LOGIN_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-KEY": API_KEY
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: "lingpingreading33"
+                    })
+                });
+
+                if (!loginRes.ok) {
+                    throw new Error("Login failed. Please check your username.");
+                }
+
+                const loginData = await loginRes.json();
+
+                // 2️⃣ Validate userId
+                const userId = loginData?.data?.userId;
+
+                if (!userId) {
+                    throw new Error("Invalid username. Please check and try again.");
+                }
+
+                // (optional) store login for this session
+                localStorage.setItem("lingpingUserId", userId);
+
+                // 3️⃣ Book session
+                const bookRes = await fetch(BOOK_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-KEY": API_KEY
+                    },
+                    body: JSON.stringify({
+                        userId: userId,
+                        sessionId: s.id,
+                        numberOfSeats: 1
+                    })
+                });
+
+                if (!bookRes.ok) {
+                    throw new Error("Booking failed. Please try again.");
+                }
+
+                alert("🎉 Booking confirmed! See you soon.");
+
+            } catch (err) {
+                alert(err.message);
+            }
         }
 
         function formatPrettyDate(dateStr) {
             const d = new Date(dateStr);
-            return d.toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" });
+            return d.toLocaleDateString("en-US", {
+                weekday: "short",
+                day: "numeric",
+                month: "short"
+            });
         }
     </script>
 </body>
