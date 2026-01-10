@@ -176,8 +176,15 @@
                     })
                 });
 
+                const bookData = await bookRes.json();
+
                 if (!bookRes.ok) {
-                    throw new Error("Booking failed. Please try again.");
+                    const errorMessage =
+                        bookData?.result?.originalError ||
+                        bookData?.message ||
+                        "Booking failed. Please try again.";
+
+                    throw new Error(errorMessage);
                 }
 
                 alert("🎉 Booking confirmed! See you soon.");
