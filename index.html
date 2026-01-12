@@ -7,19 +7,26 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <script src="js/booking.js"></script>
 
+    <!-- Styles -->
     <link rel="stylesheet" href="assets/mainpage_style.css">
-</head>
 
-<script src="config.js"></script>
+    <!-- Config & Booking -->
+    <script src="config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/booking.js"></script>
+</head>
 
 <body>
     <div class="container">
         <div class="header">Lingping Club | Online</div>
+
         <div class="sub">
             A community of curious minds exploring the world through languages, cultures, and shared perspectives.
         </div>
+
+        <!-- 👋 User Welcome -->
+        <div id="userWelcome" class="user-welcome"></div>
 
         <nav>
             <a href="about.html">About Us</a>
@@ -37,18 +44,86 @@
             <div class="topic" data-topic="movie">Movie</div>
         </div>
 
+        <!-- 🔹 Date Filter -->
         <div class="date-filter" id="dateFilter"></div>
+
+        <!-- 🔹 Events -->
         <div id="eventList"></div>
     </div>
 
     <script>
         const { BASE_URL, API_KEY } = window.CONFIG;
-        const USER_ID = "";
+
+        /* ---------------- USER WELCOME ---------------- */
+
+        function renderUserWelcome() {
+            const username = localStorage.getItem("username");
+            const el = document.getElementById("userWelcome");
+            if (!el) return;
+
+            if (username) {
+                el.innerHTML = `
+            👋 Hello <strong>${username}</strong>!
+            <span class="user-hint">You are logged in and can book sessions directly.</span>
+            <span class="logout" onclick="logout()">Logout</span>
+        `;
+            } else {
+                el.innerHTML = `
+            👋 Hello!
+            <button class="login-btn" onclick="loginAndUpdateUI()">Log in here</button>
+        `;
+            }
+        }
+
+        async function loginAndUpdateUI() {
+            let userId = localStorage.getItem("userId");
+
+            try {
+                if (!userId) {
+                    const username = prompt("Enter your username:");
+                    if (!username) return;
+
+                    const loginRes = await fetch(`${BASE_URL}/auth/login`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-API-KEY": API_KEY
+                        },
+                        body: JSON.stringify({
+                            username,
+                            password: "lingpingreading33"
+                        })
+                    });
+
+                    const loginData = await loginRes.json();
+                    userId = loginData?.data?.userId;
+
+                    if (!loginRes.ok || !userId) {
+                        throw new Error("Invalid username. Please check and try again.");
+                    }
+
+                    localStorage.setItem("userId", userId);
+                    localStorage.setItem("username", username);
+                }
+
+                renderUserWelcome();
+
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("userId");
+            localStorage.removeItem("username");
+            location.reload();
+        }
+
+        /* ---------------- DATE HELPERS ---------------- */
 
         function formatPrettyDate(dateStr) {
             const [year, month, day] = dateStr.split("-").map(Number);
-            const d = new Date(year, month - 1, day); // LOCAL date, no timezone shift
-
+            const d = new Date(year, month - 1, day);
             return d.toLocaleDateString("en-US", {
                 weekday: "short",
                 day: "numeric",
@@ -59,20 +134,24 @@
         function getNext7Days() {
             const days = [];
             const today = new Date();
+
             for (let i = 0; i < 7; i++) {
                 const d = new Date(today);
                 d.setDate(today.getDate() + i);
                 days.push({
-                    date: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`, // API
-                    display: d.toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short" }) // Button
+                    date: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`,
+                    display: d.toLocaleDateString("en-US", {
+                        weekday: "short",
+                        day: "numeric",
+                        month: "short"
+                    })
                 });
             }
             return days;
         }
 
         const dates = getNext7Days();
-        let activeDate = dates[0].date; // Correct property
-
+        let activeDate = dates[0].date;
         let selectedTopic = "";
         let sessions = [];
 
@@ -81,11 +160,12 @@
 
         function renderDates() {
             dateFilter.innerHTML = "";
+
             dates.forEach(d => {
-                const isActive = activeDate === d.date;
                 const btn = document.createElement("div");
-                btn.className = "date-btn" + (isActive ? " active" : "");
+                btn.className = "date-btn" + (activeDate === d.date ? " active" : "");
                 btn.innerText = d.display;
+
                 btn.onclick = () => {
                     activeDate = d.date;
                     selectedTopic = "";
@@ -94,6 +174,7 @@
                     renderDates();
                     renderEvents();
                 };
+
                 dateFilter.appendChild(btn);
             });
         }
@@ -146,7 +227,6 @@
                         <div class="event-title">${s.title}</div>
                         <div class="event-desc">${s.description}</div>
                         <div class="event-time">${formatPrettyDate(s.date)} · ${s.time}</div>
-
                         <div class="event-time">Hosts: ${s.hosts}</div>
                     </div>
                     <div class="right">
@@ -159,7 +239,6 @@
                             onclick="event.stopPropagation(); bookSession({ sessionId: '${s.id}' })">
                             Book
                         </button>
-
                     </div>
                 `;
 
@@ -184,14 +263,20 @@
         });
 
         async function init() {
+            renderUserWelcome();
             renderDates();
 
-            const raw = await getReadingSessions(dates[0].date, dates[dates.length - 1].date);
+            const raw = await getReadingSessions(
+                dates[0].date,
+                dates[dates.length - 1].date
+            );
 
             sessions = raw.map(s => {
                 const start = new Date(s.startTime);
                 const end = new Date(start.getTime() + s.durationMins * 60000);
-                const hosts = s.hosts?.length ? s.hosts.map(h => h.name).join(", ") : "TBA";
+                const hosts = s.hosts?.length
+                    ? s.hosts.map(h => h.name).join(", ")
+                    : "TBA";
 
                 return {
                     id: s._id,

@@ -37,6 +37,7 @@ window.bookSession = async function ({ sessionId }) {
             }
 
             localStorage.setItem("userId", userId);
+            localStorage.setItem("username", username);
         }
 
         // ✅ Book session
@@ -61,6 +62,11 @@ window.bookSession = async function ({ sessionId }) {
                 bookData?.message ||
                 "Booking failed. Please try again."
             );
+        }
+
+        // 🔥 THIS is the missing piece
+        if (window.renderUserWelcome) {
+            window.renderUserWelcome();
         }
 
         alert("🎉 Booking confirmed! See you soon.");
