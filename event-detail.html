@@ -100,9 +100,6 @@
     </div>
 
     <script>
-        const { BASE_URL, API_KEY } = window.CONFIG;
-        const LOGIN_URL = BASE_URL + "/auth/login";
-        const BOOK_URL = BASE_URL + "/bookings/";
 
         const container = document.getElementById("sessionContainer");
         const s = JSON.parse(localStorage.getItem("selectedSession"));
@@ -123,9 +120,23 @@
                 <div class="sub">Host(s): ${s.hosts}</div>
                 <div class="description">${fullDescHTML}</div>
                 <div class="section">
-                    <div class="sub">Platform: Tencent</div>
-                    <div class="sub">Meeting number: 745-0780-4846</div>
+                <div class="sub">Platform: Tencent</div>
+                <div class="sub">
+                    Meeting number:
+                    <span
+                        id="meetingNumber"
+                        style="text-decoration: underline; color: #007bff; cursor: pointer;"
+                        onclick="copyMeetingNumber()"
+                    >
+                        745-0780-4846
+                    </span>
+                    <span
+                        style="margin-left:6px; cursor:pointer; font-size:13px;"
+                        onclick="copyMeetingNumber()"
+                    >📋</span>
                 </div>
+            </div>
+
             `;
         }
 
@@ -137,6 +148,16 @@
                 month: "short"
             });
         }
+
+        function copyMeetingNumber() {
+            const text = document.getElementById("meetingNumber")?.innerText;
+            if (!text) return;
+
+            navigator.clipboard.writeText(text)
+                .then(() => alert("Meeting number copied"))
+                .catch(() => alert("Copy failed. Please copy manually."));
+        }
+
     </script>
 </body>
 

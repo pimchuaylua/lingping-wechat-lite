@@ -9,31 +9,37 @@ window.bookSession = async function ({ sessionId }) {
     const LOGIN_URL = BASE_URL + "/auth/login";
     const BOOK_URL = BASE_URL + "/bookings/";
 
-    const username = prompt("Enter your username to book:");
-    if (!username) return;
+    let userId = localStorage.getItem("userId");
 
     try {
-        const loginRes = await fetch(LOGIN_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-API-KEY": API_KEY
-            },
-            body: JSON.stringify({
-                username,
-                password: "lingpingreading33"
-            })
-        });
+        // ✅ If no userId, ask user to log in
+        if (!userId) {
+            const username = prompt("Enter your username to book:");
+            if (!username) return;
 
-        const loginData = await loginRes.json();
-        const userId = loginData?.data?.userId;
+            const loginRes = await fetch(LOGIN_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                },
+                body: JSON.stringify({
+                    username,
+                    password: "lingpingreading33"
+                })
+            });
 
-        if (!loginRes.ok || !userId) {
-            throw new Error("Invalid username. Please check and try again.");
+            const loginData = await loginRes.json();
+            userId = loginData?.data?.userId;
+
+            if (!loginRes.ok || !userId) {
+                throw new Error("Invalid username. Please check and try again.");
+            }
+
+            localStorage.setItem("userId", userId);
         }
 
-        localStorage.setItem("lingpingUserId", userId);
-
+        // ✅ Book session
         const bookRes = await fetch(BOOK_URL, {
             method: "POST",
             headers: {
