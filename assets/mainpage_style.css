@@ -218,6 +218,7 @@ nav a:hover {
     margin: 10px 0 16px;
     font-size: 14px;
     color: #333;
+    text-align: center;
 }
 
 .user-hint {
