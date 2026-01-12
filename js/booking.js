@@ -95,27 +95,30 @@ async function getMyBookings() {
 }
 
 function mapBookingsToSessions(bookings) {
-    return bookings.map(b => {
-        const s = b.readingSession;
-        const start = new Date(s.startTime);
-        const end = new Date(start.getTime() + s.durationMins * 60000);
+    return bookings
+        .map(b => {
+            const s = b.readingSession;
+            const start = new Date(s.startTime);
+            const end = new Date(start.getTime() + s.durationMins * 60000);
 
-        const hosts = s.hosts?.length
-            ? s.hosts.map(h => h.name).join(", ")
-            : "TBA";
+            const hosts = s.hosts?.length
+                ? s.hosts.map(h => h.name).join(", ")
+                : "TBA";
 
-        return {
-            id: s._id,
-            date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
-            time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
-            title: s.title,
-            description: s.shortDescription,
-            fullDescription: s.fullDescription,
-            hosts,
-            isFull: s.isFull,
-            seatsLeft: s.numberOfSeatsLeft,
-            photoUrl: s.photoUrl,
-            booked: true
-        };
-    });
+            return {
+                id: s._id,
+                startTime: start, // 🔑 keep for sorting
+                date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
+                time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+                title: s.title,
+                description: s.shortDescription,
+                fullDescription: s.fullDescription,
+                hosts,
+                isFull: s.isFull,
+                seatsLeft: s.numberOfSeatsLeft,
+                photoUrl: s.photoUrl,
+                booked: true
+            };
+        })
+        .sort((a, b) => a.startTime - b.startTime); // 🔽 order by time
 }

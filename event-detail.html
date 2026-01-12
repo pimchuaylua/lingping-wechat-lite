@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="config.js"></script>
     <script src="js/booking.js"></script>
+    <script src="js/utils.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
@@ -116,7 +117,7 @@
                 <div class="back-btn" onclick="history.back()">← Back</div>
                 <img src="${s.photoUrl || 'https://via.placeholder.com/480x200'}">
                 <h1>${s.title}</h1>
-                <div class="sub">${formatPrettyDate(s.date)} · ${s.time}</div>
+                <div class="sub">${Utils.formatPrettyDate(s.date)} · ${s.time}</div>
                 <div class="sub">Host(s): ${s.hosts}</div>
                 <div class="description">${fullDescHTML}</div>
                 <div class="section">
@@ -138,15 +139,6 @@
             </div>
 
             `;
-        }
-
-        function formatPrettyDate(dateStr) {
-            const d = new Date(dateStr);
-            return d.toLocaleDateString("en-US", {
-                weekday: "short",
-                day: "numeric",
-                month: "short"
-            });
         }
 
         function copyMeetingNumber() {
