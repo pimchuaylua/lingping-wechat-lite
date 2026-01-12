@@ -169,6 +169,33 @@ nav a:hover {
     color: #fff;
 }
 
+.login-btn {
+    border: none;
+    border-radius: 999px;
+    /* pill shape */
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+
+    background: #FFB050;
+    color: #ffffff;
+
+    box-shadow: 0 4px 10px rgba(255, 176, 80, 0.35);
+    transition: all 0.2s ease;
+}
+
+.login-btn:hover {
+    background: #ffa033;
+    box-shadow: 0 6px 14px rgba(255, 176, 80, 0.45);
+    transform: translateY(-1px);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(255, 176, 80, 0.3);
+}
+
 .book-btn.available {
     background: var(--theme);
     cursor: pointer;

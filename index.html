@@ -64,12 +64,11 @@
             if (username) {
                 el.innerHTML = `
             👋 Hello <strong>${username}</strong>!
-            <span class="user-hint">You are logged in and can book sessions directly.</span>
+            <span class="user-hint">You are logged in and can book sessions!</span>
             <span class="logout" onclick="logout()">Logout</span>
         `;
             } else {
                 el.innerHTML = `
-            👋 Hello!
             <button class="login-btn" onclick="loginAndUpdateUI()">Log in here</button>
         `;
             }
