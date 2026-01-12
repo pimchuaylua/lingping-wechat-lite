@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>My Bookings | Lingping Club</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/mainpage_style.css">
+
+    <!-- Config & Logic -->
+    <script src="config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/booking.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">Lingping Club | Online</div>
+
+        <div class="sub">
+            A community of curious minds exploring the world through languages, cultures, and shared perspectives.
+        </div>
+
+        <!-- 👋 User Welcome -->
+        <div id="userWelcome" class="user-welcome"></div>
+
+        <nav>
+            <a href="about.html">About Us</a>
+            <a href="my-bookings.html">My Bookings</a>
+            <a href="membership.html">Become a Member</a>
+            <a href="contact.html">Contact Us</a>
+        </nav>
+
+        <!-- 🔹 Date Filter -->
+        <div class="date-filter" id="dateFilter"></div>
+
+        <!-- 🔹 Events -->
+        <div id="eventList"></div>
+    </div>
+
+    <script>
+        const { BASE_URL, API_KEY } = window.CONFIG;
+        const eventList = document.getElementById("eventList");
+
+        /* ---------------- USER WELCOME ---------------- */
+
+        function renderUserWelcome() {
+            const username = localStorage.getItem("username");
+            const el = document.getElementById("userWelcome");
+            if (!el) return;
+
+            if (username) {
+                el.innerHTML = `
+                    👋 Hello <strong>${username}</strong>!
+                    <span class="logout" onclick="Auth.logout()">Logout</span>
+                `;
+            } else {
+                el.innerHTML = `
+                    <button class="login-btn" onclick="loginAndLoad()">Log in</button>
+                `;
+            }
+        }
+
+        async function loginAndLoad() {
+            try {
+                const username = prompt("Enter your username:");
+                if (!username) return;
+
+                await Auth.login(username);
+                renderUserWelcome();
+                loadMyBookings();
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        /* ---------------- DATE FORMAT ---------------- */
+
+        function formatPrettyDate(dateStr) {
+            const [year, month, day] = dateStr.split("-").map(Number);
+            const d = new Date(year, month - 1, day);
+            return d.toLocaleDateString("en-US", {
+                weekday: "short",
+                day: "numeric",
+                month: "short"
+            });
+        }
+
+        /* ---------------- LOAD BOOKINGS ---------------- */
+
+        async function loadMyBookings() {
+            const userId = localStorage.getItem("userId");
+
+            if (!userId) {
+                eventList.innerHTML = `<div class="empty">Please log in to see your bookings.</div>`;
+                return;
+            }
+
+            const bookings = await getMyBookings();
+
+            if (!bookings || !bookings.length) {
+                eventList.innerHTML = `<div class="empty">You have no upcoming bookings.</div>`;
+                return;
+            }
+
+            const sessions = mapBookingsToSessions(bookings);
+            renderEvents(sessions);
+        }
+
+        /* ---------------- RENDER EVENTS ---------------- */
+
+        function renderEvents(sessions) {
+            eventList.innerHTML = "";
+
+            sessions.forEach(s => {
+                const card = document.createElement("div");
+                card.className = "card";
+
+                card.innerHTML = `
+                    <div class="event-info">
+                        <div class="event-title">${s.title}</div>
+                        <div class="event-desc">${s.description}</div>
+                        <div class="event-time">${formatPrettyDate(s.date)} · ${s.time}</div>
+                        <div class="event-time">Hosts: ${s.hosts}</div>
+                    </div>
+                    <div class="right">
+                        <div class="status booked">Booked</div>
+                    </div>
+                `;
+
+                card.onclick = () => {
+                    localStorage.setItem("selectedSession", JSON.stringify(s));
+                    window.location.href = "event-detail.html";
+                };
+
+                eventList.appendChild(card);
+            });
+        }
+
+        /* ---------------- INIT ---------------- */
+
+        function init() {
+            renderUserWelcome();
+            loadMyBookings();
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

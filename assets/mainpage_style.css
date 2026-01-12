@@ -235,3 +235,10 @@ nav a:hover {
 .logout:hover {
     text-decoration: underline;
 }
+
+.status.booked {
+    background: #2ecc71;
+    /* nice green */
+    color: #fff;
+    font-weight: 600;
+}
