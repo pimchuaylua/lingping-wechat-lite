@@ -242,3 +242,24 @@ nav a:hover {
     color: #fff;
     font-weight: 600;
 }
+
+.location-toggle {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.location-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+}
+
+.location-btn.active {
+    background: var(--theme);
+    color: #fff;
+    border-color: var(--theme);
+    font-weight: 500;
+}

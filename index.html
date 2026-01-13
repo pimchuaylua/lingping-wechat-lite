@@ -37,6 +37,17 @@
             <a href="contact.html">Contact Us</a>
         </nav>
 
+        <!-- 🔹 Location Toggle -->
+        <div class="location-toggle">
+            <button class="location-btn active" data-level="695c763e2d652e065db71030">
+                Online
+            </button>
+            <button class="location-btn" data-level="67eab5b337cd4b56a080743f">
+                Chiang Mai
+            </button>
+        </div>
+
+
         <!-- 🔹 Topics -->
         <div class="topics">
             <div class="topic active" data-topic="">All</div>
@@ -56,6 +67,7 @@
 
     <script>
         const { BASE_URL, API_KEY } = window.CONFIG;
+        let currentLevel = "695c763e2d652e065db71030"; // Online default
 
         /* ---------------- USER WELCOME ---------------- */
 
@@ -174,7 +186,7 @@
             const params = new URLSearchParams({
                 fromDate,
                 toDate,
-                level: "695c763e2d652e065db71030"
+                level: currentLevel
             });
 
             const res = await fetch(`${BASE_URL}/reading-sessions?${params}`, {
@@ -187,6 +199,22 @@
             const json = await res.json();
             return json.data;
         }
+
+        document.querySelectorAll(".location-btn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                // toggle active state
+                document.querySelectorAll(".location-btn")
+                    .forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                // update level
+                currentLevel = btn.dataset.level;
+
+                // re-fetch & re-render everything
+                await init();
+            });
+        });
+
 
         function renderEvents() {
             let filtered = [...sessions];
