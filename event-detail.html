@@ -8,89 +8,8 @@
     <script src="config.js"></script>
     <script src="js/booking.js"></script>
     <script src="js/utils.js"></script>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-            margin: 0;
-            background: #f5f5f5;
-            color: #333;
-            padding-bottom: 80px;
-        }
-
-        .container {
-            max-width: 480px;
-            margin: 20px auto;
-            padding: 16px;
-            background: #fff;
-            border-radius: 12px;
-        }
-
-        img {
-            width: 100%;
-            border-radius: 12px;
-            margin-bottom: 12px;
-        }
-
-        h1 {
-            font-size: 22px;
-            margin-bottom: 6px;
-        }
-
-        .sub {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 12px;
-        }
-
-        .back-btn {
-            display: inline-block;
-            margin-bottom: 12px;
-            font-size: 14px;
-            cursor: pointer;
-            color: #007bff;
-            text-decoration: underline;
-        }
-
-        .description p {
-            margin: 8px 0;
-        }
-
-        .section {
-            border-top: 1px solid #eee;
-            padding-top: 12px;
-            margin-top: 12px;
-        }
-
-        /* Book button */
-        .book-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #fff;
-            border-top: 1px solid #eee;
-            padding: 12px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .book-btn {
-            width: 100%;
-            max-width: 480px;
-            background: #FFB050;
-            color: #fff;
-            font-size: 16px;
-            padding: 12px;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .book-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-    </style>
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/event-detail_style.css">
 </head>
 
 <body>
@@ -101,7 +20,7 @@
     </div>
 
     <script>
-
+        const { BASE_URL, API_KEY } = window.CONFIG;
         const container = document.getElementById("sessionContainer");
         const s = JSON.parse(localStorage.getItem("selectedSession"));
 
@@ -113,6 +32,7 @@
                 .map(line => `<p>${line}</p>`)
                 .join("");
 
+            // Render basic session info
             container.innerHTML = `
                 <div class="back-btn" onclick="history.back()">← Back</div>
                 <img src="${s.photoUrl || 'https://via.placeholder.com/480x200'}">
@@ -120,25 +40,58 @@
                 <div class="sub">${Utils.formatPrettyDate(s.date)} · ${s.time}</div>
                 <div class="sub">Host(s): ${s.hosts}</div>
                 <div class="description">${fullDescHTML}</div>
-                <div class="section">
-                <div class="sub">Platform: Tencent</div>
-                <div class="sub">
-                    Meeting number:
-                    <span
-                        id="meetingNumber"
-                        style="text-decoration: underline; color: #007bff; cursor: pointer;"
-                        onclick="copyMeetingNumber()"
-                    >
-                        745-0780-4846
-                    </span>
-                    <span
-                        style="margin-left:6px; cursor:pointer; font-size:13px;"
-                        onclick="copyMeetingNumber()"
-                    >📋</span>
+                <div id="attendeesSection" class="section">
+                    <div class="sub">Loading attendees...</div>
                 </div>
-            </div>
-
+                <div class="section">
+                    <div class="sub">Platform: Tencent</div>
+                    <div class="sub">
+                        Meeting number:
+                        <span
+                            id="meetingNumber"
+                            style="text-decoration: underline; color: #007bff; cursor: pointer;"
+                            onclick="copyMeetingNumber()"
+                        >
+                            745-0780-4846
+                        </span>
+                        <span
+                            style="margin-left:6px; cursor:pointer; font-size:13px;"
+                            onclick="copyMeetingNumber()"
+                        >📋</span>
+                    </div>
+                </div>
             `;
+
+            // Fetch attendees using same pattern as your login fetch
+            async function loadAttendees() {
+                try {
+                    const res = await fetch(`${BASE_URL}/reading-sessions/${s.id}/attendees`, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-API-KEY": API_KEY
+                        }
+                    });
+
+                    const data = await res.json();
+                    const section = document.getElementById("attendeesSection");
+
+                    if (data.status && data.data.length > 0) {
+                        const listHTML = data.data.map(a => `
+                            <div class="sub">• ${a.name}</div>
+                        `).join("");
+                        section.innerHTML = `<div class="sub"><strong>Attendees (${s.maxParticipants - s.seatsLeft}):</strong></div>${listHTML}`;
+                    } else {
+                        section.innerHTML = `<div class="sub"><strong>Attendees:</strong> None yet</div>`;
+                    }
+                } catch (err) {
+                    console.error(err);
+                    document.getElementById("attendeesSection").innerHTML =
+                        `<div class="sub"><strong>Attendees:</strong> Could not load</div>`;
+                }
+            }
+
+            loadAttendees();
         }
 
         function copyMeetingNumber() {
@@ -149,8 +102,9 @@
                 .then(() => alert("Meeting number copied"))
                 .catch(() => alert("Copy failed. Please copy manually."));
         }
-
     </script>
+
+
 </body>
 
 </html>
