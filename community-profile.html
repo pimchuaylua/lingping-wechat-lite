@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>My Profile | Lingping Club</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/mainpage_style.css" />
+
+    <!-- Config -->
+    <script src="config.js"></script>
+
+    <!-- Profile Logic -->
+    <script src="js/profile-questions.js" defer></script>
+    <script src="js/community-profile.js" defer></script>
+
+    <style>
+        /* --- Profile form layout --- */
+        .form-label {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-label input,
+        .form-label textarea {
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .form-label input:focus,
+        .form-label textarea:focus {
+            outline: none;
+            border-color: var(--theme);
+            box-shadow: 0 0 0 2px rgba(255, 176, 80, 0.15);
+        }
+
+        /* --- Fun prompts --- */
+        .prompt-block {
+            margin-bottom: 20px;
+        }
+
+        .prompt-question {
+            font-weight: 500;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            font-size: 14px;
+        }
+
+        .prompt-input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .prompt-input:focus {
+            outline: none;
+            border-color: var(--theme);
+            box-shadow: 0 0 0 2px rgba(255, 176, 80, 0.15);
+        }
+
+        /* --- Save button --- */
+        .primary-btn {
+            width: 100%;
+            margin-top: 24px;
+            padding: 12px;
+            border-radius: 24px;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            background: var(--theme);
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .primary-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">Lingping Club | Online</div>
+
+        <div class="sub">
+            A community of curious minds exploring the world through languages, cultures, and shared perspectives.
+        </div>
+
+        <!-- 👋 Login / User Welcome (ADDED) -->
+        <div id="userWelcome" class="user-welcome"></div>
+
+        <nav class="tab-bar">
+            <a href="index.html" class="tab">Home</a>
+            <a href="my-bookings.html" class="tab">Bookings</a>
+            <a href="community.html" class="tab">Community</a>
+            <a href="community-profile.html" class="tab active">My Profile</a>
+        </nav>
+
+        <form id="profileForm" class="card">
+            <div class="event-info">
+
+                <label class="form-label">
+                    Display Name
+                    <input type="text" id="displayName" placeholder="Your name" />
+                </label>
+
+                <label class="form-label">
+                    Profile Picture URL
+                    <input type="text" id="profilePic" placeholder="https://..." />
+                </label>
+
+                <label class="form-label">
+                    Short Bio
+                    <textarea id="bio" rows="2" placeholder="A short introduction..."></textarea>
+                </label>
+
+                <label class="form-label">
+                    Description
+                    <textarea id="description" rows="4" placeholder="Tell others more about you..."></textarea>
+                </label>
+
+                <label class="form-label">
+                    Topics of Interest (comma-separated IDs)
+                    <input type="text" id="topics" placeholder="topicId1, topicId2" />
+                </label>
+
+                <h3 style="margin:32px 0 16px;">More About Me</h3>
+
+                <!-- Questions injected by JS -->
+                <div id="funPrompts"></div>
+
+                <button type="submit" class="primary-btn">
+                    Save Profile
+                </button>
+
+            </div>
+        </form>
+    </div>
+
+    <script>
+        /* ---------------- CONFIG ---------------- */
+        const { BASE_URL, API_KEY } = window.CONFIG;
+
+        /* ---------------- LOGIN BAR ---------------- */
+
+        function renderUserWelcome() {
+            const username = localStorage.getItem("username");
+            const el = document.getElementById("userWelcome");
+            if (!el) return;
+
+            if (username) {
+                el.innerHTML = `
+                    👋 Hello <strong>${username}</strong>!
+                    <span class="logout" onclick="logout()">Logout</span>
+                `;
+            } else {
+                el.innerHTML = `
+                    <button class="login-btn" onclick="loginAndUpdateUI()">Log in here</button>
+                `;
+            }
+        }
+
+        async function loginAndUpdateUI() {
+            let userId = localStorage.getItem("userId");
+
+            try {
+                if (!userId) {
+                    const username = prompt("Enter your username:");
+                    if (!username) return;
+
+                    const res = await fetch(`${BASE_URL}/auth/login`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-API-KEY": API_KEY
+                        },
+                        body: JSON.stringify({
+                            username,
+                            password: "lingpingreading33"
+                        })
+                    });
+
+                    const json = await res.json();
+                    userId = json?.data?.userId;
+
+                    if (!res.ok || !userId) {
+                        throw new Error("Login failed");
+                    }
+
+                    localStorage.setItem("userId", userId);
+                    localStorage.setItem("username", username);
+                }
+
+                renderUserWelcome();
+
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("userId");
+            localStorage.removeItem("username");
+            location.reload();
+        }
+
+        renderUserWelcome();
+    </script>
+
+</body>
+
+</html>
