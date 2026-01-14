@@ -92,6 +92,61 @@
 </head>
 
 <body>
+    <div id="loginBlocker" style="
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(
+        rgba(255,255,255,0.85),
+        rgba(255,255,255,0.95)
+    );
+    backdrop-filter: blur(6px);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+">
+        <div style="
+        background: white;
+        padding: 28px 32px;
+        border-radius: 14px;
+        max-width: 360px;
+        width: 90%;
+        text-align: center;
+        box-shadow:
+            0 10px 30px rgba(0,0,0,0.08),
+            0 2px 8px rgba(0,0,0,0.05);
+    ">
+            <div style="font-size:28px; margin-bottom:12px;">👋</div>
+
+            <h3 style="
+            margin: 0 0 8px;
+            font-size: 20px;
+            font-weight: 600;
+        ">
+                Log in required
+            </h3>
+
+            <p style="
+            margin: 0 0 20px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        ">
+                Please log in to view and edit your profile.
+            </p>
+
+            <button class="primary-btn" onclick="loginAndUpdateUI()" style="
+                width: 100%;
+                padding: 10px 14px;
+                font-size: 15px;
+                border-radius: 8px;
+            ">
+                Log in
+            </button>
+        </div>
+    </div>
+
+
 
     <div class="container">
         <div class="header">Lingping Club | Online</div>
@@ -156,6 +211,8 @@
     </div>
 
     <script>
+
+
         /* ---------------- CONFIG ---------------- */
         const { BASE_URL, API_KEY } = window.CONFIG;
 
@@ -210,6 +267,9 @@
                 }
 
                 renderUserWelcome();
+                USER_ID = localStorage.getItem("userId");
+                document.getElementById("loginBlocker").style.display = "none";
+                loadProfile();
 
             } catch (err) {
                 alert(err.message);

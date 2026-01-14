@@ -2,13 +2,7 @@
    Auth / Config
 ============================ */
 
-const USER_ID = localStorage.getItem("userId");
-
-if (!USER_ID) {
-    alert("Please log in first.");
-    window.location.href = "login.html";
-    throw new Error("USER_ID missing");
-}
+let USER_ID = localStorage.getItem("userId");
 
 const API_BASE = window.CONFIG.BASE_URL;
 
@@ -31,6 +25,19 @@ const profileAvatarInput = document.getElementById("avatarInput");
 /* ============================
    Image resize helper
 ============================ */
+
+function requireLogin() {
+    const blocker = document.getElementById("loginBlocker");
+
+    if (!USER_ID) {
+        blocker.style.display = "flex";
+        return false;
+    }
+
+    blocker.style.display = "none";
+    return true;
+}
+
 
 function resizeImage(file, maxDimension = 1024, quality = 0.8) {
     return new Promise((resolve, reject) => {
@@ -262,4 +269,8 @@ async function saveProfile(e) {
 ============================ */
 
 form.addEventListener("submit", saveProfile);
-loadProfile();
+
+if (requireLogin()) {
+    loadProfile();
+}
+

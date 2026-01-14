@@ -63,8 +63,10 @@ nav a:hover {
     gap: 8px;
     flex-wrap: wrap;
     margin-bottom: 12px;
-    justify-content: center;
+    justify-content: flex-start;
+    /* 🔥 was center */
 }
+
 
 .topic {
     padding: 6px 12px;
@@ -81,13 +83,23 @@ nav a:hover {
     border-color: var(--theme);
 }
 
+.filters {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
 .date-filter {
     display: flex;
     gap: 8px;
     overflow-x: auto;
     margin-bottom: 16px;
-    justify-content: center;
+
+    justify-content: flex-start;
+    /* 🔥 was center */
+    padding-bottom: 4px;
+    scroll-padding-left: 16px;
 }
+
 
 .date-btn {
     padding: 8px 12px;
@@ -247,7 +259,10 @@ nav a:hover {
     display: flex;
     gap: 8px;
     margin: 12px 0;
+    justify-content: flex-start;
+    /* ✅ */
 }
+
 
 .location-btn {
     padding: 6px 14px;
