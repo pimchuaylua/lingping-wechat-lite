@@ -52,6 +52,26 @@
                     }
                 });
 
+                // ✅ Handle no-profile case
+                if (res.status === 404) {
+                    container.innerHTML = `
+                        <div class="profile-card">
+                            <h2>Profile not available</h2>
+                            <p class="sub">
+                                This member hasn’t created a public profile yet.
+                            </p>
+                            <p class="sub">
+                                You can still see them in sessions and activities 😊
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                if (!res.ok) {
+                    throw new Error("Failed to fetch profile");
+                }
+
                 const json = await res.json();
                 const p = json.data;
 
@@ -64,18 +84,18 @@
                                 <div class="sub">${p.bio || ''}</div>
                             </div>
                         </div>
-
+    
                         <p style="margin-top:16px; white-space:pre-line;">
                             ${p.description || ''}
                         </p>
-
+    
                         <div class="sub"><strong>Topics of Interest</strong></div>
                         <div>
                             ${(p.topicsOfInterests || []).map(t =>
                     `<span class="topic">${t.name}</span>`
                 ).join("")}
                         </div>
-
+    
                         <div style="margin-top:20px;">
                             ${(p.funPrompts || []).map(fp => `
                                 <p>
@@ -88,10 +108,18 @@
                 `;
             } catch (err) {
                 console.error(err);
-                container.innerHTML = "<p>Failed to load profile.</p>";
+                container.innerHTML = `
+                    <div class="profile-card">
+                        <h2>Something went wrong</h2>
+                        <p class="sub">
+                            We couldn’t load this profile. Please try again later.
+                        </p>
+                    </div>
+                `;
             }
         }
     </script>
+
 </body>
 
 </html>
