@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>View Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="config.js"></script>
+    <link rel="stylesheet" href="assets/event-detail_style.css">
+    <style>
+        .profile-card img {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .topic {
+            display: inline-block;
+            background: #f1f1f1;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin: 4px 4px 0 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="back-btn" onclick="history.back()">← Back</div>
+        <div id="profileContent">Loading profile...</div>
+    </div>
+
+    <script>
+        const { BASE_URL, API_KEY } = window.CONFIG;
+        const userId = localStorage.getItem("viewUserId");
+        const container = document.getElementById("profileContent");
+
+        if (!userId) {
+            container.innerHTML = "<p>User not found.</p>";
+        } else {
+            loadProfile();
+        }
+
+        async function loadProfile() {
+            try {
+                const res = await fetch(`${BASE_URL}/users/${userId}/profile`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-KEY": API_KEY
+                    }
+                });
+
+                const json = await res.json();
+                const p = json.data;
+
+                container.innerHTML = `
+                    <div class="profile-card">
+                        <div style="display:flex; gap:14px; align-items:center;">
+                            <img src="${p.profilePic || 'https://via.placeholder.com/96'}">
+                            <div>
+                                <h2>${p.displayName}</h2>
+                                <div class="sub">${p.bio || ''}</div>
+                            </div>
+                        </div>
+
+                        <p style="margin-top:16px; white-space:pre-line;">
+                            ${p.description || ''}
+                        </p>
+
+                        <div class="sub"><strong>Topics of Interest</strong></div>
+                        <div>
+                            ${(p.topicsOfInterests || []).map(t =>
+                    `<span class="topic">${t.name}</span>`
+                ).join("")}
+                        </div>
+
+                        <div style="margin-top:20px;">
+                            ${(p.funPrompts || []).map(fp => `
+                                <p>
+                                    <strong>${fp.question}</strong><br>
+                                    ${fp.answer}
+                                </p>
+                            `).join("")}
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = "<p>Failed to load profile.</p>";
+            }
+        }
+    </script>
+</body>
+
+</html>

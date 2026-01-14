@@ -8,7 +8,6 @@
     <script src="config.js"></script>
     <script src="js/booking.js"></script>
     <script src="js/utils.js?v=20260113"></script>
-    <!-- Styles -->
     <link rel="stylesheet" href="assets/event-detail_style.css">
 </head>
 
@@ -32,7 +31,6 @@
                 .map(line => `<p>${line}</p>`)
                 .join("");
 
-            // Render basic session info
             container.innerHTML = `
                 <div class="back-btn" onclick="history.back()">← Back</div>
                 <img src="${s.photoUrl || 'https://via.placeholder.com/480x200'}">
@@ -40,9 +38,11 @@
                 <div class="sub">${Utils.formatPrettyDate(s.date)} · ${s.time}</div>
                 <div class="sub">Host(s): ${s.hosts}</div>
                 <div class="description">${fullDescHTML}</div>
+
                 <div id="attendeesSection" class="section">
                     <div class="sub">Loading attendees...</div>
                 </div>
+
                 <div class="section">
                     <div class="sub">Platform: Tencent</div>
                     <div class="sub">
@@ -54,33 +54,40 @@
                         >
                             745-0780-4846
                         </span>
-                        <span
-                            style="margin-left:6px; cursor:pointer; font-size:13px;"
-                            onclick="copyMeetingNumber()"
-                        >📋</span>
+                        <span style="margin-left:6px; cursor:pointer;" onclick="copyMeetingNumber()">📋</span>
                     </div>
                 </div>
             `;
 
-            // Fetch attendees using same pattern as your login fetch
             async function loadAttendees() {
                 try {
                     const res = await fetch(`${BASE_URL}/reading-sessions/${s.id}/attendees`, {
-                        method: "GET",
                         headers: {
                             "Content-Type": "application/json",
                             "X-API-KEY": API_KEY
                         }
                     });
 
-                    const data = await res.json();
+                    const json = await res.json();
                     const section = document.getElementById("attendeesSection");
 
-                    if (data.status && data.data.length > 0) {
-                        const listHTML = data.data.map(a => `
-                            <div class="sub">• ${a.name}</div>
+                    if (json.status && json.data.length > 0) {
+                        const listHTML = json.data.map(a => `
+                            <div
+                                class="sub"
+                                style="cursor:pointer; color:#007bff;"
+                                onclick="viewProfile('${a.userId}')"
+                            >
+                                • ${a.name}
+                            </div>
                         `).join("");
-                        section.innerHTML = `<div class="sub"><strong>Attendees (${s.maxParticipants - s.seatsLeft}):</strong></div>${listHTML}`;
+
+                        section.innerHTML = `
+                            <div class="sub">
+                                <strong>Attendees (${s.maxParticipants - s.seatsLeft}):</strong>
+                            </div>
+                            ${listHTML}
+                        `;
                     } else {
                         section.innerHTML = `<div class="sub"><strong>Attendees:</strong> None yet</div>`;
                     }
@@ -94,17 +101,20 @@
             loadAttendees();
         }
 
+        function viewProfile(userId) {
+            localStorage.setItem("viewUserId", userId);
+            window.location.href = "view-profile.html";
+        }
+
         function copyMeetingNumber() {
             const text = document.getElementById("meetingNumber")?.innerText;
             if (!text) return;
 
             navigator.clipboard.writeText(text)
                 .then(() => alert("Meeting number copied"))
-                .catch(() => alert("Copy failed. Please copy manually."));
+                .catch(() => alert("Copy failed."));
         }
     </script>
-
-
 </body>
 
 </html>
