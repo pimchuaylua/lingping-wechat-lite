@@ -263,3 +263,41 @@ nav a:hover {
     border-color: var(--theme);
     font-weight: 500;
 }
+
+/* --- Avatar --- */
+.avatar-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background-color: #f2f2f2;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #888;
+    border: 2px dashed #ddd;
+    transition: all 0.2s ease;
+}
+
+.avatar:hover {
+    border-color: var(--theme);
+    color: var(--theme);
+}
+
+.avatar.has-photo {
+    border: none;
+}
+
+#avatarPlaceholder {
+    text-align: center;
+    padding: 0 10px;
+}

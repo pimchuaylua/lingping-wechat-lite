@@ -111,16 +111,20 @@
         </nav>
 
         <form id="profileForm" class="card">
+
             <div class="event-info">
+
+                <!-- Avatar Upload -->
+                <div class="avatar-wrapper">
+                    <div id="avatar" class="avatar">
+                        <span id="avatarPlaceholder">Upload Photo</span>
+                    </div>
+                    <input type="file" id="avatarInput" accept="image/*" hidden />
+                </div>
 
                 <label class="form-label">
                     Display Name
                     <input type="text" id="displayName" placeholder="Your name" />
-                </label>
-
-                <label class="form-label">
-                    Profile Picture URL
-                    <input type="text" id="profilePic" placeholder="https://..." />
                 </label>
 
                 <label class="form-label">
@@ -219,6 +223,76 @@
         }
 
         renderUserWelcome();
+
+        /* ---------------- AVATAR UPLOAD ---------------- */
+
+        const avatar = document.getElementById("avatar");
+        const avatarInput = document.getElementById("avatarInput");
+        const avatarPlaceholder = document.getElementById("avatarPlaceholder");
+
+        function renderAvatar(photoUrl) {
+            if (photoUrl) {
+                avatar.style.backgroundImage = `url(${photoUrl})`;
+                avatar.classList.add("has-photo");
+                avatarPlaceholder.style.display = "none";
+            } else {
+                avatar.style.backgroundImage = "";
+                avatar.classList.remove("has-photo");
+                avatarPlaceholder.style.display = "block";
+            }
+        }
+
+        // click avatar → open file picker
+        avatar.addEventListener("click", () => {
+            if (!USER_ID) {
+                alert("Please log in first.");
+                return;
+            }
+            avatarInput.click();
+        });
+
+        // file selected → upload
+        avatarInput.addEventListener("change", async () => {
+            const file = avatarInput.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const res = await fetch(
+                    `${API_BASE}/users/${USER_ID}/profile/photo`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "X-API-KEY": window.CONFIG.API_KEY,
+                        },
+                        body: formData,
+                    }
+                );
+
+                if (!res.ok) {
+                    throw new Error("Upload failed");
+                }
+
+                const json = await res.json();
+
+                // backend should return updated profile or photo url
+                const photoUrl =
+                    json?.data?.profilePic ||
+                    json?.data?.photoUrl;
+
+                renderAvatar(photoUrl);
+
+                alert("Photo uploaded successfully!");
+
+            } catch (err) {
+                alert(err.message);
+            } finally {
+                avatarInput.value = "";
+            }
+        });
+
     </script>
 
 </body>
