@@ -9,86 +9,13 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="assets/mainpage_style.css" />
-
+    <link rel="stylesheet" href="assets/community-profile_style.css">
     <!-- Config -->
     <script src="config.js"></script>
 
     <!-- Profile Logic -->
     <script src="js/profile-questions.js" defer></script>
     <script src="js/community-profile.js" defer></script>
-
-    <style>
-        /* --- Profile form layout --- */
-        .form-label {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 16px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .form-label input,
-        .form-label textarea {
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            font-size: 14px;
-            resize: vertical;
-        }
-
-        .form-label input:focus,
-        .form-label textarea:focus {
-            outline: none;
-            border-color: var(--theme);
-            box-shadow: 0 0 0 2px rgba(255, 176, 80, 0.15);
-        }
-
-        /* --- Fun prompts --- */
-        .prompt-block {
-            margin-bottom: 20px;
-        }
-
-        .prompt-question {
-            font-weight: 500;
-            margin-bottom: 8px;
-            line-height: 1.4;
-            font-size: 14px;
-        }
-
-        .prompt-input {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            font-size: 14px;
-            resize: vertical;
-        }
-
-        .prompt-input:focus {
-            outline: none;
-            border-color: var(--theme);
-            box-shadow: 0 0 0 2px rgba(255, 176, 80, 0.15);
-        }
-
-        /* --- Save button --- */
-        .primary-btn {
-            width: 100%;
-            margin-top: 24px;
-            padding: 12px;
-            border-radius: 24px;
-            border: none;
-            font-size: 15px;
-            font-weight: 600;
-            background: var(--theme);
-            color: #fff;
-            cursor: pointer;
-        }
-
-        .primary-btn:active {
-            transform: scale(0.98);
-        }
-    </style>
 </head>
 
 <body>
