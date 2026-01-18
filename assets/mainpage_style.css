@@ -324,3 +324,7 @@ nav a:hover {
 label:has(#topics) {
     display: none;
 }
+
+.hidden {
+    display: none;
+}

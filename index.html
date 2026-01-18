@@ -29,12 +29,9 @@
         <!-- 👋 User Welcome -->
         <div id="userWelcome" class="user-welcome"></div>
 
-        <nav class="tab-bar">
-            <a href="index.html" class="tab active">Home</a>
-            <a href="my-bookings.html" class="tab">Bookings</a>
-            <a href="community.html" class="tab">Community</a>
-            <a href="community-profile.html" class="tab">Me</a>
-        </nav>
+        <nav class="tab-bar" id="navGuest"></nav>
+        <nav class="tab-bar hidden" id="navMember"></nav>
+
 
         <div class="filters">
             <!-- 🔹 Location Toggle -->
@@ -86,6 +83,7 @@
             <button class="login-btn" onclick="loginAndUpdateUI()">Log in here</button>
         `;
             }
+            Auth.renderNav();
         }
 
         async function loginAndUpdateUI() {
@@ -315,6 +313,7 @@
             renderEvents();
         }
 
+        Auth.renderNav();
         init();
     </script>
 </body>

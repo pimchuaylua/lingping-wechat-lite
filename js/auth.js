@@ -49,3 +49,67 @@ window.Auth = {
         location.reload();
     }
 };
+
+/* ---------- NAV RENDERING (SAFE) ---------- */
+
+// document.addEventListener("DOMContentLoaded", () => {
+//     const userId = localStorage.getItem("userId");
+
+//     const navGuest = document.getElementById("navGuest");
+//     const navMember = document.getElementById("navMember");
+
+//     // Page may not have nav (safety)
+//     if (!navGuest || !navMember) return;
+
+//     if (userId) {
+//         // MEMBER NAV
+//         navGuest.classList.add("hidden");
+//         navMember.classList.remove("hidden");
+
+//         navMember.innerHTML = `
+//             <a href="index.html" class="tab active">Home</a>
+//             <a href="my-bookings.html" class="tab">Bookings</a>
+//             <a href="community.html" class="tab">Community</a>
+//             <a href="community-profile.html" class="tab">Me</a>
+//         `;
+//     } else {
+//         // NON-MEMBER NAV
+//         navMember.classList.add("hidden");
+//         navGuest.classList.remove("hidden");
+
+//         navGuest.innerHTML = `
+//             <a href="index.html" class="tab active">Home</a>
+//             <a href="join-us.html" class="tab">Join Us</a>
+//             <a href="about.html" class="tab">About</a> 
+//         `;
+//     }
+// });
+
+window.Auth.renderNav = function () {
+    const userId = localStorage.getItem("userId");
+    const navGuest = document.getElementById("navGuest");
+    const navMember = document.getElementById("navMember");
+
+    if (!navGuest || !navMember) return;
+
+    if (userId) {
+        navGuest.classList.add("hidden");
+        navMember.classList.remove("hidden");
+
+        navMember.innerHTML = `
+            <a href="index.html" class="tab active">Home</a>
+            <a href="my-bookings.html" class="tab">Bookings</a>
+            <a href="community.html" class="tab">Community</a>
+            <a href="community-profile.html" class="tab">Me</a>
+        `;
+    } else {
+        navMember.classList.add("hidden");
+        navGuest.classList.remove("hidden");
+
+        navGuest.innerHTML = `
+            <a href="index.html" class="tab active">Home</a>
+            <a href="about.html" class="tab">About</a>
+            <a href="join.html" class="tab">Join Us</a>
+        `;
+    }
+};
