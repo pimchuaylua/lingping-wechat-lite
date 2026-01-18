@@ -109,7 +109,7 @@ window.Auth.renderNav = function () {
         navGuest.innerHTML = `
             <a href="index.html" class="tab active">Home</a>
             <a href="about.html" class="tab">About</a>
-            <a href="join.html" class="tab">Join Us</a>
+            <a href="join-us.html" class="tab">Join Us</a>
         `;
     }
 };
