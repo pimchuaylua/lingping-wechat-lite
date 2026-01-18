@@ -46,7 +46,7 @@ function createSlider(containerId, folder, photos) {
 
 // ✅ Run AFTER DOM exists
 createSlider("onlinePhotos", "online", [
-    { file: "1.jpg", caption: "Online English Corner Every day 11AM-12PM & 9-10PM" }
+    { file: "1.jpg", caption: "Online English Corner\nEvery day 11:00–12:00 & 21:00–22:00 (China Time)" }
 ]);
 
 createSlider("chinaPhotos", "china", [
