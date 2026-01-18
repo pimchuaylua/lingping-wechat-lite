@@ -22,6 +22,7 @@
         const { BASE_URL, API_KEY } = window.CONFIG;
         const container = document.getElementById("sessionContainer");
         const s = JSON.parse(localStorage.getItem("selectedSession"));
+        const userId = localStorage.getItem("userId");
 
         if (!s) {
             container.innerHTML = "<p>Session not found.</p>";
@@ -43,20 +44,35 @@
                     <div class="sub">Loading attendees...</div>
                 </div>
 
-                <div class="section">
+                ${userId ? `
+                    <div class="section">
+                        <div class="sub">Platform: Tencent</div>
+                        <div class="sub">
+                            Meeting number:
+                            <span
+                                id="meetingNumber"
+                                style="text-decoration: underline; color: #007bff; cursor: pointer;"
+                                onclick="copyMeetingNumber()"
+                            >
+                                745-0780-4846
+                            </span>
+                            <span style="margin-left:6px; cursor:pointer;" onclick="copyMeetingNumber()">📋</span>
+                        </div>
+                    </div>
+                ` : `
+                    <div class="section">
                     <div class="sub">Platform: Tencent</div>
-                    <div class="sub">
-                        Meeting number:
-                        <span
-                            id="meetingNumber"
-                            style="text-decoration: underline; color: #007bff; cursor: pointer;"
-                            onclick="copyMeetingNumber()"
-                        >
-                            745-0780-4846
-                        </span>
-                        <span style="margin-left:6px; cursor:pointer;" onclick="copyMeetingNumber()">📋</span>
+
+                    <div class="info-box">
+                        Log in to see meeting details.<br><br>
+                        New here? Add WeChat
+                        <span class="highlight">lingpingreading</span>
+                        to join your first session for free ✨
                     </div>
                 </div>
+
+                `}
+
             `;
 
             async function loadAttendees() {

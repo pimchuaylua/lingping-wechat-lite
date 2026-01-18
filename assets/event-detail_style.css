@@ -79,3 +79,22 @@ h1 {
     opacity: 0.6;
     cursor: not-allowed;
 }
+
+.info-box {
+    background: #f7f9fc;
+    border: 1px solid #e3e7ef;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.info-box strong {
+    color: #111;
+}
+
+.info-box .highlight {
+    color: #007bff;
+    font-weight: 600;
+}
