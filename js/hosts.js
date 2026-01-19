@@ -18,5 +18,9 @@ window.HOSTS_MAP = {
     "68c511b763f05d3b3fe7a843": {
         photo: "./photos/hosts/lea.jpg",
         description: "From Chiangmai. Love exploring nature."
+    },
+    "6964a2342d652e065db71c0f": {
+        photo: "./photos/hosts/tailer.jpg",
+        description: "ENFJ💚 | Pisces♓️ | Swiftie✨ | Nintendo Switch Player🎮 | Podcast Host 🎙️| Foodie🍗 do something good and new in life"
     }
 };
