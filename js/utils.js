@@ -1,4 +1,4 @@
-// utils.js
+// utils.js?v=2025019
 window.Utils = {
     formatDate(dateStr) {
         const [year, month, day] = dateStr.split("-").map(Number);
