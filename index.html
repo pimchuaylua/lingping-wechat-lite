@@ -240,24 +240,37 @@
                 card.style.cursor = "pointer";
 
                 card.innerHTML = `
-                    <div class="event-info">
-                        <div class="event-title">${s.title}</div>
-                        <div class="event-desc">${s.description}</div>
-                        <div class="event-time">${Utils.formatPrettyDate(s.date)} · ${s.time}</div>
-                        <div class="event-time">Hosts: ${s.hosts}</div>
-                    </div>
-                    <div class="right">
-                        <div class="status ${s.isFull ? "full" : "available"}">
-                            ${s.isFull ? "Full" : `Available (${s.seatsLeft})`}
+                    ${s.photoUrl ? `
+                        <div class="event-photo">
+                            <img src="${s.photoUrl}" alt="${s.title}">
                         </div>
-                        <button
-                            class="book-btn ${s.isFull ? "" : "available"}"
-                            ${s.isFull ? "disabled" : ""}
-                            onclick="event.stopPropagation(); bookSession({ sessionId: '${s.id}' })">
-                            Book
-                        </button>
-                    </div>
+                    ` : ""}
+
+                    <div class="event-body">
+    <div class="event-info">
+        <div class="event-title">${s.title}</div>
+        <div class="event-desc">${s.description || ""}</div>
+        <div class="event-time">
+            <div class="event-date">${Utils.formatDate(s.date)}</div>
+            <div class="event-hour">${s.time} (${Utils.getTimeZoneName()})</div>
+        </div>
+    </div>
+
+    <div class="event-actions">
+        <div class="status ${s.isFull ? "full" : "available"}">
+            ${s.isFull ? "Full" : `Available (${s.seatsLeft})`}
+        </div>
+        <button
+            class="book-btn ${s.isFull ? "" : "available"}"
+            ${s.isFull ? "disabled" : ""}
+            onclick="event.stopPropagation(); bookSession({ sessionId: '${s.id}' })">
+            Book
+        </button>
+    </div>
+</div>
+
                 `;
+
 
                 card.onclick = () => {
                     localStorage.setItem("selectedSession", JSON.stringify(s));

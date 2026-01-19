@@ -1,25 +1,20 @@
 // utils.js
 window.Utils = {
-    formatPrettyDate(dateStr) {
+    formatDate(dateStr) {
         const [year, month, day] = dateStr.split("-").map(Number);
-
-        // Create date in local timezone
         const d = new Date(year, month - 1, day);
 
-        // Detect user's timezone
-        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        return d.toLocaleDateString("en-US", {
+            weekday: "short",
+            month: "short",
+            day: "numeric"
+        });
+    },
 
-        // Try to get a readable timezone name
-        const timeZoneName = new Intl.DateTimeFormat("en-US", {
+    getTimeZoneName() {
+        const d = new Date();
+        return new Intl.DateTimeFormat("en-US", {
             timeZoneName: "long"
         }).format(d).split(", ").pop();
-
-        const formattedDate = d.toLocaleDateString("en-US", {
-            weekday: "short",
-            day: "numeric",
-            month: "short"
-        });
-
-        return `${formattedDate} (${timeZoneName})`;
     }
 };

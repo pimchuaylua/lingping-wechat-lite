@@ -36,7 +36,13 @@
                 <div class="back-btn" onclick="history.back()">← Back</div>
                 <img src="${s.photoUrl || 'https://via.placeholder.com/480x200'}">
                 <h1>${s.title}</h1>
-                <div class="sub">${Utils.formatPrettyDate(s.date)} · ${s.time}</div>
+                <div class="event-time">
+                    <div class="event-date">${Utils.formatDate(s.date)}</div>
+                    <div class="event-hour">
+                        ${s.time} (${Utils.getTimeZoneName()})
+                    </div>
+                </div>
+
                 <div class="sub">Host(s): ${s.hosts}</div>
                 <div class="description">${fullDescHTML}</div>
 
