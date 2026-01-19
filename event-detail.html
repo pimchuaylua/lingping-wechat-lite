@@ -99,6 +99,7 @@
             if (s.hostObjects && s.hostObjects.length) {
                 hostsContainer.innerHTML = s.hostObjects.map(h => {
                     const extra = window.HOSTS_MAP?.[h._id] || {};
+                    console.log('id', h._id, h.name);
                     return `
             <div class="host-card">
     <img

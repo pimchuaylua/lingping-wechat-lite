@@ -3,10 +3,20 @@ window.HOSTS_MAP = {
         photo: "./photos/hosts/pim.jpg",
         description: "From Bangkok. Love reading & learning Chinese"
     },
-
-    // example
-    "HOST_ID_2": {
-        photo: "/assets/hosts/june.jpg",
-        description: "Enjoy slow conversations and deep questions"
+    "69670e782d652e065db726b8": {
+        photo: "./photos/hosts/best.jpg",
+        description: "Marketing major at Chiang Mai University. Loves deep talks and meaningful connections."
+    },
+    "696e6ce8d9adda8b3d78ac39": {
+        photo: "./photos/hosts/ou.jpg",
+        description: "Learning Thai. Active and curious about new things."
+    },
+    "6804d4a80f60d102cb0e363f": {
+        photo: "./photos/hosts/sorn.jpg",
+        description: "Born & raised in Chiangmai. Love practicing Chinese with Chinese friends."
+    },
+    "68c511b763f05d3b3fe7a843": {
+        photo: "./photos/hosts/lea.jpg",
+        description: "From Chiangmai. Love exploring nature."
     }
 };
