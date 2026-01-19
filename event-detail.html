@@ -34,51 +34,64 @@
 
             container.innerHTML = `
                 <div class="back-btn" onclick="history.back()">← Back</div>
+
                 <img src="${s.photoUrl || 'https://via.placeholder.com/480x200'}">
+
                 <h1>${s.title}</h1>
-                <div class="event-time">
-                    <div class="event-date">${Utils.formatDate(s.date)}</div>
-                    <div class="event-hour">
-                        ${s.time} (${Utils.getTimeZoneName()})
+
+                <!-- Time -->
+                <div class="section">
+                    <div class="label">Time</div>
+                    <div class="sub">
+                        ${Utils.formatDate(s.date)} · ${s.time} (${Utils.getTimeZoneName()})
                     </div>
                 </div>
 
-                <div class="sub">Host(s): ${s.hosts}</div>
-                <div class="description">${fullDescHTML}</div>
+                <!-- Meeting Info -->
+                <div class="section">
+                    <div class="label">Meeting</div>
+                    ${userId
+                    ? `
+                                <div class="sub">
+                                    Platform: Tencent<br>
+                                    Meeting number:
+                                    <span
+                                        id="meetingNumber"
+                                        style="text-decoration: underline; color:#007bff; cursor:pointer;"
+                                        onclick="copyMeetingNumber()"
+                                    >
+                                        745-0780-4846
+                                    </span>
+                                    <span style="margin-left:6px; cursor:pointer;" onclick="copyMeetingNumber()">📋</span>
+                                </div>
+                              `
+                    : `
+                                <div class="sub">
+                                    Log in to see meeting details. New here? Add WeChat
+                                    <span class="highlight">lingpingreading</span>
+                                    to join your first session for free ✨
+                                </div>
+                              `
+                }
+                </div>
 
+                <!-- Host -->
+                <div class="section">
+                    <div class="label">Host(s)</div>
+                    <div class="sub">${s.hosts}</div>
+                </div>
+
+                <!-- Description -->
+                <div class="section">
+                    <div class="label">About this session</div>
+                    <div class="description">${fullDescHTML}</div>
+                </div>
+
+                <!-- Attendees -->
                 <div id="attendeesSection" class="section">
-                    <div class="sub">Loading attendees...</div>
+                    <div class="label">Attendees</div>
+                    <div class="sub">Loading...</div>
                 </div>
-
-                ${userId ? `
-                    <div class="section">
-                        <div class="sub">Platform: Tencent</div>
-                        <div class="sub">
-                            Meeting number:
-                            <span
-                                id="meetingNumber"
-                                style="text-decoration: underline; color: #007bff; cursor: pointer;"
-                                onclick="copyMeetingNumber()"
-                            >
-                                745-0780-4846
-                            </span>
-                            <span style="margin-left:6px; cursor:pointer;" onclick="copyMeetingNumber()">📋</span>
-                        </div>
-                    </div>
-                ` : `
-                    <div class="section">
-                    <div class="sub">Platform: Tencent</div>
-
-                    <div class="info-box">
-                        Log in to see meeting details.<br><br>
-                        New here? Add WeChat
-                        <span class="highlight">lingpingreading</span>
-                        to join your first session for free ✨
-                    </div>
-                </div>
-
-                `}
-
             `;
 
             async function loadAttendees() {
@@ -105,18 +118,21 @@
                         `).join("");
 
                         section.innerHTML = `
-                            <div class="sub">
-                                <strong>Attendees (${s.maxParticipants - s.seatsLeft}):</strong>
+                            <div class="label">
+                                Attendees (${s.maxParticipants - s.seatsLeft})
                             </div>
                             ${listHTML}
                         `;
                     } else {
-                        section.innerHTML = `<div class="sub"><strong>Attendees:</strong> None yet</div>`;
+                        section.innerHTML = `
+                            <div class="label">Attendees</div>
+                            <div class="sub">None yet</div>
+                        `;
                     }
                 } catch (err) {
                     console.error(err);
                     document.getElementById("attendeesSection").innerHTML =
-                        `<div class="sub"><strong>Attendees:</strong> Could not load</div>`;
+                        `<div class="sub">Could not load attendees</div>`;
                 }
             }
 
