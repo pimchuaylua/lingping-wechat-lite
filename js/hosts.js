@@ -1,10 +1,12 @@
-// js/hosts.js
+window.HOSTS_MAP = {
+    "675d0ce9fb255bbc01f969ec": {
+        photo: "./photos/hosts/pim.jpg",
+        description: "From Bangkok. Love reading & learning Chinese"
+    },
 
-window.HOSTS = {
-    "pim001": {
-        userId: "pim001",
-        name: "Pim",
-        photo: "/assets/hosts/pim.jpg",
-        description: "Originally from Bangkok. Loves learning Chinese and reading."
+    // example
+    "HOST_ID_2": {
+        photo: "/assets/hosts/june.jpg",
+        description: "Enjoy slow conversations and deep questions"
     }
 };

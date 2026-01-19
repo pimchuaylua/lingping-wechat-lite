@@ -306,9 +306,11 @@
             sessions = raw.map(s => {
                 const start = new Date(s.startTime);
                 const end = new Date(start.getTime() + s.durationMins * 60000);
-                const hosts = s.hosts?.length
-                    ? s.hosts.map(h => h.name).join(", ")
+                const hostObjects = s.hosts || [];
+                const hosts = hostObjects.length
+                    ? hostObjects.map(h => h.name).join(", ")
                     : "TBA";
+
 
                 return {
                     id: s._id,
@@ -317,11 +319,12 @@
                     title: s.title,
                     description: s.shortDescription,
                     fullDescription: s.fullDescription,
-                    hosts,
+                    hosts: s.hosts || [],
                     isFull: s.isFull,
                     seatsLeft: s.numberOfSeatsLeft,
                     photoUrl: s.photoUrl,
-                    maxParticipants: s.maxParticipants
+                    maxParticipants: s.maxParticipants,
+                    hostObjects: hostObjects
                 };
             });
 

@@ -98,3 +98,82 @@ h1 {
     color: #007bff;
     font-weight: 600;
 }
+
+/* Event photo only */
+.event-photo {
+    width: 100%;
+    max-height: 180px;
+    /* ⬅ smaller */
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+.host-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.host-card,
+.host-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.host-info,
+.host-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.host-name {
+    font-weight: 600;
+    font-size: 17px;
+    /* stronger hierarchy */
+    line-height: 1.25;
+}
+
+.host-desc {
+    font-size: 14px;
+    color: #666;
+    margin-top: 6px;
+    max-width: 360px;
+    /* prevents overly wide text on desktop */
+}
+
+/* Hosts section spacing */
+#hostsContainer {
+    margin-top: 12px;
+    /* space below "Host(s)" title */
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    /* space between multiple hosts */
+}
+
+.host-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    /* more breathing room */
+}
+
+.host-avatar {
+    width: 96px;
+    /* bigger, face is readable */
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #eee;
+}
+
+@media (min-width: 768px) {
+    .host-avatar {
+        width: 112px;
+        height: 112px;
+    }
+}
