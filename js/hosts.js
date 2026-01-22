@@ -22,5 +22,8 @@ window.HOSTS_MAP = {
     "6964a2342d652e065db71c0f": {
         photo: "./photos/hosts/tailer.jpg",
         description: "ENFJ💚 | Pisces♓️ | Swiftie✨ | Nintendo Switch Player🎮 | Podcast Host 🎙️| Foodie🍗 do something good and new in life"
-    }
+    }, "6971c3bdd9adda8b3d78b8f3": {
+        photo: "./photos/hosts/hang.jpg",
+        description: "Love physics, coffee and good food."
+    },
 };
