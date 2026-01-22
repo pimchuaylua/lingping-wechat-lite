@@ -25,5 +25,8 @@ window.HOSTS_MAP = {
     }, "6971c3bdd9adda8b3d78b8f3": {
         photo: "./photos/hosts/hang.jpg",
         description: "Love physics, coffee and good food."
-    },
+    }, "68ad2982f03cf0caee409758": {
+        photo: "./photos/hosts/sup.jpg",
+        description: "Born & raised in Chiangmai. Arts, gardening and design ✨"
+    }
 };

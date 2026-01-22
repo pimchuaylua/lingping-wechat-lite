@@ -110,16 +110,39 @@
                 card.className = "card";
 
                 card.innerHTML = `
-                    <div class="event-info">
-                        <div class="event-title">${s.title}</div>
-                        <div class="event-desc">${s.description}</div>
-                        <div class="event-time">${Utils.formatPrettyDate(s.date)} · ${s.time}</div>
-                        <div class="event-time">Hosts: ${s.hosts}</div>
-                    </div>
-                    <div class="right">
-                        <div class="status booked">Booked</div>
-                    </div>
-                `;
+        ${s.photoUrl ? `
+            <div class="event-photo center">
+                <img src="${s.photoUrl}" alt="${s.title}">
+            </div>
+        ` : ""}
+
+        <div class="event-body">
+            <!-- Title + Status -->
+            <div class="event-row">
+                <div class="event-title">${s.title}</div>
+                <div class="status ${s.isFull ? "full" : "available"}">
+                    ${s.isFull ? "Full" : `Available (${s.seatsLeft})`}
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="event-desc">${s.description || ""}</div>
+
+            <!-- Time + Book -->
+            <div class="event-row">
+                <div class="event-time">
+                    ${Utils.formatDate(s.date)} · ${s.time} (${Utils.getTimeZoneName()})
+                </div>
+
+                <button
+                    class="book-btn ${s.isFull ? "" : "available"}"
+                    ${s.isFull ? "disabled" : ""}
+                    onclick="event.stopPropagation(); bookSession({ sessionId: '${s.id}' })">
+                    Book
+                </button>
+            </div>
+        </div>
+    `;
 
                 card.onclick = () => {
                     localStorage.setItem("selectedSession", JSON.stringify(s));
