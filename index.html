@@ -261,8 +261,27 @@
             <!-- Time + Book -->
             <div class="event-row">
                 <div class="event-time">
-                    ${Utils.formatDate(s.date)} · ${s.time} (${Utils.getTimeZoneName()})
-                </div>
+    <div>
+        ${Utils.formatDate(s.date)} · ${s.time} (${Utils.getTimeZoneName()})
+    </div>
+
+    ${currentLevel === "695c763e2d652e065db71030"
+                        ? `<div class="event-location">🌐 Online</div>`
+                        : s.locationUrl
+                            ? `<div class="event-location">
+                📍 <a href="${s.locationUrl}"
+                     target="_blank"
+                     rel="noopener"
+                     onclick="event.stopPropagation()"
+                   >${s.location || "View location"}</a>
+           </div>`
+                            : s.location
+                                ? `<div class="event-location">📍 ${s.location}</div>`
+                                : ""
+                    }
+
+</div>
+
 
                 <button
                     class="book-btn ${s.isFull ? "" : "available"}"
@@ -323,6 +342,8 @@
                     isFull: s.isFull,
                     seatsLeft: s.numberOfSeatsLeft,
                     photoUrl: s.photoUrl,
+                    location: s.location,
+                    locationUrl: s.locationUrl,
                     maxParticipants: s.maxParticipants,
                     hostObjects: hostObjects
                 };
