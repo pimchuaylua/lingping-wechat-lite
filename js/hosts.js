@@ -28,5 +28,8 @@ window.HOSTS_MAP = {
     }, "68ad2982f03cf0caee409758": {
         photo: "./photos/hosts/sup.jpg",
         description: "Born & raised in Chiangmai. Arts, gardening and design ✨"
+    }, "6973a77dd9adda8b3d78c0f7": {
+        photo: "./photos/hosts/shawn_sanford.png",
+        description: "From the U.S. Love learning Thai. Regular English Corner Sat night host! 🎙️"
     }
 };
