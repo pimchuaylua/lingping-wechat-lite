@@ -25,6 +25,8 @@
         const s = JSON.parse(localStorage.getItem("selectedSession"));
         const userId = localStorage.getItem("userId");
 
+        const isOnline = s?.levelId === "695c763e2d652e065db71030";
+
         if (!s) {
             container.innerHTML = "<p>Session not found.</p>";
         } else {
@@ -46,40 +48,55 @@
                     </div>
                 </div>
 
-                <!-- Meeting Info -->
-                <div class="section">
-                    <div class="label">Meeting</div>
-                    ${userId
+                ${isOnline
                     ? `
-                                <div class="sub">
-                                    Platform: Tencent<br>
-                                    Meeting number:
-                                    <span
-                                        id="meetingNumber"
-                                        style="text-decoration: underline; color:#007bff; cursor:pointer;"
-                                        onclick="copyMeetingNumber()"
-                                    >
-                                        745-0780-4846
-                                    </span>
-                                    <span style="margin-left:6px; cursor:pointer;" onclick="copyMeetingNumber()">📋</span>
-                                </div>
-                              `
-                    : `
-                                <div class="sub">
-                                    Log in to see meeting details. New here? Add WeChat
-                                    <span class="highlight">lingpingreading</span>
-                                    to join your first session for free ✨
-                                </div>
-                              `
-                }
+                <!-- Meeting (Online only) -->
+                <div class="section">
+                    <div class="label">Join Online</div>
+                    ${userId
+                        ? `
+                        <div class="sub">
+                            Platform: Tencent<br>
+                            Meeting number:
+                            <span
+                                id="meetingNumber"
+                                style="text-decoration: underline; color:#007bff; cursor:pointer;"
+                                onclick="copyMeetingNumber()"
+                            >
+                                745-0780-4846
+                            </span>
+                            <span style="margin-left:6px; cursor:pointer;" onclick="copyMeetingNumber()">📋</span>
+                        </div>
+                            `
+                        : `
+                        <div class="sub">
+                            Log in to see meeting details. New here? Add WeChat
+                            <span class="highlight">lingpingreading</span>
+                            to join your first session for free ✨
+                        </div>
+                            `
+                    }
                 </div>
+                        `
+                    : `
+                <!-- Location (Offline only) -->
+                <div class="section">
+                    <div class="label">Location</div>
+                    <div class="sub event-location">
+                        ${s.locationUrl
+                        ? `📍 <a href="${s.locationUrl}" target="_blank" rel="noopener">${s.location || "View location"}</a>`
+                        : `📍 ${s.location || "Location TBA"}`
+                    }
+                    </div>
+                </div>
+                        `
+                }
 
                 <!-- Host -->
                 <div class="section">
                     <div class="label">Host(s)</div>
                     <div id="hostsContainer"></div>
                 </div>
-
 
                 <!-- Description -->
                 <div class="section">
@@ -99,30 +116,23 @@
             if (s.hostObjects && s.hostObjects.length) {
                 hostsContainer.innerHTML = s.hostObjects.map(h => {
                     const extra = window.HOSTS_MAP?.[h._id] || {};
-                    console.log('id', h._id, h.name);
                     return `
-            <div class="host-card">
-    <img
-        src="${extra.photo || 'https://via.placeholder.com/72'}"
-        alt="${h.name}"
-        class="host-avatar"
-    />
-
-    <div class="host-info">
-        <div class="host-name">${h.name}</div>
-        ${extra.description
-                            ? `<div class="host-desc">${extra.description}</div>`
-                            : ""
-                        }
-    </div>
-</div>
-
-        `;
+                        <div class="host-card">
+                            <img
+                                src="${extra.photo || 'https://via.placeholder.com/72'}"
+                                alt="${h.name}"
+                                class="host-avatar"
+                            />
+                            <div class="host-info">
+                                <div class="host-name">${h.name}</div>
+                                ${extra.description ? `<div class="host-desc">${extra.description}</div>` : ""}
+                            </div>
+                        </div>
+                    `;
                 }).join("");
             } else {
                 hostsContainer.innerHTML = `<div class="sub">TBA</div>`;
             }
-
 
             async function loadAttendees() {
                 try {
@@ -137,21 +147,19 @@
                     const section = document.getElementById("attendeesSection");
 
                     if (json.status && json.data.length > 0) {
-                        const listHTML = json.data.map(a => `
-                            <div
-                                class="sub"
-                                style="cursor:pointer; color:#007bff;"
-                                onclick="viewProfile('${a.userId}')"
-                            >
-                                • ${a.name}
-                            </div>
-                        `).join("");
-
                         section.innerHTML = `
                             <div class="label">
                                 Attendees (${s.maxParticipants - s.seatsLeft})
                             </div>
-                            ${listHTML}
+                            ${json.data.map(a => `
+                                <div
+                                    class="sub"
+                                    style="cursor:pointer; color:#007bff;"
+                                    onclick="viewProfile('${a.userId}')"
+                                >
+                                    • ${a.name}
+                                </div>
+                            `).join("")}
                         `;
                     } else {
                         section.innerHTML = `

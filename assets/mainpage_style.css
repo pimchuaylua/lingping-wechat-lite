@@ -468,3 +468,14 @@ label:has(#topics) {
 .event-location a:hover {
     border-bottom-color: rgba(0, 0, 0, 0.6);
 }
+
+.booked-label {
+    color: #2e7d32;
+    /* calm green */
+    font-weight: 600;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: rgba(46, 125, 50, 0.1);
+    white-space: nowrap;
+}

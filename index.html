@@ -195,6 +195,7 @@
             });
 
             const json = await res.json();
+
             return json.data;
         }
 
@@ -322,6 +323,8 @@
                 dates[dates.length - 1].date
             );
 
+            console.log('hereeee');
+            console.log(raw);
             sessions = raw.map(s => {
                 const start = new Date(s.startTime);
                 const end = new Date(start.getTime() + s.durationMins * 60000);
@@ -330,6 +333,7 @@
                     ? hostObjects.map(h => h.name).join(", ")
                     : "TBA";
 
+                console.log('s', s);
 
                 return {
                     id: s._id,
@@ -343,9 +347,10 @@
                     seatsLeft: s.numberOfSeatsLeft,
                     photoUrl: s.photoUrl,
                     location: s.location,
-                    locationUrl: s.locationUrl,
                     maxParticipants: s.maxParticipants,
-                    hostObjects: hostObjects
+                    locationUrl: s.locationUrl,
+                    hostObjects: hostObjects,
+                    levelId: currentLevel
                 };
             });
 

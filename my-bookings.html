@@ -134,12 +134,18 @@
                     ${Utils.formatDate(s.date)} · ${s.time} (${Utils.getTimeZoneName()})
                 </div>
 
-                <button
-                    class="book-btn ${s.isFull ? "" : "available"}"
-                    ${s.isFull ? "disabled" : ""}
-                    onclick="event.stopPropagation(); bookSession({ sessionId: '${s.id}' })">
-                    Book
-                </button>
+                ${s.booked
+                        ? `<div class="booked-label">Booked ✓</div>`
+                        : `
+        <button
+            class="book-btn ${s.isFull ? "" : "available"}"
+            ${s.isFull ? "disabled" : ""}
+            onclick="event.stopPropagation(); bookSession({ sessionId: '${s.id}' })">
+            Book
+        </button>
+      `
+                    }
+
             </div>
         </div>
     `;

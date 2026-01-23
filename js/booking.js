@@ -116,8 +116,11 @@ function mapBookingsToSessions(bookings) {
                 hosts,
                 isFull: s.isFull,
                 seatsLeft: s.numberOfSeatsLeft,
+                maxParticipants: s.maxParticipants,
                 photoUrl: s.photoUrl,
-                booked: true
+                booked: true,
+                location: s.location,
+                locationUrl: s.locationUrl
             };
         })
         .sort((a, b) => a.startTime - b.startTime); // 🔽 order by time
