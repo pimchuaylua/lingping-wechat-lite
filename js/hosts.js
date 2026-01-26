@@ -31,5 +31,8 @@ window.HOSTS_MAP = {
     }, "6973a77dd9adda8b3d78c0f7": {
         photo: "./photos/hosts/shawn_sanford.png",
         description: "From the U.S. Love learning Thai. Regular English Corner Sat night host! 🎙️"
+    }, "69773774d9adda8b3d78ca2a": {
+        photo: "./photos/hosts/ethan_dong.jpg",
+        description: "From China. Currently based in Bangkok. Passionate about photography 📸 and community building 👥"
     }
 };
