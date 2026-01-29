@@ -34,5 +34,12 @@ window.HOSTS_MAP = {
     }, "69773774d9adda8b3d78ca2a": {
         photo: "./photos/hosts/ethan_dong.jpg",
         description: "From China. Currently based in Bangkok. Passionate about photography 📸 and community building 👥"
+    }, "68b519c463f05d3b3fe7725d": {
+        photo: "./photos/hosts/fuji.jpg",
+        description: "From Bangkok, Thailand 🇹🇭 | Currently based in Chiang Mai 🌿 I’m a Kendo 🥋 enthusiast and a kitchen master 👩‍🍳🔥"
+    }, "697aeb18d9adda8b3d78da85": {
+        photo: "./photos/hosts/betta.png",
+        description: "Sourthern 🌊 to Nothern Thailand ⛰️ Architecture student at Chiang Mai University 🏛️📐"
     }
+
 };
