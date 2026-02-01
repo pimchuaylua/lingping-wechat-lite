@@ -479,3 +479,14 @@ label:has(#topics) {
     background: rgba(46, 125, 50, 0.1);
     white-space: nowrap;
 }
+
+.status-active {
+    color: #1fa64b;
+    /* soft green */
+    font-weight: 500;
+}
+
+.status-inactive {
+    color: #c0392b;
+    /* soft red */
+}

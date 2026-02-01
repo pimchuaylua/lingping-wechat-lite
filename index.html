@@ -124,9 +124,9 @@
                         month: "short"
                     });
 
-                    el.innerHTML = `✔️ Community · Active (expires ${expText})`;
+                    el.innerHTML = `<span class="status-active">✔️ Community · Active (expires ${expText})</span>`;
                 } else {
-                    el.innerHTML = `❌ No active membership`;
+                    el.innerHTML = `<span class="status-inactive">❌ No active Chiangmai membership</span>`;
                 }
 
             } catch (err) {
