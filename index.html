@@ -77,6 +77,7 @@
                 el.innerHTML = `
             👋 Hello <strong>${username}</strong>!
             <span class="logout" onclick="logout()">Logout</span>
+            <div id="membershipStatus" class="membership-status"></div>
         `;
             } else {
                 el.innerHTML = `
@@ -84,6 +85,54 @@
         `;
             }
             Auth.renderNav();
+        }
+
+
+        async function renderMembershipStatus() {
+            const userId = localStorage.getItem("userId");
+            const el = document.getElementById("membershipStatus");
+            if (!el || !userId) {
+                if (el) el.innerHTML = "";
+                return;
+            }
+
+            try {
+                const res = await fetch(
+                    `${BASE_URL}/subscriptions/user/${userId}`,
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-API-KEY": API_KEY
+                        }
+                    }
+                );
+
+                const json = await res.json();
+                const subs = json?.data || [];
+                const now = new Date();
+
+                // find ACTIVE Community subscription
+                const communitySub = subs.find(s =>
+                    s.subscriptionPlan?.name?.includes("Community") &&
+                    new Date(s.expiredAt) > now
+                );
+
+                if (communitySub) {
+                    const exp = new Date(communitySub.expiredAt);
+                    const expText = exp.toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short"
+                    });
+
+                    el.innerHTML = `✔️ Community · Active (expires ${expText})`;
+                } else {
+                    el.innerHTML = `❌ No active membership`;
+                }
+
+            } catch (err) {
+                console.error("Failed to load membership", err);
+                el.innerHTML = "";
+            }
         }
 
         async function loginAndUpdateUI() {
@@ -118,6 +167,7 @@
                 }
 
                 renderUserWelcome();
+                await renderMembershipStatus();
 
             } catch (err) {
                 alert(err.message);
@@ -316,6 +366,7 @@
 
         async function init() {
             renderUserWelcome();
+            await renderMembershipStatus();
             renderDates();
 
             const raw = await getReadingSessions(
@@ -360,6 +411,7 @@
         Auth.renderNav();
         init();
     </script>
+
 </body>
 
 </html>
