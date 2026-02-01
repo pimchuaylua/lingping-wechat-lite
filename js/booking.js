@@ -29,6 +29,8 @@ window.bookSession = async function ({ sessionId }) {
                 })
             });
 
+
+
             const loginData = await loginRes.json();
             userId = loginData?.data?.userId;
 

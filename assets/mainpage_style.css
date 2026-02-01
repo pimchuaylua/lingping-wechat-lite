@@ -490,3 +490,17 @@ label:has(#topics) {
     color: #c0392b;
     /* soft red */
 }
+
+.renew-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: none;
+    background-color: #2f7cff;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.renew-btn:hover {
+    background-color: #1f66d1;
+}
