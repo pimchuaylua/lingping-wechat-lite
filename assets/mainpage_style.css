@@ -504,3 +504,36 @@ label:has(#topics) {
 .renew-btn:hover {
     background-color: #1f66d1;
 }
+
+.membership-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 16px 0 12px;
+    gap: 8px;
+}
+
+.membership-label {
+    font-size: 14px;
+    color: #666;
+}
+
+.membership-toggle {
+    display: flex;
+    gap: 10px;
+}
+
+.membership-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.membership-btn.active {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+}
