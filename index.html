@@ -89,6 +89,8 @@
         let currentLevel = "695c763e2d652e065db71030"; // Online default
         let membershipType = "community";
         let englishDifficulty = "all"; // default
+        let membershipStatusLoaded = false;
+        let cachedCommunitySub = null;
 
         /* ---------------- USER WELCOME ---------------- */
 
@@ -112,11 +114,22 @@
         }
 
 
-        async function renderMembershipStatus() {
+        // 🔒 in-memory cache (lives for this page session)
+        let membershipCache = null;
+        let membershipLoaded = false;
+
+        async function renderMembershipStatus(force = false) {
             const userId = localStorage.getItem("userId");
             const el = document.getElementById("membershipStatus");
+
             if (!el || !userId) {
                 if (el) el.innerHTML = "";
+                return;
+            }
+
+            // ✅ Use cache if already loaded
+            if (membershipLoaded && membershipCache && !force) {
+                el.innerHTML = membershipCache;
                 return;
             }
 
@@ -135,11 +148,12 @@
                 const subs = json?.data || [];
                 const now = new Date();
 
-                // find ACTIVE Community subscription
                 const communitySub = subs.find(s =>
                     s.subscriptionPlan?.name?.includes("Community") &&
                     new Date(s.expiredAt) > now
                 );
+
+                let html = "";
 
                 if (communitySub) {
                     const exp = new Date(communitySub.expiredAt);
@@ -148,23 +162,28 @@
                         month: "short"
                     });
 
-                    el.innerHTML = `
-        <span class="status-active">
-            ✔️ ${communitySub.subscriptionPlan?.name || "Community"} · 
-            Active (expires ${expText})
-        </span>
-    `;
+                    html = `
+                <span class="status-active">
+                    ✔️ ${communitySub.subscriptionPlan?.name || "Community"} · 
+                    Active (expires ${expText})
+                </span>
+            `;
                 } else {
-                    el.innerHTML = `
-        <span class="status-inactive">❌ No active Chiangmai membership</span>
-        <div style="margin-top: 8px;">
-            <button class="renew-btn"
-                onclick="window.open('https://lingpingclub.com/#/subscription-plans', '_blank')">
-                Renew / Subscribe
-            </button>
-        </div>
-    `;
+                    html = `
+                <span class="status-inactive">❌ No active Chiangmai membership</span>
+                <div style="margin-top: 8px;">
+                    <button class="renew-btn"
+                        onclick="window.open('https://lingpingclub.com/#/subscription-plans', '_blank')">
+                        Renew / Subscribe
+                    </button>
+                </div>
+            `;
                 }
+
+                // 💾 cache + render once
+                membershipCache = html;
+                membershipLoaded = true;
+                el.innerHTML = html;
 
             } catch (err) {
                 console.error("Failed to load membership", err);
