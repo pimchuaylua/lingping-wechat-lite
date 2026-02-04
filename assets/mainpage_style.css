@@ -533,9 +533,9 @@ label:has(#topics) {
 }
 
 .membership-btn.active {
-    background: #000;
+    background: var(--theme);
     color: #fff;
-    border-color: #000;
+    border-color: var(--theme);
 }
 
 .english-levels {
@@ -557,9 +557,8 @@ label:has(#topics) {
 }
 
 .english-levels .level.active {
-    background: #000;
+    background: var(--theme);
     color: #fff;
-    border-color: #000;
 }
 
 .english-levels {
