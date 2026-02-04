@@ -18,6 +18,29 @@
     <script src="js/utils.js?v=2025019?v=20260113"></script>
 </head>
 
+<div id="policyModal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-text">
+            ⚠️ <strong>重要提醒：请阅读取消政策</strong> 📌<br><br>
+            如果您想取消课程，必须至少提前一天通知。<br>
+            当天取消将扣除您的课程券。<br><br>
+
+            ⚠️ <strong>PLEASE READ: CANCEL POLICY</strong> 📌<br><br>
+            If you wish to cancel, you must do so at least 1 day before the class.<br>
+            Cancelling on the day will result in your pass being deducted.
+        </div>
+
+        <div class="modal-actions">
+            <button class="modal-cancel" onclick="closePolicyModal()">
+                No / 不同意
+            </button>
+            <button class="modal-confirm" onclick="confirmPolicy()">
+                Yes, I agree / 我同意
+            </button>
+        </div>
+    </div>
+</div>
+
 <body>
     <div class="container">
         <div class="header">Lingping Club</div>
@@ -417,7 +440,7 @@
                 <button
                     class="book-btn ${s.isFull ? "" : "available"}"
                     ${s.isFull ? "disabled" : ""}
-                    onclick="event.stopPropagation(); bookSession({ sessionId: '${s.id}' })">
+                    onclick="event.stopPropagation(); handleBookClick('${s.id}')">
                     Book
                 </button>
             </div>
@@ -532,6 +555,38 @@
                 renderEvents(); // 🔥 client-side only
             };
         });
+
+        function handleBookClick(sessionId) {
+            // Only English classes need consent
+            if (membershipType !== "english") {
+                bookSession({ sessionId });
+                return;
+            }
+
+            showCancelPolicyModal(() => {
+                // user agreed
+                bookSession({ sessionId });
+            });
+        }
+
+        let policyConfirmCallback = null;
+
+        function showCancelPolicyModal(onConfirm) {
+            policyConfirmCallback = onConfirm;
+            document.getElementById("policyModal").classList.remove("hidden");
+        }
+
+        function closePolicyModal() {
+            policyConfirmCallback = null;
+            document.getElementById("policyModal").classList.add("hidden");
+        }
+
+        function confirmPolicy() {
+            if (typeof policyConfirmCallback === "function") {
+                policyConfirmCallback();
+            }
+            closePolicyModal();
+        }
     </script>
 
 </body>

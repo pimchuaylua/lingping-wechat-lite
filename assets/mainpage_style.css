@@ -564,3 +564,54 @@ label:has(#topics) {
 .english-levels {
     margin-bottom: 12px;
 }
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+}
+
+.modal-text {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-cancel {
+    background: #eee;
+}
+
+.modal-confirm {
+    background: var(--theme);
+    color: #fff;
+}
