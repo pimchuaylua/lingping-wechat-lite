@@ -561,3 +561,7 @@ label:has(#topics) {
     color: #fff;
     border-color: #000;
 }
+
+.english-levels {
+    margin-bottom: 12px;
+}
