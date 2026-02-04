@@ -47,6 +47,7 @@
         </div>
 
         <div class="filters">
+
             <!-- 🔹 Location Toggle -->
             <div class="location-toggle">
                 <button class="location-btn active" data-level="695c763e2d652e065db71030">
@@ -55,6 +56,13 @@
                 <button class="location-btn" data-level="67eab5b337cd4b56a080743f">
                     Chiang Mai
                 </button>
+            </div>
+
+            <!-- 🔹 English Class Levels -->
+            <div class="english-levels hidden" id="englishLevels">
+                <div class="level active" data-level="all">All</div>
+                <div class="level" data-level="easy">Easy</div>
+                <div class="level" data-level="medium">Medium</div>
             </div>
 
 
@@ -76,8 +84,11 @@
     </div>
 
     <script>
+
         const { BASE_URL, API_KEY } = window.CONFIG;
         let currentLevel = "695c763e2d652e065db71030"; // Online default
+        let membershipType = "community";
+        let englishDifficulty = "all"; // default
 
         /* ---------------- USER WELCOME ---------------- */
 
@@ -270,22 +281,36 @@
                 }
             });
 
-            const json = await res.json();
+            // 🔒 Handle "no events" gracefully
+            if (res.status === 404) {
+                return [];
+            }
 
-            return json.data;
+            if (!res.ok) {
+                throw new Error(`Failed to fetch sessions: ${res.status}`);
+            }
+
+            const json = await res.json();
+            return Array.isArray(json.data) ? json.data : [];
         }
 
         document.querySelectorAll(".location-btn").forEach(btn => {
             btn.addEventListener("click", async () => {
-                // toggle active state
                 document.querySelectorAll(".location-btn")
                     .forEach(b => b.classList.remove("active"));
                 btn.classList.add("active");
 
-                // update level
-                currentLevel = btn.dataset.level;
+                if (membershipType === "english") {
+                    // English Class uses different level IDs
+                    currentLevel =
+                        btn.innerText === "Online"
+                            ? "6982e63b245037c5977a9390"
+                            : "678b14ccbc6888f262c7bf2f";
+                } else {
+                    // Community (original behavior)
+                    currentLevel = btn.dataset.level;
+                }
 
-                // re-fetch & re-render everything
                 await init();
             });
         });
@@ -294,13 +319,23 @@
         function renderEvents() {
             let filtered = [...sessions];
 
-            if (selectedTopic) {
+            // 🔹 English Class difficulty filter
+            // 🔹 English Class difficulty filter
+            if (membershipType === "english" && englishDifficulty !== "all") {
+                filtered = filtered.filter(s =>
+                    s.title.toLowerCase().includes(englishDifficulty)
+                );
+            }
+
+            // 🔹 Community topic filter
+            if (membershipType === "community" && selectedTopic) {
                 filtered = filtered.filter(s =>
                     s.title.toLowerCase().includes(selectedTopic)
                 );
             }
 
-            if (activeDate && !selectedTopic) {
+            // 🔹 Date filter
+            if (activeDate) {
                 filtered = filtered.filter(s => s.date === activeDate);
             }
 
@@ -436,6 +471,48 @@
 
         Auth.renderNav();
         init();
+
+        document.querySelectorAll(".membership-btn").forEach(btn => {
+            btn.onclick = async () => {
+                document.querySelectorAll(".membership-btn")
+                    .forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                membershipType = btn.dataset.type;
+
+                // Toggle filters
+                document.querySelector(".topics").style.display =
+                    membershipType === "community" ? "flex" : "none";
+
+                document.getElementById("englishLevels").classList.toggle(
+                    "hidden",
+                    membershipType !== "english"
+                );
+
+                // Reset defaults
+                if (membershipType === "community") {
+                    currentLevel = "695c763e2d652e065db71030"; // community default
+                } else {
+                    currentLevel = "6982e63b245037c5977a9390"; // English Online default
+                    englishDifficulty = "all";
+                }
+
+                await init();
+
+                await init();
+            };
+        });
+
+        document.querySelectorAll(".english-levels .level").forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll(".english-levels .level")
+                    .forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                englishDifficulty = btn.innerText.toLowerCase(); // "easy" or "medium"
+                renderEvents(); // 🔥 client-side only
+            };
+        });
     </script>
 
 </body>

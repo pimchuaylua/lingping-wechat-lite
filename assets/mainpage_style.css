@@ -537,3 +537,27 @@ label:has(#topics) {
     color: #fff;
     border-color: #000;
 }
+
+.english-levels {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.english-levels.hidden {
+    display: none;
+}
+
+.english-levels .level {
+    padding: 6px 14px;
+    border-radius: 16px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.english-levels .level.active {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+}
