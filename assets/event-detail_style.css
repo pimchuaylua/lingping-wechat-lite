@@ -1,3 +1,7 @@
+:root {
+    --theme: #FFB050;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
     margin: 0;

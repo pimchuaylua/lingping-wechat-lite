@@ -52,7 +52,8 @@ window.bookSession = async function ({ sessionId }) {
             body: JSON.stringify({
                 userId,
                 sessionId,
-                numberOfSeats: 1
+                numberOfSeats: 1,
+                consent: true
             })
         });
 

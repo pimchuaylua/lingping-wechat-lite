@@ -6,7 +6,10 @@ body {
     margin: 0;
     background: #f5f5f5;
     font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-    color: #333;
+}
+
+:root {
+    --theme: #ff8a00;
 }
 
 .container {
@@ -503,4 +506,64 @@ label:has(#topics) {
 
 .renew-btn:hover {
     background-color: #1f66d1;
+}
+
+.membership-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 16px 0 12px;
+    gap: 8px;
+}
+
+.membership-label {
+    font-size: 14px;
+    color: #666;
+}
+
+.membership-toggle {
+    display: flex;
+    gap: 10px;
+}
+
+.membership-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.membership-btn.active {
+    background: var(--theme);
+    color: #fff;
+    border-color: var(--theme);
+}
+
+.english-levels {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.english-levels.hidden {
+    display: none;
+}
+
+.english-levels .level {
+    padding: 6px 14px;
+    border-radius: 16px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.english-levels .level.active {
+    background: var(--theme);
+    color: #fff;
+}
+
+.english-levels {
+    margin-bottom: 12px;
 }
