@@ -10,13 +10,39 @@
     <script src="js/booking.js?v=20260127"></script>
     <script src="js/utils.js?v=2025019"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260120">
+    <link rel="stylesheet" href="assets/policy-modal.css">
 </head>
 
 <body>
+
+    <div id="policyModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-text">
+                ⚠️ <strong>重要提醒：请阅读取消政策</strong> 📌<br><br>
+                如果您想取消课程，必须至少提前一天通知。<br>
+                当天取消将扣除您的课程券。<br><br>
+
+                ⚠️ <strong>PLEASE READ: CANCEL POLICY</strong> 📌<br><br>
+                If you wish to cancel, you must do so at least 1 day before the class.<br>
+                Cancelling on the day will result in your pass being deducted.
+            </div>
+
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closePolicyModal()">
+                    No / 不同意
+                </button>
+                <button class="modal-confirm" onclick="confirmPolicy()">
+                    Yes, I agree / 我同意
+                </button>
+            </div>
+        </div>
+    </div>
     <div class="container" id="sessionContainer">Loading...</div>
 
     <div class="book-bar">
-        <button class="book-btn" onclick="bookSession({ sessionId: s.id })">Book Session</button>
+        <button class="book-btn" onclick="event.stopPropagation(); handleBookClick(s.id,s.levelName)">
+            Book Session
+        </button>
     </div>
 
     <script>
@@ -191,6 +217,41 @@
             navigator.clipboard.writeText(text)
                 .then(() => alert("Meeting number copied"))
                 .catch(() => alert("Copy failed."));
+        }
+    </script>
+
+    <script>
+        let pendingBooking = null;
+
+        function showPolicyModal(sessionId) {
+            pendingBooking = sessionId;
+            document.getElementById('policyModal').classList.remove('hidden');
+        }
+
+        function closePolicyModal() {
+            pendingBooking = null;
+            document.getElementById('policyModal').classList.add('hidden');
+        }
+
+        function confirmPolicy() {
+            if (pendingBooking) {
+                bookSession({ sessionId: pendingBooking });
+            }
+            closePolicyModal();
+        }
+    </script>
+
+    <script>
+        function handleBookClick(sessionId, levelName) {
+            console.log('levelName', levelName);
+            const isEnglish = levelName
+                ? levelName.toLowerCase().includes('english')
+                : false;
+            if (isEnglish) {
+                showPolicyModal(sessionId);
+            } else {
+                bookSession({ sessionId });
+            }
         }
     </script>
 </body>

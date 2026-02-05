@@ -16,6 +16,7 @@
     <script src="js/auth.js?v=20260119"></script>
     <script src="js/booking.js"></script>
     <script src="js/utils.js?v=2025019?v=20260113"></script>
+    <link rel="stylesheet" href="assets/policy-modal.css">
 </head>
 
 <div id="policyModal" class="modal hidden">
@@ -504,7 +505,8 @@
                     maxParticipants: s.maxParticipants,
                     locationUrl: s.locationUrl,
                     hostObjects: hostObjects,
-                    levelId: currentLevel
+                    levelId: currentLevel,
+                    levelName: s.level
                 };
             });
 
