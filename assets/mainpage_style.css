@@ -8,9 +8,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
 }
 
-:root {
-    --theme: #ff8a00;
-}
+
 
 .container {
     max-width: 480px;
@@ -200,7 +198,7 @@ nav a:hover {
     font-weight: 500;
     cursor: pointer;
 
-    background: #FFB050;
+    background: var(--theme);
     color: #ffffff;
 
     box-shadow: 0 4px 10px rgba(255, 176, 80, 0.35);
@@ -208,7 +206,7 @@ nav a:hover {
 }
 
 .login-btn:hover {
-    background: #ffa033;
+    background: var(--theme);
     box-shadow: 0 6px 14px rgba(255, 176, 80, 0.45);
     transform: translateY(-1px);
 }
