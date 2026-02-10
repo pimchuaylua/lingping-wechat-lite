@@ -40,6 +40,10 @@ window.HOSTS_MAP = {
     }, "697aeb18d9adda8b3d78da85": {
         photo: "./photos/hosts/betta.png",
         description: "Sourthern 🌊 to Nothern Thailand ⛰️ Architecture student at Chiang Mai University 🏛️📐"
+    },
+    "683da5213c0d85a59ae1b6eb": {
+        photo: "./photos/hosts/shannen.png",
+        description: "Cooking enthusiast 🍽️ | Non-profit advocate 🤍 | Lover of deep conversations"
     }
 
 };
