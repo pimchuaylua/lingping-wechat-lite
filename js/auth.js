@@ -99,7 +99,7 @@ window.Auth.renderNav = function () {
         navMember.innerHTML = `
             <a href="index.html" class="tab active">Home</a>
             <a href="my-bookings.html" class="tab">Bookings</a>
-            <a href="community.html" class="tab">Community</a>
+            <a href="subscriptions.html" class="tab active">Subscriptions</a>
             <a href="community-profile.html" class="tab">Me</a>
         `;
     } else {

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>My Subscriptions | Lingping Club</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260205">
+
+    <!-- Config & Logic -->
+    <script src="config.js"></script>
+    <script src="js/auth.js?v=20260119"></script>
+    <script src="js/utils.js?v=2025019"></script>
+
+    <style>
+        .subscription-card {
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+            border-left: 6px solid;
+            background: #fff;
+        }
+
+        .subscription-card.active {
+            border-color: #4CAF50;
+            background: #f6fff7;
+        }
+
+        .subscription-card.inactive {
+            border-color: #ccc;
+            background: #fafafa;
+            opacity: 0.7;
+        }
+
+        .sub-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .sub-meta {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .sub-expire {
+            margin-top: 6px;
+            font-size: 13px;
+            color: #777;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 6px;
+        }
+
+        .badge.active {
+            background: #4CAF50;
+            color: #fff;
+        }
+
+        .badge.inactive {
+            background: #999;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">Lingping Club</div>
+
+        <div class="sub">
+            Your subscriptions and access status
+        </div>
+
+        <!-- 👋 User Welcome -->
+        <div id="userWelcome" class="user-welcome"></div>
+
+        <nav class="tab-bar">
+            <a href="index.html" class="tab">Home</a>
+            <a href="my-bookings.html" class="tab">Bookings</a>
+            <a href="subscriptions.html" class="tab active">Subscriptions</a>
+            <a href="community-profile.html" class="tab">Me</a>
+        </nav>
+
+        <!-- 🔹 Subscription List -->
+        <div id="subscriptionList"></div>
+    </div>
+
+    <script>
+        const { BASE_URL, API_KEY } = window.CONFIG;
+        const listEl = document.getElementById("subscriptionList");
+
+        /* ---------------- LOGIN ---------------- */
+
+        async function loginAndUpdateUI() {
+            let userId = localStorage.getItem("userId");
+
+            try {
+                if (!userId) {
+                    const username = prompt("Enter your username:");
+                    if (!username) return;
+
+                    const loginRes = await fetch(`${BASE_URL}/auth/login`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-API-KEY": API_KEY
+                        },
+                        body: JSON.stringify({
+                            username,
+                            password: "lingpingreading33"
+                        })
+                    });
+
+                    const loginData = await loginRes.json();
+                    userId = loginData?.data?.userId;
+
+                    if (!loginRes.ok || !userId) {
+                        throw new Error("Invalid username. Please check and try again.");
+                    }
+
+                    localStorage.setItem("userId", userId);
+                    localStorage.setItem("username", username);
+                }
+
+                renderUserWelcome();
+                loadSubscriptions();
+
+            } catch (err) {
+                alert(err.message);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("userId");
+            localStorage.removeItem("username");
+            location.reload();
+        }
+
+        /* ---------------- USER WELCOME ---------------- */
+
+        function renderUserWelcome() {
+            const username = localStorage.getItem("username");
+            const el = document.getElementById("userWelcome");
+
+            if (!el) return;
+
+            if (username) {
+                el.innerHTML = `
+                    👋 Hello <strong>${username}</strong>!
+                    <span class="logout" onclick="logout()">Logout</span>
+                `;
+            } else {
+                el.innerHTML = `
+                    <button class="login-btn" onclick="loginAndUpdateUI()">Log in</button>
+                `;
+            }
+        }
+
+        /* ---------------- LOAD SUBSCRIPTIONS ---------------- */
+
+        async function loadSubscriptions() {
+            const userId = localStorage.getItem("userId");
+
+            if (!userId) {
+                listEl.innerHTML = `<div class="empty">Please log in to see your subscriptions.</div>`;
+                return;
+            }
+
+            try {
+                const res = await fetch(`${BASE_URL}/subscriptions/user/${userId}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-api-key": API_KEY
+                    }
+                });
+
+                const json = await res.json();
+                const subs = json.data || [];
+
+                if (!subs.length) {
+                    listEl.innerHTML = `<div class="empty">You have no subscriptions.</div>`;
+                    return;
+                }
+
+                // Sort by expiredAt DESC
+                subs.sort((a, b) => new Date(b.expiredAt) - new Date(a.expiredAt));
+                renderSubscriptions(subs);
+
+            } catch (err) {
+                listEl.innerHTML = `<div class="empty">Failed to load subscriptions.</div>`;
+            }
+        }
+
+        /* ---------------- RENDER ---------------- */
+
+        function renderSubscriptions(subs) {
+            listEl.innerHTML = "";
+            const now = new Date();
+
+            // 1️⃣ Enrich subscriptions with computed flags
+            const enriched = subs.map(sub => {
+                const expiredAt = new Date(sub.expiredAt);
+
+                const levelName = sub.subscriptionPlan.name || "";
+                const isCommunity = levelName.toLowerCase().includes("community");
+
+                const isActive =
+                    (isCommunity && expiredAt > now) ||
+                    (!isCommunity && expiredAt > now && sub.numberOfPassesLeft > 0);
+
+                return {
+                    ...sub,
+                    expiredAtDate: expiredAt,
+                    isCommunity,
+                    isActive
+                };
+            });
+
+            // 2️⃣ Split active / inactive
+            const activeSubs = enriched
+                .filter(s => s.isActive)
+                .sort((a, b) => b.expiredAtDate - a.expiredAtDate);
+
+            const inactiveSubs = enriched
+                .filter(s => !s.isActive)
+                .sort((a, b) => b.expiredAtDate - a.expiredAtDate);
+
+            // 3️⃣ Render in order: active → inactive
+            [...activeSubs, ...inactiveSubs].forEach(sub => {
+                const card = document.createElement("div");
+                card.className = `subscription-card ${sub.isActive ? "active" : "inactive"}`;
+
+                const passesHtml = !sub.isCommunity
+                    ? `<div>Passes Left: ${sub.numberOfPassesLeft}</div>`
+                    : "";
+
+                card.innerHTML = `
+            <div class="sub-title">
+                ${sub.subscriptionPlan.name}
+                <span class="badge ${sub.isActive ? "active" : "inactive"}">
+                    ${sub.isActive ? "Active" : "Expired"}
+                </span>
+            </div>
+
+            <div class="sub-meta">
+                ${passesHtml}
+            </div>
+
+            <div class="sub-expire">
+                Expires on: ${Utils.formatDate(sub.expiredAt)}
+            </div>
+        `;
+
+                listEl.appendChild(card);
+            });
+        }
+
+
+
+        /* ---------------- INIT ---------------- */
+
+        function init() {
+            renderUserWelcome();
+            loadSubscriptions();
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
