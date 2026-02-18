@@ -1,5 +1,5 @@
 /**
- * booking.js?v=20260218
+ * booking.js?v=202602182
  * Shared booking logic for Lingping
  */
 
