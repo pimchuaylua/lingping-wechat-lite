@@ -53,7 +53,16 @@
 
         console.log('s', s)
         console.log('levelId', s.levelId);
-        const isOnline = s?.levelId === "695c763e2d652e065db71030" || s?.level == "Online";
+        console.log('level', s?.level)
+        const isOnline = s?.levelName?.toLowerCase().includes("online");
+
+        //write function is onlineEnglishClass c
+        function getMeetingNumber(levelId) {
+            if (['6982e63b245037c5977a9390'].includes(levelId)) {
+                return "818-0945-3603";
+            }
+            return "395-0447-1911";
+        }
 
         if (!s) {
             container.innerHTML = "<p>Session not found.</p>";
@@ -87,13 +96,15 @@
                             Platform: Tencent<br>
                             Meeting number:
                             <span
-                                id="meetingNumber"
                                 style="text-decoration: underline; color:#007bff; cursor:pointer;"
-                                onclick="copyMeetingNumber()"
+                                onclick="copyMeetingNumber('${getMeetingNumber(s?.levelId)}')"
                             >
-                                395-0447-1911
+                                ${getMeetingNumber(s?.levelId)}
                             </span>
-                            <span style="margin-left:6px; cursor:pointer;" onclick="copyMeetingNumber()">📋</span>
+                            <span 
+                                style="margin-left:6px; cursor:pointer;" 
+                                onclick="copyMeetingNumber('${getMeetingNumber(s?.levelId)}')"
+                            >📋</span>
                         </div>
                             `
                         : `
@@ -242,6 +253,7 @@
     </script>
 
     <script>
+
         function handleBookClick(sessionId, levelName) {
             console.log('levelName', levelName);
             const isEnglish = levelName
