@@ -124,7 +124,7 @@ function mapBookingsToSessions(bookings) {
                 booked: true,
                 location: s.location,
                 locationUrl: s.locationUrl,
-                level: s.level
+                levelName: s.level
             };
         })
         .sort((a, b) => a.startTime - b.startTime); // 🔽 order by time

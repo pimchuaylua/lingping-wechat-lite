@@ -50,17 +50,16 @@
         const container = document.getElementById("sessionContainer");
         const s = JSON.parse(localStorage.getItem("selectedSession"));
         const userId = localStorage.getItem("userId");
-
-        console.log('s', s)
-        console.log('levelId', s.levelId);
-        console.log('level', s?.level)
         const isOnline = s?.levelName?.toLowerCase().includes("online");
 
         //write function is onlineEnglishClass c
-        function getMeetingNumber(levelId) {
-            if (['6982e63b245037c5977a9390'].includes(levelId)) {
+        function getMeetingNumber(levelName) {
+            if (!levelName) return "395-0447-1911";
+
+            if (levelName.toLowerCase().includes("english")) {
                 return "818-0945-3603";
             }
+
             return "395-0447-1911";
         }
 
@@ -92,20 +91,25 @@
                     <div class="label">Join Online</div>
                     ${userId
                         ? `
-                        <div class="sub">
-                            Platform: Tencent<br>
-                            Meeting number:
-                            <span
-                                style="text-decoration: underline; color:#007bff; cursor:pointer;"
-                                onclick="copyMeetingNumber('${getMeetingNumber(s?.levelId)}')"
+                        <div class="sub" style="margin-top:10px;">
+                            <div
+                                onclick="copyMeetingNumber('${getMeetingNumber(s?.levelName)}')"
+                                style="
+                                    background:#007bff;
+                                    color:white;
+                                    padding:14px;
+                                    border-radius:8px;
+                                    cursor:pointer;
+                                    text-align:center;
+                                    font-weight:bold;
+                                    line-height:1.6;
+                                "
                             >
-                                ${getMeetingNumber(s?.levelId)}
-                            </span>
-                            <span 
-                                style="margin-left:6px; cursor:pointer;" 
-                                onclick="copyMeetingNumber('${getMeetingNumber(s?.levelId)}')"
-                            >📋</span>
+                                Tencent Meeting 腾讯会议<br>
+                                ${getMeetingNumber(s?.levelName)} 📋
+                            </div>
                         </div>
+
                             `
                         : `
                         <div class="sub">
@@ -221,14 +225,19 @@
             window.location.href = "view-profile.html";
         }
 
-        function copyMeetingNumber() {
-            const text = document.getElementById("meetingNumber")?.innerText;
-            if (!text) return;
+        function copyMeetingNumber(number) {
+            if (!number) return;
 
-            navigator.clipboard.writeText(text)
-                .then(() => alert("Meeting number copied"))
-                .catch(() => alert("Copy failed."));
+            const tempInput = document.createElement("input");
+            tempInput.value = number;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            alert("Meeting number copied ✅");
         }
+
     </script>
 
     <script>
