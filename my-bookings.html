@@ -68,7 +68,7 @@
 
         async function loginAndLoad() {
             try {
-                const username = prompt("Enter your username:");
+                const username = prompt("Enter your username:")?.trim();
                 if (!username) return;
 
                 await Auth.login(username);

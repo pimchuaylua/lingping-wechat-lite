@@ -14,7 +14,7 @@ window.bookSession = async function ({ sessionId }) {
     try {
         // ✅ If no userId, ask user to log in
         if (!userId) {
-            const username = prompt("Enter your username to book:");
+            const username = prompt("Enter your username to book:")?.trim();
             if (!username) return;
 
             const loginRes = await fetch(LOGIN_URL, {

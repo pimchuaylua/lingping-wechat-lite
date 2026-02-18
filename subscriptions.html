@@ -106,7 +106,7 @@
 
             try {
                 if (!userId) {
-                    const username = prompt("Enter your username:");
+                    const username = prompt("Enter your username:")?.trim();
                     if (!username) return;
 
                     const loginRes = await fetch(`${BASE_URL}/auth/login`, {
