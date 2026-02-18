@@ -97,6 +97,39 @@ async function getMyBookings() {
     return json.data;
 }
 
+async function cancelBooking(sessionId) {
+    if (!confirm("Are you sure you want to cancel this booking?")) {
+        return;
+    }
+
+    try {
+        const res = await fetch(`${BASE_URL}/bookings/cancel_by_session`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-API-KEY": API_KEY
+            },
+            body: JSON.stringify({
+                userId: userId,
+                sessionId: sessionId
+            })
+        });
+
+        const json = await res.json();
+
+        if (json.status) {
+            alert("Booking cancelled ✅");
+            location.reload(); // refresh page
+        } else {
+            alert(json.message || "Cancel failed");
+        }
+
+    } catch (err) {
+        console.error(err);
+        alert("Cancel failed. Please try again.");
+    }
+}
+
 function mapBookingsToSessions(bookings) {
     return bookings
         .map(b => {

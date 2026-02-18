@@ -43,6 +43,11 @@
         <button class="book-btn" onclick="event.stopPropagation(); handleBookClick(s.id,s.levelName)">
             Book Session
         </button>
+
+        <button id="cancelBtn" class="cancel-btn" onclick="event.stopPropagation(); cancelBooking(s.id)"
+            style="display:none;">
+            Cancel Booking
+        </button>
     </div>
 
     <script>
@@ -262,6 +267,10 @@
     </script>
 
     <script>
+
+        if (userId) {
+            document.getElementById("cancelBtn").style.display = "inline-block";
+        }
 
         function handleBookClick(sessionId, levelName) {
             console.log('levelName', levelName);
