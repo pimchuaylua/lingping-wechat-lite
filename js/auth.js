@@ -57,26 +57,31 @@ window.Auth.renderNav = function () {
 
     if (!navGuest || !navMember) return;
 
+    // 🔥 Always reset BOTH navs first
+    navGuest.innerHTML = "";
+    navMember.innerHTML = "";
+
+    navGuest.classList.add("hidden");
+    navMember.classList.add("hidden");
+
     if (userId) {
-        navGuest.classList.add("hidden");
         navMember.classList.remove("hidden");
 
         navMember.innerHTML = `
-            <a href="index.html" class="tab active">Home</a>
+            <a href="index.html" class="tab">Home</a>
             <a href="my-bookings.html" class="tab">Booked</a>
-            <a href="subscriptions/subscription_main.html" class="tab">Plans & Pricing</a>
-            <a href="subscriptions.html" class="tab active">Passes</a>
+            <a href="subscriptions/subscription_main.html" class="tab">Plans</a>
+            <a href="subscriptions.html" class="tab">Passes</a>
             <a href="community-profile.html" class="tab">Me</a>
         `;
     } else {
-        navMember.classList.add("hidden");
         navGuest.classList.remove("hidden");
 
         navGuest.innerHTML = `
-            <a href="index.html" class="tab active">Home</a>
+            <a href="index.html" class="tab">Home</a>
             <a href="about.html" class="tab">About</a>
-            <a href="subscriptions/subscription_main.html" class="tab">Plans & Pricing</a>
-            <a href="join-us.html" class="tab">Contact Us</a>
+            <a href="subscriptions/subscription_main.html" class="tab">Plans</a>
+            <a href="join-us.html" class="tab">Contact</a>
         `;
     }
 };
