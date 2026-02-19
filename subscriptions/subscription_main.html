@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Join Lingping</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/event-detail_style.css?v=20260218">
+    <link rel="stylesheet" href="../assets/subscription_main_style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="back-btn" onclick="history.back()">← Back</div>
+
+        <h1 style="text-align:center; margin-bottom:10px;">
+            🌏 Choose How You Want to Learn
+        </h1>
+
+        <div class="sub" style="text-align:center;">
+            Start here 👇
+        </div>
+
+        <div class="plans-wrapper">
+
+            <!-- COMMUNITY CARD -->
+            <div class="plan-card" onclick="goCommunity()">
+                <div class="plan-title">Community</div>
+                <div class="plan-sub">Social & interactive</div>
+
+                <div class="plan-features">
+                    <p>• Unlimited events</p>
+                    <p>• Cultural discussions</p>
+                    <p>• Language corners</p>
+                    <p>• Book clubs</p>
+                    <p>• Movie clubs</p>
+                </div>
+
+                <div class="plan-btn">
+                    <button class="book-btn" style="width:100%;">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+
+            <!-- ENGLISH CARD -->
+            <div class="plan-card" onclick="goEnglish()">
+                <div class="plan-title">English Classes</div>
+                <div class="plan-sub">Structured & goal-based</div>
+
+                <div class="plan-features">
+                    <p>• Guided lessons</p>
+                    <p>• Vocabulary building</p>
+                    <p>• Feedback & correction</p>
+                    <p>• Skill improvement</p>
+                </div>
+
+                <div class="plan-btn">
+                    <button class="book-btn" style="width:100%;">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Important Note -->
+        <div class="section" style="margin-top:25px;">
+            <div class="sub" style="font-size:14px; color:#666;">
+                ⚠️ Community and English Classes are independent and purchased separately.
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function goCommunity() {
+            window.location.href = "community-access.html";
+        }
+
+        function goEnglish() {
+            window.location.href = "english-classes.html";
+        }
+    </script>
+
+</body>
+
+</html>
