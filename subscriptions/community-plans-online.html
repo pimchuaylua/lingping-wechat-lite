@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Online Community Plans | Lingping</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/event-detail_style.css?v=20260218">
+    <link rel="stylesheet" href="../assets/subscription_main_style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="back-btn" onclick="history.back()">← Back</div>
+
+        <h1 style="text-align:center;">🌐 Online Community</h1>
+        <div class="sub" style="text-align:center; margin-bottom:25px;">
+            Step 3: Choose your plan
+        </div>
+
+        <div class="plans-wrapper" style="flex-direction:column; gap:20px;">
+
+            <!-- 1 MONTH -->
+            <div class="plan-card">
+                <div class="plan-title">1 Month</div>
+
+                <div style="font-size:26px; font-weight:600; margin-top:10px;">
+                    ฿170
+                </div>
+
+                <div class="plan-sub">
+                    ฿170 / month
+                </div>
+
+                <div class="plan-features" style="margin-top:15px;">
+                    <p>• Unlimited online events</p>
+                    <p>• Cancel anytime</p>
+                </div>
+
+                <div class="plan-btn">
+                    <button class="book-btn" style="width:100%;" onclick="buyOnline1()">
+                        Buy 1 Month
+                    </button>
+                </div>
+            </div>
+
+
+            <!-- 3 MONTHS -->
+            <div class="plan-card" style="border:2px solid #FFB050; position:relative;">
+
+                <!-- Highlight badge -->
+                <div style="
+                    position:absolute;
+                    top:-12px;
+                    right:20px;
+                    background:#FFB050;
+                    color:#fff;
+                    font-size:12px;
+                    padding:4px 10px;
+                    border-radius:20px;
+                    font-weight:600;
+                ">
+                    Better Value
+                </div>
+
+                <div class="plan-title">3 Months</div>
+
+                <div style="font-size:26px; font-weight:600; margin-top:10px;">
+                    ฿440
+                </div>
+
+                <div class="plan-sub">
+                    ฿147 / month
+                </div>
+
+                <div class="plan-features" style="margin-top:15px;">
+                    <p>• Unlimited online events</p>
+                    <p>• Billed once every 3 months</p>
+                </div>
+
+                <div class="plan-btn">
+                    <button class="book-btn" style="width:100%;" onclick="buyOnline3()">
+                        Buy 3 Months
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Info Note -->
+        <div class="section" style="margin-top:25px;">
+            <div class="sub" style="font-size:14px; color:#666;">
+                Access starts immediately after payment.
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function buyOnline1() {
+            window.location.href = "checkout-online-1.html";
+        }
+
+        function buyOnline3() {
+            window.location.href = "checkout-online-3.html";
+        }
+    </script>
+
+</body>
+
+</html>
