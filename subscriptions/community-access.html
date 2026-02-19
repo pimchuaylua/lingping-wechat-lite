@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Community Access | Lingping</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/event-detail_style.css?v=20260218">
+    <link rel="stylesheet" href="../assets/subscription_main_style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="back-btn" onclick="history.back()">← Back</div>
+
+        <h1 style="text-align:center;">Community Membership</h1>
+        <div class="sub" style="text-align:center; margin-bottom:25px;">
+            Step 2: Choose your access type
+        </div>
+
+        <div class="plans-wrapper">
+
+            <!-- OPTION A -->
+            <div class="plan-card">
+                <div class="plan-title">🌐 Online Only</div>
+                <div class="plan-sub">Unlimited access to:</div>
+
+                <div class="plan-features">
+                    <p>• All online events</p>
+                    <p style="color:#999;">(No onsite access)</p>
+                </div>
+
+                <div class="plan-btn">
+                    <button class="book-btn" style="width:100%;" onclick="goOnlineOnly()">
+                        Continue
+                    </button>
+                </div>
+            </div>
+
+
+            <!-- OPTION B -->
+            <div class="plan-card">
+                <div class="plan-title">🏠🌐 Full Access</div>
+                <div class="plan-sub">Unlimited access to:</div>
+
+                <div class="plan-features">
+                    <p>• All online events</p>
+                    <p>• All onsite events in your city</p>
+                </div>
+
+                <div class="plan-btn" style="display:flex; flex-direction:column; gap:10px;">
+
+                    <button class="book-btn" onclick="goBangkok()">
+                        Bangkok
+                    </button>
+
+                    <button class="book-btn" onclick="goChiangmai()">
+                        Chiangmai
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        function goOnlineOnly() {
+            window.location.href = "community-plans-online.html";
+        }
+
+        function goBangkok() {
+            window.location.href = "community-plans-bangkok.html";
+        }
+
+        function goChiangmai() {
+            window.location.href = "community-plans-chiangmai.html";
+        }
+    </script>
+
+</body>
+
+</html>
