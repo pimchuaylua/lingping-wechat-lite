@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Lingping Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="config.js"></script>
+</head>
+
+<body>
+    <h2>Login to Lingping</h2>
+
+    <div id="g_id_onload" data-client_id="140719627174-5tt9d5rqmbjt48tplrh072j10uqkau8t.apps.googleusercontent.com"
+        data-callback="handleCredentialResponse">
+    </div>
+
+    <div class="g_id_signin" data-type="standard"></div>
+
+    <script>
+        const { BASE_URL, API_KEY } = window.CONFIG;
+
+        async function handleCredentialResponse(response) {
+            try {
+                const data = parseJwt(response.credential);
+
+                const email = data.email;
+                const displayName = data.name || email;
+
+                console.log("User email:", email, displayName);
+
+                // 1️⃣ Try login first
+                let loginResult = await loginUser(email);
+
+                if (!loginResult.success) {
+                    // 2️⃣ If login fails → create user
+                    const registerResult = await registerUser(email, displayName);
+
+                    if (!registerResult.success) {
+                        throw new Error("Registration failed");
+                    }
+
+                    // 3️⃣ Try login again
+                    loginResult = await loginUser(email);
+
+                    if (!loginResult.success) {
+                        throw new Error("Login after registration failed");
+                    }
+                }
+
+                // 4️⃣ Save session
+                saveSession(loginResult.data, email);
+
+                // 5️⃣ Redirect
+                window.location.href = "/";
+
+            } catch (error) {
+                console.error("Login flow error:", error);
+                alert("Login failed. Please try again.");
+            }
+        }
+
+        /* ---------------- LOGIN ---------------- */
+
+        async function loginUser(email) {
+            const res = await fetch(`${BASE_URL}/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                },
+                body: JSON.stringify({
+                    username: email,
+                    password: "1234"
+                })
+            });
+
+            const json = await res.json().catch(() => ({}));
+
+            if (res.ok && json?.status && json?.data?.userId) {
+                return { success: true, data: json.data };
+            }
+
+            return { success: false };
+        }
+
+        /* ---------------- REGISTER ---------------- */
+
+        async function registerUser(email, displayName) {
+            const res = await fetch(`${BASE_URL}/users`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                },
+                body: JSON.stringify({
+                    username: email,
+                    password: "1234",
+                    displayName: displayName,
+                    levelId: "675d52f5713aceb862a84a00",
+                    email: email
+                })
+            });
+
+            const json = await res.json().catch(() => ({}));
+
+            if (res.ok) {
+                return { success: true };
+            }
+
+            return { success: false };
+        }
+
+        /* ---------------- SESSION ---------------- */
+
+        function saveSession(data, email) {
+            localStorage.setItem("userId", data.userId);
+            localStorage.setItem("username", email);
+            localStorage.setItem("accessToken", data.access_token);
+        }
+
+        function parseJwt(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+    </script>
+</body>
+
+</html>
