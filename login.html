@@ -2,159 +2,186 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <title>Lingping Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="assets/event-detail_style.css?v=20260218">
+    <link rel="stylesheet" href="assets/subscription_main_style.css">
+    <link rel="stylesheet" href="assets/login_style.css">
+
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="config.js"></script>
 </head>
 
 <body>
-    <h2>Login to Lingping</h2>
 
-    <div id="g_id_onload" data-client_id="140719627174-5tt9d5rqmbjt48tplrh072j10uqkau8t.apps.googleusercontent.com"
-        data-callback="handleCredentialResponse">
+    <div class="container" style="max-width:420px; margin-top:60px;">
+
+        <div class="login-card">
+
+            <h1 style="margin-bottom:5px;">Welcome Back 👋</h1>
+            <div class="sub" style="margin-bottom:25px;">
+                Continue to Lingping
+            </div>
+
+            <!-- Google Login -->
+            <div id="g_id_onload"
+                data-client_id="140719627174-5tt9d5rqmbjt48tplrh072j10uqkau8t.apps.googleusercontent.com"
+                data-callback="handleCredentialResponse">
+            </div>
+
+            <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"
+                style="display:flex; justify-content:center;">
+            </div>
+
+            <div class="login-divider">or</div>
+
+            <!-- Username Login -->
+            <button class="username-btn" onclick="loginWithUsername()">
+                Login with Username
+            </button>
+
+        </div>
+
     </div>
 
-    <div class="g_id_signin" data-type="standard"></div>
-    <hr>
-    <h3>Or login with username</h3>
-    <button onclick="loginWithUsername()">Login with Username</button>
-
-    <script>
-        const { BASE_URL, API_KEY } = window.CONFIG;
-
-        /* ---------------- REDIRECT HELPER ---------------- */
-
-        function redirectBack() {
-            const redirectTo =
-                sessionStorage.getItem("redirectAfterLogin") ||
-                document.referrer ||
-                "/";
-
-            sessionStorage.removeItem("redirectAfterLogin");
-            window.location.href = redirectTo;
-        }
-
-        /* ---------------- GOOGLE LOGIN ---------------- */
-
-        async function handleCredentialResponse(response) {
-            try {
-                const data = parseJwt(response.credential);
-
-                const email = data.email;
-                const displayName = data.name || email;
-
-                let loginResult = await loginUser(email, "1234");
-
-                if (!loginResult.success) {
-                    const registerResult = await registerUser(email, displayName);
-
-                    if (!registerResult.success) {
-                        throw new Error("Registration failed");
-                    }
-
-                    loginResult = await loginUser(email, "1234");
-
-                    if (!loginResult.success) {
-                        throw new Error("Login after registration failed");
-                    }
-                }
-
-                saveSession(loginResult.data, email);
-                redirectBack();
-
-            } catch (error) {
-                console.error("Login flow error:", error);
-                alert("Login failed. Please try again.");
-            }
-        }
-
-        /* ---------------- USERNAME LOGIN ---------------- */
-
-        async function loginWithUsername() {
-            try {
-                const username = prompt("Enter your username:")?.trim();
-                if (!username) return;
-
-                const loginResult = await loginUser(username, "lingpingreading33");
-
-                if (!loginResult.success) {
-                    throw new Error("Invalid username. Please check and try again.");
-                }
-
-                saveSession(loginResult.data, username);
-                redirectBack();
-
-            } catch (err) {
-                alert(err.message);
-            }
-        }
-
-        /* ---------------- LOGIN API ---------------- */
-
-        async function loginUser(username, password) {
-            const res = await fetch(`${BASE_URL}/auth/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-API-KEY": API_KEY
-                },
-                body: JSON.stringify({
-                    username,
-                    password
-                })
-            });
-
-            const json = await res.json().catch(() => ({}));
-
-            if (res.ok && json?.status && json?.data?.userId) {
-                return { success: true, data: json.data };
-            }
-
-            return { success: false };
-        }
-
-        /* ---------------- REGISTER ---------------- */
-
-        async function registerUser(email, displayName) {
-            const res = await fetch(`${BASE_URL}/users`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-API-KEY": API_KEY
-                },
-                body: JSON.stringify({
-                    username: email,
-                    password: "1234",
-                    displayName,
-                    levelId: "675d52f5713aceb862a84a00",
-                    email
-                })
-            });
-
-            if (res.ok) return { success: true };
-            return { success: false };
-        }
-
-        /* ---------------- SESSION ---------------- */
-
-        function saveSession(data, username) {
-            localStorage.setItem("userId", data.userId);
-            localStorage.setItem("username", username);
-            localStorage.setItem("accessToken", data.access_token);
-        }
-
-        function parseJwt(token) {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(
-                atob(base64).split('').map(c =>
-                    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-                ).join('')
-            );
-            return JSON.parse(jsonPayload);
-        }
-    </script>
 </body>
+
+<script>
+    const { BASE_URL, API_KEY } = window.CONFIG;
+
+    /* ---------------- REDIRECT HELPER ---------------- */
+
+    function redirectBack() {
+        const redirectTo =
+            sessionStorage.getItem("redirectAfterLogin") ||
+            document.referrer ||
+            "/";
+
+        sessionStorage.removeItem("redirectAfterLogin");
+        window.location.href = redirectTo;
+    }
+
+    /* ---------------- GOOGLE LOGIN ---------------- */
+
+    async function handleCredentialResponse(response) {
+        try {
+            const data = parseJwt(response.credential);
+
+            const email = data.email;
+            const displayName = data.name || email;
+
+            let loginResult = await loginUser(email, "1234");
+
+            if (!loginResult.success) {
+                const registerResult = await registerUser(email, displayName);
+
+                if (!registerResult.success) {
+                    throw new Error("Registration failed");
+                }
+
+                loginResult = await loginUser(email, "1234");
+
+                if (!loginResult.success) {
+                    throw new Error("Login after registration failed");
+                }
+            }
+
+            saveSession(loginResult.data, email);
+            redirectBack();
+
+        } catch (error) {
+            console.error("Login flow error:", error);
+            alert("Login failed. Please try again.");
+        }
+    }
+
+    /* ---------------- USERNAME LOGIN ---------------- */
+
+    async function loginWithUsername() {
+        try {
+            const username = prompt("Enter your username:")?.trim();
+            if (!username) return;
+
+            const loginResult = await loginUser(username, "lingpingreading33");
+
+            if (!loginResult.success) {
+                throw new Error("Invalid username. Please check and try again.");
+            }
+
+            saveSession(loginResult.data, username);
+            redirectBack();
+
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
+    /* ---------------- LOGIN API ---------------- */
+
+    async function loginUser(username, password) {
+        const res = await fetch(`${BASE_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-API-KEY": API_KEY
+            },
+            body: JSON.stringify({
+                username,
+                password
+            })
+        });
+
+        const json = await res.json().catch(() => ({}));
+
+        if (res.ok && json?.status && json?.data?.userId) {
+            return { success: true, data: json.data };
+        }
+
+        return { success: false };
+    }
+
+    /* ---------------- REGISTER ---------------- */
+
+    async function registerUser(email, displayName) {
+        const res = await fetch(`${BASE_URL}/users`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-API-KEY": API_KEY
+            },
+            body: JSON.stringify({
+                username: email,
+                password: "1234",
+                displayName,
+                levelId: "675d52f5713aceb862a84a00",
+                email
+            })
+        });
+
+        if (res.ok) return { success: true };
+        return { success: false };
+    }
+
+    /* ---------------- SESSION ---------------- */
+
+    function saveSession(data, username) {
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("username", username);
+        localStorage.setItem("accessToken", data.access_token);
+    }
+
+    function parseJwt(token) {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+            atob(base64).split('').map(c =>
+                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+            ).join('')
+        );
+        return JSON.parse(jsonPayload);
+    }
+</script>
 
 </html>
