@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/event-detail_style.css?v=20260218">
     <link rel="stylesheet" href="../assets/subscription_main_style.css">
+    <script src="../config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/payment.js"></script>
 </head>
 
 <body>
@@ -45,7 +48,7 @@
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buyDay()">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69a66eae63a94172571cf8e6')">
                         Buy 1 Day
                     </button>
                 </div>
@@ -61,7 +64,7 @@
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buy2Weeks()">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69a66e8263a94172571cf8e5')">
                         Buy 2 Weeks
                     </button>
                 </div>
@@ -77,7 +80,7 @@
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buy1Month()">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('699c6e5bc80a3cb92b301b83')">
                         Buy 1 Month
                     </button>
                 </div>
@@ -109,7 +112,7 @@
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buy3Months()">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69a66e6763a94172571cf8e4')">
                         Buy 3 Months
                     </button>
                 </div>
@@ -125,24 +128,6 @@
         </div>
 
     </div>
-
-    <script>
-        function buyDay() {
-            window.location.href = "../join-us.html";
-        }
-
-        function buy2Weeks() {
-            window.location.href = "../join-us.html";
-        }
-
-        function buy1Month() {
-            window.location.href = "../join-us.html";
-        }
-
-        function buy3Months() {
-            window.location.href = "../join-us.html";
-        }
-    </script>
 
 </body>
 
