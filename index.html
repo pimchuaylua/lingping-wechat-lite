@@ -483,35 +483,43 @@
 
             console.log('hereeee');
             console.log(raw);
-            sessions = raw.map(s => {
-                const start = new Date(s.startTime);
-                const end = new Date(start.getTime() + s.durationMins * 60000);
-                const hostObjects = s.hosts || [];
-                const hosts = hostObjects.length
-                    ? hostObjects.map(h => h.name).join(", ")
-                    : "TBA";
+            const now = Date.now();
 
-                console.log('s', s);
+            sessions = raw
+                .filter(s => {
+                    console.log(s.startTime);
+                    const start = new Date(s.startTime).getTime();
+                    const end = start + (s.durationMins * 60000);
 
-                return {
-                    id: s._id,
-                    date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
-                    time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
-                    title: s.title,
-                    description: s.shortDescription,
-                    fullDescription: s.fullDescription,
-                    hosts: s.hosts || [],
-                    isFull: s.isFull,
-                    seatsLeft: s.numberOfSeatsLeft,
-                    photoUrl: s.photoUrl,
-                    location: s.location,
-                    maxParticipants: s.maxParticipants,
-                    locationUrl: s.locationUrl,
-                    hostObjects: hostObjects,
-                    levelId: currentLevel,
-                    levelName: s.level
-                };
-            });
+                    return now <= end;
+                })
+                .map(s => {
+                    const start = new Date(s.startTime);
+                    const end = new Date(start.getTime() + s.durationMins * 60000);
+                    const hostObjects = s.hosts || [];
+                    const hosts = hostObjects.length
+                        ? hostObjects.map(h => h.name).join(", ")
+                        : "TBA";
+
+                    return {
+                        id: s._id,
+                        date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
+                        time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+                        title: s.title,
+                        description: s.shortDescription,
+                        fullDescription: s.fullDescription,
+                        hosts: s.hosts || [],
+                        isFull: s.isFull,
+                        seatsLeft: s.numberOfSeatsLeft,
+                        photoUrl: s.photoUrl,
+                        location: s.location,
+                        maxParticipants: s.maxParticipants,
+                        locationUrl: s.locationUrl,
+                        hostObjects: hostObjects,
+                        levelId: currentLevel,
+                        levelName: s.level
+                    };
+                });
 
             renderEvents();
         }
