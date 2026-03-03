@@ -226,3 +226,74 @@ h1 {
 .cancel-btn:hover {
     background: #f5c6cb;
 }
+
+/* Modal overlay */
+.lp-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+/* Modal card styled like .plan-card */
+.lp-modal-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
+    width: 100%;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Title like .plan-title */
+.lp-modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* Subtitle like .plan-sub */
+.lp-modal-sub {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+/* Body text */
+.lp-modal-body {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.lp-modal-body a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.lp-modal-body a:hover {
+    text-decoration: underline;
+}
+
+/* Button area like .plan-btn */
+.lp-modal-btn {
+    margin-top: auto;
+}
+
+.lp-modal-logo {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.lp-modal-logo img {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
