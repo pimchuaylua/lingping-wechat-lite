@@ -94,9 +94,24 @@
                 <!-- Meeting (Online only) -->
                 <div class="section">
                     <div class="label">Join Online</div>
+
                     ${userId
                         ? `
                         <div class="sub" style="margin-top:10px;">
+
+                            <!-- Platform Info -->
+                            <div style="text-align:center; font-size:13px; color:#666; margin-bottom:8px;">
+                                Tencent Meeting 腾讯会议 
+                                <span 
+                                    onclick="openMeetingInfo()" 
+                                    style="cursor:pointer; color:#007bff; font-weight:bold;"
+                                    title="Platform information"
+                                >
+                                    ⓘ
+                                </span>
+                            </div>
+
+                            <!-- Join Button -->
                             <div
                                 onclick="copyMeetingNumber('${getMeetingNumber(s?.levelName)}')"
                                 style="
@@ -110,7 +125,6 @@
                                     line-height:1.6;
                                 "
                             >
-                                Tencent Meeting 腾讯会议<br>
                                 ${getMeetingNumber(s?.levelName)} 📋
                             </div>
                         </div>
@@ -282,6 +296,49 @@
             } else {
                 bookSession({ sessionId });
             }
+        }
+
+        function openMeetingInfo() {
+
+            const modal = document.createElement("div");
+            modal.className = "lp-modal-overlay";
+
+            modal.innerHTML = `
+    <div class="lp-modal-card">
+
+        <div class="lp-modal-logo">
+            <img src="photos/logos/voov_logo.png" alt="VooV Meeting Logo">
+        </div>
+
+        <div class="lp-modal-title">
+            Tencent VooV Meeting
+        </div>
+
+        <div class="lp-modal-sub">
+            Available on desktop and mobile.
+        </div>
+
+        <div class="lp-modal-body">
+            Download 
+            <a href="https://voovmeeting.com/download-center.html" target="_blank">
+                here
+            </a>.
+        </div>
+
+        <div class="lp-modal-btn">
+            <button onclick="closeMeetingInfo()" class="book-btn" style="width:100%;">
+                Close
+            </button>
+        </div>
+
+    </div>
+`;
+
+            document.body.appendChild(modal);
+        }
+
+        function closeMeetingInfo() {
+            document.querySelector(".lp-modal-overlay")?.remove();
         }
     </script>
 </body>
