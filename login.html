@@ -8,13 +8,35 @@
 
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260303">
     <link rel="stylesheet" href="assets/subscription_main_style.css">
-    <link rel="stylesheet" href="assets/login_style.css">
+    <link rel="stylesheet" href="assets/login_style.css?v=20260310">
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="config.js"></script>
 </head>
 
 <body>
+
+    <div id="browserPopup" class="browser-popup">
+        <div class="browser-popup-card">
+            <h3>Open in your browser</h3>
+            <p>
+                Google login may not work inside this app.<br><br>
+
+                Please open this page in<br><br>
+
+                <img src="assets/logos/safari.png" alt="Safari"
+                    style="height:22px; width:auto; vertical-align:middle; margin-right:6px;">
+                <b>Safari</b>
+                &nbsp;or&nbsp;
+                <img src="assets/logos/chrome.png" alt="Chrome"
+                    style="height:22px; width:auto; vertical-align:middle; margin-right:6px;">
+                <b>Chrome</b>.
+            </p>
+
+            <button onclick="copyLoginLink()">Copy Link</button>
+            <button onclick="closeBrowserPopup()">Cancel</button>
+        </div>
+    </div>
 
     <div class="container" style="max-width:420px; margin-top:60px;">
 
@@ -31,8 +53,19 @@
                 data-callback="handleCredentialResponse">
             </div>
 
-            <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"
-                style="display:flex; justify-content:center;">
+            <div id="googleWrapper" style="position:relative; display:flex; justify-content:center;">
+
+                <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline">
+                </div>
+
+                <div id="googleBlocker" onclick="showBrowserPopup()" style="
+                        display:none;
+                        position:absolute;
+                        inset:0;
+                        cursor:pointer;
+                    ">
+                </div>
+
             </div>
 
             <div class="login-divider">or</div>
@@ -49,6 +82,19 @@
 </body>
 
 <script>
+
+    function isInAppBrowser() {
+        const ua = navigator.userAgent || navigator.vendor || window.opera;
+        // return (
+        //     ua.includes("FBAN") ||
+        //     ua.includes("FBAV") ||
+        //     ua.includes("Instagram") ||
+        //     ua.includes("Line") ||
+        //     ua.includes("MicroMessenger")
+        // );
+        return true;
+    }
+
     const { BASE_URL, API_KEY } = window.CONFIG;
 
     /* ---------------- REDIRECT HELPER ---------------- */
@@ -182,6 +228,28 @@
         );
         return JSON.parse(jsonPayload);
     }
+
+    function showBrowserPopup() {
+        document.getElementById("browserPopup").style.display = "flex";
+    }
+
+    function closeBrowserPopup() {
+        document.getElementById("browserPopup").style.display = "none";
+    }
+
+    function copyLoginLink() {
+        navigator.clipboard.writeText(window.location.href);
+        alert("Link copied! Open it in Safari or Chrome.");
+    }
+
+    window.addEventListener("load", () => {
+
+        if (isInAppBrowser()) {
+            document.getElementById("googleBlocker").style.display = "block";
+        }
+
+    });
+
 </script>
 
 </html>
