@@ -68,7 +68,7 @@ window.Auth.renderNav = function () {
         navMember.classList.remove("hidden");
 
         navMember.innerHTML = `
-            <a href="index.html" class="tab">Home</a>
+            <a href="/" class="tab">Home</a>
             <a href="my-bookings.html" class="tab">Booked</a>
             <a href="subscriptions/subscription_main.html" class="tab">Plans</a>
             <a href="subscriptions.html" class="tab">Passes</a>
@@ -78,7 +78,7 @@ window.Auth.renderNav = function () {
         navGuest.classList.remove("hidden");
 
         navGuest.innerHTML = `
-            <a href="index.html" class="tab">Home</a>
+            <a href="/" class="tab">Home</a>
             <a href="about.html" class="tab">About</a>
             <a href="subscriptions/subscription_main.html" class="tab">Plans</a>
             <a href="join-us.html" class="tab">Contact</a>
