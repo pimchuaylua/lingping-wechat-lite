@@ -53,7 +53,7 @@
                 data-callback="handleCredentialResponse">
             </div>
 
-            <div id="googleWrapper" style="position:relative; display:flex; justify-content:center;">
+            <div id="googleWrapper" style="position:relative; display:flex; justify-content:center; min-height:44px;">
 
                 <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline">
                 </div>
@@ -71,9 +71,9 @@
             <div class="login-divider">or</div>
 
             <!-- Username Login -->
-            <button class="username-btn" onclick="loginWithUsername()">
-                Login with Username
-            </button>
+            <div class="username-link" onclick="loginWithUsername()">
+                Use a username instead
+            </div>
 
         </div>
 

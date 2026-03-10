@@ -41,23 +41,22 @@ body {
     right: 0;
 }
 
-/* Username button */
+/* Username button - secondary */
 .username-btn {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     border-radius: 14px;
-    border: none;
-    background: #111;
-    color: white;
-    font-size: 15px;
+    border: 1px solid #e5e7eb;
+    background: #f8fafc;
+    color: #555;
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .username-btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
+    background: #f1f5f9;
 }
 
 @media (max-width: 480px) {
@@ -100,4 +99,17 @@ body {
     background: white;
     font-weight: 500;
     cursor: pointer;
+}
+
+.username-link {
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: underline;
+    color: #333;
+    cursor: pointer;
+}
+
+.username-link:hover {
+    color: #000;
 }
