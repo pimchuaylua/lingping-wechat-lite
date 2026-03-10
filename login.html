@@ -85,14 +85,13 @@
 
     function isInAppBrowser() {
         const ua = navigator.userAgent || navigator.vendor || window.opera;
-        // return (
-        //     ua.includes("FBAN") ||
-        //     ua.includes("FBAV") ||
-        //     ua.includes("Instagram") ||
-        //     ua.includes("Line") ||
-        //     ua.includes("MicroMessenger")
-        // );
-        return true;
+        return (
+            ua.includes("FBAN") ||
+            ua.includes("FBAV") ||
+            ua.includes("Instagram") ||
+            ua.includes("Line") ||
+            ua.includes("MicroMessenger")
+        );
     }
 
     const { BASE_URL, API_KEY } = window.CONFIG;
