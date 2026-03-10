@@ -85,13 +85,14 @@
 
     function isInAppBrowser() {
         const ua = navigator.userAgent || navigator.vendor || window.opera;
-        return (
-            ua.includes("FBAN") ||
-            ua.includes("FBAV") ||
-            ua.includes("Instagram") ||
-            ua.includes("Line") ||
-            ua.includes("MicroMessenger")
-        );
+        // return (
+        //     ua.includes("FBAN") ||
+        //     ua.includes("FBAV") ||
+        //     ua.includes("Instagram") ||
+        //     ua.includes("Line") ||
+        //     ua.includes("MicroMessenger")
+        // );
+        return true;
     }
 
     const { BASE_URL, API_KEY } = window.CONFIG;
@@ -237,7 +238,8 @@
     }
 
     function copyLoginLink() {
-        navigator.clipboard.writeText(window.location.href);
+        const url = document.referrer || window.location.origin;
+        navigator.clipboard.writeText(url);
         alert("Link copied! Open it in Safari or Chrome.");
     }
 
