@@ -176,7 +176,7 @@
                 const now = new Date();
 
                 const communitySub = subs.find(s =>
-                    s.subscriptionPlan?.name?.includes("Community") &&
+                    s.subscriptionPlan?.name?.includes("Community") || s.subscriptionPlan?.name?.includes("English") &&
                     new Date(s.expiredAt) > now
                 );
 
@@ -197,7 +197,7 @@
             `;
                 } else {
                     html = `
-                <span class="status-inactive">❌ No active Chiangmai membership</span>
+                <span class="status-inactive">❌ No active membership</span>
                 <div style="margin-top: 8px;">
                     <button class="renew-btn"
                         onclick="window.open('https://lingpingclub.com/#/subscription-plans', '_blank')">
