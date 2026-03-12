@@ -70,9 +70,44 @@
 
             <div class="login-divider">or</div>
 
+            <!-- Phone Login -->
+            <div class="login-option" onclick="showPhoneLogin()">
+                Continue with phone
+            </div>
+
             <!-- Username Login -->
-            <div class="username-link" onclick="loginWithUsername()">
-                Use a username instead
+            <div class="login-option" onclick="loginWithUsername()">
+                Continue with username
+            </div>
+
+            <!-- PHONE LOGIN PANEL -->
+            <div id="phoneLoginPanel" style="display:none; margin-top:20px;">
+
+                <div style="display:flex; gap:8px; margin-bottom:10px;">
+
+                    <select id="countryCode" style="padding:12px; border-radius:8px; border:1px solid #ddd;">
+                        <option value="+66">🇹🇭 +66</option>
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+44">🇬🇧 +44</option>
+                        <option value="+86">🇨🇳 +86</option>
+                        <option value="+81">🇯🇵 +81</option>
+                    </select>
+
+                    <input id="phoneInput" type="text" placeholder="812345678"
+                        style="flex:1; padding:12px; border-radius:8px; border:1px solid #ddd;">
+
+                </div>
+
+                <button class="primary-button" onclick="sendOTP()">
+                    Send OTP
+                </button>
+
+                <input id="otpInput" class="input-field" type="text" placeholder="Enter OTP">
+
+                <button class="primary-button" onclick="verifyOTP()">
+                    Verify
+                </button>
+
             </div>
 
         </div>
@@ -249,6 +284,122 @@
         }
 
     });
+
+    /* ---------------- PHONE LOGIN ---------------- */
+
+    function showPhoneLogin() {
+        const panel = document.getElementById("phoneLoginPanel");
+
+        if (panel.style.display === "none") {
+            panel.style.display = "block";
+        } else {
+            panel.style.display = "none";
+        }
+    }
+
+    async function sendOTP() {
+
+        const countryCode = document.getElementById("countryCode").value;
+        let phone = document.getElementById("phoneInput").value.trim();
+
+        if (!phone) {
+            alert("Please enter your phone number");
+            return;
+        }
+
+        // remove leading 0 (Thai format)
+        if (phone.startsWith("0")) {
+            phone = phone.substring(1);
+        }
+
+        const fullPhone = countryCode + phone;
+
+        try {
+
+            const res = await fetch(`${BASE_URL}/auth/send-otp`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                },
+                body: JSON.stringify({
+                    phone: fullPhone
+                })
+            });
+
+            const json = await res.json();
+
+            if (res.ok && json?.status && json?.data?.success) {
+
+                alert("OTP sent to " + fullPhone);
+
+            } else {
+
+                throw new Error("Failed to send OTP");
+
+            }
+
+        } catch (err) {
+
+            console.error(err);
+            alert("Failed to send OTP. Please try again.");
+
+        }
+
+    }
+
+    async function verifyOTP() {
+
+        const countryCode = document.getElementById("countryCode").value;
+        let phone = document.getElementById("phoneInput").value.trim();
+        const otp = document.getElementById("otpInput").value.trim();
+
+        if (!otp) {
+            alert("Enter OTP");
+            return;
+        }
+
+        if (phone.startsWith("0")) {
+            phone = phone.substring(1);
+        }
+
+        const fullPhone = countryCode + phone;
+
+        try {
+
+            const res = await fetch(`${BASE_URL}/auth/verify-otp`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                },
+                body: JSON.stringify({
+                    phone: fullPhone,
+                    otp: otp
+                })
+            });
+
+            const json = await res.json();
+
+            if (res.ok && json?.status && json?.data?.userId) {
+
+                saveSession(json.data, fullPhone);
+                redirectBack();
+
+            } else {
+
+                alert("Login failed. The OTP may be incorrect or expired. Please try again.");
+
+            }
+
+        } catch (err) {
+
+            console.error(err);
+            alert("Verification failed");
+
+        }
+
+    }
 
 </script>
 
