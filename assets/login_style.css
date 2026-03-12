@@ -153,3 +153,9 @@ body {
 .primary-button:hover {
     opacity: 0.9;
 }
+
+.browser-popup {
+    backdrop-filter: blur(6px);
+}
+
+vertical-align: -2px;
