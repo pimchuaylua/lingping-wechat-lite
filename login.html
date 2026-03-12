@@ -18,23 +18,30 @@
 
     <div id="browserPopup" class="browser-popup">
         <div class="browser-popup-card">
-            <h3>Open in your browser</h3>
-            <p>
-                Google login may not work inside this app.<br><br>
 
-                Please open this page in<br><br>
+            <h3><b>Open in Browser for the Best Experience</b></h3>
 
-                <img src="assets/logos/safari.png" alt="Safari"
-                    style="height:22px; width:auto; vertical-align:middle; margin-right:6px;">
-                <b>Safari</b>
-                &nbsp;or&nbsp;
-                <img src="assets/logos/chrome.png" alt="Chrome"
-                    style="height:22px; width:auto; vertical-align:middle; margin-right:6px;">
-                <b>Chrome</b>.
+            <p style="margin-top:12px; line-height:1.6; text-align:left;">
+                1. Tap <b>⋯</b> in the app.<br>
+                2. Click <b>"Open in Browser"</b>
             </p>
 
-            <button onclick="copyLoginLink()">Copy Link</button>
-            <button onclick="closeBrowserPopup()">Cancel</button>
+            <p style="margin-top:14px; font-size:13px; color:#666;">
+                If you don't see that option, copy the login link and open it in Chrome or Safari. <br><br>
+                <img src="assets/logos/chrome.png" alt="Chrome"
+                    style="height:25px; width:auto; vertical-align:middle; margin-left:6px;">
+                <img src="assets/logos/safari.png" alt="Safari"
+                    style="height:25px; width:auto; vertical-align:middle; margin-left:4px;">
+            </p>
+
+            <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+
+                <button onclick="copyLoginLink()" class="primary-button" style="flex:1;">
+                    Copy Login Link
+                </button>
+
+            </div>
+
         </div>
     </div>
 
@@ -56,14 +63,6 @@
             <div id="googleWrapper" style="position:relative; display:flex; justify-content:center; min-height:44px;">
 
                 <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline">
-                </div>
-
-                <div id="googleBlocker" onclick="showBrowserPopup()" style="
-                        display:none;
-                        position:absolute;
-                        inset:0;
-                        cursor:pointer;
-                    ">
                 </div>
 
             </div>
@@ -280,7 +279,7 @@
     window.addEventListener("load", () => {
 
         if (isInAppBrowser()) {
-            document.getElementById("googleBlocker").style.display = "block";
+            showBrowserPopup();
         }
 
     });
