@@ -71,7 +71,7 @@ window.Auth.renderNav = function () {
             <a href="/" class="tab">Home</a>
             <a href="my-bookings.html" class="tab">Booked</a>
             <a href="subscriptions/subscription_main.html" class="tab">Subscribe</a>
-            <a href="subscriptions.html" class="tab">Passes</a>
+            <a href="subscriptions.html" class="tab">My Plan</a>
             <a href="community-profile.html" class="tab">Me</a>
         `;
     } else {
