@@ -175,36 +175,60 @@
                 const subs = json?.data || [];
                 const now = new Date();
 
-                const communitySub = subs.find(s =>
-                    s.subscriptionPlan?.name?.includes("Community") || s.subscriptionPlan?.name?.includes("English") &&
-                    new Date(s.expiredAt) > now
+                // ✅ 1. filter active
+                const activeSubs = subs.filter(s => {
+                    const name = (s.subscriptionPlan?.name || "").toLowerCase();
+                    const notExpired = new Date(s.expiredAt) > now;
+
+                    const isCommunityPlan = name.includes("community");
+                    const isEnglishPlan = name.includes("english");
+
+                    if (isCommunityPlan) return notExpired;
+                    if (isEnglishPlan) return notExpired && s.numberOfPassesLeft > 0;
+
+                    return false;
+                });
+
+                // ✅ 2. sort by expiry (low → high)
+                activeSubs.sort((a, b) =>
+                    new Date(a.expiredAt) - new Date(b.expiredAt)
                 );
 
                 let html = "";
 
-                if (communitySub) {
-                    const exp = new Date(communitySub.expiredAt);
-                    const expText = exp.toLocaleDateString("en-GB", {
-                        day: "numeric",
-                        month: "short"
-                    });
+                if (activeSubs.length) {
+                    html = activeSubs.map(sub => {
+                        const name = (sub.subscriptionPlan?.name || "").toLowerCase();
+                        const isEnglishPlan = name.includes("english");
 
-                    html = `
-                <span class="status-active">
-                    ✔️ ${communitySub.subscriptionPlan?.name || "Community"} · 
-                    Active (expires ${expText})
-                </span>
-            `;
+                        const exp = new Date(sub.expiredAt);
+                        const expText = exp.toLocaleDateString("en-GB", {
+                            day: "numeric",
+                            month: "short"
+                        });
+
+                        // ✅ warning if < 7 days
+                        const daysLeft = (exp - now) / (1000 * 60 * 60 * 24);
+                        const warning = daysLeft < 7 ? "⚠️ " : "";
+
+                        return `
+            <div class="status-active">
+                ${warning}✔️ ${sub.subscriptionPlan?.name || "Plan"} · 
+                expires ${expText}
+                ${isEnglishPlan ? ` · ${sub.numberOfPassesLeft} left` : ""}
+            </div>
+        `;
+                    }).join("");
                 } else {
                     html = `
-                <span class="status-inactive">❌ No active membership</span>
-                <div style="margin-top: 8px;">
-                    <button class="renew-btn"
-                        onclick="window.open('https://lingpingclub.com/#/subscription-plans', '_blank')">
-                        Renew / Subscribe
-                    </button>
-                </div>
-            `;
+        <span class="status-inactive">❌ No active membership</span>
+        <div style="margin-top: 8px;">
+            <button class="renew-btn"
+                onclick="window.open('https://lingpingclub.com/#/subscription-plans', '_blank')">
+                Renew / Subscribe
+            </button>
+        </div>
+    `;
                 }
 
                 // 💾 cache + render once
