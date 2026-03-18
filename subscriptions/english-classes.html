@@ -7,6 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/event-detail_style.css?v=20260303">
     <link rel="stylesheet" href="../assets/subscription_main_style.css">
+    <script src="../config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/payment.js"></script>
 </head>
 
 <body>
@@ -23,8 +26,7 @@
         <!-- Intro Description -->
         <div class="section" style="margin-bottom:20px;">
             <div class="sub" style="font-size:15px; color:#444;">
-                Structured lessons with vocabulary training, personalized feedback, and
-                skill-focused improvement.
+                Structured lessons with vocabulary training, personalized feedback, and skill-focused improvement.
             </div>
 
             <div style="margin-top:12px; font-size:14px;">
@@ -37,40 +39,54 @@
 
         <div class="plans-wrapper" style="flex-direction:column; gap:20px;">
 
-            <!-- 1 HOUR -->
+            <!-- 1 HOUR Online Class-->
             <div class="plan-card">
-                <div class="plan-title">1 Hour</div>
+                <div class="plan-title">1 Class (Online, 1 hour)</div>
 
                 <div style="font-size:24px; font-weight:600; margin-top:10px;">
-                    ¥60
-                </div>
-
-                <div style="margin-top:8px; font-size:14px;">
-                    Price per session: ¥60
+                    ฿300
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buy1Hour()">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba74f3cd7353019f77568e')">
                         Buy 1 Hour
                     </button>
                 </div>
             </div>
 
+            <!-- 2 HOURS (In-Person, Chiang Mai) -->
+            <div class="plan-card">
+                <div class="plan-title">1 Class Chiangmai (2 hours)</div>
+
+                <div style="font-size:24px; font-weight:600; margin-top:10px;">
+                    ฿600
+                </div>
+
+                <div style="font-size:13px; color:#666; margin-top:5px;">
+                    Valid for 1 session, Chiang Mai location
+                </div>
+
+                <div class="plan-btn">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba78d8cd7353019f775692')">
+                        Buy 2 Hours
+                    </button>
+                </div>
+            </div>
 
             <!-- 10 HOURS -->
             <div class="plan-card">
-                <div class="plan-title">10 Hours</div>
+                <div class="plan-title">10 Hours – Flexible Use (Online/In-Person)</div>
 
                 <div style="font-size:24px; font-weight:600; margin-top:10px;">
-                    ¥570
+                    ฿2,850
                 </div>
 
                 <div style="margin-top:8px; font-size:14px;">
-                    Price per session: ¥57
+                    Price per hour: ฿285
                 </div>
 
                 <div style="color:#2e7d32; font-weight:600; margin-top:5px;">
-                    Save ¥30
+                    Save ฿150
                 </div>
 
                 <div style="font-size:13px; color:#666; margin-top:5px;">
@@ -78,17 +94,15 @@
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buy10Hours()">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('698aebced9adda8b3d792466')">
                         Buy 10 Hours
                     </button>
                 </div>
             </div>
 
-
             <!-- 20 HOURS (MOST POPULAR) -->
             <div class="plan-card" style="border:2px solid #FFB050; position:relative;">
 
-                <!-- Highlight badge -->
                 <div style="
                     position:absolute;
                     top:-12px;
@@ -103,18 +117,18 @@
                     ⭐ Most Popular
                 </div>
 
-                <div class="plan-title">20 Hours</div>
+                <div class="plan-title">20 Hours – Flexible Use (Online/In-Person)</div>
 
                 <div style="font-size:24px; font-weight:600; margin-top:10px;">
-                    ¥1,080
+                    ฿5,400
                 </div>
 
                 <div style="margin-top:8px; font-size:14px;">
-                    <strong>Price per session: ¥54</strong>
+                    Price per hour: ฿270
                 </div>
 
                 <div style="color:#2e7d32; font-weight:600; margin-top:5px;">
-                    Save ¥120
+                    Save ฿600
                 </div>
 
                 <div style="font-size:13px; color:#666; margin-top:5px;">
@@ -122,27 +136,26 @@
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buy20Hours()">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('698b0785d9adda8b3d7928d6')">
                         Buy 20 Hours
                     </button>
                 </div>
             </div>
 
-
             <!-- 30 HOURS -->
             <div class="plan-card">
-                <div class="plan-title">30 Hours</div>
+                <div class="plan-title">30 Hours – Flexible Use (Online/In-Person)</div>
 
                 <div style="font-size:24px; font-weight:600; margin-top:10px;">
-                    ¥1,530
+                    ฿7,650
                 </div>
 
                 <div style="margin-top:8px; font-size:14px;">
-                    Price per session: ¥51
+                    Price per hour: ฿255
                 </div>
 
                 <div style="color:#2e7d32; font-weight:600; margin-top:5px;">
-                    Save ¥270
+                    Save ฿1,350
                 </div>
 
                 <div style="font-size:13px; color:#666; margin-top:5px;">
@@ -150,27 +163,26 @@
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buy30Hours()">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba7525cd7353019f77568f')">
                         Buy 30 Hours
                     </button>
                 </div>
             </div>
 
-
             <!-- 40 HOURS -->
             <div class="plan-card">
-                <div class="plan-title">40 Hours</div>
+                <div class="plan-title">40 Hours – Flexible Use (Online/In-Person)</div>
 
                 <div style="font-size:24px; font-weight:600; margin-top:10px;">
-                    ¥1,920
+                    ฿9,600
                 </div>
 
                 <div style="margin-top:8px; font-size:14px;">
-                    Price per session: ¥48
+                    Price per hour: ฿240
                 </div>
 
                 <div style="color:#2e7d32; font-weight:600; margin-top:5px;">
-                    Save ¥480
+                    Save ฿1,920
                 </div>
 
                 <div style="font-size:13px; color:#666; margin-top:5px;">
@@ -178,27 +190,26 @@
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buy40Hours()">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba753bcd7353019f775690')">
                         Buy 40 Hours
                     </button>
                 </div>
             </div>
 
-
             <!-- 50 HOURS -->
             <div class="plan-card">
-                <div class="plan-title">50 Hours</div>
+                <div class="plan-title">50 Hours – Flexible Use (Online/In-Person)</div>
 
                 <div style="font-size:24px; font-weight:600; margin-top:10px;">
-                    ¥2,250
+                    ฿11,250
                 </div>
 
                 <div style="margin-top:8px; font-size:14px;">
-                    Price per session: ¥45
+                    Price per hour: ฿225
                 </div>
 
                 <div style="color:#2e7d32; font-weight:600; margin-top:5px;">
-                    Save ¥750
+                    Save ฿3,000
                 </div>
 
                 <div style="font-size:13px; color:#666; margin-top:5px;">
@@ -206,7 +217,7 @@
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buy50Hours()">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba7552cd7353019f775691')">
                         Buy 50 Hours
                     </button>
                 </div>
@@ -222,32 +233,6 @@
         </div>
 
     </div>
-
-    <script>
-        function buy1Hour() {
-            window.location.href = "../join-us.html";
-        }
-
-        function buy10Hours() {
-            window.location.href = "../join-us.html";
-        }
-
-        function buy20Hours() {
-            window.location.href = "../join-us.html";
-        }
-
-        function buy30Hours() {
-            window.location.href = "../join-us.html";
-        }
-
-        function buy40Hours() {
-            window.location.href = "../join-us.html";
-        }
-
-        function buy50Hours() {
-            window.location.href = "../join-us.html";
-        }
-    </script>
 
 </body>
 
