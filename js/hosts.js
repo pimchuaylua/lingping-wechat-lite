@@ -46,7 +46,7 @@ window.HOSTS_MAP = {
         description: "Cooking enthusiast 🍽️ | Non-profit advocate 🤍 | Lover of deep conversations"
     },
     "69de0cf71e82bb1d64171c17": {
-        photo: "./photos/hosts/thamma.png",
+        photo: "./photos/hosts/thamma.jpg",
         description: "Thamma From Nonthaburi | Learning 6 Languages And Eager To Learn More | Temple & History Nerd 🛕 | Hosting Weekly City Walks At Bangkok And Nonthaburi 🌍"
     }
 };
