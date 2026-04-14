@@ -586,3 +586,31 @@ body {
     /* reduce if needed */
     padding: 10px 0;
 }
+
+.location-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #333;
+    /* explicitly set text color */
+    cursor: pointer;
+    text-decoration: none;
+    /* remove underline for links */
+    -webkit-appearance: none;
+    /* remove iOS default button styling */
+}
+
+.location-btn.active {
+    background: var(--theme);
+    color: #fff;
+    border-color: var(--theme);
+    font-weight: 500;
+}
+
+.location-btn {
+    -webkit-tap-highlight-color: transparent;
+    /* removes highlight on tap */
+    color: inherit;
+    /* inherit color so blue doesn’t appear */
+}
