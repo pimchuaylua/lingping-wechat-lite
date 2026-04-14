@@ -27,5 +27,13 @@ window.Utils = {
         return new Intl.DateTimeFormat("en-US", {
             timeZoneName: "long"
         }).format(d).split(", ").pop();
+    },
+
+    goBackOrHome(fallbackUrl = "../index.html") {
+        if (document.referrer && document.referrer !== "") {
+            window.history.back();
+        } else {
+            window.location.href = fallbackUrl;
+        }
     }
 };
