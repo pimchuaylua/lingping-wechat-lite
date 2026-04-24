@@ -132,14 +132,21 @@
 
     /* ---------------- REDIRECT HELPER ---------------- */
 
-    function redirectBack() {
-        const redirectTo =
-            sessionStorage.getItem("redirectAfterLogin") ||
-            document.referrer ||
-            "/";
+    // function redirectBack() {
+    //     const redirectTo =
+    //         sessionStorage.getItem("redirectAfterLogin") ||
+    //         document.referrer ||
+    //         "/";
 
-        sessionStorage.removeItem("redirectAfterLogin");
-        window.location.href = redirectTo;
+    //     sessionStorage.removeItem("redirectAfterLogin");
+    //     window.location.href = redirectTo;
+    // }
+
+    function redirectBack() {
+        const params = new URLSearchParams(window.location.search);
+        const returnUrl = params.get("returnUrl");
+
+        window.location.href = returnUrl || "/index.html";
     }
 
     /* ---------------- GOOGLE LOGIN ---------------- */
