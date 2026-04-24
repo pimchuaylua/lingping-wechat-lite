@@ -134,7 +134,7 @@
         `;
             } else {
                 el.innerHTML = `
-            <button class="login-btn" onclick="loginAndUpdateUI()">Log in here</button>
+            <button class="login-btn" onclick="goToLogin()">Log in here</button>
         `;
             }
             Auth.renderNav();
@@ -240,6 +240,11 @@
                 console.error("Failed to load membership", err);
                 el.innerHTML = "";
             }
+        }
+
+        function goToLogin() {
+            const returnUrl = encodeURIComponent(window.location.href);
+            window.location.href = `/login.html?returnUrl=${returnUrl}`;
         }
 
         async function loginAndUpdateUI() {
