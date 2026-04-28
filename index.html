@@ -17,37 +17,21 @@
     <script src="js/booking.js?v=202602183"></script>
     <script src="js/utils.js?v=20250210?v=20260113"></script>
     <link rel="stylesheet" href="assets/policy-modal.css">
+
+    <meta property="og:title" content="Lingping Club" />
+    <meta property="og:description"
+        content="A language exchange club exploring the world through languages, cultures, and shared perspectives." />
+    <meta property="og:image" content="https://lingpingclub.com/assets/logos/lingping_logo.png" />
+    <meta property="og:url" content="https://lingpingclub.com" />
+    <meta property="og:type" content="website" />
 </head>
-
-<div id="policyModal" class="modal hidden">
-    <div class="modal-content">
-        <div class="modal-text">
-            ⚠️ <strong>重要提醒：请阅读取消政策</strong> 📌<br><br>
-            如果您想取消课程，必须至少提前一天通知。<br>
-            当天取消将扣除您的课程券。<br><br>
-
-            ⚠️ <strong>PLEASE READ: CANCEL POLICY</strong> 📌<br><br>
-            If you wish to cancel, you must do so at least 1 day before the class.<br>
-            Cancelling on the day will result in your pass being deducted.
-        </div>
-
-        <div class="modal-actions">
-            <button class="modal-cancel" onclick="closePolicyModal()">
-                No / 不同意
-            </button>
-            <button class="modal-confirm" onclick="confirmPolicy()">
-                Yes, I agree / 我同意
-            </button>
-        </div>
-    </div>
-</div>
 
 <body>
     <div class="container">
         <div class="header">Lingping Club</div>
 
         <div class="sub">
-            A community of curious minds exploring the world through languages, cultures, and shared perspectives.
+            A language exchange club exploring the world through languages, cultures, and shared perspectives.
         </div>
 
         <!-- 👋 User Welcome -->
@@ -108,6 +92,29 @@
         </div>
         <!-- 🔹 Events -->
         <div id="eventList"></div>
+    </div>
+
+    <div id="policyModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-text">
+                ⚠️ <strong>重要提醒：请阅读取消政策</strong> 📌<br><br>
+                如果您想取消课程，必须至少提前一天通知。<br>
+                当天取消将扣除您的课程券。<br><br>
+
+                ⚠️ <strong>PLEASE READ: CANCEL POLICY</strong> 📌<br><br>
+                If you wish to cancel, you must do so at least 1 day before the class.<br>
+                Cancelling on the day will result in your pass being deducted.
+            </div>
+
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closePolicyModal()">
+                    No / 不同意
+                </button>
+                <button class="modal-confirm" onclick="confirmPolicy()">
+                    Yes, I agree / 我同意
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
