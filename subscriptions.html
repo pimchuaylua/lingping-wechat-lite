@@ -9,6 +9,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="assets/mainpage_style.css?v=20260331">
+    <link rel="stylesheet" href="assets/language_levels.css">
 
     <!-- Config & Logic -->
     <script src="config.js"></script>
@@ -83,6 +84,7 @@
 
         <!-- 👋 User Welcome -->
         <div id="userWelcome" class="user-welcome"></div>
+        <div id="learningBadge" class="learning-badge"></div>
 
         <nav class="tab-bar">
             <a href="/" class="tab">Home</a>
@@ -207,7 +209,65 @@
             }
         }
 
+        async function loadUserProfile() {
+            const userId = localStorage.getItem("userId");
+            if (!userId) return;
+
+            try {
+                const res = await fetch(`${BASE_URL}/users/${userId}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-api-key": API_KEY
+                    }
+                });
+
+                const json = await res.json();
+                const user = json.data;
+                console.log("load language:", user);
+                renderLearningBadge(user);
+
+            } catch (err) {
+                console.error("Failed to load user");
+            }
+        }
+
         /* ---------------- RENDER ---------------- */
+
+        function renderLearningBadge(user) {
+            const el = document.getElementById("learningBadge");
+            if (!el) return;
+
+            if (!user.learningLanguageCode || !user.languageLevel) {
+                el.innerHTML = "";
+                return;
+            }
+
+            const languageMap = {
+                TH: "🇹🇭 Thai",
+                ZH: "🇨🇳 Chinese",
+                EN: "🇬🇧 English",
+                JP: "🇯🇵 Japanese"
+            };
+
+            const language = languageMap[user.learningLanguageCode] || user.learningLanguageCode;
+            const level = user.languageLevel;
+
+            el.innerHTML = `
+        <div class="learning-card level-${level}">
+
+            <div class="learning-content">
+                <div class="learning-label">LEARNING</div>
+                <div class="learning-main">
+                    ${language} · ${capitalize(level)}
+                </div>
+            </div>
+        </div>
+    `;
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
 
         function renderSubscriptions(subs) {
             listEl.innerHTML = "";
@@ -277,6 +337,7 @@
 
         function init() {
             renderUserWelcome();
+            loadUserProfile();
             loadSubscriptions();
         }
 

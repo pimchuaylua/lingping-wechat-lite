@@ -1,0 +1,92 @@
+.learning-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px 16px;
+    margin: 16px auto;
+    width: 260px;
+
+    border-radius: 16px;
+    border: 1px solid;
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+/* icon (neutral now) */
+.learning-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 10px;
+
+    background: rgba(255, 255, 255, 0.6);
+    color: #444;
+    font-size: 18px;
+}
+
+/* label */
+.learning-label {
+    font-size: 11px;
+    letter-spacing: 0.6px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    opacity: 0.7;
+}
+
+/* main text */
+.learning-main {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* ---------- LEVEL THEMES ---------- */
+
+/* 🌱 Beginner (green) */
+.level-beginner {
+    background: #f1f8f4;
+    border-color: #d6eadf;
+}
+
+.level-beginner .learning-label {
+    color: #5c8f6f;
+}
+
+.level-beginner .learning-main {
+    color: #2e5f44;
+}
+
+/* 🚀 Intermediate (yellow) */
+.level-intermediate {
+    background: #fff8e6;
+    border-color: #f3e2b3;
+}
+
+.level-intermediate .learning-label {
+    color: #a8892d;
+}
+
+.level-intermediate .learning-main {
+    color: #6b5a1a;
+}
+
+/* 🔥 Advanced (orange/red) */
+.level-advanced {
+    background: #fff1ec;
+    border-color: #f3d2c7;
+}
+
+.level-advanced .learning-label {
+    color: #c25a3c;
+}
+
+.level-advanced .learning-main {
+    color: #7a2e1c;
+}
