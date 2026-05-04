@@ -30,19 +30,18 @@
     <div class="container">
         <div class="header">Lingping Club</div>
 
-        <div class="sub">
+        <!-- <div class="sub">
             A language exchange club exploring the world through languages, cultures, and shared perspectives.
-        </div>
+        </div> -->
 
         <!-- 👋 User Welcome -->
-        <div id="userWelcome" class="user-welcome"></div>
-
         <nav class="tab-bar" id="navGuest"></nav>
         <nav class="tab-bar hidden" id="navMember"></nav>
+        <div id="userWelcome" class="user-welcome"></div>
 
 
         <div class="membership-section">
-            <div class="membership-label">I’m here for</div>
+            <div class="membership-label">I'm here for</div>
 
             <div class="membership-toggle">
                 <button class="membership-btn active" data-type="community">
@@ -56,17 +55,32 @@
 
         <div class="filters">
 
-            <!-- 🔹 Location Toggle -->
-            <div class="location-toggle">
-                <button class="location-btn active" data-level="695c763e2d652e065db71030">
-                    Online
-                </button>
-                <button class="location-btn" data-level="69870890d9adda8b3d791661">
-                    Bangkok
-                </button>
-                <button class="location-btn" data-level="67eab5b337cd4b56a080743f">
-                    Chiang Mai
-                </button>
+            <!-- 🔹 Inline Filters -->
+            <div class="filters-inline">
+
+                <!-- Location -->
+                <div class="location-selector">
+                    <button id="locationDisplay" class="location-btn active">
+                        🌐 Online ▾
+                    </button>
+
+                    <div id="locationOptions" class="location-options hidden">
+                        <div class="location-option" data-level="695c763e2d652e065db71030">🌐 Online</div>
+                        <div class="location-option" data-level="69870890d9adda8b3d791661">📍 Bangkok</div>
+                        <div class="location-option" data-level="67eab5b337cd4b56a080743f">📍 Chiang Mai</div>
+                    </div>
+                </div>
+
+                <div class="separator">·</div>
+
+                <!-- Topics -->
+                <div class="topics-inline">
+                    <span class="topic active" data-topic="">All</span>
+                    <span class="topic" data-topic="english">English</span>
+                    <span class="topic" data-topic="thai">Thai</span>
+                    <span class="topic" data-topic="chinese">Chinese</span>
+                </div>
+
             </div>
 
             <!-- 🔹 English Class Levels -->
@@ -74,17 +88,6 @@
                 <div class="level active" data-level="all">All</div>
                 <div class="level" data-level="easy">Easy</div>
                 <div class="level" data-level="medium">Medium</div>
-            </div>
-
-
-            <!-- 🔹 Topics -->
-            <div class="topics">
-                <div class="topic active" data-topic="">All</div>
-                <div class="topic" data-topic="english">English</div>
-                <div class="topic" data-topic="thai">Thai</div>
-                <div class="topic" data-topic="chinese">Chinese</div>
-                <div class="topic" data-topic="book">Book</div>
-                <div class="topic" data-topic="movie">Movie</div>
             </div>
 
             <!-- 🔹 Date Filter -->
@@ -376,26 +379,26 @@
             return Array.isArray(json.data) ? json.data : [];
         }
 
-        document.querySelectorAll(".location-btn").forEach(btn => {
-            btn.addEventListener("click", async () => {
-                document.querySelectorAll(".location-btn")
-                    .forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
+        // document.querySelectorAll(".location-btn").forEach(btn => {
+        //     btn.addEventListener("click", async () => {
+        //         document.querySelectorAll(".location-btn")
+        //             .forEach(b => b.classList.remove("active"));
+        //         btn.classList.add("active");
 
-                if (membershipType === "english") {
-                    // English Class uses different level IDs
-                    currentLevel =
-                        btn.innerText === "Online"
-                            ? "6982e63b245037c5977a9390"
-                            : "678b14ccbc6888f262c7bf2f";
-                } else {
-                    // Community (original behavior)
-                    currentLevel = btn.dataset.level;
-                }
+        //         if (membershipType === "english") {
+        //             // English Class uses different level IDs
+        //             currentLevel =
+        //                 btn.innerText === "Online"
+        //                     ? "6982e63b245037c5977a9390"
+        //                     : "678b14ccbc6888f262c7bf2f";
+        //         } else {
+        //             // Community (original behavior)
+        //             currentLevel = btn.dataset.level;
+        //         }
 
-                await init();
-            });
-        });
+        //         await init();
+        //     });
+        // });
 
 
         function renderEvents() {
@@ -459,7 +462,8 @@
         ${Utils.formatDate(s.date)} · ${s.time} (${Utils.getTimeZoneName()})
     </div>
 
-    ${currentLevel === "695c763e2d652e065db71030"
+    ${currentLevel === "695c763e2d652e065db71030" ||
+                        currentLevel === "6982e63b245037c5977a9390"
                         ? `<div class="event-location">🌐 Online</div>`
                         : s.locationUrl
                             ? `<div class="event-location">
@@ -572,7 +576,7 @@
                 membershipType = btn.dataset.type;
 
                 // Toggle filters
-                document.querySelector(".topics").style.display =
+                document.querySelector(".topic").style.display =
                     membershipType === "community" ? "flex" : "none";
 
                 document.getElementById("englishLevels").classList.toggle(
@@ -581,14 +585,16 @@
                 );
 
                 // Reset defaults
+                const filtersInline = document.querySelector(".filters-inline");
                 if (membershipType === "community") {
+                    filtersInline.style.display = "flex";
                     currentLevel = "695c763e2d652e065db71030"; // community default
                 } else {
                     currentLevel = "6982e63b245037c5977a9390"; // English Online default
                     englishDifficulty = "all";
-                }
 
-                await init();
+                    filtersInline.style.display = "none";
+                }
 
                 await init();
             };
@@ -636,6 +642,48 @@
             }
             closePolicyModal();
         }
+
+        const displayBtn = document.getElementById("locationDisplay");
+        const options = document.getElementById("locationOptions");
+
+        displayBtn.addEventListener("click", () => {
+            options.classList.toggle("hidden");
+        });
+
+        document.querySelectorAll(".location-option").forEach(option => {
+            option.addEventListener("click", () => {
+
+                const filtersInline = document.querySelector(".filters-inline");
+
+                if (membershipType === "english") {
+                    // hide filters for English
+                    currentLevel = "6982e63b245037c5977a9390";
+                } else {
+                    // show filters for community
+                    currentLevel = option?.dataset?.level;
+                }
+
+                init();
+
+                //now
+                const text = option.innerText;
+                const level = option.dataset.level;
+                currentLevel = option.dataset.level;
+
+                // ✅ FIX 1: guard against undefined
+                if (!level) {
+                    console.error("Missing data-level:", option);
+                    return;
+                }
+
+                displayBtn.innerHTML = `${text} ▾`;
+                displayBtn.dataset.level = level;
+
+                options.classList.add("hidden");
+
+                // filterByLocation(level);
+            });
+        });
     </script>
 
 </body>
