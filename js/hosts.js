@@ -48,5 +48,9 @@ window.HOSTS_MAP = {
     "69de0cf71e82bb1d64171c17": {
         photo: "./photos/hosts/thamma.jpg",
         description: "Thamma From Nonthaburi | Learning 6 Languages And Eager To Learn More | Temple & History Nerd 🛕 | Hosting Weekly City Walks At Bangkok And Nonthaburi 🌍"
+    },
+    "69f61377ceaac6e3d0ab6475": {
+        photo: "./photos/hosts/dragon.jpg",
+        description: "From Bangkok • Music is life • Heat is my kryptonite"
     }
 };

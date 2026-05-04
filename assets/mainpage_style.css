@@ -14,6 +14,7 @@ body {
     max-width: 480px;
     margin: 0 auto;
     padding: 16px;
+    text-align: left;
 }
 
 .header {
@@ -58,30 +59,26 @@ nav a:hover {
     background: rgba(255, 176, 80, 0.2);
 }
 
-/* 🔹 Topics */
-.topics {
+/* Topics inline */
+.topics-inline {
     display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 12px;
-    justify-content: flex-start;
-    /* 🔥 was center */
+    gap: 10px;
 }
 
-
 .topic {
-    padding: 6px 12px;
-    border-radius: 16px;
-    border: 1px solid #eee;
-    background: #fff;
-    font-size: 13px;
     cursor: pointer;
+    color: #666;
 }
 
 .topic.active {
-    background: var(--theme);
-    color: #fff;
-    border-color: var(--theme);
+    color: var(--theme);
+    font-weight: 500;
+}
+
+.topic.active {
+    color: var(--theme);
+    border-bottom: 2px solid var(--theme);
+    font-weight: 500;
 }
 
 .filters {
@@ -273,17 +270,15 @@ nav a:hover {
 
 
 .location-btn {
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid #ddd;
-    background: #fff;
-    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 15px;
+    color: #444;
 }
 
 .location-btn.active {
-    background: var(--theme);
-    color: #fff;
-    border-color: var(--theme);
+    color: var(--theme);
     font-weight: 500;
 }
 
@@ -587,67 +582,47 @@ body {
     padding: 10px 0;
 }
 
-.location-btn {
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid #ddd;
+.location-selector {
+    position: relative;
+    margin: 12px 0;
+}
+
+/* Dropdown */
+.location-options {
+    position: absolute;
+    top: 110%;
+    left: 0;
     background: #fff;
-    color: #333;
-    /* explicitly set text color */
+    border: 1px solid #eee;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    z-index: 10;
+    min-width: 180px;
+}
+
+.location-option {
+    padding: 10px 14px;
     cursor: pointer;
-    text-decoration: none;
-    /* remove underline for links */
-    -webkit-appearance: none;
-    /* remove iOS default button styling */
-}
-
-.location-btn.active {
-    background: var(--theme);
-    color: #fff;
-    border-color: var(--theme);
-    font-weight: 500;
-}
-
-.location-btn {
-    -webkit-tap-highlight-color: transparent;
-    /* removes highlight on tap */
-    color: inherit;
-    /* inherit color so blue doesn’t appear */
-}
-
-.learning-badge {
-    text-align: center;
-    margin: 12px 0 18px;
-}
-
-.learning-pill {
-    display: inline-block;
-    background: #eef7ff;
-    border: 1px solid #d6eaff;
-    color: #2b5c88;
-    padding: 10px 16px;
-    border-radius: 16px;
     font-size: 14px;
 }
 
-.learning-pill .title {
-    font-size: 12px;
-    opacity: 0.7;
-    margin-bottom: 2px;
+.location-option:hover {
+    background: #f5f5f5;
 }
 
-.learning-pill .main {
-    font-weight: 600;
-    font-size: 15px;
+.hidden {
+    display: none;
 }
 
-.learning-card {
-    border-radius: 10px;
-    padding: 14px;
+.filters-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-bottom: 12px;
+    font-size: 14px;
+}
 
-    border-left: 6px solid #d6dee6;
-    /* soft neutral */
-    background: #f8fafc;
-    /* very light gray/blue */
+.separator {
+    color: #ccc;
 }
