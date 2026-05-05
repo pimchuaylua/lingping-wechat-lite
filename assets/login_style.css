@@ -69,10 +69,18 @@ body {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.55);
+
+    /* IMPORTANT: default hidden */
     display: none;
-    align-items: center;
+
     justify-content: center;
-    z-index: 9999;
+    align-items: center;
+
+    z-index: 999999;
+}
+
+.browser-popup.active {
+    display: flex;
 }
 
 .browser-popup-card {
@@ -158,4 +166,23 @@ body {
     backdrop-filter: blur(6px);
 }
 
-vertical-align: -2px;
+.success-popup {
+    position: fixed;
+    inset: 0;
+    display: none;
+    /* IMPORTANT: move default here */
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 999999;
+}
+
+.success-card {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    text-align: center;
+    width: 85%;
+    max-width: 320px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}

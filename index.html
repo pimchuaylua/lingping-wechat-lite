@@ -28,7 +28,11 @@
 
 <body>
     <div class="container">
+        <div class="top-bar">
+
+        </div>
         <div class="header">Lingping Club</div>
+        <div id="loginContainer"></div>
 
         <!-- <div class="sub">
             A language exchange club exploring the world through languages, cultures, and shared perspectives.
@@ -136,16 +140,18 @@
             const el = document.getElementById("userWelcome");
             if (!el) return;
 
+            //     if (username) {
+            //         el.innerHTML = `
+            //     👋 Hello <strong>${username}</strong>!
+            //     <span class="logout" onclick="logout()">Logout</span>
+            //     <div id="membershipStatus" class="membership-status"></div>
+            // `;
+            //     }
+
             if (username) {
-                el.innerHTML = `
-            👋 Hello <strong>${username}</strong>!
-            <span class="logout" onclick="logout()">Logout</span>
-            <div id="membershipStatus" class="membership-status"></div>
-        `;
+                el.innerHTML = ``;
             } else {
-                el.innerHTML = `
-            <button class="login-btn" onclick="goToLogin()">Log in here</button>
-        `;
+                el.innerHTML = ``;
             }
             Auth.renderNav();
         }
@@ -289,7 +295,7 @@
                 }
 
                 renderUserWelcome();
-                await renderMembershipStatus();
+                // await renderMembershipStatus();
 
             } catch (err) {
                 alert(err.message);
@@ -513,7 +519,7 @@
 
         async function init() {
             renderUserWelcome();
-            await renderMembershipStatus();
+            // await renderMembershipStatus();
             renderDates();
 
             const raw = await getReadingSessions(
