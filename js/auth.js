@@ -68,20 +68,26 @@ window.Auth.renderNav = function () {
         navMember.classList.remove("hidden");
 
         navMember.innerHTML = `
-            <a href="/" class="tab">Home</a>
-            <a href="my-bookings.html" class="tab">Booked</a>
-            <a href="subscriptions/subscription_main.html" class="tab">Subscribe</a>
-            <a href="subscriptions.html" class="tab">My Plan</a>
-            <a href="community-profile.html" class="tab">Me</a>
+            <div class="nav-inner">
+                    <a href="/" class="tab">Home</a>
+                    <a href="my-bookings.html" class="tab">Booked</a>
+                    <a href="subscriptions/subscription_main.html" class="tab">Subscribe</a>
+                    <a href="subscriptions.html" class="tab">My Plan</a>
+                    <a href="community-profile.html" class="tab">Me</a>
+                </div>
+            </div>
         `;
     } else {
         navGuest.classList.remove("hidden");
 
         navGuest.innerHTML = `
-            <a href="/" class="tab">Home</a>
-            <a href="about.html" class="tab">About</a>
-            <a href="subscriptions/subscription_main.html" class="tab">Subscribe</a>
-            <a href="join-us.html" class="tab">Contact</a>
+            <div class="nav-inner">
+                    <a href="/" class="tab">Home</a>
+                    <a href="about.html" class="tab">About</a>
+                    <a href="subscriptions/subscription_main.html" class="tab">Subscribe</a>
+                    <a href="join-us.html" class="tab">Contact</a>
+                    <button class="login-btn" onclick="goToLogin()">Log in</button>
+            </div>
         `;
     }
 };
