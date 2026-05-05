@@ -14,32 +14,9 @@ window.bookSession = async function ({ sessionId }) {
     try {
         // ✅ If no userId, ask user to log in
         if (!userId) {
-            const username = prompt("Enter your username to book:")?.trim();
-            if (!username) return;
-
-            const loginRes = await fetch(LOGIN_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-API-KEY": API_KEY
-                },
-                body: JSON.stringify({
-                    username,
-                    password: "lingpingreading33"
-                })
-            });
-
-
-
-            const loginData = await loginRes.json();
-            userId = loginData?.data?.userId;
-
-            if (!loginRes.ok || !userId) {
-                throw new Error("Invalid username. Please check and try again.");
-            }
-
-            localStorage.setItem("userId", userId);
-            localStorage.setItem("username", username);
+            localStorage.setItem("redirectAfterLogin", window.location.href);
+            window.location.href = "login.html";
+            return;
         }
 
         // ✅ Book session

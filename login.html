@@ -175,6 +175,7 @@
             }
 
             saveSession(loginResult.data, email);
+            alert("🎉 You're logged in! Ready to book and subscribe. Please go back to continue.");
             redirectBack();
 
         } catch (error) {
@@ -197,6 +198,7 @@
             }
 
             saveSession(loginResult.data, username);
+            alert("🎉 You're logged in! Ready to book and subscribe. Please go back to continue.");
             redirectBack();
 
         } catch (err) {
@@ -390,6 +392,7 @@
             if (res.ok && json?.status && json?.data?.userId) {
 
                 saveSession(json.data, fullPhone);
+                alert("🎉 You're logged in! Ready to book and subscribe. Please go back to continue.");
                 redirectBack();
 
             } else {
