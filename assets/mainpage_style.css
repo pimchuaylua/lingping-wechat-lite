@@ -270,15 +270,32 @@ nav a:hover {
 
 
 .location-btn {
-    background: transparent;
-    border: none;
-    padding: 0;
-    font-size: 15px;
-    color: #444;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    transition: all 0.2s ease;
+}
+
+.location-btn:hover {
+    background: #f7f7f7;
+}
+
+.location-btn::after {
+    content: "▾";
+    font-size: 12px;
+    margin-left: 4px;
 }
 
 .location-btn.active {
-    color: var(--theme);
+    color: var(black);
     font-weight: 500;
 }
 
