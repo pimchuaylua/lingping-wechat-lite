@@ -281,22 +281,39 @@ nav a:hover {
     align-items: center;
     gap: 6px;
 
+    color: #666;
     transition: all 0.2s ease;
 }
 
+/* Hover */
 .location-btn:hover {
     background: #f7f7f7;
 }
 
+/* Arrow */
 .location-btn::after {
     content: "▾";
     font-size: 12px;
     margin-left: 4px;
 }
 
+/* Active (selected state) */
 .location-btn.active {
-    color: var(black);
+    color: #111;
     font-weight: 500;
+    border-color: #ccc;
+    background: #fafafa;
+}
+
+/* 🔥 Kill iOS blue styles */
+button {
+    color: #666;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus,
+button:active {
+    outline: none;
 }
 
 /* --- Avatar --- */
@@ -536,6 +553,7 @@ label:has(#topics) {
     gap: 10px;
 }
 
+/* Membership buttons */
 .membership-btn {
     padding: 8px 16px;
     border-radius: 20px;
@@ -543,11 +561,19 @@ label:has(#topics) {
     background: #fff;
     cursor: pointer;
     font-size: 14px;
+
+    color: #666;
+    /* 👈 fix blue text */
+    transition: all 0.2s ease;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
+/* Active state */
 .membership-btn.active {
     background: var(--theme);
     color: #fff;
+    /* 👈 keep white when active */
     border-color: var(--theme);
 }
 
@@ -616,6 +642,7 @@ body {
     overflow: hidden;
     z-index: 10;
     min-width: 180px;
+    color: #333;
 }
 
 .location-option {
