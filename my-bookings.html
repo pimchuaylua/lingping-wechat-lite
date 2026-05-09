@@ -121,8 +121,19 @@
             <!-- Title + Status -->
             <div class="event-row">
                 <div class="event-title">${s.title}</div>
-                <div class="status ${s.isFull ? "full" : "available"}">
-                    ${s.isFull ? "Full" : `Available (${s.seatsLeft})`}
+
+                <div class="status ${s.maxParticipants === -1
+                        ? "canceled"
+                        : s.isFull
+                            ? "full"
+                            : "available"
+                    }">
+                    ${s.maxParticipants === -1
+                        ? "Canceled"
+                        : s.isFull
+                            ? "Full"
+                            : "Available"
+                    }
                 </div>
             </div>
 

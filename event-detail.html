@@ -211,7 +211,7 @@
                     if (json.status && json.data.length > 0) {
                         section.innerHTML = `
                             <div class="label">
-                                Attendees (${s.maxParticipants - s.seatsLeft})
+                                Attendees (${s.maxParticipants - s.seatsLeft}/${s.maxParticipants})
                             </div>
                             ${json.data.map(a => `
                                 <div
