@@ -302,7 +302,7 @@ nav a:hover {
 .location-btn::after {
     content: "▾";
     font-size: 12px;
-    margin-left: 4px;
+    margin-left: 1px;
 }
 
 /* Active (selected state) */
@@ -577,9 +577,12 @@ label:has(#topics) {
 }
 
 .membership-btn {
-    background: none;
-    border: none;
-    padding: 0;
+    background: rgba(255, 140, 0, 0.08);
+    /* light orange */
+    border: 1px solid rgba(255, 140, 0, 0.25);
+
+    padding: 6px 12px;
+    border-radius: 20px;
 
     color: var(--theme);
     font-size: 14px;
@@ -587,51 +590,49 @@ label:has(#topics) {
 
     cursor: pointer;
 
-    text-decoration: none;
-    transition: opacity 0.2s ease;
-
-    /* IMPORTANT: removes button feel */
-    appearance: none;
-    -webkit-appearance: none;
-    font-family: inherit;
-    line-height: 1;
-}
-
-.membership-btn {
-    height: 36px;
     display: inline-flex;
     align-items: center;
 
-    /* override text-only collapse */
-    padding: 0 4px;
+    transition: all 0.2s ease;
+
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: inherit;
 }
 
 /* layout */
 .membership-toggle {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
+}
+
+/* hover */
+.membership-btn:hover {
+    background: rgba(255, 140, 0, 0.15);
 }
 
 /* inactive */
 .membership-btn:not(.active) {
-    opacity: 1;
-    font-weight: 500;
+    opacity: 0.8;
 }
 
-/* active = real link style */
+/* active state */
 .membership-btn.active {
-    font-weight: 700;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    background: rgba(255, 140, 0, 0.18);
+    border-color: rgba(255, 140, 0, 0.4);
+    font-weight: 600;
     opacity: 1;
 }
 
 .membership-btn,
-.location-btn,
-.more-btn {
+.location-btn {
+    height: 34px;
+    box-sizing: border-box;
     line-height: 1;
-    vertical-align: middle;
+
+    display: inline-flex;
+    align-items: center;
 }
 
 .membership-toggle,
@@ -715,7 +716,7 @@ body {
 }
 
 .location-option {
-    padding: 10px 14px;
+    padding: 6px 12px;
     cursor: pointer;
     font-size: 14px;
 }
@@ -950,4 +951,14 @@ body {
 
 .more-btn:hover {
     color: #111827;
+}
+
+.membership-label {
+    font-size: 16px;
+    color: #888;
+    font-weight: 500;
+
+    margin-right: 8px;
+    display: inline-flex;
+    align-items: center;
 }
