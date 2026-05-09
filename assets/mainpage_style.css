@@ -562,21 +562,81 @@ label:has(#topics) {
     gap: 24px;
 }
 
-.membership-btn {
-    background: transparent;
-    border: none;
-    padding: 0;
+.location-btn {
+    height: 36px;
+    box-sizing: border-box;
 
-    font-size: 16px;
-    color: #777;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 14px;
     font-weight: 500;
 
     cursor: pointer;
 }
 
-.membership-btn.active {
+.membership-btn {
+    background: none;
+    border: none;
+    padding: 0;
+
     color: var(--theme);
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+
+    /* IMPORTANT: removes button feel */
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: inherit;
+    line-height: 1;
+}
+
+.membership-btn {
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+
+    /* override text-only collapse */
+    padding: 0 4px;
+}
+
+/* layout */
+.membership-toggle {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* inactive */
+.membership-btn:not(.active) {
+    opacity: 1;
+    font-weight: 500;
+}
+
+/* active = real link style */
+.membership-btn.active {
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 1;
+}
+
+.membership-btn,
+.location-btn,
+.more-btn {
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.membership-toggle,
+.header-right {
+    align-items: center;
 }
 
 .english-levels {
@@ -745,8 +805,8 @@ body {
 .top-header {
     display: flex;
     align-items: center;
+    /* 👈 THIS is the key */
     justify-content: space-between;
-    padding: 12px 16px;
 }
 
 .header-left,
@@ -806,26 +866,6 @@ body {
     display: flex;
     justify-content: center;
     gap: 8px;
-}
-
-.membership-btn {
-    background: transparent;
-    border: 1px solid #ddd;
-    color: #666;
-
-    padding: 8px 16px;
-    border-radius: 999px;
-
-    font-size: 14px;
-    font-weight: 500;
-
-    transition: 0.2s ease;
-}
-
-.membership-btn.active {
-    background: rgba(245, 158, 11, 0.12);
-    border-color: rgba(245, 158, 11, 0.25);
-    color: #c77700;
 }
 
 .more-dropdown {
