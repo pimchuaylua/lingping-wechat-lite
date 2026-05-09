@@ -65,14 +65,17 @@ nav a:hover {
     gap: 10px;
 }
 
+/* Topics */
 .topic {
     cursor: pointer;
     color: #666;
+    padding-bottom: 2px;
 }
 
 .topic.active {
     color: var(--theme);
-    font-weight: 500;
+    border-bottom: 2px solid var(--theme);
+    font-weight: 600;
 }
 
 .topic.active {
@@ -555,37 +558,93 @@ label:has(#topics) {
 
 .membership-toggle {
     display: flex;
-    gap: 10px;
+    justify-content: center;
+    gap: 24px;
 }
 
-/* Membership buttons */
-.membership-btn {
-    padding: 8px 16px;
-    border-radius: 20px;
-    border: 1px solid #ddd;
-    background: #fff;
-    cursor: pointer;
+.location-btn {
+    height: 36px;
+    box-sizing: border-box;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
     font-size: 14px;
+    font-weight: 500;
 
-    color: #666;
-    /* 👈 fix blue text */
-    transition: all 0.2s ease;
-
-    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
 }
 
-/* Active state */
+.membership-btn {
+    background: none;
+    border: none;
+    padding: 0;
+
+    color: var(--theme);
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+
+    /* IMPORTANT: removes button feel */
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: inherit;
+    line-height: 1;
+}
+
+.membership-btn {
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+
+    /* override text-only collapse */
+    padding: 0 4px;
+}
+
+/* layout */
+.membership-toggle {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* inactive */
+.membership-btn:not(.active) {
+    opacity: 1;
+    font-weight: 500;
+}
+
+/* active = real link style */
 .membership-btn.active {
-    background: var(--theme);
-    color: #fff;
-    /* 👈 keep white when active */
-    border-color: var(--theme);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    opacity: 1;
+}
+
+.membership-btn,
+.location-btn,
+.more-btn {
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.membership-toggle,
+.header-right {
+    align-items: center;
 }
 
 .english-levels {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     margin-top: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
 }
 
 .english-levels.hidden {
@@ -593,20 +652,25 @@ label:has(#topics) {
 }
 
 .english-levels .level {
-    padding: 6px 14px;
-    border-radius: 16px;
-    border: 1px solid #ddd;
     cursor: pointer;
+
+    background: transparent;
+    border: 1px solid #ddd;
+    color: #666;
+
+    padding: 8px 16px;
+    border-radius: 999px;
+
     font-size: 14px;
+    font-weight: 500;
+
+    transition: 0.2s ease;
 }
 
 .english-levels .level.active {
-    background: var(--theme);
-    color: #fff;
-}
-
-.english-levels {
-    margin-bottom: 12px;
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.25);
+    color: #c77700;
 }
 
 html,
@@ -711,4 +775,179 @@ body {
     align-items: center;
     width: 100%;
     /* 🔥 THIS is the missing piece */
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    justify-self: start;
+}
+
+.logo {
+    height: 44px;
+    width: 44px;
+    /* 👈 important for perfect circle */
+    object-fit: cover;
+    /* keeps image from stretching */
+    display: block;
+    border-radius: 50%;
+}
+
+.brand-name {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.tab-bar {
+    margin-top: 8px;
+}
+
+.top-header {
+    display: flex;
+    align-items: center;
+    /* 👈 THIS is the key */
+    justify-content: space-between;
+}
+
+.header-left,
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.membership-cta {
+    justify-self: center;
+
+    background: var(--theme);
+    color: white;
+    text-decoration: none;
+
+    height: 44px;
+    /* 👈 key */
+    padding: 0 18px;
+    /* remove vertical padding */
+    display: flex;
+    /* 👈 centers text */
+    align-items: center;
+
+    border-radius: 12px;
+
+    font-weight: 600;
+    font-size: 14px;
+
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.membership-cta:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.login-btn {
+    height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+.membership-section {
+    margin-top: 20px;
+}
+
+.membership-label {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.membership-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.more-dropdown {
+    position: relative;
+}
+
+.more-btn {
+    background: transparent;
+    border: none;
+
+    padding: 8px 12px;
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 400;
+    /* 👈 more natural than 200 */
+
+    color: #9ca3af;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.more-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+
+    min-width: 160px;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+}
+
+.more-item {
+    display: block;
+    padding: 10px 12px;
+
+    text-decoration: none;
+    color: #111827;
+    font-size: 14px;
+}
+
+.more-item:hover {
+    background: #f3f4f6;
+}
+
+.hidden {
+    display: none;
+}
+
+.login-link {
+    color: var(--theme);
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.login-link:hover {
+    opacity: 0.7;
+}
+
+.more-btn {
+    background: none;
+    border: none;
+
+    color: #6b7280;
+    font-weight: 500;
+    font-size: 30px;
+
+    cursor: pointer;
+    padding: 6px;
+}
+
+.more-btn:hover {
+    color: #111827;
 }
