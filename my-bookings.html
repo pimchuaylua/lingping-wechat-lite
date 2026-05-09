@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260331">
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260509">
 
     <!-- Config & Logic -->
     <script src="config.js"></script>
@@ -121,8 +121,19 @@
             <!-- Title + Status -->
             <div class="event-row">
                 <div class="event-title">${s.title}</div>
-                <div class="status ${s.isFull ? "full" : "available"}">
-                    ${s.isFull ? "Full" : `Available (${s.seatsLeft})`}
+
+                <div class="status ${s.maxParticipants === -1
+                        ? "canceled"
+                        : s.isFull
+                            ? "full"
+                            : "available"
+                    }">
+                    ${s.maxParticipants === -1
+                        ? "Canceled"
+                        : s.isFull
+                            ? "Full"
+                            : "Available"
+                    }
                 </div>
             </div>
 
