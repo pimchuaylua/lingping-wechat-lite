@@ -13,6 +13,7 @@
 
     <!-- Config & Booking -->
     <script src="config.js"></script>
+    <script src="js/dropdown.js"></script>
     <script src="js/auth.js?v=20260312"></script>
     <script src="js/booking.js?v=202602183"></script>
     <script src="js/utils.js?v=20250210?v=20260113"></script>
@@ -28,63 +29,7 @@
 
 <body>
     <div class="container">
-        <div class="top-header">
-
-            <!-- LEFT -->
-            <div class="header-left">
-                <div class="brand">
-                    <img src="assets/logos/lingping_logo.png" class="logo" />
-                </div>
-
-                <a href="subscriptions/subscription_main.html" class="membership-cta">
-                    Get Membership
-                </a>
-            </div>
-
-            <!-- RIGHT -->
-            <div class="header-right">
-
-                <!-- <div class="membership-section">
-
-                    <div class="membership-toggle">
-                        <button class="membership-btn active" data-type="community">
-                            Community
-                        </button>
-                        <button class="membership-btn" data-type="english">
-                            Classes
-                        </button>
-                    </div>
-                </div> -->
-
-                <div class="more-dropdown">
-                    <button class="more-btn" onclick="toggleMoreDropdown()">
-                        ☰
-                    </button>
-
-                    <div id="moreMenu" class="more-menu hidden">
-                        <a href="/" class="more-item">Home</a>
-                        <a href="login.html" class="more-item">Log In</a>
-                        <a href="subscriptions.html" class="more-item">My Plan</a>
-                        <a href="my-bookings.html" class="more-item">Bookings</a>
-                        <a href="community-profile.html" class="more-item">Profile</a>
-                        <a href="about.html" class="more-item">About</a>
-                        <a href="join-us.html" class="more-item">Contact</a>
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- <div class="sub">
-            A language exchange club exploring the world through languages, cultures, and shared perspectives.
-        </div> -->
-
-        <!-- 👋 User Welcome -->
-        <nav class="tab-bar" id="navGuest"></nav>
-        <nav class="tab-bar hidden" id="navMember"></nav>
-        <div id="userWelcome" class="user-welcome"></div>
-
+        <div id="header"></div>
 
         <div class="membership-section">
             <span class="membership-label">I'm here for</span>
@@ -743,17 +688,7 @@
             });
         });
 
-        function toggleMoreDropdown() {
-            const menu = document.getElementById("moreMenu");
-            menu.classList.toggle("hidden");
-        }
 
-        document.addEventListener("click", function (e) {
-            const dropdown = document.querySelector(".more-dropdown");
-            if (!dropdown.contains(e.target)) {
-                document.getElementById("moreMenu").classList.add("hidden");
-            }
-        });
     </script>
 
 </body>
