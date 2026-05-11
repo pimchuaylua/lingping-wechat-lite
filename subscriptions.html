@@ -281,8 +281,8 @@
                 const isCommunity = levelName.toLowerCase().includes("community");
 
                 const isActive =
-                    (isCommunity && expiredAt > now) ||
-                    (!isCommunity && expiredAt > now && sub.numberOfPassesLeft > 0);
+                    (sub.numberOfPassesLeft == null && expiredAt > now) ||
+                    (sub.numberOfPassesLeft > 0);
 
                 return {
                     ...sub,
@@ -306,15 +306,16 @@
                 const card = document.createElement("div");
                 card.className = `subscription-card ${sub.isActive ? "active" : "inactive"}`;
 
-                const passesHtml = !sub.isCommunity
-                    ? `<div>Passes Left: ${sub.numberOfPassesLeft}</div>`
-                    : "";
+                const passesHtml = `<div>${sub.numberOfPassesLeft == null
+                    ? "Unlimited access"
+                    : `Passes Left: ${sub.numberOfPassesLeft}`
+                    }</div>`
 
                 card.innerHTML = `
             <div class="sub-title">
                 ${sub.subscriptionPlan.name}
                 <span class="badge ${sub.isActive ? "active" : "inactive"}">
-                    ${sub.isActive ? "Active" : "Expired"}
+                    ${sub.isActive ? "Active" : "Expired/No Passes Left"}
                 </span>
             </div>
 
