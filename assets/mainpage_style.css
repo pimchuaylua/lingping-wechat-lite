@@ -397,18 +397,15 @@ label:has(#topics) {
 .event-photo {
     width: 100%;
     height: 180px;
-    /* consistent height */
     border-radius: 14px;
     overflow: hidden;
     background: #eaeaea;
 
-    /* ✅ CENTER IT */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
+    /* IMPORTANT for flag overlay */
 }
 
-.event-photo img {
+.event-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -964,4 +961,23 @@ body {
     margin-right: 8px;
     display: inline-flex;
     align-items: center;
+}
+
+
+.lang-flag {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50%;
+    object-fit: cover;
+    /* crops center correctly */
+
+    border: 2px solid white;
+    background: white;
+
+    z-index: 10;
 }
