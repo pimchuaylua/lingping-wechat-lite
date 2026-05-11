@@ -428,12 +428,35 @@
                 card.className = "card";
                 card.style.cursor = "pointer";
 
+                // ✅ FIXED: flag logic inside loop
+                let flagImg = "";
+
+                const title = s.title.toLowerCase();
+
+                if (title.includes("english") && title.includes("thai")) {
+                    flagImg = "assets/flags/thai-eng.png";
+                } else if (title.includes("english")) {
+                    flagImg = "assets/flags/english.png";
+                } else if (title.includes("thai")) {
+                    flagImg = "assets/flags/thai.png";
+                } else if (title.includes("chinese")) {
+                    flagImg = "assets/flags/chinese.png";
+                } else if (title.includes("russian")) {
+                    flagImg = "assets/flags/russian.png";
+                } else if (title.includes("japanese")) {
+                    flagImg = "assets/flags/japanese.png";
+                } else if (title.includes("spanish")) {
+                    flagImg = "assets/flags/spanish.png";
+                }
+
                 card.innerHTML = `
-        ${s.photoUrl ? `
-            <div class="event-photo center">
-                <img src="${s.photoUrl}" alt="${s.title}">
-            </div>
-        ` : ""}
+                <div class="event-photo">
+                    <img class="event-img" src="${s.photoUrl}" alt="${s.title}">
+
+                    ${flagImg ? `
+                        <img class="lang-flag" src="${flagImg}" />
+                    ` : ""}
+                </div>
 
         <div class="event-body">
             <!-- Title + Status -->
@@ -456,7 +479,7 @@
             </div>
 
             <!-- Description -->
-            <div class="event-desc">${s.description || ""}</div>
+           <!-- <div class="event-desc">${s.description || ""}</div>-->
 
             <!-- Time + Book -->
             <div class="event-row">
