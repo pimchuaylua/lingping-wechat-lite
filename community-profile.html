@@ -8,10 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260331" />
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260511">
     <link rel="stylesheet" href="assets/community-profile_style.css">
     <!-- Config -->
     <script src="config.js"></script>
+    <script src="js/dropdown.js"></script>
 
     <!-- Profile Logic -->
     <script src="js/profile-questions.js" defer></script>
@@ -76,21 +77,10 @@
 
 
     <div class="container">
-        <div class="header">Lingping Club</div>
-
-        <!-- <div class="sub">
-            A language exchange club exploring the world through languages, cultures, and shared perspectives.
-        </div> -->
+        <div id="header"></div>
 
         <!-- 👋 Login / User Welcome (ADDED) -->
         <div id="userWelcome" class="user-welcome"></div>
-
-        <nav class="tab-bar">
-            <a href="/" class="tab">Home</a>
-            <a href="my-bookings.html" class="tab">Booked</a>
-            <a href="subscriptions/subscription_main.html" class="tab">Subscribe</a>
-            <a href="subscriptions.html" class="tab active">My Plan</a>
-        </nav>
 
         <form id="profileForm" class="card">
 
