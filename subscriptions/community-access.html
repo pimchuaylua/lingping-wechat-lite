@@ -42,7 +42,7 @@
 
             <!-- OPTION B -->
             <div class="plan-card">
-                <div class="plan-title">🏠🌐 Full Access</div>
+                <div class="plan-title">🏡 Your City + <br> 🌐 Online</div>
                 <div class="plan-sub">Unlimited access to:</div>
 
                 <div class="plan-features">
@@ -50,17 +50,12 @@
                     <p>• All onsite events in your city</p>
                 </div>
 
-                <div class="plan-btn" style="display:flex; flex-direction:column; gap:10px;">
-
-                    <button class="book-btn" onclick="goBangkok()">
-                        Bangkok
-                    </button>
-
-                    <button class="book-btn" onclick="goChiangmai()">
-                        Chiangmai
-                    </button>
-
-                </div>
+                <select class="city-dropdown" onchange="goToCity(this.value)">
+                    <option value="" selected disabled>Your City</option>
+                    <option value="bangkok">Bangkok</option>
+                    <option value="chiangmai">Chiang Mai</option>
+                    <option value="phuket">Phuket</option>
+                </select>
             </div>
 
         </div>
@@ -68,6 +63,17 @@
     </div>
 
     <script>
+
+        function goToCity(city) {
+            if (city === "bangkok") {
+                goBangkok();
+            } else if (city === "chiangmai") {
+                goChiangmai();
+            } else if (city === "phuket") {
+                goPhuket();
+            }
+        }
+
         function goOnlineOnly() {
             window.location.href = "community-plans-online.html";
         }
@@ -78,6 +84,10 @@
 
         function goChiangmai() {
             window.location.href = "community-plans-chiangmai.html";
+        }
+
+        function goPhuket() {
+            window.location.href = "community-plans-phuket.html";
         }
     </script>
 
