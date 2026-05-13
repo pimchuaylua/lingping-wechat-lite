@@ -212,7 +212,6 @@
 
                 const json = await res.json();
                 const user = json.data;
-                console.log("load language:", user);
                 renderLearningBadge(user);
 
             } catch (err) {
