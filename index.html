@@ -453,6 +453,7 @@
                 // ✅ FIXED: flag logic inside loop
                 let flagImg = "";
 
+                const isCanceled = s.maxParticipants === -1;
                 const title = s.title.toLowerCase();
 
                 if (title.includes("english") && title.includes("thai")) {
@@ -491,7 +492,7 @@
                             ? "full"
                             : "available"
                     }">
-                    ${s.maxParticipants === -1
+                    ${isCanceled
                         ? "Canceled"
                         : s.isFull
                             ? "Full"
@@ -531,7 +532,7 @@
 
                 <button
                     class="book-btn ${s.isFull ? "" : "available"}"
-                    ${s.isFull ? "disabled" : ""}
+                    ${s.isFull || isCanceled ? "disabled" : ""}
                     onclick="event.stopPropagation(); handleBookClick('${s.id}')">
                     Book
                 </button>

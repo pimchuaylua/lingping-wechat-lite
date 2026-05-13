@@ -90,10 +90,13 @@
         function renderEvents(sessions) {
             eventList.innerHTML = "";
 
+
+
             sessions.forEach(s => {
                 const card = document.createElement("div");
                 card.className = "card";
 
+                const isCanceled = s.maxParticipants === -1;
                 card.innerHTML = `
         ${s.photoUrl ? `
             <div class="event-photo center">
@@ -112,7 +115,7 @@
                             ? "full"
                             : "available"
                     }">
-                    ${s.maxParticipants === -1
+                    ${isCanceled
                         ? "Canceled"
                         : s.isFull
                             ? "Full"
@@ -135,7 +138,7 @@
                         : `
         <button
             class="book-btn ${s.isFull ? "" : "available"}"
-            ${s.isFull ? "disabled" : ""}
+            ${s.isFull || isCanceled ? "disabled" : ""}
             onclick="event.stopPropagation(); bookSession({ sessionId: '${s.id}' })">
             Book
         </button>
