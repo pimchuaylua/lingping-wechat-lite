@@ -52,7 +52,13 @@ window.bookSession = async function ({ sessionId }) {
         alert("🎉 Booking confirmed! See you soon.");
 
     } catch (err) {
-        alert(err.message);
+        if (err.message.includes("No valid subscription found")) {
+
+            document.getElementById("membershipModal").style.display = "flex";
+
+        } else {
+            alert(err.message);
+        }
     }
 };
 
@@ -138,4 +144,12 @@ function mapBookingsToSessions(bookings) {
             };
         })
         .sort((a, b) => a.startTime - b.startTime); // 🔽 order by time
+}
+
+function closeMembershipPopup() {
+    document.getElementById("membershipModal").style.display = "none";
+}
+
+function goToMembership() {
+    window.location.href = "subscriptions/subscription_main.html"; // change to your membership page
 }

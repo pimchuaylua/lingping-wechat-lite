@@ -17,7 +17,7 @@
     <script src="js/auth.js?v=20260312"></script>
     <script src="js/booking.js?v=202602183"></script>
     <script src="js/utils.js?v=20250210?v=20260113"></script>
-    <link rel="stylesheet" href="assets/policy-modal.css">
+    <link rel="stylesheet" href="assets/policy-modal.css?v=20260513">
 
     <meta property="og:title" content="Lingping Club" />
     <meta property="og:description"
@@ -106,6 +106,27 @@
                 </button>
                 <button class="modal-confirm" onclick="confirmPolicy()">
                     Yes, I agree / 我同意
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="membershipModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-text">
+                ✨ <strong>Membership Needed</strong><br><br>
+
+                Your membership or passes have been used up 😊<br>
+                Renew your membership to continue booking sessions and joining discussions.
+            </div>
+
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closeMembershipPopup()">
+                    Maybe Later
+                </button>
+
+                <button class="modal-confirm" onclick="goToMembership()">
+                    Get Membership
                 </button>
             </div>
         </div>
