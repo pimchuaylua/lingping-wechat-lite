@@ -111,6 +111,27 @@
         </div>
     </div>
 
+    <div id="membershipModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-text">
+                ✨ <strong>Membership Needed</strong><br><br>
+
+                Your membership or passes have been used up 😊<br>
+                Renew your membership to continue booking sessions and joining discussions.
+            </div>
+
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closeMembershipPopup()">
+                    Maybe Later
+                </button>
+
+                <button class="modal-confirm" onclick="goToMembership()">
+                    Get Membership
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
 
         const { BASE_URL, API_KEY } = window.CONFIG;

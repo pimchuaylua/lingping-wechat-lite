@@ -88,3 +88,31 @@
 .city-dropdown:focus {
     outline: none;
 }
+
+.popup-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.popup-buttons button {
+    flex: 1;
+}
+
+.secondary-button {
+    background: #f3f3f3;
+    color: #333;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.primary-button {
+    background: black;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
