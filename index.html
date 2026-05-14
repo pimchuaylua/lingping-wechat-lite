@@ -132,6 +132,30 @@
         </div>
     </div>
 
+    <div id="preBookingModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-text">
+                📌 <strong>Confirm Booking</strong><br><br>
+
+                📅 Session: <span id="modalSessionName"></span><br>
+                🕖 Time: <span id="modalSessionTime"></span><br><br>
+
+                By joining, you agree to our community guidelines.<br>
+                Please keep conversations respectful 🌿
+            </div>
+
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closePreBookingModal()">
+                    Cancel
+                </button>
+
+                <button class="modal-confirm" onclick="confirmPreBooking()">
+                    OK, Book
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
 
         const { BASE_URL, API_KEY } = window.CONFIG;
@@ -533,7 +557,7 @@
                 <button
                     class="book-btn ${s.isFull ? "" : "available"}"
                     ${s.isFull || isCanceled ? "disabled" : ""}
-                    onclick="event.stopPropagation(); handleBookClick('${s.id}')">
+                    onclick='event.stopPropagation(); handleBookClick("${s.id}", ${JSON.stringify(s)})'>
                     Book
                 </button>
             </div>
@@ -660,10 +684,15 @@
             };
         });
 
-        function handleBookClick(sessionId) {
+        function handleBookClick(sessionId, session) {
             // Only English classes need consent
+
+            console.log(session);
             if (membershipType !== "english") {
-                bookSession({ sessionId });
+
+                currentSessionId = sessionId;
+
+                preBookingModal(sessionId, session);
                 return;
             }
 
