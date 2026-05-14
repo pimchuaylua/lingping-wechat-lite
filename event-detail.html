@@ -40,8 +40,7 @@
     <div class="container" id="sessionContainer">Loading...</div>
 
     <div class="book-bar">
-        <button class="book-btn"
-            onclick="event.stopPropagation(); handleBookClick(s.id,s.levelName, JSON.stringify(s))">
+        <button class="book-btn" onclick="event.stopPropagation(); handleBookClick(s.id,s.levelName, s)">
             Book Session
         </button>
 
@@ -72,29 +71,7 @@
         </div>
     </div>
 
-    <div id="preBookingModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <div class="modal-text">
-                📌 <strong>Confirm Booking</strong><br><br>
-
-                📅 Session: <span id="modalSessionName"></span><br>
-                🕖 Time: <span id="modalSessionTime"></span><br><br>
-
-                By joining, you agree to our community guidelines.<br>
-                Please keep conversations respectful 🌿
-            </div>
-
-            <div class="modal-actions">
-                <button class="modal-cancel" onclick="closePreBookingModal()">
-                    Cancel
-                </button>
-
-                <button class="modal-confirm" onclick="confirmPreBooking()">
-                    OK, Book
-                </button>
-            </div>
-        </div>
-    </div>
+    <div id="preBookingModalContainer"></div>
 
     <script>
         const { BASE_URL, API_KEY } = window.CONFIG;
