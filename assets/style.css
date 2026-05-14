@@ -57,7 +57,7 @@ body {
 .content {
     font-size: 16px;
     line-height: 1.6;
-    text-align: justify;
+    text-align: left;
 }
 
 .subtle-link {
