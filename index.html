@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260511">
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260514">
 
     <!-- Config & Booking -->
     <script src="config.js"></script>
@@ -130,6 +130,10 @@
                 </button>
             </div>
         </div>
+    </div>
+
+    <div id="preBookingModalContainer"></div>
+    </div>
     </div>
 
     <script>
@@ -533,7 +537,7 @@
                 <button
                     class="book-btn ${s.isFull ? "" : "available"}"
                     ${s.isFull || isCanceled ? "disabled" : ""}
-                    onclick="event.stopPropagation(); handleBookClick('${s.id}')">
+                    onclick='event.stopPropagation(); handleBookClick("${s.id}", ${JSON.stringify(s)})'>
                     Book
                 </button>
             </div>
@@ -660,10 +664,15 @@
             };
         });
 
-        function handleBookClick(sessionId) {
+        function handleBookClick(sessionId, session) {
             // Only English classes need consent
+
+            console.log(session);
             if (membershipType !== "english") {
-                bookSession({ sessionId });
+
+                currentSessionId = sessionId;
+
+                preBookingModal(sessionId, session);
                 return;
             }
 

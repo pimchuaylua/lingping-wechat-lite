@@ -153,3 +153,38 @@ function closeMembershipPopup() {
 function goToMembership() {
     window.location.href = "subscriptions/subscription_main.html"; // change to your membership page
 }
+
+function preBookingModal(sessionId, session) {
+    console.log('in preBookingModal');
+    // session = JSON.parse(session);
+    console.log(session);
+    console.log(session.title);
+    console.log(session.time)
+    currentSessionId = sessionId;
+
+    document.getElementById("modalSessionName").innerText = session.title;
+    document.getElementById("modalSessionTime").innerText = `${Utils.formatDate(session.date)} · ${session.time} (${Utils.getTimeZoneName()})`
+    document.getElementById("modalSessionLocation").innerHTML =
+        session.levelName?.toLowerCase().includes("online")
+            ? "🌐 Online"
+            : `📍 ${session.location || "Location TBA"} `;
+
+    document.getElementById("preBookingModal").style.display = "flex";
+}
+
+function confirmPreBooking() {
+
+    document.getElementById("preBookingModal").style.display = "none";
+
+    bookSession({ sessionId: currentSessionId });
+}
+
+function closePreBookingModal() {
+    document.getElementById("preBookingModal").style.display = "none";
+}
+
+fetch("components/pre-booking-modal.html")
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById("preBookingModalContainer").innerHTML = html;
+    });

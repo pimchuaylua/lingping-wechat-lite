@@ -40,7 +40,7 @@
     <div class="container" id="sessionContainer">Loading...</div>
 
     <div class="book-bar">
-        <button class="book-btn" onclick="event.stopPropagation(); handleBookClick(s.id,s.levelName)">
+        <button class="book-btn" onclick="event.stopPropagation(); handleBookClick(s.id,s.levelName, s)">
             Book Session
         </button>
 
@@ -70,6 +70,8 @@
             </div>
         </div>
     </div>
+
+    <div id="preBookingModalContainer"></div>
 
     <script>
         const { BASE_URL, API_KEY } = window.CONFIG;
@@ -307,15 +309,20 @@
             document.getElementById("cancelBtn").style.display = "inline-block";
         }
 
-        function handleBookClick(sessionId, levelName) {
+        function handleBookClick(sessionId, levelName, session) {
+
+            console.log(session);
+
             const isEnglish = levelName
                 ? levelName.toLowerCase().includes('english')
                 : false;
+
             if (isEnglish) {
                 showPolicyModal(sessionId);
-            } else {
-                bookSession({ sessionId });
+                return;
             }
+            console.log('here!');
+            preBookingModal(sessionId, session);
         }
 
         function openMeetingInfo() {
