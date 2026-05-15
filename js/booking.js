@@ -49,7 +49,7 @@ window.bookSession = async function ({ sessionId }) {
             window.renderUserWelcome();
         }
 
-        alert("🎉 Booking confirmed! See you soon.");
+        showBookingSuccessModal();
 
     } catch (err) {
         if (err.message.includes("No valid subscription found")) {
@@ -188,3 +188,17 @@ fetch("components/pre-booking-modal.html")
     .then(html => {
         document.getElementById("preBookingModalContainer").innerHTML = html;
     });
+
+fetch("components/booking-success-modal.html")
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById("bookingSuccessModalContainer").innerHTML = html;
+    });
+
+function showBookingSuccessModal() {
+    document.getElementById("bookingSuccessModal").style.display = "flex";
+}
+
+function closeBookingSuccessModal() {
+    document.getElementById("bookingSuccessModal").style.display = "none";
+}

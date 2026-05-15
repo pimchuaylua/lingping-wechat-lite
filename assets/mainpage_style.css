@@ -443,6 +443,10 @@ label:has(#topics) {
     overflow: hidden;
 }
 
+.event-title {
+    transition: color 0.18s ease;
+}
+
 .event-desc {
     font-size: 13px;
     color: #777;
@@ -459,7 +463,36 @@ label:has(#topics) {
     flex-direction: column;
     height: 100%;
     padding: 0;
-    /* ⬅️ align with photo top */
+
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.event-body:hover {
+    transform: translateY(-3px);
+    opacity: 0.92;
+}
+
+.event-body:active {
+    transform: scale(0.97);
+}
+
+.event-title {
+    transition: color 0.18s ease;
+}
+
+.event-body:hover .event-title {
+    color: var(--theme);
+}
+
+/* MUCH more visible */
+.event-time::after {
+    content: "→ Tap for details";
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--theme);
+    font-weight: 600;
 }
 
 
