@@ -1,19 +1,32 @@
-function toggleMoreDropdown(btn) {
-    const menu = btn.parentElement.querySelector(".more-menu");
-    menu.classList.toggle("hidden");
-}
+document.addEventListener("DOMContentLoaded", () => {
+    // Load header safely
+    const header = document.getElementById("header");
 
-document.addEventListener("click", function (e) {
-    document.querySelectorAll(".more-dropdown").forEach(dropdown => {
+    if (header) {
+        fetch("/header.html")
+            .then(res => res.text())
+            .then(data => {
+                header.innerHTML = data;
+            });
+    }
+
+    // Click outside to close dropdown
+    document.addEventListener("click", function (e) {
+        const dropdown = document.querySelector(".more-dropdown");
+        const menu = document.getElementById("moreMenu");
+
+        if (!dropdown || !menu) return;
+
         if (!dropdown.contains(e.target)) {
-            const menu = dropdown.querySelector(".more-menu");
             menu.classList.add("hidden");
         }
     });
 });
 
-fetch("/header.html")
-    .then(res => res.text())
-    .then(data => {
-        document.getElementById("header").innerHTML = data;
-    });
+// Toggle dropdown
+function toggleMoreDropdown() {
+    const menu = document.getElementById("moreMenu");
+    if (!menu) return;
+
+    menu.classList.toggle("hidden");
+}
