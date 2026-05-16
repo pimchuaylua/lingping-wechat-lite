@@ -208,7 +208,10 @@
                                 src="${extra.photo || 'assets/logos/lingping_logo.png'}"
                                 alt="${h.name}"
                                 class="host-avatar"
+                                style="cursor:pointer;"
+                                onclick="openPhoto('${extra.photo || 'assets/logos/lingping_logo.png'}')"
                             />
+                            
                             <div class="host-info">
                                 <div class="host-name">${h.name}</div>
                                 ${extra.description ? `<div class="host-desc">${extra.description}</div>` : ""}
@@ -367,6 +370,31 @@
 
         function closeMeetingInfo() {
             document.querySelector(".lp-modal-overlay")?.remove();
+        }
+    </script>
+
+    <script>
+        function openPhoto(url) {
+            const modal = document.createElement('div');
+
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.background = 'rgba(0,0,0,0.8)';
+            modal.style.display = 'flex';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            modal.style.zIndex = '9999';
+
+            modal.innerHTML = `
+            <img src="${url}" style="max-width:90%; max-height:90%; border-radius:12px;">
+        `;
+
+            modal.onclick = () => modal.remove();
+
+            document.body.appendChild(modal);
         }
     </script>
 </body>
