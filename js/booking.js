@@ -120,8 +120,9 @@ function mapBookingsToSessions(bookings) {
             const start = new Date(s.startTime);
             const end = new Date(start.getTime() + s.durationMins * 60000);
 
-            const hosts = s.hosts?.length
-                ? s.hosts.map(h => h.name).join(", ")
+            const hostObjects = s.hosts || [];
+            const hosts = hostObjects.length
+                ? hostObjects.map(h => h.name).join(", ")
                 : "TBA";
 
             return {
@@ -132,7 +133,8 @@ function mapBookingsToSessions(bookings) {
                 title: s.title,
                 description: s.shortDescription,
                 fullDescription: s.fullDescription,
-                hosts,
+                hosts: s.hosts || [],
+                hostObjects: hostObjects,
                 isFull: s.isFull,
                 seatsLeft: s.numberOfSeatsLeft,
                 maxParticipants: s.maxParticipants,
@@ -155,11 +157,7 @@ function goToMembership() {
 }
 
 function preBookingModal(sessionId, session) {
-    console.log('in preBookingModal');
     // session = JSON.parse(session);
-    console.log(session);
-    console.log(session.title);
-    console.log(session.time)
     currentSessionId = sessionId;
 
     document.getElementById("modalSessionName").innerText = session.title;

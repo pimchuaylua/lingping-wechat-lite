@@ -96,12 +96,17 @@
                 const card = document.createElement("div");
                 card.className = "card";
 
+                const hostObjects = s.hosts || [];
+                const hosts = hostObjects.length
+                    ? hostObjects.map(h => h.name).join(", ")
+                    : "TBA";
+
                 const isCanceled = s.maxParticipants === -1;
                 card.innerHTML = `
         ${s.photoUrl ? `
-            <div class="event-photo center">
-                <img src="${s.photoUrl}" alt="${s.title}">
-            </div>
+            <div class="event-photo">
+                    <img class="event-img" src="${s.photoUrl}" alt="${s.title}">
+                </div>
         ` : ""}
 
         <div class="event-body">
