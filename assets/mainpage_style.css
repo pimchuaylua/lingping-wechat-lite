@@ -815,18 +815,65 @@ body {
     display: flex;
     align-items: center;
     justify-self: start;
+
+    position: relative;
+    cursor: pointer;
 }
 
+/* logo */
 .logo {
     height: 44px;
     width: 44px;
-    /* 👈 important for perfect circle */
     object-fit: cover;
-    /* keeps image from stretching */
     display: block;
     border-radius: 50%;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* hover / tap feedback */
+.brand:hover .logo {
+    transform: scale(1.06);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.brand::before {
+    content: "✨";
+    position: absolute;
+    top: 0px;
+    left: -2px;
+    font-size: 12px;
+    animation: sparkle 1.6s infinite;
+    pointer-events: none;
+}
+
+/* sparkle hint */
+.brand::after {
+    content: "✨";
+    position: absolute;
+    bottom: 0px;
+    right: -2px;
+    font-size: 12px;
+    animation: sparkle 1.6s infinite;
+    pointer-events: none;
+}
+
+/* subtle animation */
+@keyframes sparkle {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: scale(1.4);
+        opacity: 1;
+    }
+}
+
+/* optional text */
 .brand-name {
     font-size: 22px;
     font-weight: 700;
