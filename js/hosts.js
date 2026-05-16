@@ -52,5 +52,17 @@ window.HOSTS_MAP = {
     "69f61377ceaac6e3d0ab6475": {
         photo: "./photos/hosts/dragon.jpg",
         description: "From Bangkok • Music is life • Heat is my kryptonite"
+    }, "69f5d9afceaac6e3d0ab5c58": {
+        photo: "./photos/hosts/jan.png",
+        description: "Law fresh grad ⚖️ | Bangkok ↔ Chiang Mai 🌆🌿 | Mountain escape lover ⛰️"
+    }, "69f5d99dceaac6e3d0ab5c56": {
+        photo: "./photos/hosts/nice.png",
+        description: "Language lover 🌍 | Learning Spanish 🇪🇸 | Always meeting new people ✨"
+    }, "6964a22c2d652e065db71c0d": {
+        photo: "./photos/hosts/ethan.png",
+        description: "Chinese teacher 🇨🇳 | Love meeting new friends ✨ | Language & culture enthusiast 🌏"
+    }, "69f5d918ceaac6e3d0ab5c50": {
+        photo: "./photos/hosts/emmy.png",
+        description: "Curious about people 🌿 | Lover of books 📖 | Always exploring somewhere new 🌎"
     }
 };

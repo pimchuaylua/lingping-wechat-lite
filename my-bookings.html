@@ -9,11 +9,12 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
+    <link rel="stylesheet" href="assets/style.css">
 
     <!-- Config & Logic -->
     <script src="config.js"></script>
     <script src="js/auth.js?v=20260312"></script>
-    <script src="js/booking.js?v=202602183"></script>
+    <script src="js/booking.js?v=20260516"></script>
     <script src="js/utils.js?v=20250210"></script>
     <script src="js/dropdown.js"></script>
 </head>
@@ -21,9 +22,7 @@
 <body>
     <div class="container">
         <div id="header"></div>
-        <!-- 🔹 Date Filter -->
-
-        <!-- 🔹 Events -->
+        <h1 class="page-title">Upcoming Sessions</h1>
         <div id="eventList"></div>
     </div>
 
@@ -96,12 +95,17 @@
                 const card = document.createElement("div");
                 card.className = "card";
 
+                const hostObjects = s.hosts || [];
+                const hosts = hostObjects.length
+                    ? hostObjects.map(h => h.name).join(", ")
+                    : "TBA";
+
                 const isCanceled = s.maxParticipants === -1;
                 card.innerHTML = `
         ${s.photoUrl ? `
-            <div class="event-photo center">
-                <img src="${s.photoUrl}" alt="${s.title}">
-            </div>
+            <div class="event-photo">
+                    <img class="event-img" src="${s.photoUrl}" alt="${s.title}">
+                </div>
         ` : ""}
 
         <div class="event-body">
