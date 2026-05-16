@@ -128,8 +128,22 @@
                 </div>
             </div>
 
-            <!-- Description -->
-            <div class="event-desc">${s.description || ""}</div>
+            ${s.levelName.includes("Online")
+                        ? `<div class="event-location">🌐 Online</div>`
+                        : s.locationUrl
+                            ? `<div class="event-location">
+                📍 <a href="${s.locationUrl}"
+                     target="_blank"
+                     rel="noopener"
+                     onclick="event.stopPropagation()"
+                   >${s.location || "View location"}</a>
+           </div>`
+                            : s.location
+                                ? `<div class="event-location">📍 ${s.location}</div>`
+                                : ""
+                    }
+
+</div>
 
             <!-- Time + Book -->
             <div class="event-row">
