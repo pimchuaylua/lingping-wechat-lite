@@ -31,10 +31,39 @@
                     font-size:14px;
                 ">
                     🌿 <strong>Community Reminder</strong><br>
-                    • Be on time. Arrive 10 minutes early to order drinks.<br>
+                    • Be on time.<br>
                     • Respect others and be polite.<br>
-                    • Take turns speaking, listen actively and be inclusive.<br>
-                    • Keep the space educational. No inappropriate jokes or comments.
+                    • Take turns speaking and listen actively.<br>
+                    • No inappropriate jokes or comments.<br>
+                    • Only booked participants may join. No walk-ins or unbooked guests.
+                </div>
+
+                <div style="
+                    margin-top:12px;
+                    background:#ffe9e9;
+                    padding:12px;
+                    border-radius:10px;
+                    font-size:14px;
+                ">
+                    📌 <strong>Cancellation Policy</strong><br>
+                    Please cancel at least 3 hours before your session if you can’t join so others can take your spot
+                    and hosts can plan their time better. Please be considerate.
+                </div>
+
+                <!-- AGREEMENT CHECKBOX -->
+                <div style="
+                    margin-top:14px;
+                    padding:12px;
+                    border-radius:10px;
+                    background:#f7f7f7;
+                    font-size:14px;
+                ">
+                    <label style="display:flex; gap:10px; align-items:flex-start; cursor:pointer;">
+                        <input type="checkbox" id="bookingAgreeCheckbox" style="margin-top:3px;">
+                        <span>
+                            I understand and agree to the community reminders and cancellation policy.
+                        </span>
+                    </label>
                 </div>
 
                 <div style="margin-top:12px; font-size:14px;">
@@ -51,9 +80,34 @@
                 Cancel
             </button>
 
-            <button class="modal-confirm" onclick="confirmPreBooking()">
+            <button class="modal-confirm" onclick="
+                if (!document.getElementById('bookingAgreeCheckbox')?.checked) {
+                    alert('Please agree to the community reminders and cancellation policy.');
+                    return;
+                }
+
+                bookSession({ sessionId: currentSessionId });
+                closePreBookingModal();
+            ">
                 OK, Book
             </button>
         </div>
     </div>
 </div>
+
+<script>
+    function confirmPreBooking() {
+
+        const agreed = document.getElementById("bookingAgreeCheckbox")?.checked;
+
+        if (!agreed) {
+            alert("Please agree to the community reminders and cancellation policy.");
+            return;
+        }
+
+        // continue booking here
+        bookSession({ sessionId: currentSessionId });
+
+        closePreBookingModal();
+    }
+</script>
