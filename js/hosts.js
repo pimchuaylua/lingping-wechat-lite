@@ -64,5 +64,8 @@ window.HOSTS_MAP = {
     }, "69f5d918ceaac6e3d0ab5c50": {
         photo: "./photos/hosts/emmy.png",
         description: "Curious about people 🌿 | Lover of books 📖 | Always exploring somewhere new 🌎"
+    }, "6a0805ab0e1c62025f3a3249": {
+        photo: "./photos/hosts/tonkla.png",
+        description: "Student looking to improve his communication 🗣️ / Wants to learn many skills 🎨 / Video game enthusiast 🎮"
     }
 };

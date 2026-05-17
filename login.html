@@ -49,10 +49,7 @@
 
         <div class="login-card">
 
-            <h1 style="margin-bottom:5px;">Welcome Back 👋</h1>
-            <div class="sub" style="margin-bottom:25px;">
-                Continue to Lingping
-            </div>
+            <h1 style="margin-bottom:10px;">Welcome Back</h1>
 
             <!-- Google Login -->
             <div id="g_id_onload"
@@ -60,22 +57,37 @@
                 data-callback="handleCredentialResponse">
             </div>
 
-            <div id="googleWrapper" style="position:relative; display:flex; justify-content:center; min-height:44px;">
-
-                <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline">
+            <!-- Google Login -->
+            <div style="text-align:center; margin-bottom:10px;">
+                <div style="
+        font-size:18px;
+        font-weight:700;
+        margin-bottom:10px;
+    ">
+                    <span style="font-size:13px; font-weight:400; color:#666;">
+                        Get Updates & Reminders
+                    </span>
                 </div>
 
+                <div id="g_id_onload"
+                    data-client_id="140719627174-5tt9d5rqmbjt48tplrh072j10uqkau8t.apps.googleusercontent.com"
+                    data-callback="handleCredentialResponse">
+                </div>
+
+                <div id="googleWrapper"
+                    style="display:flex; justify-content:center; transform: scale(1.2); margin-top:10px;">
+                    <div class="g_id_signin" data-type="standard" data-size="large" data-theme="filled_blue">
+                    </div>
+                </div>
             </div>
 
             <div class="login-divider">or</div>
 
-            <!-- Phone Login -->
-            <div class="login-option" onclick="showPhoneLogin()">
-                Continue with phone
+            <div class="login-option" style="font-size:14px; padding:10px 12px;" onclick="showPhoneLogin()">
+                Continue with phone number
             </div>
 
-            <!-- Username Login -->
-            <div class="login-option" onclick="loginWithUsername()">
+            <div class="login-option" style="font-size:14px; padding:10px 12px;" onclick="loginWithUsername()">
                 Continue with username
             </div>
 
