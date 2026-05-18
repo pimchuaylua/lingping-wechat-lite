@@ -67,5 +67,11 @@ window.HOSTS_MAP = {
     }, "6a0805ab0e1c62025f3a3249": {
         photo: "./photos/hosts/tonkla.png",
         description: "Student looking to improve his communication 🗣️ / Wants to learn many skills 🎨 / Video game enthusiast 🎮"
+    }, "69f61388ceaac6e3d0ab6477": {
+        photo: "./photos/hosts/pimkaew.png",
+        description: "Fresh business grad ✨ Enjoy meeting new people, exploring ideas, and learning Japanese 🇯🇵"
+    }, "69f5d937ceaac6e3d0ab5c52": {
+        photo: "./photos/hosts/facu.png",
+        description: "From Argentina to the World 🌏!"
     }
 };
