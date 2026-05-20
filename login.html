@@ -128,7 +128,7 @@
     <div id="successPopup" class="success-popup" style="display:none;">
         <div class="success-card">
             <h2>🎉 You're logged in!</h2>
-            <p>Ready to book and subscribe. Please go back to continue.</p>
+            <p>You can now get a membership and start booking activities!</p>
 
             <button onclick="closeSuccessPopup()" class="primary-button" style="margin-top:15px;">
                 OK
@@ -169,7 +169,13 @@
         const params = new URLSearchParams(window.location.search);
         const returnUrl = params.get("returnUrl");
 
-        window.location.href = returnUrl || "/index.html";
+        // first priority: explicit returnUrl
+        // second priority: previous page
+        // fallback: homepage
+        window.location.href =
+            returnUrl ||
+            document.referrer ||
+            "/index.html";
     }
 
     /* ---------------- GOOGLE LOGIN ---------------- */
@@ -200,9 +206,13 @@
             saveSession(loginResult.data, email);
             showSuccessPopup();
 
-            setTimeout(() => {
-                redirectBack();
-            }, 2000);
+
+            // allow browser to paint popup first
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    redirectBack();
+                }, 2000);
+            });
 
         } catch (error) {
             console.error("Login flow error:", error);
@@ -226,9 +236,13 @@
             saveSession(loginResult.data, username);
             showSuccessPopup();
 
-            setTimeout(() => {
-                redirectBack();
-            }, 2000);
+
+            // allow browser to paint popup first
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    redirectBack();
+                }, 2000);
+            });
 
         } catch (err) {
             alert(err.message);
@@ -423,9 +437,13 @@
                 saveSession(json.data, fullPhone);
                 showSuccessPopup();
 
-                setTimeout(() => {
-                    redirectBack();
-                }, 2000);
+
+                // allow browser to paint popup first
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        redirectBack();
+                    }, 2000);
+                });
 
             } else {
 
