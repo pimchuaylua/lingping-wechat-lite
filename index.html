@@ -136,6 +136,44 @@
     <div id="preBookingModalContainer"></div>
     <div id="bookingSuccessModalContainer"></div>
 
+    <div id="promoModal" class="modal" style="display:none;">
+        <div class="modal-content">
+
+            <div class="modal-text" style="text-align:center;">
+
+                <div style="font-size:15px; font-weight:600; margin-bottom:12px; color:#555;">
+                    Welcome to Lingping Club ✨
+                </div>
+
+                <div style="
+                    background:#fff7d6;
+                    border:1px solid #ffe08a;
+                    border-radius:12px;
+                    padding:16px;
+                    margin-top:10px;
+                ">
+                    <div style="font-size:22px; line-height:1.4;">
+                        Log in for free trials in Bangkok, Phuket & online!
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-actions" style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
+
+                <button class="modal-cancel" onclick="closePromoModal()">
+                    Continue browsing
+                </button>
+
+                <button class="modal-confirm" onclick="window.location.href='login.html'">
+                    Login
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+
     <div id="surpriseModal" class="modal" style="display:none;">
         <div class="modal-content">
 
@@ -794,6 +832,21 @@
 
             el.innerText = getRandomQuote();
         }
+    </script>
+
+    <script>
+        function closePromoModal() {
+            document.getElementById("promoModal").style.display = "none";
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const userId = localStorage.getItem("userId");
+            console.log('im here!', userId)
+            if (!userId) {
+                console.log('showing promoModal')
+                document.getElementById("promoModal").style.display = "flex";
+            }
+        });
     </script>
 
 </body>
