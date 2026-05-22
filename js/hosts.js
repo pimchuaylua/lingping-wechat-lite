@@ -73,7 +73,7 @@ window.HOSTS_MAP = {
     }, "69f5d937ceaac6e3d0ab5c52": {
         photo: "./photos/hosts/facu.png",
         description: "From Argentina to the World 🌏!"
-    }, "69f61388ceaac6e3d0ab6477": {
+    }, "69ff4afaceaac6e3d0ab8d8d": {
         photo: "./photos/hosts/een.png",
         description: "From Southern Thailand 🌴 Translator & Host 🎤"
     }
