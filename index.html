@@ -396,11 +396,11 @@
 
         /* ---------------- DATE HELPERS ---------------- */
 
-        function getNext7Days() {
+        function getNextNDays(n) {
             const days = [];
             const today = new Date();
 
-            for (let i = 0; i < 7; i++) {
+            for (let i = 0; i < n; i++) {
                 const d = new Date(today);
                 d.setDate(today.getDate() + i);
                 days.push({
@@ -415,7 +415,7 @@
             return days;
         }
 
-        const dates = getNext7Days();
+        const dates = getNextNDays(9);
         let activeDate = null;
         let selectedTopic = "";
         let sessions = [];
