@@ -88,7 +88,7 @@ h1 {
 .book-btn {
     width: 100%;
     max-width: 480px;
-    background: #FFB050;
+    background: var(--theme);
     color: #fff;
     font-size: 16px;
     padding: 12px;
@@ -367,4 +367,12 @@ h1 {
     gap: 10px;
     /* 👈 this restores spacing */
     margin-top: 8px;
+    margin-bottom: 16px;
+    /* space before CTA area */
+}
+
+.sub {
+    margin-bottom: 8px;
+    color: #777;
+    font-size: 13px;
 }
