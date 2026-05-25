@@ -9,7 +9,7 @@
     <script src="js/hosts.js?v=9"></script>
     <script src="js/booking.js?v=202605162"></script>
     <script src="js/utils.js?v=20250210"></script>
-    <link rel="stylesheet" href="assets/event-detail_style.css?v=20260516">
+    <link rel="stylesheet" href="assets/event-detail_style.css?v=20260526">
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
 </head>
 
@@ -156,9 +156,7 @@
                             `
                         : `
                         <div class="sub">
-                            Log in to see meeting details. New here? Add WeChat
-                            <span class="highlight">lingpingreading</span>
-                            to join your first session for free ✨
+                            Log in to see meeting details & get your first free trial ✨
                         </div>
                             `
                     }
@@ -186,7 +184,7 @@
 
                 <!-- Description -->
                 <div class="section">
-                    <div class="label">About this session</div>
+                    <div class="label">What We’ll Talk About</div>
                     <div class="description">${fullDescHTML}</div>
                 </div>
 
@@ -235,25 +233,43 @@
                     const json = await res.json();
                     const section = document.getElementById("attendeesSection");
 
+
                     if (json.status && json.data.length > 0) {
+
+                        const joined = s.maxParticipants - s.seatsLeft;
+                        const left = s.seatsLeft;
+
+                        let seatText = "";
+
+                        if (left === 0) {
+                            seatText = `${joined} joined · full`;
+                        } else if (left === 1) {
+                            seatText = `${joined} joined · 1 seat left`;
+                        } else {
+                            seatText = `${joined} joined · ${left} seats left`;
+                        }
+
                         section.innerHTML = `
                             <div class="label">
-                                Attendees (${s.maxParticipants - s.seatsLeft}/${s.maxParticipants})
+                                People You’ll Meet (${seatText})
                             </div>
+
+                            <div class="sub">
+                            Tap to get to know fellow Lingping members 👇
+                            </div>
+
+                            <div class="chips">
                             ${json.data.map(a => `
-                                <div
-                                    class="sub"
-                                    style="cursor:pointer; color:#007bff;"
-                                    onclick="viewProfile('${a.userId}')"
-                                >
-                                    • ${a.name}
-                                </div>
+                                <span class="chip clickable" onclick="viewProfile('${a.userId}')">
+                                ${a.name}
+                                </span>
                             `).join("")}
+                            </div>
                         `;
                     } else {
                         section.innerHTML = `
-                            <div class="label">Attendees</div>
-                            <div class="sub">None yet</div>
+                            <div class="label">People You’ll Meet</div>
+                            <div class="sub">Be the first to join—people will join soon!</div>
                         `;
                     }
                 } catch (err) {

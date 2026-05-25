@@ -44,6 +44,11 @@ h1 {
     text-decoration: underline;
 }
 
+.description {
+    color: #374151;
+    /* consistent content color */
+}
+
 .description p {
     margin: 8px 0;
 }
@@ -304,4 +309,62 @@ h1 {
     height: 50px;
     width: auto;
     object-fit: contain;
+}
+
+.label {
+    font-weight: 700;
+    font-size: 15px;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.sub.clickable {
+    cursor: pointer;
+    color: #666;
+    text-decoration: underline;
+    text-decoration-color: #e5e7eb;
+    text-underline-offset: 3px;
+    padding: 2px 0;
+    transition: 0.15s;
+}
+
+.sub.clickable:hover {
+    color: #111827;
+    text-decoration-color: #9ca3af;
+    transform: translateX(2px);
+}
+
+.hint {
+    font-size: 15px;
+    color: #9ca3af;
+    margin: 4px 0 10px;
+    line-height: 1.4;
+}
+
+.chip {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #fff7ed;
+    /* very light orange */
+    color: #9a3412;
+    /* warm dark orange text */
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.15s;
+    border: 1px solid #fed7aa;
+}
+
+.chip:hover {
+    background: #ffedd5;
+    border-color: #fdba74;
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    /* 👈 this restores spacing */
+    margin-top: 8px;
 }
