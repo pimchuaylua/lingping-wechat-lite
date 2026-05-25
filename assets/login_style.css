@@ -186,3 +186,8 @@ body {
     max-width: 320px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
+
+.input-error {
+    border: 1px solid #e63946 !important;
+    background: #fff5f5;
+}

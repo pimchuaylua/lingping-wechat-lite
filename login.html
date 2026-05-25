@@ -92,11 +92,18 @@
             </div>
 
             <!-- PHONE LOGIN PANEL -->
-            <div id="phoneLoginPanel" style="display:none; margin-top:20px;">
+            <div id="phoneLoginPanel" style="display:none; margin-top:20px; width:100%;">
 
-                <div style="display:flex; gap:8px; margin-bottom:10px;">
+                <!-- PHONE -->
+                <div style="display:flex; gap:8px; margin-bottom:10px; width:100%;">
 
-                    <select id="countryCode" style="padding:12px; border-radius:8px; border:1px solid #ddd;">
+                    <select id="countryCode" style="
+            padding:12px;
+            border-radius:8px;
+            border:1px solid #ddd;
+            width:120px;
+            flex-shrink:0;
+        ">
                         <option value="+66">🇹🇭 +66</option>
                         <option value="+1">🇺🇸 +1</option>
                         <option value="+44">🇬🇧 +44</option>
@@ -104,18 +111,38 @@
                         <option value="+81">🇯🇵 +81</option>
                     </select>
 
-                    <input id="phoneInput" type="text" placeholder="812345678"
-                        style="flex:1; padding:12px; border-radius:8px; border:1px solid #ddd;">
+                    <input id="phoneInput" type="text" placeholder="812345678" style="
+                flex:1;
+                padding:12px;
+                border-radius:8px;
+                border:1px solid #ddd;
+                width:100%;
+                box-sizing:border-box;
+            ">
 
                 </div>
 
+                <!-- OTP -->
                 <button class="primary-button" onclick="sendOTP()">
                     Send OTP
                 </button>
 
+                <!-- NAME -->
+                <div style="margin-top:12px; margin-bottom:6px; width:100%;">
+
+                    <input id="phoneUserDisplayName" type="text" placeholder="Your name (required)" style="
+                width:100%;
+                padding:12px;
+                border-radius:8px;
+                border:1px solid #ddd;
+                font-weight:500;
+                box-sizing:border-box;
+            ">
+                </div>
+
                 <input id="otpInput" class="input-field" type="text" placeholder="Enter OTP">
 
-                <button class="primary-button" onclick="verifyOTP()">
+                <button class="primary-button" onclick="verifyOTPWithValidation()">
                     Verify
                 </button>
 
@@ -399,12 +426,32 @@
 
     }
 
+    function verifyOTPWithValidation() {
+        const nameInput = document.getElementById("phoneUserDisplayName");
+        const otpInput = document.getElementById("otpInput");
+
+        const name = nameInput.value.trim();
+
+        // reset error state
+        nameInput.classList.remove("input-error");
+
+        // validate name
+        if (!name) {
+            nameInput.classList.add("input-error");
+            nameInput.focus();
+            return;
+        }
+
+        // continue your existing verify logic
+        verifyOTP();
+    }
+
     async function verifyOTP() {
 
         const countryCode = document.getElementById("countryCode").value;
         let phone = document.getElementById("phoneInput").value.trim();
         const otp = document.getElementById("otpInput").value.trim();
-
+        const phoneUserDisplayName = document.getElementById("phoneUserDisplayName").value.trim();
         if (!otp) {
             alert("Enter OTP");
             return;
@@ -426,6 +473,7 @@
                 },
                 body: JSON.stringify({
                     phone: fullPhone,
+                    displayName: phoneUserDisplayName,
                     otp: otp
                 })
             });
