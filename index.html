@@ -18,7 +18,7 @@
     <script src="js/booking.js?v=202605162"></script>
     <script src="js/utils.js?v=20250210?v=20260113"></script>
     <script src="js/quotes.js"></script>
-    <link rel="stylesheet" href="assets/policy-modal.css?v=20260513">
+    <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
 
     <meta property="og:title" content="Lingping Club" />
     <meta property="og:description"
@@ -841,9 +841,7 @@
 
         window.addEventListener("DOMContentLoaded", () => {
             const userId = localStorage.getItem("userId");
-            console.log('im here!', userId)
             if (!userId) {
-                console.log('showing promoModal')
                 document.getElementById("promoModal").style.display = "flex";
             }
         });
