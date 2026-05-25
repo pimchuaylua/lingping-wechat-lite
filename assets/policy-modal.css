@@ -17,7 +17,7 @@
     border-radius: 16px;
     padding: 24px;
     max-width: 420px;
-    width: 90%;
+    width: 70%;
     text-align: center;
 }
 
@@ -27,21 +27,19 @@
     margin-bottom: 24px;
 }
 
-/* 🔑 FIXED ACTIONS */
 .modal-actions {
     display: flex;
     gap: 12px;
-    margin-top: 8px;
+    justify-content: center;
 }
 
 .modal-actions button {
-    flex: 1;
-    min-height: 44px;
-    /* ensures visibility */
-    padding: 12px 16px;
-    font-size: 16px;
-    font-weight: 500;
-    border-radius: 12px;
+    width: 140px;
+    /* same size for both */
+    min-height: 36px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 10px;
     border: none;
     cursor: pointer;
 }
