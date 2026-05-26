@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>My Learning Journey | Lingping Club</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
+    <link rel="stylesheet" href="assets/style.css">
+
+    <!-- Config & Logic -->
+    <script src="config.js"></script>
+    <script src="js/auth.js?v=20260312"></script>
+    <script src="js/booking.js?v=202605162"></script>
+    <script src="js/utils.js?v=20250210"></script>
+    <script src="js/dropdown.js?v=20260516"></script>
+</head>
+
+<body>
+    <div class="container">
+
+        <div id="header"></div>
+
+        <h1 class="page-title">My Learning Journey</h1>
+
+        <div id="journeyList"></div>
+
+    </div>
+
+    <script>
+        /* ---------------- MOCK DATA ---------------- */
+
+        const mockJourney = [
+            {
+                id: "j1",
+                title: "Hometowns (Chinese 🇨🇳)",
+                date: "May 25, 2026",
+                chip: "🇨🇳 Chinese",
+                hasMemo: true,
+                words: "建筑 (jiànzhù, architecture)，沙滩 (shātān, beach)，友善 (yǒushàn, kind)",
+                insights: "I felt so happy seeing our friends from Phuket and China asking each other about their hometowns. Glad to see that Lingping sparks curiosity."
+            },
+            {
+                id: "j2",
+                title: "Mindset & Challenges Talk (Thai 🇹🇭)",
+                date: "May 24, 2026",
+                chip: "🇹🇭 Thai",
+                hasMemo: false,
+                words: "เกรงใจ, ขี้เหนียว, ใจดำ",
+                insights: "Different people define 'challenge' differently depending on culture."
+            },
+            {
+                id: "j3",
+                title: "Travel Stories Sharing (English 🇬🇧)",
+                date: "May 23, 2026",
+                chip: "🇬🇧 English",
+                hasMemo: false,
+                words: "Conservative, Expectations, Divorce",
+                insights: "People connect faster when sharing personal travel stories."
+            }
+        ];
+
+        const journeyList = document.getElementById("journeyList");
+
+        /* ---------------- MEMO STATE ---------------- */
+
+        function getMemoState() {
+            return JSON.parse(localStorage.getItem("journeyMemo") || "{}");
+        }
+
+        function toggleMemo(id) {
+            const state = getMemoState();
+            state[id] = !state[id];
+            localStorage.setItem("journeyMemo", JSON.stringify(state));
+            renderJourney();
+        }
+
+        /* ---------------- HELPERS ---------------- */
+
+        function renderSection(label, value, type) {
+            if (!value || value.trim() === "") return "";
+
+            return `
+                <div class="section section-${type}">
+                    <div class="section-label">${label}</div>
+                    <div class="section-value">${value}</div>
+                </div>
+            `;
+        }
+
+        /* ---------------- RENDER ---------------- */
+
+        function renderJourney() {
+            const memoState = getMemoState();
+            journeyList.innerHTML = "";
+
+            mockJourney.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "card";
+
+                const hasMemo = memoState[item.id] ?? item.hasMemo;
+
+                const contentHTML = `
+                ${renderSection("Thoughts", item.insights, "thoughts")}
+                ${renderSection("Words I'll Use", item.words, "words")}
+        `;
+
+                card.innerHTML = `
+            <div class="event-body">
+
+                <!-- TITLE + ICON -->
+                <div class="event-row" style="align-items:flex-start; justify-content:space-between;">
+                    <div>
+                        <div class="event-title">${item.title}</div>
+
+                        <!-- small date -->
+                        <div style="font-size:12px; color:#aaa; margin-top:2px;">
+                            ${item.date}
+                        </div>
+                    </div>
+
+                    <div style="cursor:pointer; font-size:18px;"
+                         onclick="event.stopPropagation(); toggleMemo('${item.id}')">
+                        ${hasMemo ? "✔️" : "➕"}
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+                <!-- CONTENT (only show non-empty sections) -->
+                <div style="margin-top:12px; font-size:14px; line-height:1.6;">
+                    ${contentHTML}
+                </div>
+
+            </div>
+        `;
+
+                card.onclick = () => {
+                    localStorage.setItem("selectedLearning", JSON.stringify(item));
+                    window.location.href = "learning-detail.html";
+                };
+
+                journeyList.appendChild(card);
+            });
+        }
+
+        /* ---------------- INIT ---------------- */
+
+        renderJourney();
+
+    </script>
+
+    <style>
+        /* ---------------- SECTION BASE (RESET TO CLEAN LIST FEEL) ---------------- */
+
+        .section {
+            margin-bottom: 12px;
+        }
+
+        /* remove old grey block style */
+        .section {
+            padding: 0;
+            background: transparent;
+        }
+
+        /* ---------------- LABEL ---------------- */
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #4a4a4a;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        /* ---------------- DEFAULT TEXT ---------------- */
+
+        .section-value {
+            font-size: 14px;
+            color: #4a4a4a;
+            line-height: 1.7;
+        }
+
+        /* =========================================================
+   🟨 POST-IT STYLE ONLY FOR WORDS + THOUGHTS
+========================================================= */
+
+        .section-words,
+        .section-thoughts {
+            background: #fff9c4;
+            padding: 10px 12px;
+            border-radius: 10px;
+            box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.08);
+            margin-top: 2px;
+            transform: rotate(-0.5deg);
+        }
+
+        /* different tint for thoughts (slightly different sticky note) */
+        .section-thoughts {
+            background: #e8f5ff;
+            transform: rotate(0.5deg);
+        }
+
+        /* words separator line (keep your learning structure) */
+        .section-words .section-value {
+            padding-top: 6px;
+            border-top: 1px dashed rgba(0, 0, 0, 0.15);
+        }
+
+        /* ---------------- CLEAN CLAMP FOR THOUGHTS ---------------- */
+
+        .section-thoughts .section-value {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .event-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #020000;
+            letter-spacing: 0.7px;
+        }
+
+        .card-date {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.381);
+            margin-top: 2px;
+            font-style: italic;
+        }
+
+        .divider {
+            margin: 1px 0 0 0;
+            /* ↓ was 10px */
+            height: 4px;
+            /* ↓ was 8px */
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            position: absolute;
+            left: 1%;
+            right: 1%;
+            height: 1px;
+            /* (0.2px is too thin / inconsistent) */
+            background: #eaeaea;
+        }
+
+        .divider::before {
+            top: 0;
+        }
+
+        .divider::after {
+            bottom: 0;
+        }
+    </style>
+
+</body>
+
+</html>
