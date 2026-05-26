@@ -52,7 +52,7 @@ window.bookSession = async function ({ sessionId }) {
         showBookingSuccessModal();
 
     } catch (err) {
-        if (err.message.includes("No valid subscription found")) {
+        if (err.message.includes("No valid subscription found") || err.message.includes("Error occured")) {
 
             document.getElementById("membershipModal").style.display = "flex";
 
