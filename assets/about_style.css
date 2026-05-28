@@ -1,15 +1,16 @@
 .photo-slider {
-    width: 100%;
-    max-width: 420px;
+    width: 90vw;
+    /* 90% of screen width */
+    max-width: 1000px;
     margin: 24px auto 40px;
     text-align: center;
 }
 
-/* Wrapper that holds arrow + photo + arrow */
 .photo-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: 12px;
 }
 
 .photo-frame {
@@ -18,33 +19,41 @@
 
 .photo-frame img {
     width: 100%;
-    height: 260px;
-    object-fit: contain;
-    background: #f6f6f6;
+    height: auto;
+    display: block;
     border-radius: 14px;
 }
 
 /* arrows */
 .photo-arrow {
-    background: rgba(255, 255, 255, 0.9);
+    background: transparent;
     border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    font-size: 20px;
+    width: auto;
+    height: auto;
+    font-size: 25px;
+    line-height: 1;
     cursor: pointer;
     user-select: none;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    opacity: 0.7;
+    opacity: 0.5;
+    box-shadow: none;
+    padding: 0 4px;
 }
 
 .photo-arrow:hover {
     opacity: 1;
-    background: #fff;
 }
 
 .photo-caption {
     margin-top: 10px;
     font-size: 14px;
     color: #666;
+}
+
+.section-title {
+    font-size: 25px;
+    font-weight: 700;
+    text-align: center;
+    color: #3a312c;
+    letter-spacing: -0.6px;
+    margin: 5px 0 5px;
 }
