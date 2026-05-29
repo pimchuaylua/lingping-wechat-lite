@@ -46,9 +46,9 @@
             <div class="popup-section">
                 <div class="label">Words you learned</div>
 
-                <input class="word-input" placeholder="沙滩 (shātān) = beach" />
-                <input class="word-input" placeholder="建筑 (jiànzhù) = architecture" />
-                <input class="word-input" placeholder="Inspiration = 灵感" />
+                <input class="word-input" placeholder="Ex. 建筑 (jiànzhù) = architecture" />
+                <input class="word-input" placeholder="Ex. มาตรฐาน = standard" />
+                <input class="word-input" placeholder="Ex. Inspiration = 灵感" />
             </div>
 
             <div class="popup-actions">
@@ -94,7 +94,6 @@
 
             const data = await res.json();
             const list = data.data;
-            console.log(list);
             const myLearnings = list
                 .map((item, index) => {
                     const session =
@@ -128,8 +127,6 @@
                         sessionId: item.readingSession._id
                     };
                 });
-
-            console.log(myLearnings);
 
             return myLearnings;
 
@@ -184,7 +181,6 @@
             const contentHTML = `
         ${renderSection("Thoughts", item.insights, "thoughts")}
         ${renderSection("Words I'll Use", item.words, "words")}`;
-            console.log(item);
 
             card.innerHTML = `
         <div class="card-header">
@@ -229,14 +225,11 @@
     }
 
     async function submitLearning() {
-        const thoughts = document.getElementById("thoughtsInput").value;
+        const thoughts = document.getElementById("thoughtsInput").value ?? "";
 
         const wordInputs = document.querySelectorAll(".word-input");
-
         const wordsLearned = Array.from(wordInputs)
-            .map(i => i.value.trim())
-            .filter(Boolean);
-
+            .map(i => (i.value ?? "").trim());
         const userId = localStorage.getItem("userId");
 
         try {
@@ -250,8 +243,8 @@
                     },
                     body: JSON.stringify({
                         sessionId: currentSessionId,
-                        wordsLearned,
-                        thoughts
+                        wordsLearned: wordsLearned ?? [],
+                        thoughts: thoughts ?? ""
                     })
                 }
             );
@@ -259,7 +252,7 @@
             if (!res.ok) throw new Error("Failed");
 
             closeLearningPopup();
-            resetLearningForm(); // ✅ important
+            resetLearningForm();
 
             alert("Yay! I learned new things today 🎉");
             renderJourney();
@@ -268,8 +261,6 @@
             console.error(err);
             alert("Failed to save learning");
         }
-
-
     }
 
     function resetLearningForm() {
