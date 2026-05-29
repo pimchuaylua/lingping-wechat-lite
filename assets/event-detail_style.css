@@ -376,3 +376,49 @@ h1 {
     color: #777;
     font-size: 13px;
 }
+
+.host-help {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--theme)
+}
+
+.host-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.host-popup-content {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 320px;
+    text-align: center;
+}
+
+.host-popup-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 18px;
+}
+
+.host-popup-link {
+    display: block;
+    margin: 12px 0;
+    color: #111;
+    text-decoration: none;
+}
+
+.host-popup-close {
+    margin-top: 16px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
