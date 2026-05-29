@@ -39,16 +39,16 @@
             <div class="popup-section">
                 <div class="label">Thoughts</div>
                 <textarea id="thoughtsInput"
-                    placeholder="Insights you learned, new culture, new perspectives, reflections, did someone change your mind?"></textarea>
+                    placeholder="Insights you learned, new cultures you noticed, reflections, or what you’re thinking about…"></textarea>
             </div>
 
             <!-- Words -->
             <div class="popup-section">
                 <div class="label">Words you learned</div>
 
-                <input class="word-input" placeholder="satán = beach" />
-                <input class="word-input" placeholder="admire = Chinese translation" />
-                <input class="word-input" placeholder="好奇 = curious" />
+                <input class="word-input" placeholder="沙滩 (shātān) = beach" />
+                <input class="word-input" placeholder="建筑 (jiànzhù) = architecture" />
+                <input class="word-input" placeholder="Inspiration = 灵感" />
             </div>
 
             <div class="popup-actions">
@@ -576,13 +576,30 @@
         font-size: 13px;
     }
 
-    .word-input {
+    .word-input,
+    #thoughtsInput {
         width: 100%;
-        padding: 8px;
-        margin-top: 6px;
+        box-sizing: border-box;
+        padding: 10px;
         border-radius: 10px;
         border: 1px solid #ddd;
         font-size: 13px;
+    }
+
+    #thoughtsInput {
+        height: 2em;
+        /* fallback base */
+        min-height: 120px;
+        max-height: 300px;
+
+        resize: vertical;
+        /* user can expand if needed */
+        padding: 10px;
+        line-height: 1.4;
+    }
+
+    .word-input {
+        margin-bottom: 8px;
     }
 
     .complete-btn {
@@ -599,38 +616,66 @@
 
     .popup-actions {
         display: flex;
-        justify-content: space-between;
         gap: 12px;
-        margin-top: 14px;
+    }
+
+    .popup-actions button {
+        flex: 1;
+        height: 44px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0;
+        margin: 0;
+
+        box-sizing: border-box;
+
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 44px;
+        /* 🔥 key trick for perfect vertical alignment */
+
+        border-radius: 10px;
+
+        appearance: none;
+        -webkit-appearance: none;
     }
 
     .discard-btn {
-        flex: 1;
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid #ddd;
-        background: #f5f5f5;
-        color: #444;
-        font-weight: 600;
-        cursor: pointer;
+        background: #f3f4f6;
+        border: 1px solid #e5e7eb;
+        color: #374151;
     }
 
     .complete-btn {
-        flex: 1;
-        padding: 10px;
-        border-radius: 10px;
-        border: none;
-        background: #16a34a;
+        background: #48c074;
+        border: 1px solid #48c074;
         color: white;
-        font-weight: 600;
-        cursor: pointer;
     }
 
-    .discard-btn:hover {
-        background: #eaeaea;
+    .popup-section .label {
+        font-size: 15px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 10px;
+        letter-spacing: -0.2px;
     }
 
-    .complete-btn:hover {
-        background: #15803d;
+    .popup-section {
+        padding: 0 12px;
+    }
+
+    .popup {
+        width: 90vw;
+        max-width: 900px;
+        /* optional safety for big screens */
+        margin: 0 auto;
+    }
+
+    .word-input {
+        width: 100%;
+        box-sizing: border-box;
     }
 </style>
