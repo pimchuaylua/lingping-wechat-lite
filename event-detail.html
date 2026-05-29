@@ -9,7 +9,7 @@
     <script src="js/hosts.js?v=9"></script>
     <script src="js/booking.js?v=202605162"></script>
     <script src="js/utils.js?v=20250210"></script>
-    <link rel="stylesheet" href="assets/event-detail_style.css?v=202605262">
+    <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
 </head>
 
@@ -72,6 +72,25 @@
 
     <div id="preBookingModalContainer"></div>
     <div id="bookingSuccessModalContainer"></div>
+
+    <!-- Popup -->
+    <div id="hostHelpPopup" class="host-popup">
+        <div class="host-popup-content">
+            <div class="host-popup-title">We’re happy to help you!</div>
+
+            <a href="tel:+66611923366" class="host-popup-link">
+                📞 Call <u>+66 61 192 3366</u>
+            </a>
+
+            <a href="https://lin.ee/Z1VavLv" target="_blank" class="host-popup-link">
+                💬 Message our <u>LINE Official</u>
+            </a>
+
+            <button onclick="closeHostHelpPopup()" class="host-popup-close">
+                Close
+            </button>
+        </div>
+    </div>
 
     <script>
         const { BASE_URL, API_KEY } = window.CONFIG;
@@ -211,7 +230,14 @@
                             
                             <div class="host-info">
                                 <div class="host-name">${h.name}</div>
-                                ${extra.description ? `<div class="host-desc">${extra.description}</div>` : ""}
+                                
+                                ${extra.description ? `
+                                    <div class="host-desc">${extra.description}</div>
+                                ` : ""}
+
+                                <div class="host-help" onclick="openHostHelpPopup()" style="cursor:pointer;">
+                                    <strong>📍 Need help finding us?</strong>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -299,6 +325,16 @@
             alert("Meeting number copied ✅");
         }
 
+    </script>
+
+    <script>
+        function openHostHelpPopup() {
+            document.getElementById('hostHelpPopup').style.display = 'flex';
+        }
+
+        function closeHostHelpPopup() {
+            document.getElementById('hostHelpPopup').style.display = 'none';
+        }
     </script>
 
     <script>
