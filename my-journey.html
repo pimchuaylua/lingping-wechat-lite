@@ -30,40 +30,76 @@
 
     </div>
 
+
     <script>
         /* ---------------- MOCK DATA ---------------- */
 
-        const mockJourney = [
-            {
-                id: "j1",
-                title: "Hometowns (Chinese 🇨🇳)",
-                date: "May 25, 2026",
-                chip: "🇨🇳 Chinese",
-                hasMemo: true,
-                words: "建筑 (jiànzhù, architecture)，沙滩 (shātān, beach)，友善 (yǒushàn, kind)",
-                insights: "I felt so happy seeing our friends from Phuket and China asking each other about their hometowns. Glad to see that Lingping sparks curiosity."
-            },
-            {
-                id: "j2",
-                title: "Mindset & Challenges Talk (Thai 🇹🇭)",
-                date: "May 24, 2026",
-                chip: "🇹🇭 Thai",
-                hasMemo: false,
-                words: "เกรงใจ, ขี้เหนียว, ใจดำ",
-                insights: "Different people define 'challenge' differently depending on culture."
-            },
-            {
-                id: "j3",
-                title: "Travel Stories Sharing (English 🇬🇧)",
-                date: "May 23, 2026",
-                chip: "🇬🇧 English",
-                hasMemo: false,
-                words: "Conservative, Expectations, Divorce",
-                insights: "People connect faster when sharing personal travel stories."
-            }
-        ];
+        const { BASE_URL, API_KEY } = window.CONFIG;
 
         const journeyList = document.getElementById("journeyList");
+
+        async function loadJourney() {
+            try {
+                const userId = localStorage.getItem("userId");
+                const token = localStorage.getItem("token");
+
+                const res = await fetch(
+                    `${BASE_URL}/bookings/history/user/${userId}`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-API-KEY": API_KEY,
+                            "Authorization": `Bearer ${token}`
+                        }
+                    }
+                );
+
+                const data = await res.json();
+                const list = data.data;
+                console.log(list);
+                const myLearnings = list
+                    .map((item, index) => {
+                        const session =
+                            item.readingSession?.translations?.en_US || {};
+
+                        const title = session.title || "Lingping Session";
+
+                        const date = new Date(
+                            item.readingSession.startTime
+                        ).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric"
+                        });
+
+                        const words =
+                            item.learning?.wordsLearned?.join(", ") ||
+                            "-";
+
+                        const insights =
+                            item.learning?.thoughts ||
+                            "-";
+
+                        return {
+                            id: item._id || `j${index}`,
+                            title,
+                            date,
+                            hasMemo: item.hasLearning,
+                            words,
+                            insights
+                        };
+                    });
+
+                console.log(myLearnings);
+
+                return myLearnings;
+
+            } catch (err) {
+                console.error("Failed to load journey:", err);
+                return [];
+            }
+        }
 
         /* ---------------- MEMO STATE ---------------- */
 
@@ -93,54 +129,38 @@
 
         /* ---------------- RENDER ---------------- */
 
-        function renderJourney() {
+        async function renderJourney() {
             const memoState = getMemoState();
+
             journeyList.innerHTML = "";
 
-            mockJourney.forEach(item => {
+            const myLearnings = await loadJourney();
+
+            myLearnings.forEach(item => {
                 const card = document.createElement("div");
                 card.className = "card";
 
                 const hasMemo = memoState[item.id] ?? item.hasMemo;
 
                 const contentHTML = `
-                ${renderSection("Thoughts", item.insights, "thoughts")}
-                ${renderSection("Words I'll Use", item.words, "words")}
+            ${renderSection("Thoughts", item.insights, "thoughts")}
+            ${renderSection("Words I'll Use", item.words, "words")}
         `;
 
                 card.innerHTML = `
-            <div class="event-body">
+                    <div class="card-header">
+                        <div class="card-main">
+                            <div class="card-title">${item.title}</div>
+                            <div class="card-date">${item.date}</div>
+                        </div>
 
-                <!-- TITLE + ICON -->
-                <div class="event-row" style="align-items:flex-start; justify-content:space-between;">
-                    <div>
-                        <div class="event-title">${item.title}</div>
-
-                        <!-- small date -->
-                        <div style="font-size:12px; color:#aaa; margin-top:2px;">
-                            ${item.date}
+                        <div class="memo-icon ${hasMemo ? 'has-memo' : 'no-memo'}">
+                            ${hasMemo ? "✔️" : "➕"}
                         </div>
                     </div>
 
-                    <div style="cursor:pointer; font-size:18px;"
-                         onclick="event.stopPropagation(); toggleMemo('${item.id}')">
-                        ${hasMemo ? "✔️" : "➕"}
-                    </div>
-                </div>
-
-                <div class="divider"></div>
-                <!-- CONTENT (only show non-empty sections) -->
-                <div style="margin-top:12px; font-size:14px; line-height:1.6;">
                     ${contentHTML}
-                </div>
-
-            </div>
-        `;
-
-                card.onclick = () => {
-                    localStorage.setItem("selectedLearning", JSON.stringify(item));
-                    window.location.href = "learning-detail.html";
-                };
+                `;
 
                 journeyList.appendChild(card);
             });
@@ -258,6 +278,139 @@
 
         .divider::after {
             bottom: 0;
+        }
+
+        .chip {
+            display: inline-block;
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #3a3a3a;
+
+            /* flat tape look */
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+
+            border-radius: 2px;
+            /* almost flat rectangle */
+
+            box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.08);
+
+            transform: rotate(-0.6deg);
+
+            letter-spacing: 0.2px;
+
+            position: relative;
+
+            transition: all 0.15s ease;
+        }
+
+        /* subtle torn tape edges */
+        .chip::before,
+        .chip::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 6px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            opacity: 0.9;
+        }
+
+        .chip::before {
+            left: -3px;
+        }
+
+        .chip::after {
+            right: -3px;
+        }
+
+        /* hover = flatten tape */
+        .chip:hover {
+            transform: rotate(0deg) scale(1.02);
+            box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.12);
+        }
+
+        /* ===== Variants ===== */
+
+        /* 🇹🇭 Thai — warm orange, more energy */
+        .chip.thai {
+            background: #ffedd5;
+            color: #c2410c;
+            border-color: rgba(194, 65, 12, 0.2);
+        }
+
+        /* 🇨🇳 Chinese — stronger blue */
+        .chip.chinese {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-color: rgba(29, 78, 216, 0.2);
+        }
+
+        /* 🇬🇧 English — richer green */
+        .chip.english {
+            background: #d1fae5;
+            color: #047857;
+            border-color: rgba(4, 120, 87, 0.2);
+        }
+
+        /* default — warm yellow, slightly stronger */
+        .chip.default {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: rgba(146, 64, 14, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.25;
+            color: #222121;
+            letter-spacing: -0.3px;
+        }
+
+        .card-date {
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.55);
+        }
+
+        .memo-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            user-select: none;
+
+            transition: all 0.15s ease;
+        }
+
+        /* has memo = calm green */
+        .memo-icon.has-memo {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        /* no memo = light gray + inviting */
+        .memo-icon.no-memo {
+            background: #f3f4f6;
+            color: #6b7280;
+            border: 1px dashed #d1d5db;
+        }
+
+        .memo-icon:hover {
+            transform: scale(1.08);
         }
     </style>
 
