@@ -30,393 +30,607 @@
 
     </div>
 
+    <div id="learningPopup" class="learning-popup hidden">
+        <div class="learning-popup-content">
 
-    <script>
-        /* ---------------- MOCK DATA ---------------- */
+            <div class="popup-title">Add Learning ✍️</div>
 
-        const { BASE_URL, API_KEY } = window.CONFIG;
-
-        const journeyList = document.getElementById("journeyList");
-
-        async function loadJourney() {
-            try {
-                const userId = localStorage.getItem("userId");
-                const token = localStorage.getItem("token");
-
-                const res = await fetch(
-                    `${BASE_URL}/bookings/history/user/${userId}`,
-                    {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-API-KEY": API_KEY,
-                            "Authorization": `Bearer ${token}`
-                        }
-                    }
-                );
-
-                const data = await res.json();
-                const list = data.data;
-                console.log(list);
-                const myLearnings = list
-                    .map((item, index) => {
-                        const session =
-                            item.readingSession?.translations?.en_US || {};
-
-                        const title = session.title || "Lingping Session";
-
-                        const date = new Date(
-                            item.readingSession.startTime
-                        ).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric"
-                        });
-
-                        const words =
-                            item.learning?.wordsLearned?.join(", ") ||
-                            "-";
-
-                        const insights =
-                            item.learning?.thoughts ||
-                            "-";
-
-                        return {
-                            id: item._id || `j${index}`,
-                            title,
-                            date,
-                            hasMemo: item.hasLearning,
-                            words,
-                            insights
-                        };
-                    });
-
-                console.log(myLearnings);
-
-                return myLearnings;
-
-            } catch (err) {
-                console.error("Failed to load journey:", err);
-                return [];
-            }
-        }
-
-        /* ---------------- MEMO STATE ---------------- */
-
-        function getMemoState() {
-            return JSON.parse(localStorage.getItem("journeyMemo") || "{}");
-        }
-
-        function toggleMemo(id) {
-            const state = getMemoState();
-            state[id] = !state[id];
-            localStorage.setItem("journeyMemo", JSON.stringify(state));
-            renderJourney();
-        }
-
-        /* ---------------- HELPERS ---------------- */
-
-        function renderSection(label, value, type) {
-            if (!value || value.trim() === "") return "";
-
-            return `
-                <div class="section section-${type}">
-                    <div class="section-label">${label}</div>
-                    <div class="section-value">${value}</div>
-                </div>
-            `;
-        }
-
-        /* ---------------- RENDER ---------------- */
-
-        async function renderJourney() {
-            const memoState = getMemoState();
-
-            journeyList.innerHTML = "";
-
-            const myLearnings = await loadJourney();
-
-            myLearnings.forEach(item => {
-                const card = document.createElement("div");
-                card.className = "card";
-
-                const hasMemo = memoState[item.id] ?? item.hasMemo;
-
-                const contentHTML = `
-            ${renderSection("Thoughts", item.insights, "thoughts")}
-            ${renderSection("Words I'll Use", item.words, "words")}
-        `;
-
-                card.innerHTML = `
-    <div class="card-header">
-
-        <!-- Row 1: date + memo icon -->
-        <div class="card-top">
-            <div class="card-date">${item.date}</div>
-
-            <div class="memo-icon ${hasMemo ? 'has-memo' : 'no-memo'}">
-                ${hasMemo ? "✔️" : "➕"}
+            <!-- Thoughts -->
+            <div class="popup-section">
+                <div class="label">Thoughts</div>
+                <textarea id="thoughtsInput"
+                    placeholder="Insights you learned, new culture, new perspectives, reflections, did someone change your mind?"></textarea>
             </div>
-        </div>
 
-        <!-- Row 2: title -->
-        <div class="card-main">
-            <div class="card-title">${item.title}</div>
-        </div>
+            <!-- Words -->
+            <div class="popup-section">
+                <div class="label">Words you learned</div>
 
+                <input class="word-input" placeholder="satán = beach" />
+                <input class="word-input" placeholder="admire = Chinese translation" />
+                <input class="word-input" placeholder="好奇 = curious" />
+            </div>
+
+            <div class="popup-actions">
+                <button class="discard-btn" onclick="closeLearningPopup()">
+                    Discard
+                </button>
+
+                <button class="complete-btn" onclick="submitLearning()">
+                    Complete
+                </button>
+            </div>
+
+        </div>
     </div>
-
-    ${contentHTML}
-`;
-
-                journeyList.appendChild(card);
-            });
-        }
-
-        /* ---------------- INIT ---------------- */
-
-        renderJourney();
-
-    </script>
-
-    <style>
-        /* ---------------- SECTION BASE (RESET TO CLEAN LIST FEEL) ---------------- */
-
-        .section {
-            margin-bottom: 12px;
-        }
-
-        /* remove old grey block style */
-        .section {
-            padding: 0;
-            background: transparent;
-        }
-
-        /* ---------------- LABEL ---------------- */
-
-        .section-label {
-            font-size: 12px;
-            font-weight: 700;
-            color: #4a4a4a;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-
-        /* ---------------- DEFAULT TEXT ---------------- */
-
-        .section-value {
-            font-size: 14px;
-            color: #4a4a4a;
-            line-height: 1.7;
-        }
-
-        /* =========================================================
-   🟨 POST-IT STYLE ONLY FOR WORDS + THOUGHTS
-========================================================= */
-
-        .section-words,
-        .section-thoughts {
-            background: #fff9c4;
-            padding: 10px 12px;
-            border-radius: 10px;
-            box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.08);
-            margin-top: 2px;
-            transform: rotate(-0.5deg);
-        }
-
-        /* different tint for thoughts (slightly different sticky note) */
-        .section-thoughts {
-            background: #e8f5ff;
-            transform: rotate(0.5deg);
-        }
-
-        /* words separator line (keep your learning structure) */
-        .section-words .section-value {
-            padding-top: 6px;
-            border-top: 1px dashed rgba(0, 0, 0, 0.15);
-        }
-
-        /* ---------------- CLEAN CLAMP FOR THOUGHTS ---------------- */
-
-        .section-thoughts .section-value {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .event-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #020000;
-            letter-spacing: 0.7px;
-        }
-
-        .card-date {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.381);
-            margin-top: 2px;
-            font-style: italic;
-        }
-
-        .divider {
-            margin: 1px 0 0 0;
-            /* ↓ was 10px */
-            height: 4px;
-            /* ↓ was 8px */
-            position: relative;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: "";
-            position: absolute;
-            left: 1%;
-            right: 1%;
-            height: 1px;
-            /* (0.2px is too thin / inconsistent) */
-            background: #eaeaea;
-        }
-
-        .divider::before {
-            top: 0;
-        }
-
-        .divider::after {
-            bottom: 0;
-        }
-
-        .chip {
-            display: inline-block;
-            padding: 5px 12px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #3a3a3a;
-
-            /* flat tape look */
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid rgba(0, 0, 0, 0.06);
-
-            border-radius: 2px;
-            /* almost flat rectangle */
-
-            box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.08);
-
-            transform: rotate(-0.6deg);
-
-            letter-spacing: 0.2px;
-
-            position: relative;
-
-            transition: all 0.15s ease;
-        }
-
-        /* subtle torn tape edges */
-        .chip::before,
-        .chip::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            width: 6px;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            opacity: 0.9;
-        }
-
-        .chip::before {
-            left: -3px;
-        }
-
-        .chip::after {
-            right: -3px;
-        }
-
-        /* hover = flatten tape */
-        .chip:hover {
-            transform: rotate(0deg) scale(1.02);
-            box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.12);
-        }
-
-        /* ===== Variants ===== */
-
-        /* 🇹🇭 Thai — warm orange, more energy */
-        .chip.thai {
-            background: #ffedd5;
-            color: #c2410c;
-            border-color: rgba(194, 65, 12, 0.2);
-        }
-
-        /* 🇨🇳 Chinese — stronger blue */
-        .chip.chinese {
-            background: #dbeafe;
-            color: #1d4ed8;
-            border-color: rgba(29, 78, 216, 0.2);
-        }
-
-        /* 🇬🇧 English — richer green */
-        .chip.english {
-            background: #d1fae5;
-            color: #047857;
-            border-color: rgba(4, 120, 87, 0.2);
-        }
-
-        /* default — warm yellow, slightly stronger */
-        .chip.default {
-            background: #fef3c7;
-            color: #92400e;
-            border-color: rgba(146, 64, 14, 0.2);
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 600;
-            line-height: 1.25;
-            color: #222121;
-            letter-spacing: -0.3px;
-        }
-
-        .card-date {
-            font-size: 12px;
-            color: rgba(0, 0, 0, 0.55);
-        }
-
-        .card-header {
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* top row only for memo */
-        .card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 4px;
-        }
-
-        /* memo icon */
-        .memo-icon {
-            font-size: 14px;
-            cursor: pointer;
-            padding: 2px 6px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.6);
-            border: 1px dashed rgba(0, 0, 0, 0.1);
-            box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.08);
-            transform: rotate(2deg);
-        }
-
-        .memo-icon.has-memo {
-            background: #dcfce7;
-            color: #166534;
-            border: 1px solid #86efac;
-        }
-
-        .memo-icon.no-memo {
-            color: #6b7280;
-        }
-    </style>
 
 </body>
 
 </html>
+
+<script>
+    /* ---------------- MOCK DATA ---------------- */
+
+    const { BASE_URL, API_KEY } = window.CONFIG;
+
+    const journeyList = document.getElementById("journeyList");
+
+    async function loadJourney() {
+        try {
+            const userId = localStorage.getItem("userId");
+            const token = localStorage.getItem("token");
+
+            const res = await fetch(
+                `${BASE_URL}/bookings/history/user/${userId}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-KEY": API_KEY,
+                        "Authorization": `Bearer ${token}`
+                    }
+                }
+            );
+
+            const data = await res.json();
+            const list = data.data;
+            console.log(list);
+            const myLearnings = list
+                .map((item, index) => {
+                    const session =
+                        item.readingSession?.translations?.en_US || {};
+
+                    const title = session.title || "Lingping Session";
+
+                    const date = new Date(
+                        item.readingSession.startTime
+                    ).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric"
+                    });
+
+                    const words =
+                        item.learning?.wordsLearned?.join(", ") ||
+                        "-";
+
+                    const insights =
+                        item.learning?.thoughts ||
+                        "-";
+
+                    return {
+                        id: item._id || `j${index}`,
+                        title,
+                        date,
+                        hasMemo: item.hasLearning,
+                        words,
+                        insights,
+                        sessionId: item.readingSession._id
+                    };
+                });
+
+            console.log(myLearnings);
+
+            return myLearnings;
+
+        } catch (err) {
+            console.error("Failed to load journey:", err);
+            return [];
+        }
+    }
+
+    /* ---------------- MEMO STATE ---------------- */
+
+    function getMemoState() {
+        return JSON.parse(localStorage.getItem("journeyMemo") || "{}");
+    }
+
+    function toggleMemo(id) {
+        const state = getMemoState();
+        state[id] = !state[id];
+        localStorage.setItem("journeyMemo", JSON.stringify(state));
+        renderJourney();
+    }
+
+    /* ---------------- HELPERS ---------------- */
+
+    function renderSection(label, value, type) {
+        if (!value || value.trim() === "") return "";
+
+        return `
+            <div class="section section-${type}">
+                <div class="section-label">${label}</div>
+                <div class="section-value">${value}</div>
+            </div>
+        `;
+    }
+
+    /* ---------------- RENDER ---------------- */
+
+    async function renderJourney() {
+        const memoState = getMemoState();
+
+        journeyList.innerHTML = "";
+
+        const myLearnings = await loadJourney();
+
+        myLearnings.forEach(item => {
+
+            const card = document.createElement("div");
+            card.className = "card";
+
+            const hasMemo = memoState[item.id] ?? item.hasMemo;
+
+            const contentHTML = `
+        ${renderSection("Thoughts", item.insights, "thoughts")}
+        ${renderSection("Words I'll Use", item.words, "words")}`;
+            console.log(item);
+
+            card.innerHTML = `
+        <div class="card-header">
+
+            <!-- Row 1: date + memo icon -->
+            <div class="card-top">
+                <div class="card-date">${item.date}</div>
+
+                <div class="memo-icon ${hasMemo ? 'has-memo' : 'no-memo'}"
+                    onclick="${hasMemo ? '' : `openLearningPopup('${item.sessionId}')`}">
+                    ${hasMemo ? "✔️" : "➕"}
+                </div>
+            </div>
+
+            <!-- Row 2: title -->
+            <div class="card-main">
+                <div class="card-title">${item.title}</div>
+            </div>
+
+        </div>
+
+        ${contentHTML}
+        `;
+
+            journeyList.appendChild(card);
+        });
+    }
+
+    /* ---------------- INIT ---------------- */
+
+    renderJourney();
+
+    let currentSessionId = null;
+
+    function openLearningPopup(sessionId) {
+        currentSessionId = sessionId;
+        document.getElementById("learningPopup").classList.remove("hidden");
+    }
+
+    function closeLearningPopup() {
+        document.getElementById("learningPopup").classList.add("hidden");
+    }
+
+    async function submitLearning() {
+        const thoughts = document.getElementById("thoughtsInput").value;
+
+        const wordInputs = document.querySelectorAll(".word-input");
+
+        const wordsLearned = Array.from(wordInputs)
+            .map(i => i.value.trim())
+            .filter(Boolean);
+
+        const userId = localStorage.getItem("userId");
+
+        try {
+            const res = await fetch(
+                `${BASE_URL}/users/${userId}/learnings`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-KEY": window.CONFIG.API_KEY
+                    },
+                    body: JSON.stringify({
+                        sessionId: currentSessionId,
+                        wordsLearned,
+                        thoughts
+                    })
+                }
+            );
+
+            if (!res.ok) throw new Error("Failed");
+
+            closeLearningPopup();
+            resetLearningForm(); // ✅ important
+
+            alert("Yay! I learned new things today 🎉");
+            renderJourney();
+
+        } catch (err) {
+            console.error(err);
+            alert("Failed to save learning");
+        }
+
+
+    }
+
+    function resetLearningForm() {
+        document.getElementById("thoughtsInput").value = "";
+
+        document.querySelectorAll(".word-input").forEach(input => {
+            input.value = "";
+        });
+
+        function openLearningPopup(sessionId) {
+            currentSessionId = sessionId;
+
+            resetLearningForm(); // ✅ always start clean
+
+            document.getElementById("learningPopup").classList.remove("hidden");
+        }
+    }
+
+</script>
+
+<style>
+    /* ---------------- SECTION BASE (RESET TO CLEAN LIST FEEL) ---------------- */
+
+    .section {
+        margin-bottom: 12px;
+    }
+
+    /* remove old grey block style */
+    .section {
+        padding: 0;
+        background: transparent;
+    }
+
+    /* ---------------- LABEL ---------------- */
+
+    .section-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #4a4a4a;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+
+    /* ---------------- DEFAULT TEXT ---------------- */
+
+    .section-value {
+        font-size: 14px;
+        color: #4a4a4a;
+        line-height: 1.7;
+    }
+
+    /* =========================================================
+🟨 POST-IT STYLE ONLY FOR WORDS + THOUGHTS
+========================================================= */
+
+    .section-words,
+    .section-thoughts {
+        background: #fff9c4;
+        padding: 10px 12px;
+        border-radius: 10px;
+        box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.08);
+        margin-top: 2px;
+        transform: rotate(-0.5deg);
+    }
+
+    /* different tint for thoughts (slightly different sticky note) */
+    .section-thoughts {
+        background: #e8f5ff;
+        transform: rotate(0.5deg);
+    }
+
+    /* words separator line (keep your learning structure) */
+    .section-words .section-value {
+        padding-top: 6px;
+        border-top: 1px dashed rgba(0, 0, 0, 0.15);
+    }
+
+    /* ---------------- CLEAN CLAMP FOR THOUGHTS ---------------- */
+
+    .section-thoughts .section-value {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .event-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #020000;
+        letter-spacing: 0.7px;
+    }
+
+    .card-date {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.381);
+        margin-top: 2px;
+        font-style: italic;
+    }
+
+    .divider {
+        margin: 1px 0 0 0;
+        /* ↓ was 10px */
+        height: 4px;
+        /* ↓ was 8px */
+        position: relative;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: "";
+        position: absolute;
+        left: 1%;
+        right: 1%;
+        height: 1px;
+        /* (0.2px is too thin / inconsistent) */
+        background: #eaeaea;
+    }
+
+    .divider::before {
+        top: 0;
+    }
+
+    .divider::after {
+        bottom: 0;
+    }
+
+    .chip {
+        display: inline-block;
+        padding: 5px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #3a3a3a;
+
+        /* flat tape look */
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+
+        border-radius: 2px;
+        /* almost flat rectangle */
+
+        box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.08);
+
+        transform: rotate(-0.6deg);
+
+        letter-spacing: 0.2px;
+
+        position: relative;
+
+        transition: all 0.15s ease;
+    }
+
+    /* subtle torn tape edges */
+    .chip::before,
+    .chip::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 6px;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        opacity: 0.9;
+    }
+
+    .chip::before {
+        left: -3px;
+    }
+
+    .chip::after {
+        right: -3px;
+    }
+
+    /* hover = flatten tape */
+    .chip:hover {
+        transform: rotate(0deg) scale(1.02);
+        box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    /* ===== Variants ===== */
+
+    /* 🇹🇭 Thai — warm orange, more energy */
+    .chip.thai {
+        background: #ffedd5;
+        color: #c2410c;
+        border-color: rgba(194, 65, 12, 0.2);
+    }
+
+    /* 🇨🇳 Chinese — stronger blue */
+    .chip.chinese {
+        background: #dbeafe;
+        color: #1d4ed8;
+        border-color: rgba(29, 78, 216, 0.2);
+    }
+
+    /* 🇬🇧 English — richer green */
+    .chip.english {
+        background: #d1fae5;
+        color: #047857;
+        border-color: rgba(4, 120, 87, 0.2);
+    }
+
+    /* default — warm yellow, slightly stronger */
+    .chip.default {
+        background: #fef3c7;
+        color: #92400e;
+        border-color: rgba(146, 64, 14, 0.2);
+    }
+
+    .card-title {
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 1.25;
+        color: #222121;
+        letter-spacing: -0.3px;
+    }
+
+    .card-date {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.55);
+    }
+
+    .card-header {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* top row only for memo */
+    .card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 4px;
+    }
+
+    /* memo icon */
+    .memo-icon {
+        font-size: 14px;
+        cursor: pointer;
+        padding: 2px 6px;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px dashed rgba(0, 0, 0, 0.1);
+        box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.08);
+        transform: rotate(2deg);
+    }
+
+    .memo-icon.has-memo {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+    }
+
+    .memo-icon.no-memo {
+        color: #6b7280;
+    }
+
+    .learning-popup {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .learning-popup.hidden {
+        display: none;
+    }
+
+    .learning-popup-content {
+        width: 90%;
+        max-width: 380px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .popup-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    .popup-section {
+        margin-bottom: 12px;
+    }
+
+    .label {
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #555;
+    }
+
+    textarea {
+        width: 100%;
+        height: 80px;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        font-size: 13px;
+    }
+
+    .word-input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 6px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        font-size: 13px;
+    }
+
+    .complete-btn {
+        width: 100%;
+        margin-top: 14px;
+        padding: 10px;
+        border: none;
+        border-radius: 10px;
+        background: #16a34a;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .popup-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+    .discard-btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        background: #f5f5f5;
+        color: #444;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .complete-btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        background: #16a34a;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .discard-btn:hover {
+        background: #eaeaea;
+    }
+
+    .complete-btn:hover {
+        background: #15803d;
+    }
+</style>
