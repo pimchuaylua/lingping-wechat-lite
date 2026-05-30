@@ -342,10 +342,10 @@
     /* ---------------- CLEAN CLAMP FOR THOUGHTS ---------------- */
 
     .section-thoughts .section-value {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        display: block;
+        overflow-wrap: break-word;
+        white-space: pre-wrap;
+        /* keeps line breaks the user types */
     }
 
     .event-title {
@@ -578,15 +578,21 @@
     }
 
     #thoughtsInput {
-        height: 2em;
-        /* fallback base */
+        width: 100%;
+        box-sizing: border-box;
+
+        font-size: 13px;
+        line-height: 1.4;
+
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+
         min-height: 120px;
         max-height: 300px;
 
         resize: vertical;
-        /* user can expand if needed */
-        padding: 10px;
-        line-height: 1.4;
+        overflow-y: auto;
     }
 
     .word-input {
