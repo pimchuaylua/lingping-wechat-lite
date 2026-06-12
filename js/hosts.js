@@ -76,5 +76,11 @@ window.HOSTS_MAP = {
     }, "69ff4afaceaac6e3d0ab8d8d": {
         photo: "./photos/hosts/een.png",
         description: "From Southern Thailand 🌴 Translator & Host 🎤"
+    }, "6a019d90ceaac6e3d0ab9789": {
+        photo: "./photos/hosts/mio.png",
+        description: "Music lover | Kind soul | Pet friendly | Always up for good conversations"
+    }, "6a243aaa695852d4ceb84057": {
+        photo: "./photos/hosts/aomsin.png",
+        description: "🤖 AI engineer who enjoys meeting new people & exchanging ideas"
     }
 };
