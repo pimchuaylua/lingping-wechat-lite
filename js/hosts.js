@@ -82,5 +82,8 @@ window.HOSTS_MAP = {
     }, "6a243aaa695852d4ceb84057": {
         photo: "./photos/hosts/aomsin.png",
         description: "🤖 AI engineer who enjoys meeting new people & exchanging ideas"
+    }, "69f5d96eceaac6e3d0ab5c54": {
+        photo: "./photos/hosts/ying.png",
+        description: "🌿 Outdoor enthusiast who loves meeting new people. Here to practice English & exchange ideas!"
     }
 };
