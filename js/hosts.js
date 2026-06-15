@@ -85,5 +85,8 @@ window.HOSTS_MAP = {
     }, "69f5d96eceaac6e3d0ab5c54": {
         photo: "./photos/hosts/ying.png",
         description: "🌿 Outdoor enthusiast who loves meeting new people. Here to practice English & exchange ideas!"
+    }, "6a2fc39e695852d4ceb87f4f": {
+        photo: "./photos/hosts/cake.png",
+        description: "Badminton lover | Marvel fan | Positive energy | Making memories one day at the time"
     }
 };
