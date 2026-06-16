@@ -586,7 +586,7 @@
             <div class="event-row">
                 <div class="event-time">
     <div>
-        ${Utils.formatDate(s.date)} · ${s.time} (${Utils.getTimeZoneName()})
+        ${Utils.formatDate(s.date)} · ${s.shortTime} (${Utils.getTimeZoneName()})
     </div>
 
     ${currentLevel === "695c763e2d652e065db71030" ||
@@ -604,6 +604,12 @@
                                 ? `<div class="event-location">📍 ${s.location}</div>`
                                 : ""
                     }
+
+           ${s.hostNames ? `
+    <div class="event-hosts">
+        Hosted by ${s.hostNames}
+    </div>
+` : ""}  
 
 </div>
 
@@ -668,14 +674,20 @@
                         ? hostObjects.map(h => h.name).join(", ")
                         : "TBA";
 
+                    const hostNames = (s.hosts || [])
+                        .map(host => host.name)
+                        .join(", ");
+
                     return {
                         id: s._id,
                         date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
                         time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+                        shortTime: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
                         title: s.title,
                         description: s.shortDescription,
                         fullDescription: s.fullDescription,
                         hosts: s.hosts || [],
+                        hostNames: hostNames,
                         isFull: s.isFull,
                         seatsLeft: s.numberOfSeatsLeft,
                         photoUrl: s.photoUrl,
@@ -684,7 +696,8 @@
                         locationUrl: s.locationUrl,
                         hostObjects: hostObjects,
                         levelId: currentLevel,
-                        levelName: s.level
+                        levelName: s.level,
+
                     };
                 });
 
