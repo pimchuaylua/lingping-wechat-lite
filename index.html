@@ -605,6 +605,12 @@
                                 : ""
                     }
 
+           ${s.hostNames ? `
+    <div class="event-hosts">
+        Hosted by ${s.hostNames}
+    </div>
+` : ""}  
+
 </div>
 
 
@@ -668,6 +674,10 @@
                         ? hostObjects.map(h => h.name).join(", ")
                         : "TBA";
 
+                    const hostNames = (s.hosts || [])
+                        .map(host => host.name)
+                        .join(", ");
+
                     return {
                         id: s._id,
                         date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
@@ -677,6 +687,7 @@
                         description: s.shortDescription,
                         fullDescription: s.fullDescription,
                         hosts: s.hosts || [],
+                        hostNames: hostNames,
                         isFull: s.isFull,
                         seatsLeft: s.numberOfSeatsLeft,
                         photoUrl: s.photoUrl,
@@ -685,7 +696,8 @@
                         locationUrl: s.locationUrl,
                         hostObjects: hostObjects,
                         levelId: currentLevel,
-                        levelName: s.level
+                        levelName: s.level,
+
                     };
                 });
 

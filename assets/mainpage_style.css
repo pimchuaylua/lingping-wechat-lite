@@ -140,13 +140,13 @@ nav a:hover {
 
 .event-desc {
     font-size: 13px;
-    color: #777;
+    color: #69696c;
     margin-bottom: 6px;
 }
 
 .event-time {
     font-size: 13px;
-    color: #666;
+    color: #69696c;
 }
 
 .event-actions {
@@ -491,7 +491,6 @@ label:has(#topics) {
 
 /* MUCH more visible */
 .event-time::after {
-    content: "→ Tap for details";
     display: block;
     margin-top: 6px;
     font-size: 12px;
@@ -1079,4 +1078,11 @@ body {
     height: 1px;
     background: #eee;
     margin: 6px 0;
+}
+
+.event-time>div,
+.event-location {
+    margin-bottom: 6px;
+    color: #69696c;
+    font-size: 13px;
 }
