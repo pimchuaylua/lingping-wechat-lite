@@ -586,7 +586,7 @@
             <div class="event-row">
                 <div class="event-time">
     <div>
-        ${Utils.formatDate(s.date)} · ${s.time} (${Utils.getTimeZoneName()})
+        ${Utils.formatDate(s.date)} · ${s.shortTime} (${Utils.getTimeZoneName()})
     </div>
 
     ${currentLevel === "695c763e2d652e065db71030" ||
@@ -672,6 +672,7 @@
                         id: s._id,
                         date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
                         time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+                        shortTime: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
                         title: s.title,
                         description: s.shortDescription,
                         fullDescription: s.fullDescription,
