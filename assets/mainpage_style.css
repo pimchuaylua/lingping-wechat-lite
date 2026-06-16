@@ -304,16 +304,20 @@ nav a:hover {
 /* Arrow */
 .location-btn::after {
     content: "▾";
-    font-size: 12px;
+    font-size: 20px;
     margin-left: 1px;
 }
 
-/* Active (selected state) */
 .location-btn.active {
-    color: #111;
+    color: #444;
     font-weight: 500;
-    border-color: #ccc;
+    font-size: 17px;
+
+    min-width: 150px;
+    padding: 10px 10px;
+
     background: #fafafa;
+    border-color: #ccc;
 }
 
 /* 🔥 Kill iOS blue styles */
