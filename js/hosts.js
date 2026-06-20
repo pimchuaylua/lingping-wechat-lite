@@ -88,5 +88,14 @@ window.HOSTS_MAP = {
     }, "6a2fc39e695852d4ceb87f4f": {
         photo: "./photos/hosts/cake.png",
         description: "Badminton lover | Marvel fan | Positive energy | Making memories one day at the time"
+    }, "6a36b1a4695852d4ceb89f4a": {
+        photo: "./photos/hosts/naey.png",
+        description: "Love cooking 🍳, baking 🍰, and exploring Chinese culture 🇨🇳"
+    }, "6a1c5cbb695852d4ceb81b03": {
+        photo: "./photos/hosts/luna.png",
+        description: ""
+    }, "6a1c5d5b695852d4ceb81b05": {
+        photo: "./photos/hosts/pk.png",
+        description: "🇺🇸 From the US | Curious about people 🌏 | Love cooking 🍳 and learning about different cultures"
     }
 };
