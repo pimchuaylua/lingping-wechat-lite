@@ -450,6 +450,23 @@
 
             document.body.appendChild(modal);
         }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const pendingSessionId = localStorage.getItem("pendingSessionId");
+            const userId = localStorage.getItem("userId");
+
+            if (pendingSessionId && userId) {
+                localStorage.removeItem("pendingSessionId");
+
+                try {
+                    await window.bookSession({
+                        sessionId: pendingSessionId,
+                    });
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        });
     </script>
 </body>
 
