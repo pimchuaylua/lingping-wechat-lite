@@ -349,50 +349,6 @@
             }
         }
 
-        function goToLogin() {
-            const returnUrl = encodeURIComponent(window.location.href);
-            window.location.href = `/login.html?returnUrl=${returnUrl}`;
-        }
-
-        async function loginAndUpdateUI() {
-            let userId = localStorage.getItem("userId");
-
-            try {
-                if (!userId) {
-                    const username = prompt("Enter your username:")?.trim();
-                    if (!username) return;
-
-                    const loginRes = await fetch(`${BASE_URL}/auth/login`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-API-KEY": API_KEY
-                        },
-                        body: JSON.stringify({
-                            username,
-                            password: "lingpingreading33"
-                        })
-                    });
-
-                    const loginData = await loginRes.json();
-                    userId = loginData?.data?.userId;
-
-                    if (!loginRes.ok || !userId) {
-                        throw new Error("Invalid username. Please check and try again.");
-                    }
-
-                    localStorage.setItem("userId", userId);
-                    localStorage.setItem("username", username);
-                }
-
-                renderUserWelcome();
-                // await renderMembershipStatus();
-
-            } catch (err) {
-                alert(err.message);
-            }
-        }
-
         function logout() {
             localStorage.removeItem("userId");
             localStorage.removeItem("username");
@@ -861,6 +817,23 @@
             const userId = localStorage.getItem("userId");
             if (!userId) {
                 document.getElementById("promoModal").style.display = "flex";
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const pendingSessionId = localStorage.getItem("pendingSessionId");
+            const userId = localStorage.getItem("userId");
+
+            if (pendingSessionId && userId) {
+                localStorage.removeItem("pendingSessionId");
+
+                try {
+                    await window.bookSession({
+                        sessionId: pendingSessionId,
+                    });
+                } catch (err) {
+                    console.error(err);
+                }
             }
         });
     </script>

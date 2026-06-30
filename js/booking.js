@@ -14,6 +14,7 @@ window.bookSession = async function ({ sessionId }) {
     try {
         // ✅ If no userId, ask user to log in
         if (!userId) {
+            localStorage.setItem("pendingSessionId", sessionId);
             localStorage.setItem("redirectAfterLogin", window.location.href);
             window.location.href = "login.html";
             return;

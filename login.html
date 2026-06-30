@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="assets/subscription_main_style.css?v=20260513">
     <link rel="stylesheet" href="assets/login_style.css?v=20260312">
-
+    <script src="js/booking.js?v=202605162"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="config.js"></script>
 </head>
@@ -516,6 +516,23 @@
     function closeSuccessPopup() {
         document.getElementById("successPopup").style.display = "none";
     }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        const pendingSessionId = localStorage.getItem("pendingSessionId");
+        const userId = localStorage.getItem("userId");
+
+        if (pendingSessionId && userId) {
+            localStorage.removeItem("pendingSessionId");
+
+            try {
+                await window.bookSession({
+                    sessionId: pendingSessionId,
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    });
 
 </script>
 
