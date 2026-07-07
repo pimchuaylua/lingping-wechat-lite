@@ -97,5 +97,11 @@ window.HOSTS_MAP = {
     }, "6a1c5d5b695852d4ceb81b05": {
         photo: "./photos/hosts/pk.png",
         description: "🇺🇸 From the US | Curious about people 🌏 | Love cooking 🍳 and learning about different cultures"
+    }, "6a4a51a4b32d2721caf68433": {
+        photo: "./photos/hosts/bambi.png",
+        description: "🎓 Senior at CMU | 🎬 Movie lover | 💬 Always happy to chat and practice English"
+    }, "6a3a2340695852d4ceb8ae07": {
+        photo: "./photos/hosts/mila.png",
+        description: "From Thailand, enjoy meeting people and learn about their stories and cultures."
     }
 };
