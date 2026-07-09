@@ -40,22 +40,35 @@
             </div>
 
 
-            <!-- OPTION B -->
             <div class="plan-card">
                 <div class="plan-title">🏡 Your City + <br> 🌐 Online</div>
                 <div class="plan-sub">Unlimited access to:</div>
 
                 <div class="plan-features">
                     <p>• All online events</p>
-                    <p>• All onsite events in your city</p>
+                    <p>• All onsite events in one city</p>
                 </div>
 
                 <select class="city-dropdown" onchange="goToCity(this.value)">
-                    <option value="" selected disabled>Your City</option>
+                    <option value="" selected disabled>Choose your city</option>
                     <option value="bangkok">Bangkok</option>
                     <option value="chiangmai">Chiang Mai</option>
                     <option value="phuket">Phuket</option>
                 </select>
+            </div>
+
+            <div class="plan-card" onclick="goToCity('multi-city')" style="cursor:pointer;">
+                <div class="plan-title">🇹🇭 All Cities + <br> 🌐 Online</div>
+                <div class="plan-sub">Perfect for travelers</div>
+
+                <div class="plan-features">
+                    <p>• All online events</p>
+                    <p>• All onsite events in every city</p>
+                </div>
+
+                <button class="book-btn" style="width:100%;">
+                    View All Cities Pass
+                </button>
             </div>
 
         </div>
@@ -71,6 +84,8 @@
                 goChiangmai();
             } else if (city === "phuket") {
                 goPhuket();
+            } else if (city === "multi-city") {
+                goMultiCity();
             }
         }
 
@@ -88,6 +103,10 @@
 
         function goPhuket() {
             window.location.href = "community-plans-phuket.html";
+        }
+
+        function goMultiCity() {
+            window.location.href = "community-plans-multicity.html";
         }
     </script>
 
