@@ -511,79 +511,70 @@
                     flagImg = "assets/flags/spanish.png";
                 }
 
+                const status = s.maxParticipants === -1
+                    ? "Canceled"
+                    : s.isFull
+                        ? "Full"
+                        : "Available";
+
+                const statusClass = s.maxParticipants === -1
+                    ? "canceled"
+                    : s.isFull
+                        ? "full"
+                        : "available";
+
                 card.innerHTML = `
-                <div class="event-photo">
-                    <img class="event-img" src="${s.photoUrl}" alt="${s.title}">
+                <div class="event-card">
+                    <div class="event-photo">
+                        <img class="event-img" src="${s.photoUrl}" alt="${s.title}">
 
-                    ${flagImg ? `
-                        <img class="lang-flag" src="${flagImg}" />
-                    ` : ""}
-                </div>
+                        ${flagImg ? `
+                            <img class="lang-flag" src="${flagImg}" />
+                        ` : ""}
+                    </div>
+                    <div class="event-body">
+                        <!-- Title + Status -->
+                        <div class="event-row">
+                            <div class="event-title">${s.title}</div>
+                            <div class="status ${statusClass}"> ${status} </div>
+                        </div class="event-row">
+                         <!-- Time + Book -->
+                        <div class="event-row">
+                            <div class="event-time">
+                        <div>
+                            ${Utils.formatDate(s.date)} · ${s.shortTime} (${Utils.getTimeZoneName()})
+                        </div>
 
-        <div class="event-body">
-            <!-- Title + Status -->
-            <div class="event-row">
-                <div class="event-title">${s.title}</div>
-
-                <div class="status ${s.maxParticipants === -1
-                        ? "canceled"
-                        : s.isFull
-                            ? "full"
-                            : "available"
-                    }">
-                    ${isCanceled
-                        ? "Canceled"
-                        : s.isFull
-                            ? "Full"
-                            : "Available"
-                    }
-                </div>
-            </div>
-
-            <!-- Description -->
-           <!-- <div class="event-desc">${s.description || ""}</div>-->
-
-            <!-- Time + Book -->
-            <div class="event-row">
-                <div class="event-time">
-    <div>
-        ${Utils.formatDate(s.date)} · ${s.shortTime} (${Utils.getTimeZoneName()})
-    </div>
-
-    ${currentLevel === "695c763e2d652e065db71030" ||
+                        ${currentLevel === "695c763e2d652e065db71030" ||
                         currentLevel === "6982e63b245037c5977a9390"
                         ? `<div class="event-location">🌐 Online</div>`
                         : s.locationUrl
                             ? `<div class="event-location">
-                📍 <a href="${s.locationUrl}"
-                     target="_blank"
-                     rel="noopener"
-                     onclick="event.stopPropagation()"
-                   >${s.location || "View location"}</a>
-           </div>`
+                                    📍 <a href="${s.locationUrl}"
+                                        target="_blank"
+                                        rel="noopener"
+                                        onclick="event.stopPropagation()"
+                                    >${s.location || "View location"}</a>
+                            </div>`
                             : s.location
                                 ? `<div class="event-location">📍 ${s.location}</div>`
                                 : ""
                     }
 
-           ${s.hostNames ? `
-    <div class="event-hosts">
-        Hosted by ${s.hostNames}
-    </div>
-` : ""}  
+                                    ${s.hostNames ? `
+                                <div class="event-hosts">
+                                    Hosted by ${s.hostNames}
+                                </div>
+                            ` : ""}  
 
-</div>
+                            </div>
 
-
-                <button
-                    class="book-btn ${s.isFull ? "" : "available"}"
-                    ${s.isFull || isCanceled ? "disabled" : ""}
-                    onclick='event.stopPropagation(); handleBookClick("${s.id}", ${JSON.stringify(s)})'>
-                    Book
-                </button>
-            </div>
-        </div>
-    `;
+                            <button class="book-btn ${s.isFull ? "" : "available"}"${s.isFull || isCanceled ? "disabled" : ""} onclick='event.stopPropagation(); handleBookClick("${s.id}", ${JSON.stringify(s)})'>
+                                Book
+                            </button>
+                    </div class="event-body">
+                </div class="event-card">
+        `;
 
                 card.onclick = () => {
                     localStorage.setItem("selectedSession", JSON.stringify(s));

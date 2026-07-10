@@ -13,13 +13,21 @@ body {
 }
 
 .container {
-    max-width: 480px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 16px;
-    text-align: left;
+    padding: 24px;
     display: flex;
-    min-height: 100vh;
     flex-direction: column;
+    min-height: 100vh;
+    text-align: left;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
 html,

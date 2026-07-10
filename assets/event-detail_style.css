@@ -11,11 +11,21 @@ body {
 }
 
 .container {
-    max-width: 480px;
-    margin: 20px auto;
-    padding: 16px;
-    background: #fff;
-    border-radius: 12px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    text-align: left;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
 img {
@@ -121,14 +131,13 @@ h1 {
     font-weight: 600;
 }
 
-/* Event photo only */
 .event-photo {
     width: 100%;
-    max-height: 180px;
-    /* ⬅ smaller */
+    aspect-ratio: 16 / 9;
     object-fit: cover;
     border-radius: 12px;
     margin-bottom: 10px;
+    display: block;
 }
 
 .host-list {

@@ -11,13 +11,21 @@ body {
 
 
 .container {
-    max-width: 480px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 16px;
-    text-align: left;
+    padding: 24px;
     display: flex;
-    min-height: 100vh;
     flex-direction: column;
+    min-height: 100vh;
+    text-align: left;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
 .header {
@@ -134,8 +142,23 @@ nav a:hover {
 }
 
 .event-title {
-    font-weight: 500;
+    flex: 1;
+    font-size: 16px;
+    font-weight: 600;
     margin-bottom: 4px;
+    line-height: 1.3;
+    margin-top: 0;
+    padding-top: 8px;
+    transition: color 0.18s ease;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.event-body:hover .event-title {
+    color: var(--theme);
 }
 
 .event-desc {
@@ -156,7 +179,6 @@ nav a:hover {
     margin-top: 12px;
 }
 
-
 .right {
     display: flex;
     flex-direction: column;
@@ -170,6 +192,8 @@ nav a:hover {
     border-radius: 10px;
     background: #eee;
     color: #666;
+    align-self: flex-start;
+    margin-top: 8px;
 }
 
 .status.available {
@@ -396,7 +420,7 @@ label:has(#topics) {
     border: 1px solid #eee;
 }
 
-/* ---------- EVENT PHOTO ---------- */
+/* ---------- EVENT START ---------- */
 
 .event-photo {
     width: 100%;
@@ -409,6 +433,24 @@ label:has(#topics) {
     /* IMPORTANT for flag overlay */
 }
 
+@media (min-width: 768px) {
+    .event-card {
+        display: flex;
+        gap: 16px;
+        align-items: stretch;
+    }
+
+    .event-photo {
+        width: 260px;
+        height: 180px;
+        flex-shrink: 0;
+    }
+
+    .event-body {
+        flex: 1;
+    }
+}
+
 .event-img {
     width: 100%;
     height: 100%;
@@ -416,39 +458,18 @@ label:has(#topics) {
     display: block;
 }
 
-/* ---------- EVENT BODY ---------- */
-
 .event-body {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-/* ---------- ROWS ---------- */
 
 .event-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 8px;
-}
-
-/* ---------- TEXT ---------- */
-
-.event-title {
-    flex: 1;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.3;
-
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.event-title {
-    transition: color 0.18s ease;
 }
 
 .event-desc {
@@ -481,14 +502,6 @@ label:has(#topics) {
     transform: scale(0.97);
 }
 
-.event-title {
-    transition: color 0.18s ease;
-}
-
-.event-body:hover .event-title {
-    color: var(--theme);
-}
-
 /* MUCH more visible */
 .event-time::after {
     display: block;
@@ -512,13 +525,7 @@ label:has(#topics) {
     }
 }
 
-.event-title {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    line-height: 1.3;
-    margin-top: 0;
-}
+
 
 .event-time {
     font-size: 13px;
@@ -542,6 +549,8 @@ label:has(#topics) {
 .event-location a:hover {
     border-bottom-color: rgba(0, 0, 0, 0.6);
 }
+
+/* ---------- EVENT END ---------- */
 
 .booked-label {
     color: #2e7d32;
