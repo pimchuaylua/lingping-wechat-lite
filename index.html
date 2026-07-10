@@ -523,6 +523,32 @@
                         ? "full"
                         : "available";
 
+                const readableDateTime = `${Utils.formatDate(s.date)} · ${s.shortTime} (${Utils.getTimeZoneName()})`;
+
+                const isOnline =
+                    currentLevel === "695c763e2d652e065db71030" ||
+                    currentLevel === "6982e63b245037c5977a9390";
+
+                const locationHtml = isOnline
+                    ? `<div class="event-location">🌐 Online</div>`
+                    : s.locationUrl
+                        ? `<div class="event-location">
+                📍 <a href="${s.locationUrl}"
+                    target="_blank"
+                    rel="noopener"
+                    onclick="event.stopPropagation()"
+                >${s.location || "View location"}</a>
+           </div>`
+                        : s.location
+                            ? `<div class="event-location">📍 ${s.location}</div>`
+                            : "";
+
+                const hostHtml = s.hostNames
+                    ? `<div class="event-hosts">
+                            Hosted by ${s.hostNames}
+                    </div>`
+                    : "";
+
                 card.innerHTML = `
                 <div class="event-card">
                     <div class="event-photo">
@@ -539,44 +565,30 @@
                             <div class="status ${statusClass}"> ${status} </div>
                         </div class="event-row">
                          <!-- Time + Book -->
+                        
                         <div class="event-row">
-                            <div class="event-time">
-                        <div>
-                            ${Utils.formatDate(s.date)} · ${s.shortTime} (${Utils.getTimeZoneName()})
+                            ${readableDateTime}
                         </div>
 
-                        ${currentLevel === "695c763e2d652e065db71030" ||
-                        currentLevel === "6982e63b245037c5977a9390"
-                        ? `<div class="event-location">🌐 Online</div>`
-                        : s.locationUrl
-                            ? `<div class="event-location">
-                                    📍 <a href="${s.locationUrl}"
-                                        target="_blank"
-                                        rel="noopener"
-                                        onclick="event.stopPropagation()"
-                                    >${s.location || "View location"}</a>
-                            </div>`
-                            : s.location
-                                ? `<div class="event-location">📍 ${s.location}</div>`
-                                : ""
-                    }
+                        <div class="event-row">
+                            ${locationHtml}
+                        </div>
 
-                                    ${s.hostNames ? `
-                                <div class="event-hosts">
-                                    Hosted by ${s.hostNames}
-                                </div>
-                            ` : ""}  
+                        <div class="event-row">
+                            ${hostHtml}
+                        </div>
+                        
 
-                            </div>
-
-                            <button class="book-btn ${s.isFull ? "" : "available"}"${s.isFull || isCanceled ? "disabled" : ""} onclick='event.stopPropagation(); handleBookClick("${s.id}", ${JSON.stringify(s)})'>
-                                Book
-                            </button>
+                        <button class="book-btn ${s.isFull ? "" : "available"}" ${s.isFull || isCanceled ? "disabled" : ""} onclick='event.stopPropagation(); handleBookClick("${s.id}")'>
+                            Book
+                        </button>
                     </div class="event-body">
                 </div class="event-card">
         `;
 
-                card.onclick = () => {
+                card.onclick = (e) => {
+                    if (e.target.closest(".book-btn")) return;
+
                     localStorage.setItem("selectedSession", JSON.stringify(s));
                     window.location.href = "event-detail.html";
                 };
@@ -703,9 +715,10 @@
             };
         });
 
-        function handleBookClick(sessionId, session) {
+        function handleBookClick(sessionId) {
             // Only English classes need consent
 
+            const session = sessions.find(x => x.id === sessionId);
             console.log(session);
             if (membershipType !== "english") {
 
