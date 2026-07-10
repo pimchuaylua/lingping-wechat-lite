@@ -133,6 +133,8 @@ h1 {
     border-radius: 10px;
     border: none;
     cursor: pointer;
+    margin: 8px auto 0;
+    display: block;
 }
 
 .book-btn:disabled {
