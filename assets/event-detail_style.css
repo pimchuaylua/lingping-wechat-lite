@@ -170,6 +170,12 @@ h1 {
     display: block;
 }
 
+@media (max-width: 768px) {
+    .event-photo {
+        width: 100%;
+    }
+}
+
 .host-list {
     display: flex;
     flex-direction: column;

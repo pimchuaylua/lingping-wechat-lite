@@ -3,17 +3,18 @@
 }
 
 .membership-desc .sub {
-    font-size: 14px;
+    font-size: 16px;
     color: #444;
 }
 
 .access-list {
     margin-top: 12px;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .access-list p {
-    margin: 4px 0;
+    margin: 5px 0;
+    font-size: 16px;
 }
 
 .explore-text {
