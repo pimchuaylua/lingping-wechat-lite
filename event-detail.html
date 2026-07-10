@@ -159,16 +159,7 @@
                             <!-- Join Button -->
                             <div
                                 onclick="copyMeetingNumber('${getMeetingNumber(s?.levelName)}')"
-                                style="
-                                    background:#4C7DFF;
-                                    color:white;
-                                    padding:14px;
-                                    border-radius:8px;
-                                    cursor:pointer;
-                                    text-align:center;
-                                    font-weight:bold;
-                                    line-height:1.6;
-                                "
+                                class="meeting-room"
                             >
                                 ${getMeetingNumber(s?.levelName)} 📋
                             </div>
@@ -442,8 +433,15 @@
             modal.style.zIndex = '9999';
 
             modal.innerHTML = `
-            <img src="${url}" style="max-width:90%; max-height:90%; border-radius:12px;">
-        `;
+                <img src="${url}" style="
+                    max-width:90%;
+                    max-height:90%;
+                    width:auto;
+                    height:auto;
+                    object-fit:contain;
+                    border-radius:12px;
+                ">
+            `;
 
             modal.onclick = () => modal.remove();
 
