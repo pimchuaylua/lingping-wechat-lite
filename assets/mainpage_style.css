@@ -147,7 +147,6 @@ nav a:hover {
     font-weight: 600;
     margin-bottom: 4px;
     line-height: 1.3;
-    margin-top: 0;
     padding-top: 8px;
     transition: color 0.18s ease;
 
@@ -447,6 +446,7 @@ label:has(#topics) {
 
     justify-content: space-between;
     color: #444;
+    font-size: 14px;
 }
 
 .event-body:hover {
@@ -474,6 +474,7 @@ label:has(#topics) {
     justify-content: space-between;
     align-items: center;
     gap: 8px;
+    margin-top: 4px;
 }
 
 .event-desc {
@@ -1097,9 +1098,9 @@ body {
     .event-body {
         flex: 1;
         height: 180px;
+        font-size: 16px;
     }
 
-    /* Only title + status row */
     .event-row:first-child {
         display: flex;
         justify-content: space-between;
@@ -1108,50 +1109,13 @@ body {
     }
 
     .event-title {
-        font-size: 17px;
+        font-size: 18px;
     }
 
     .event-time,
     .event-location,
     .event-hosts {
-        font-size: 14px;
-
-        @media (min-width: 768px) {
-            .event-card {
-                display: flex;
-                gap: 16px;
-                align-items: stretch;
-            }
-
-            .event-photo {
-                width: 260px;
-                height: 180px;
-                flex-shrink: 0;
-            }
-
-            .event-body {
-                flex: 1;
-                height: 180px;
-            }
-
-            /* Only title + status row */
-            .event-row:first-child {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 12px;
-            }
-
-            .event-title {
-                font-size: 17px;
-            }
-
-            .event-time,
-            .event-location,
-            .event-hosts {
-                font-size: 14px;
-                color: #444
-            }
-        }
+        font-size: 16px;
+        color: #444;
     }
 }
