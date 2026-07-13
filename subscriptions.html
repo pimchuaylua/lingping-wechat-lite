@@ -98,45 +98,6 @@
             window.location.href = `/login.html?returnUrl=${returnUrl}`;
         }
 
-        // async function loginAndUpdateUI() {
-        //     let userId = localStorage.getItem("userId");
-
-        //     try {
-        //         if (!userId) {
-        //             const username = prompt("Enter your username:")?.trim();
-        //             if (!username) return;
-
-        //             const loginRes = await fetch(`${BASE_URL}/auth/login`, {
-        //                 method: "POST",
-        //                 headers: {
-        //                     "Content-Type": "application/json",
-        //                     "X-API-KEY": API_KEY
-        //                 },
-        //                 body: JSON.stringify({
-        //                     username,
-        //                     password: "lingpingreading33"
-        //                 })
-        //             });
-
-        //             const loginData = await loginRes.json();
-        //             userId = loginData?.data?.userId;
-
-        //             if (!loginRes.ok || !userId) {
-        //                 throw new Error("Invalid username. Please check and try again.");
-        //             }
-
-        //             localStorage.setItem("userId", userId);
-        //             localStorage.setItem("username", username);
-        //         }
-
-        //         renderUserWelcome();
-        //         loadSubscriptions();
-
-        //     } catch (err) {
-        //         alert(err.message);
-        //     }
-        // }
-
         function logout() {
             localStorage.removeItem("userId");
             localStorage.removeItem("username");
@@ -190,7 +151,14 @@
                 }
 
                 // Sort by expiredAt DESC
-                subs.sort((a, b) => new Date(b.expiredAt) - new Date(a.expiredAt));
+                subs.sort((a, b) => {
+                    if (a.expiredAt === null && b.expiredAt === null) return 0;
+                    if (a.expiredAt === null) return 1;
+                    if (b.expiredAt === null) return -1;
+
+                    return new Date(b.expiredAt) - new Date(a.expiredAt);
+                });
+                console.log(subs);
                 renderSubscriptions(subs);
 
             } catch (err) {
@@ -263,18 +231,26 @@
 
             // 1️⃣ Enrich subscriptions with computed flags
             const enriched = subs.map(sub => {
-                const expiredAt = new Date(sub.expiredAt);
+                const expiredAtDate = sub.expiredAt ? new Date(sub.expiredAt) : null;
+                const activatedAtDate = sub.activatedAt
+                    ? new Date(sub.activatedAt)
+                    : new Date(sub.createdAt);
 
                 const levelName = sub.subscriptionPlan.name || "";
                 const isCommunity = levelName.toLowerCase().includes("community");
 
+                // Active if:
+                // - Not yet activated (expiredAt === null), OR
+                // - Not expired
+                // AND still has passes (or unlimited)
                 const isActive =
-                    (sub.numberOfPassesLeft == null && expiredAt > now) ||
-                    (sub.numberOfPassesLeft > 0);
+                    (expiredAtDate === null || expiredAtDate > now) &&
+                    (sub.numberOfPassesLeft == null || sub.numberOfPassesLeft > 0);
 
                 return {
                     ...sub,
-                    expiredAtDate: expiredAt,
+                    expiredAtDate,
+                    activatedAtDate,
                     isCommunity,
                     isActive
                 };
@@ -283,11 +259,22 @@
             // 2️⃣ Split active / inactive
             const activeSubs = enriched
                 .filter(s => s.isActive)
-                .sort((a, b) => b.expiredAtDate - a.expiredAtDate);
+                .sort((a, b) => {
+                    if (!a.expiredAtDate && !b.expiredAtDate) return 0;
+                    if (!a.expiredAtDate) return 1;  // null expiry goes last
+                    if (!b.expiredAtDate) return -1;
+
+                    return a.expiredAtDate - b.expiredAtDate; // earliest expiry first
+                });
 
             const inactiveSubs = enriched
                 .filter(s => !s.isActive)
-                .sort((a, b) => b.expiredAtDate - a.expiredAtDate);
+                .sort((a, b) => {
+                    if (!a.expiredAtDate && !b.expiredAtDate) return 0;
+                    if (!a.expiredAtDate) return 1;
+                    if (!b.expiredAtDate) return -1;
+                    return b.expiredAtDate - a.expiredAtDate;
+                });
 
             // 3️⃣ Render in order: active → inactive
             [...activeSubs, ...inactiveSubs].forEach(sub => {
@@ -300,21 +287,33 @@
                     }</div>`
 
                 card.innerHTML = `
-            <div class="sub-title">
-                ${sub.subscriptionPlan.name}
-                <span class="badge ${sub.isActive ? "active" : "inactive"}">
-                    ${sub.isActive ? "Active" : "Expired/No Passes Left"}
-                </span>
-            </div>
+                    <div class="sub-title">
+                        ${sub.subscriptionPlan.name}
+                        <span class="badge ${sub.isActive ? "active" : "inactive"}">
+                            ${sub.isActive ? "Active" : "Expired/No Passes Left"}
+                        </span>
+                    </div>
 
-            <div class="sub-meta">
-                ${passesHtml}
-            </div>
+                    <div class="sub-meta">
+                        ${passesHtml}
+                    </div>
 
-            <div class="sub-expire">
-                Expires on: ${Utils.formatDate(sub.expiredAt)}
-            </div>
-        `;
+                    <div class="sub-expire">
+                        Valid through: ${sub.expiredAt
+                        ? Utils.formatLastValidDay(sub.expiredAt)
+                        : "Day of first use"
+                    }
+                    </div>
+
+                    <div class="sub-expire">
+                        Activated: ${sub.activatedAt === undefined
+                        ? Utils.formatFullDate(sub.createdAt)
+                        : sub.activatedAt === null
+                            ? "Not activated yet"
+                            : Utils.formatFullDate(sub.activatedAt)
+                    }
+                    </div> 
+                `;
 
                 listEl.appendChild(card);
             });

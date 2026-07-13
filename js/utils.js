@@ -20,7 +20,49 @@ window.Utils = {
             day: "numeric"
         });
     }
-    ,
+    , formatLastValidDay(input) {
+        let d;
+
+        if (input instanceof Date) {
+            d = new Date(input);
+        } else if (typeof input === "string") {
+            d = new Date(input);
+        } else {
+            return "—";
+        }
+
+        if (isNaN(d.getTime())) return "—";
+
+        // Display the previous day
+        d.setDate(d.getDate() - 1);
+
+        return d.toLocaleDateString("en-US", {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+            year: "numeric"
+        });
+    }, formatFullDate(input) {
+        let d;
+
+        if (input instanceof Date) {
+            d = input;
+        } else if (typeof input === "string") {
+            // Handles both ISO strings and YYYY-MM-DD
+            d = new Date(input);
+        } else {
+            return "—";
+        }
+
+        if (isNaN(d.getTime())) return "—";
+
+        return d.toLocaleDateString("en-US", {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+            year: "numeric"
+        });
+    },
 
     // getTimeZoneName() {
     //     const d = new Date();
