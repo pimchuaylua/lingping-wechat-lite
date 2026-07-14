@@ -223,6 +223,7 @@
         let englishDifficulty = "all"; // default
         let membershipStatusLoaded = false;
         let cachedCommunitySub = null;
+        const LAST_SELECTED_LOCATION_KEY = "lastSelectedLocation";
 
         /* ---------------- USER WELCOME ---------------- */
 
@@ -618,8 +619,6 @@
                 dates[dates.length - 1].date
             );
 
-            console.log('hereeee');
-            console.log(raw);
             const now = Date.now();
 
             sessions = raw
@@ -756,6 +755,16 @@
         const displayBtn = document.getElementById("locationDisplay");
         const options = document.getElementById("locationOptions");
 
+        const savedLevel = localStorage.getItem(LAST_SELECTED_LOCATION_KEY);
+        if (savedLevel) {
+            const savedOption = document.querySelector(`.location-option[data-level="${savedLevel}"]`);
+            if (savedOption) {
+                displayBtn.innerHTML = savedOption.innerHTML;
+                displayBtn.dataset.level = savedLevel;
+                currentLevel = savedLevel;
+            }
+        }
+
         displayBtn.addEventListener("click", () => {
             options.classList.toggle("hidden");
         });
@@ -785,6 +794,9 @@
                     console.error("Missing data-level:", option);
                     return;
                 }
+
+                localStorage.setItem(LAST_SELECTED_LOCATION_KEY, level);
+                console.log('setting storage', LAST_SELECTED_LOCATION_KEY, level);
 
                 displayBtn.innerHTML = `${text}`;
                 displayBtn.dataset.level = level;
