@@ -218,12 +218,13 @@
     <script>
 
         const { BASE_URL, API_KEY } = window.CONFIG;
-        let currentLevel = "695c763e2d652e065db71030"; // Online default
+        const LAST_SELECTED_LOCATION_KEY = "lastSelectedLocation";
+
+        let currentLevel = localStorage.getItem(LAST_SELECTED_LOCATION_KEY) ?? "695c763e2d652e065db71030";
         let membershipType = "community";
         let englishDifficulty = "all"; // default
         let membershipStatusLoaded = false;
         let cachedCommunitySub = null;
-        const LAST_SELECTED_LOCATION_KEY = "lastSelectedLocation";
 
         /* ---------------- USER WELCOME ---------------- */
 
@@ -623,7 +624,6 @@
 
             sessions = raw
                 .filter(s => {
-                    console.log(s.startTime);
                     const start = new Date(s.startTime).getTime();
                     const end = start + (s.durationMins * 60000);
 
