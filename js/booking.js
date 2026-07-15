@@ -8,6 +8,7 @@ window.bookSession = async function ({ sessionId }) {
 
     const LOGIN_URL = BASE_URL + "/auth/login";
     const BOOK_URL = BASE_URL + "/bookings/";
+    const PENDING_PREPAYMENT_SESSION_KEY = "pendingSessionIdToBookBeforeCompletePayment";
 
     let userId = localStorage.getItem("userId");
 
@@ -54,9 +55,14 @@ window.bookSession = async function ({ sessionId }) {
 
     } catch (err) {
         if (err.message.includes("No valid subscription found") || err.message.includes("Error occured")) {
-
+            localStorage.setItem(
+                PENDING_PREPAYMENT_SESSION_KEY,
+                JSON.stringify({
+                    sessionId: sessionId,
+                    expiresAt: Date.now() + 5 * 60 * 1000 // 5 minutes
+                })
+            );
             document.getElementById("membershipModal").style.display = "flex";
-
         } else {
             alert(err.message);
         }

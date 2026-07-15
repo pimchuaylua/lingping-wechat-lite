@@ -3,6 +3,7 @@
 (function () {
 
     const PENDING_PLAN_KEY = "pendingPlanId";
+    const PENDING_PREPAYMENT_SESSION_KEY = "pendingSessionIdToBookBeforeCompletePayment";
 
     async function createPayment(subscriptionPlanId) {
 
@@ -18,17 +19,25 @@
 
         try {
 
+            const paymentPayload = {
+                userId,
+                subscriptionPlanId,
+                quantity: 1,
+            };
+
+            const pendingSessionIdToBook = getPrePaymentPendingSessionId()
+
+            if (pendingSessionIdToBook) {
+                paymentPayload.pendingSessionIdToBook = pendingSessionIdToBook;
+            }
+
             const response = await fetch(`${BASE_URL}/payments`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-API-KEY": API_KEY
                 },
-                body: JSON.stringify({
-                    userId,
-                    subscriptionPlanId,
-                    quantity: 1
-                })
+                body: JSON.stringify(paymentPayload)
             });
 
             const result = await response.json();
@@ -37,6 +46,9 @@
 
                 // clear pending plan
                 localStorage.removeItem(PENDING_PLAN_KEY);
+
+                // clear pending session after payment is created successfully
+                localStorage.removeItem(PENDING_PREPAYMENT_SESSION_KEY);
 
                 window.location.href = result.data.paymentUrl;
             } else {
@@ -47,6 +59,21 @@
             console.error("Payment error:", error);
             alert("Unable to start payment.");
         }
+    }
+
+    function getPrePaymentPendingSessionId() {
+        const data = localStorage.getItem(PENDING_PREPAYMENT_SESSION_KEY);
+
+        if (!data) return null;
+
+        const parsed = JSON.parse(data);
+
+        if (Date.now() > parsed.expiresAt) {
+            localStorage.removeItem(PENDING_PREPAYMENT_SESSION_KEY);
+            return null;
+        }
+
+        return parsed.sessionId;
     }
 
     // 🔥 Auto-run after login if there is pending plan
