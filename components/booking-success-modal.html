@@ -7,21 +7,32 @@
                 Booking Confirmed 🎉
             </div>
 
-            Join our local group chats for updates, reminders, or if you can’t find us 📢
-
         </div>
 
-        <div class="modal-actions">
-
-            <button class="modal-confirm" onclick="window.open('join-us.html', '_blank')">
-                Contact Page
+        <div class="modal-actions vertical">
+            <button id="addToCalendarBtn" class="modal-confirm" style="display:none">
+                📅 Add to Google Calendar
             </button>
+
+            <!-- <button class="modal-confirm" onclick="window.open('join-us.html', '_blank')">
+                💬 Join Local Group Chats
+            </button> -->
 
             <button class="modal-cancel" onclick="closeBookingSuccessModal()">
                 I'm OK
             </button>
-
         </div>
 
     </div>
 </div>
+<style>
+    .modal-actions.vertical {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .modal-actions.vertical button {
+        width: 100%;
+    }
+</style>

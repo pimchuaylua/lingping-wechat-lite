@@ -51,7 +51,7 @@ window.bookSession = async function ({ sessionId }) {
             window.renderUserWelcome();
         }
 
-        showBookingSuccessModal();
+        showBookingSuccessModal(bookData);
 
     } catch (err) {
         if (err.message.includes("No valid subscription found") || err.message.includes("Error occured")) {
@@ -200,8 +200,19 @@ fetch("components/booking-success-modal.html")
         document.getElementById("bookingSuccessModalContainer").innerHTML = html;
     });
 
-function showBookingSuccessModal() {
+function showBookingSuccessModal(bookData) {
     document.getElementById("bookingSuccessModal").style.display = "flex";
+
+    const calendarBtn = document.getElementById("addToCalendarBtn");
+    const calendarLink = bookData?.data?.googleCalendarLink;
+
+    if (calendarLink) {
+        calendarBtn.style.display = "inline-block";
+        calendarBtn.onclick = () => window.open(calendarLink, "_blank");
+    } else {
+        calendarBtn.style.display = "none";
+        calendarBtn.onclick = null;
+    }
 }
 
 function closeBookingSuccessModal() {
