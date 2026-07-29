@@ -434,28 +434,6 @@
             return Array.isArray(json.data) ? json.data : [];
         }
 
-        // document.querySelectorAll(".location-btn").forEach(btn => {
-        //     btn.addEventListener("click", async () => {
-        //         document.querySelectorAll(".location-btn")
-        //             .forEach(b => b.classList.remove("active"));
-        //         btn.classList.add("active");
-
-        //         if (membershipType === "english") {
-        //             // English Class uses different level IDs
-        //             currentLevel =
-        //                 btn.innerText === "Online"
-        //                     ? "6982e63b245037c5977a9390"
-        //                     : "678b14ccbc6888f262c7bf2f";
-        //         } else {
-        //             // Community (original behavior)
-        //             currentLevel = btn.dataset.level;
-        //         }
-
-        //         await init();
-        //     });
-        // });
-
-
         function renderEvents() {
             let filtered = [...sessions];
 
@@ -545,11 +523,22 @@
                             ? `<div class="event-location">📍 ${s.location}</div>`
                             : "";
 
-                const hostHtml = s.hostNames
-                    ? `<div class="event-hosts">
-                            Hosted by ${s.hostNames}
+                const hostHtml =
+                    s.hosts?.length
+                        ? `<div class="event-hosts">
+                Hosted by ${s.hosts
+                            .map(
+                                host => `
+                            <span
+                                class="host-link"
+                                onclick="event.stopPropagation(); viewProfile('${host._id}')"
+                            >
+                                ${host.profile?.displayName || host.displayName}
+                            </span>`
+                            )
+                            .join(", ")}
                     </div>`
-                    : "";
+                        : "";
 
                 card.innerHTML = `
                 <div class="event-card">
@@ -633,12 +622,8 @@
                     const start = new Date(s.startTime);
                     const end = new Date(start.getTime() + s.durationMins * 60000);
                     const hostObjects = s.hosts || [];
-                    const hosts = hostObjects.length
-                        ? hostObjects.map(h => h.name).join(", ")
-                        : "TBA";
-
                     const hostNames = (s.hosts || [])
-                        .map(host => host.name)
+                        .map(host => host.displayName)
                         .join(", ");
 
                     return {
@@ -851,6 +836,11 @@
                 }
             }
         });
+
+        function viewProfile(userId) {
+            localStorage.setItem("viewUserId", userId);
+            window.location.href = "view-profile.html";
+        }
     </script>
 
 </body>

@@ -1119,3 +1119,17 @@ body {
         color: #444;
     }
 }
+
+.host-link {
+    color: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    text-decoration-color: rgba(68, 68, 68, 0.35);
+    transition: text-decoration-color 0.15s ease;
+}
+
+.host-link:hover {
+    text-decoration-color: rgba(68, 68, 68, 0.8);
+}
