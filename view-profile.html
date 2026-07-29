@@ -12,6 +12,10 @@
             --theme: #FFB050;
         }
 
+        .profile-section {
+            margin-top: 28px;
+        }
+
         .profile-pic {
             width: 140px;
             height: 140px;
@@ -126,7 +130,10 @@
 
         /* Section titles */
         .section-title {
-            color: #666;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
         }
 
 
@@ -161,10 +168,16 @@
             margin-top: 6px;
             white-space: pre-line;
         }
+
+        .profile-description {
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+            color: #555;
+            font-size: 15px;
+            line-height: 1.7;
+        }
     </style>
-
-
-
 
 </head>
 
@@ -214,6 +227,7 @@
 
                 container.innerHTML = `
                     <div class="profile-card">
+
                         <div class="profile-header">
                             <img
                                 src="${p.profilePic || 'https://via.placeholder.com/140'}"
@@ -225,35 +239,43 @@
                             <h2>${p.displayName}</h2>
                             <div class="sub">${p.bio || ''}</div>
                         </div>
-                    </div>
 
-                    <!-- Image Modal -->
-                    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
-                        <span class="close-btn">&times;</span>
-                        <img id="modalImage" class="modal-image">
-                    </div>
+                        ${p.description ? `
+                            <div class="profile-section">
+                                <div class="section-title">More about Me</div>
+                                <div class="profile-description">
+                                    ${p.description}
+                                </div>
+                            </div>
+                        ` : ""}
 
-                    <p style="white-space:pre-line;">
-                        ${p.description || ''}
-                    </p>
-
-                    <div class="section-title">Topics of Interest</div>
-                    <div>
-                        ${(p.topicsOfInterests || []).map(t =>
+                        ${p.topicsOfInterests && p.topicsOfInterests.length ? `
+                            <div class="profile-section">
+                                <div class="section-title">Topics of Interest</div>
+                                <div>
+                                    ${p.topicsOfInterests.map(t =>
                     `<span class="topic">${t.name}</span>`
                 ).join("")}
-                    </div>
-
-                    <div style="margin-top:20px;">
-                        ${(p.funPrompts || []).map(fp => `
-                            <div class="fun-prompt">
-                                <strong>${fp.question}</strong>
-                                <div class="fun-answer">${fp.answer || ""}</div>
+                                </div>
                             </div>
+                        ` : ""}
 
-                        `).join("")}
+                        ${(p.funPrompts || []).filter(fp => fp.answer && fp.answer.trim()).length ? `
+                            <div class="profile-section">
+                                <div class="section-title">Fun Facts</div>
+
+                                ${(p.funPrompts || [])
+                            .filter(fp => fp.answer && fp.answer.trim())
+                            .map(fp => `
+                                        <div class="fun-prompt">
+                                            <strong>${fp.question}</strong>
+                                            <div class="fun-answer">${fp.answer}</div>
+                                        </div>
+                                    `).join("")}
+                            </div>
+                        ` : ""}
+
                     </div>
-                </div>
 
                 `;
             } catch (err) {
