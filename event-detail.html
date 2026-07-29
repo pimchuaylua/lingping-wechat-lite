@@ -211,6 +211,10 @@
 
             if (s.hostObjects && s.hostObjects.length) {
                 hostsContainer.innerHTML = s.hostObjects.map(h => {
+                    const shortBio = h.profile.bio
+                        ? h.profile.bio.split(/\s+/).slice(0, 20).join(" ") +
+                        (h.profile.bio.split(/\s+/).length > 20 ? "..." : "")
+                        : "";
                     return `
             <div class="host-card">
                 <img
@@ -229,8 +233,8 @@
                         ${h.profile?.displayName || h.displayName}
                     </div>
                     
-                    ${h.profile?.bio ? `
-                        <div class="host-desc">${h.profile.bio}</div>
+                    ${shortBio ? `
+                        <div class="host-desc">${shortBio}</div>
                     ` : ""}
 
                     <div class="host-help" onclick="openHostHelpPopup()" style="cursor:pointer;">

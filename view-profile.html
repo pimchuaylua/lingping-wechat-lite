@@ -246,14 +246,14 @@
                             <img id="modalImage" class="modal-image">
                         </div>
 
-                        ${p.description ? `
-                            <div class="profile-section">
-                                <div class="section-title">More about Me</div>
-                                <div class="profile-description">
-                                    ${p.description}
-                                </div>
+                        ${p.description && p.description.trim() ? `
+                        <div class="profile-section">
+                            <div class="section-title">More About Me</div>
+                            <div class="profile-description">
+                                ${p.description}
                             </div>
-                        ` : ""}
+                        </div>
+                    ` : ""}
 
                         ${p.topicsOfInterests && p.topicsOfInterests.length ? `
                             <div class="profile-section">
