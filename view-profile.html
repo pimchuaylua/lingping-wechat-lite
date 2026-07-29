@@ -240,6 +240,12 @@
                             <div class="sub">${p.bio || ''}</div>
                         </div>
 
+                        <!-- Image Modal -->
+                        <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+                            <span class="close-btn">&times;</span>
+                            <img id="modalImage" class="modal-image">
+                        </div>
+
                         ${p.description ? `
                             <div class="profile-section">
                                 <div class="section-title">More about Me</div>
