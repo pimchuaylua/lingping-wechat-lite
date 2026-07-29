@@ -223,6 +223,7 @@ async function saveProfile(e) {
         };
     });
 
+    const topicsInput = document.getElementById("topics")?.value || "";
     const payload = {
         displayName:
             document.getElementById("displayName").value.trim() || " ",
@@ -230,12 +231,6 @@ async function saveProfile(e) {
             document.getElementById("bio").value.trim() || " ",
         description:
             document.getElementById("description").value.trim() || " ",
-        topicsOfInterests:
-            document.getElementById("topics")
-                .value
-                .split(",")
-                .map((t) => t.trim())
-                .filter(Boolean),
         funPrompts,
     };
 
