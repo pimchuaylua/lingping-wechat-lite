@@ -533,7 +533,7 @@
                                 class="host-link"
                                 onclick="event.stopPropagation(); viewProfile('${host._id}')"
                             >
-                                ${host.profile?.displayName || host.name}
+                                ${host.profile?.displayName || host.displayName}
                             </span>`
                             )
                             .join(", ")}
@@ -625,10 +625,6 @@
                     const hostNames = (s.hosts || [])
                         .map(host => host.displayName)
                         .join(", ");
-
-                    console.log(hostObjects);
-
-
 
                     return {
                         id: s._id,
