@@ -1133,3 +1133,36 @@ body {
 .host-link:hover {
     text-decoration-color: rgba(68, 68, 68, 0.8);
 }
+
+.event-hosts {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.host-avatars {
+    display: flex;
+    align-items: center;
+}
+
+.host-avatar-small {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    margin-left: -8px;
+    cursor: pointer;
+    background: #eee;
+}
+
+.host-avatar-small:first-child {
+    margin-left: 0;
+}
+
+.host-names {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}

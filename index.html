@@ -525,19 +525,30 @@
 
                 const hostHtml =
                     s.hosts?.length
-                        ? `<div class="event-hosts">
-                Hosted by ${s.hosts
-                            .map(
-                                host => `
+                        ? `
+                <div class="event-hosts">
+                    <div class="host-avatars">
+                        ${s.hosts.map(host => `
+                            <img
+                                src="${host.profile?.profilePic || 'assets/logos/lingping_logo.png'}"
+                                class="host-avatar-small"
+                                alt="${host.profile?.displayName || host.displayName}"
+                                onclick="event.stopPropagation(); viewProfile('${host._id}')"
+                            />
+                        `).join("")}
+                    </div>
+
+                    <div class="host-names">
+                        Hosted by ${s.hosts.map(host => `
                             <span
                                 class="host-link"
                                 onclick="event.stopPropagation(); viewProfile('${host._id}')"
                             >
                                 ${host.profile?.displayName || host.displayName}
-                            </span>`
-                            )
-                            .join(", ")}
-                    </div>`
+                            </span>
+                        `).join(", ")}
+                    </div>
+                </div>`
                         : "";
 
                 card.innerHTML = `
