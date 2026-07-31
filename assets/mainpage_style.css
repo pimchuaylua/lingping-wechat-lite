@@ -73,7 +73,7 @@ nav a:hover {
 /* Topics inline */
 .topics-inline {
     display: flex;
-    gap: 10px;
+    gap: 12px;
 }
 
 /* Topics */
