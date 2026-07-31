@@ -211,28 +211,32 @@
 
             if (s.hostObjects && s.hostObjects.length) {
                 hostsContainer.innerHTML = s.hostObjects.map(h => {
-                    const shortBio = h.profile.bio
-                        ? h.profile.bio.split(/\s+/).slice(0, 20).join(" ") +
-                        (h.profile.bio.split(/\s+/).length > 20 ? "..." : "")
+                    const profile = h.profile || {};
+                    const bio = profile.bio || "";
+
+                    const words = bio.split(/\s+/).filter(Boolean);
+                    const shortBio = words.length
+                        ? words.slice(0, 20).join(" ") + (words.length > 20 ? "..." : "")
                         : "";
+
                     return `
             <div class="host-card">
                 <img
-                    src="${h.profile?.profilePic || 'assets/logos/lingping_logo.png'}"
-                    alt="${h.profile?.displayName || h.displayName}"
+                    src="${profile.profilePic || 'assets/logos/lingping_logo.png'}"
+                    alt="${profile.displayName || h.displayName || 'Host'}"
                     class="host-avatar"
                     style="cursor:pointer;"
-                    onclick="openPhoto('${h.profile?.profilePic || 'assets/logos/lingping_logo.png'}')"
+                    onclick="openPhoto('${profile.profilePic || 'assets/logos/lingping_logo.png'}')"
                 />
-                
+
                 <div class="host-info">
                     <div
                         class="host-name host-link"
                         onclick="event.stopPropagation(); viewProfile('${h._id}')"
                     >
-                        ${h.profile?.displayName || h.displayName}
+                        ${profile.displayName || h.displayName || 'Host'}
                     </div>
-                    
+
                     ${shortBio ? `
                         <div class="host-desc">${shortBio}</div>
                     ` : ""}
@@ -258,8 +262,8 @@
                     });
 
                     const json = await res.json();
-                    const section = document.getElementById("attendeesSection");
 
+                    const section = document.getElementById("attendeesSection");
 
                     if (json.status && json.data.length > 0) {
 
@@ -277,32 +281,42 @@
                         }
 
                         section.innerHTML = `
-                            <div class="label">
-                                People You’ll Meet (${seatText})
-                            </div>
+                <div class="label">
+                    People You'll Meet (${seatText})
+                </div>
 
-                            <div class="sub">
-                            Tap to get to know fellow Lingping members 👇
-                            </div>
+                <div class="sub">
+                    Tap to get to know fellow Lingping members 👇
+                </div>
 
-                            <div class="chips">
-                            ${json.data.map(a => `
-                                <span class="chip clickable" onclick="viewProfile('${a.userId}')">
+                <div class="attendee-list">
+                    ${json.data.map(a => `
+                        <div class="attendee-row">
+                            <img
+                                class="attendee-avatar"
+                                src="${a.profile?.profilePic || 'assets/logos/lingping_logo.png'}"
+                                alt="${a.name}"
+                                onclick="viewProfile('${a.userId}')"
+                            />
+
+                            <span
+                                class="attendee-link"
+                                onclick="viewProfile('${a.userId}')"
+                            >
                                 ${a.name}
-                                </span>
-                            `).join("")}
-                            </div>
-                        `;
+                            </span>
+                        </div>
+                    `).join("")}
+                </div>
+            `;
                     } else {
                         section.innerHTML = `
-                            <div class="label">People You’ll Meet</div>
-                            <div class="sub">Be the first to join—people will join soon!</div>
-                        `;
+                <div class="label">People You'll Meet</div>
+                <div class="sub">Be the first to join—people will join soon!</div>
+            `;
                     }
                 } catch (err) {
                     console.error(err);
-                    document.getElementById("attendeesSection").innerHTML =
-                        `<div class="sub">Could not load attendees</div>`;
                 }
             }
 

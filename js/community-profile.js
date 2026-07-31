@@ -142,12 +142,12 @@ profileAvatarInput.addEventListener("change", async () => {
         }
 
         // Reload profile to get final S3 URL
-        await loadProfile();
+        await loadAvatarOnly();
 
     } catch (err) {
         console.error("Photo upload failed:", err);
         alert(err.message || "Failed to upload photo");
-        loadProfile(); // revert to previous avatar if needed
+        loadAvatarOnly(); // revert to previous avatar if needed
     }
 });
 
@@ -170,16 +170,25 @@ PROFILE_QUESTIONS.forEach((q, i) => {
 /* ============================
    Load existing profile
 ============================ */
+async function fetchProfile() {
+    const res = await fetch(
+        `${API_BASE}/users/${USER_ID}/profile`,
+        { headers }
+    );
+
+    const json = await res.json();
+    return json?.data ?? null;
+}
+
+async function loadAvatarOnly() {
+    const data = await fetchProfile();
+    if (!data) return;
+    renderAvatar(data.profilePic);
+}
 
 async function loadProfile() {
     try {
-        const res = await fetch(
-            `${API_BASE}/users/${USER_ID}/profile`,
-            { headers }
-        );
-
-        const json = await res.json();
-        const data = json?.data;
+        const data = await fetchProfile();
         if (!data) return;
 
         document.getElementById("displayName").value = data.displayName ?? "";

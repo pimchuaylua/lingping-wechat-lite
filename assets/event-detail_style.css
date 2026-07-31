@@ -35,10 +35,19 @@ body {
     max-width: 1000px;
     margin: 0 auto;
     padding: 24px;
+    padding-bottom: 80px;
+    /* Space for desktop book bar */
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     text-align: left;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        padding-bottom: calc(80px + env(safe-area-inset-bottom));
+    }
 }
 
 *,
@@ -410,10 +419,8 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    /* 👈 this restores spacing */
     margin-top: 8px;
-    margin-bottom: 16px;
-    /* space before CTA area */
+    padding-bottom: 35px;
 }
 
 
@@ -474,5 +481,41 @@ h1 {
 }
 
 .host-link:hover {
+    text-decoration-color: rgba(68, 68, 68, 0.8);
+}
+
+.attendee-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.attendee-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.attendee-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #eee;
+    cursor: pointer;
+}
+
+.attendee-link {
+    color: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    text-decoration-color: rgba(68, 68, 68, 0.35);
+    transition: text-decoration-color 0.15s ease;
+}
+
+.attendee-link:hover {
     text-decoration-color: rgba(68, 68, 68, 0.8);
 }
