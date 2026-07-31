@@ -410,10 +410,8 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    /* 👈 this restores spacing */
     margin-top: 8px;
-    margin-bottom: 16px;
-    /* space before CTA area */
+    padding-bottom: 35px;
 }
 
 
