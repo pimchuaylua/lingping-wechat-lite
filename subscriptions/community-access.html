@@ -51,9 +51,17 @@
 
                 <select class="city-dropdown" onchange="goToCity(this.value)">
                     <option value="" selected disabled>Choose your city</option>
-                    <option value="bangkok">Bangkok</option>
-                    <option value="chiangmai">Chiang Mai</option>
-                    <option value="phuket">Phuket</option>
+
+                    <optgroup label="🇹🇭 Thailand">
+                        <option value="bangkok">Bangkok</option>
+                        <option value="chiangmai">Chiang Mai</option>
+                        <option value="phuket">Phuket</option>
+                    </optgroup>
+
+                    <optgroup label="🇨🇳 China">
+                        <option value="chengdu">Chengdu</option>
+                    </optgroup>
+
                 </select>
             </div>
 
@@ -86,6 +94,8 @@
                 goPhuket();
             } else if (city === "multi-city") {
                 goMultiCity();
+            } else if (city === "chengdu") {
+                goChengdu();
             }
         }
 
@@ -103,6 +113,10 @@
 
         function goPhuket() {
             window.location.href = "community-plans-phuket.html";
+        }
+
+        function goChengdu() {
+            window.location.href = "community-plans-chengdu.html";
         }
 
         function goMultiCity() {
