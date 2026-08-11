@@ -302,7 +302,7 @@
                                 class="attendee-link"
                                 onclick="viewProfile('${a.userId}')"
                             >
-                                ${a.profile?.displayName || a.name}
+                                ${a.profile?.displayName?.trim() || a.name}
                             </span>
                         </div>
                     `).join("")}
