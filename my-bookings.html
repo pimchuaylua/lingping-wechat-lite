@@ -22,7 +22,7 @@
 <body>
     <div class="container">
         <div id="header"></div>
-        <h1 class="page-title">Upcoming Sessions</h1>
+        <h1 class="page-title" id="pageTitle">Upcoming Sessions</h1>
         <div id="eventList"></div>
     </div>
 
@@ -57,7 +57,10 @@
 
                 await Auth.login(username);
                 renderUserWelcome();
-                loadMyBookings();
+
+                const params = new URLSearchParams(window.location.search);
+                const type = params.get("type") || "attending";
+                loadMyEvents(type);
             } catch (err) {
                 alert(err.message);
             }
@@ -65,7 +68,7 @@
 
         /* ---------------- LOAD BOOKINGS ---------------- */
 
-        async function loadMyBookings() {
+        async function loadMyEvents(type = "attending") {
             const userId = localStorage.getItem("userId");
 
             if (!userId) {
@@ -73,14 +76,25 @@
                 return;
             }
 
-            const bookings = await getMyBookings();
+            let sessions = [];
 
-            if (!bookings || !bookings.length) {
-                eventList.innerHTML = `<div class="empty">You have no upcoming bookings.</div>`;
-                return;
+            if (type === "attending") {
+                const bookings = await getMyBookings();
+
+                if (!bookings || !bookings.length) {
+                    eventList.innerHTML = `<div class="empty">You have no upcoming bookings.</div>`;
+                    return;
+                }
+                sessions = mapBookingsToSessions(bookings);
+            } else if (type === "hosting") {
+                const hostingEvents = await getEventsToHost();
+                if (!hostingEvents || !hostingEvents.length) {
+                    eventList.innerHTML = `<div class="empty">You have no upcoming hosted events.</div>`;
+                    return;
+                }
+                sessions = hostingEvents.map(formatReadingSessionToDisplay);
             }
 
-            const sessions = mapBookingsToSessions(bookings);
             renderEvents(sessions);
         }
 
@@ -101,7 +115,41 @@
                     : "TBA";
 
                 const isCanceled = s.maxParticipants === -1;
+
+                const isHosting =
+                    new URLSearchParams(window.location.search).get("type") === "hosting";
+
+                const hostHtml =
+                    s.hosts?.length
+                        ? `
+                <div class="event-hosts">
+                    <div class="host-avatars">
+                        ${s.hosts.map(host => `
+                            <img
+                                src="${host.profile?.profilePic || 'assets/logos/lingping_logo.png'}"
+                                class="host-avatar-small"
+                                alt="${host.profile?.displayName || host.displayName}"
+                                onclick="event.stopPropagation(); viewProfile('${host._id}')"
+                            />
+                        `).join("")}
+                    </div>
+
+                    <div class="host-names">
+                        Hosted by ${s.hosts.map(host => `
+                            <span
+                                class="host-link"
+                                onclick="event.stopPropagation(); viewProfile('${host._id}')"
+                            >
+                                ${host.profile?.displayName || host.displayName}
+                            </span>
+                        `).join(", ")}
+                    </div>
+                </div>`
+                        : "";
+
+
                 card.innerHTML = `
+                <div class="event-card">
         ${s.photoUrl ? `
             <div class="event-photo">
                     <img class="event-img" src="${s.photoUrl}" alt="${s.title}">
@@ -128,7 +176,7 @@
                 </div>
             </div>
 
-            ${s.levelName.includes("Online")
+            ${s.level.includes("Online")
                         ? `<div class="event-location">🌐 Online</div>`
                         : s.locationUrl
                             ? `<div class="event-location">
@@ -143,28 +191,26 @@
                                 : ""
                     }
 
-</div>
-
+            <div class="event-row">
+                            <div class="event-time">
+                    ${Utils.formatDate(s.date)} · ${s.startTime} (${Utils.getTimeZoneName()})
+                </div>
+                        </div>
             <!-- Time + Book -->
             <div class="event-row">
-                <div class="event-time">
-                    ${Utils.formatDate(s.date)} · ${s.time} (${Utils.getTimeZoneName()})
-                </div>
+                
+
+                ${hostHtml}
 
                 ${s.booked
-                        ? `<div class="booked-label">Booked ✓</div>`
-                        : `
-        <button
-            class="book-btn ${s.isFull ? "" : "available"}"
-            ${s.isFull || isCanceled ? "disabled" : ""}
-            onclick="event.stopPropagation(); bookSession({ sessionId: '${s.id}' })">
-            Book
-        </button>
-      `
-                    }
+                        ? `<div class="${isHosting ? "hosting-label" : "booked-label"}">
+       ${isHosting ? "Hosting" : "Attending"} ✓
+     </div>`
+                        : ""}
 
             </div>
         </div>
+        </div class="event-card">
     `;
 
                 card.onclick = () => {
@@ -180,10 +226,27 @@
 
         function init() {
             renderUserWelcome();
-            loadMyBookings();
+
+            const params = new URLSearchParams(window.location.search);
+            const type = params.get("type") || "attending";
+            loadMyEvents(type);
         }
 
         init();
+    </script>
+
+    <script>
+        const type = new URLSearchParams(window.location.search).get("type");
+
+        document.getElementById("pageTitle").textContent =
+            type === "hosting"
+                ? "Events I'm Hosting"
+                : "Events I'm Attending";
+
+        function viewProfile(userId) {
+            localStorage.setItem("viewUserId", userId);
+            window.location.href = "view-profile.html";
+        }
     </script>
 </body>
 

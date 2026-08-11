@@ -87,6 +87,25 @@ async function getMyBookings() {
     return json.data;
 }
 
+async function getEventsToHost() {
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) return null;
+
+    const res = await fetch(
+        `${BASE_URL}/reading-sessions?hostId=${userId}&status=future`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+                "X-API-KEY": API_KEY
+            }
+        }
+    );
+
+    const json = await res.json();
+    return json.data;
+}
+
 async function cancelBooking(sessionId) {
     if (!confirm("Are you sure you want to cancel this booking?")) {
         return;
@@ -120,40 +139,45 @@ async function cancelBooking(sessionId) {
     }
 }
 
+function formatReadingSessionToDisplay(s) {
+    const start = new Date(s.startTime);
+    const end = new Date(start.getTime() + s.durationMins * 60000);
+
+    const hostObjects = s.hosts || [];
+    const hosts = hostObjects.length
+        ? hostObjects.map(h => h.name).join(", ")
+        : "TBA";
+
+    return {
+        id: s._id,
+        startTime: start, // 🔑 keep for sorting
+        date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
+        startTime: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+        time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+        title: s.title,
+        description: s.shortDescription,
+        fullDescription: s.fullDescription,
+        hosts: s.hosts || [],
+        hostObjects: hostObjects,
+        isFull: s.isFull,
+        seatsLeft: s.numberOfSeatsLeft,
+        maxParticipants: s.maxParticipants,
+        photoUrl: s.photoUrl,
+        booked: true,
+        location: s.location,
+        locationUrl: s.locationUrl,
+        level: s.level
+    };
+
+}
 function mapBookingsToSessions(bookings) {
     return bookings
         .map(b => {
-            const s = b.readingSession;
-            const start = new Date(s.startTime);
-            const end = new Date(start.getTime() + s.durationMins * 60000);
-
-            const hostObjects = s.hosts || [];
-            const hosts = hostObjects.length
-                ? hostObjects.map(h => h.name).join(", ")
-                : "TBA";
-
-            return {
-                id: s._id,
-                startTime: start, // 🔑 keep for sorting
-                date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
-                time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
-                title: s.title,
-                description: s.shortDescription,
-                fullDescription: s.fullDescription,
-                hosts: s.hosts || [],
-                hostObjects: hostObjects,
-                isFull: s.isFull,
-                seatsLeft: s.numberOfSeatsLeft,
-                maxParticipants: s.maxParticipants,
-                photoUrl: s.photoUrl,
-                booked: true,
-                location: s.location,
-                locationUrl: s.locationUrl,
-                levelName: s.level
-            };
+            return formatReadingSessionToDisplay(b.readingSession)
         })
         .sort((a, b) => a.startTime - b.startTime); // 🔽 order by time
 }
+
 
 function closeMembershipPopup() {
     document.getElementById("membershipModal").style.display = "none";

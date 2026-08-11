@@ -549,6 +549,17 @@ label:has(#topics) {
     white-space: nowrap;
 }
 
+.hosting-label {
+    color: #4b84ee;
+    /* calm blue */
+    font-weight: 600;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: rgba(75, 132, 238, 0.1);
+    white-space: nowrap;
+}
+
 .status-active {
     color: #1fa64b;
     /* soft green */
