@@ -472,7 +472,6 @@ label:has(#topics) {
 
 .event-row {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     gap: 8px;
     margin-top: 4px;
@@ -1184,4 +1183,29 @@ body {
     font-size: 12px;
     color: #666;
     cursor: default;
+}
+
+.edit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border: 1px solid #007bff;
+    border-radius: 999px;
+    background: #fff;
+    color: #007bff;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.edit-btn:hover {
+    background: #007bff;
+    color: #fff;
+}
+
+.edit-btn .edit-icon {
+    flex-shrink: 0;
 }
