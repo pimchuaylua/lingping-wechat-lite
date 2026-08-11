@@ -196,18 +196,23 @@
                     ${Utils.formatDate(s.date)} · ${s.startTime} (${Utils.getTimeZoneName()})
                 </div>
                         </div>
-            <!-- Time + Book -->
+            <div class="event-row">${hostHtml} </div>
             <div class="event-row">
-                
-
-                ${hostHtml}
-
-                ${s.booked
+    ${s.booked
                         ? `<div class="${isHosting ? "hosting-label" : "booked-label"}">
-       ${isHosting ? "Hosting" : "Attending"} ✓
-     </div>`
+            ✓ ${isHosting ? "Hosting" : "Joining"} 
+        </div>
+        ${isHosting
+                            ? `<button class="edit-btn" onclick="event.stopPropagation(); location.href='edit-event.html?readingSessionId=${s.id}'">
+                <svg class="edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 20h4L18.5 9.5a2.121 2.121 0 0 0-3-3L5 17v3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14 6l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Edit
+            </button>`
+                            : ""}`
                         : ""}
-
+</div>
             </div>
         </div>
         </div class="event-card">

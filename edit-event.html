@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Session</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="config.js"></script>
+    <script src="js/utils.js?v=20250210"></script>
+    <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
+    <style>
+        .section input.sub,
+        .section textarea.sub {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff;
+            color: #111827;
+            font-size: 15px;
+            font-family: inherit;
+            line-height: 1.4;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .section input.sub:focus,
+        .section textarea.sub:focus {
+            outline: none;
+            border-color: var(--theme);
+            box-shadow: 0 0 0 3px rgba(255, 176, 80, 0.18);
+        }
+
+        .section input.sub[readonly] {
+            background: #f9fafb;
+            color: #6b7280;
+            cursor: default;
+        }
+
+        .section textarea.sub {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .hint mark {
+            background: #FFF3B0;
+            color: #78350f;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-style: normal;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" id="formContainer">Loading...</div>
+
+    <div class="book-bar">
+        <button class="book-btn" id="saveBtn" onclick="saveSession()">
+            Save Changes
+        </button>
+    </div>
+
+    <script>
+        const { BASE_URL, API_KEY } = window.CONFIG;
+        const params = new URLSearchParams(window.location.search);
+        const sessionId = params.get('readingSessionId');
+        const container = document.getElementById('formContainer');
+
+        if (!sessionId) {
+            container.innerHTML = '<p>No readingSessionId provided in URL.</p>';
+        } else {
+            loadSession();
+        }
+
+        async function loadSession() {
+            try {
+                const res = await fetch(`${BASE_URL}/reading-sessions/${sessionId}?locale=en_US`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-KEY': API_KEY
+                    }
+                });
+
+                const json = await res.json();
+                const s = json.data;
+
+                if (!json.status || !s) {
+                    container.innerHTML = '<p>Session not found.</p>';
+                    return;
+                }
+
+                console.log('s', s)
+                const en = s.translations?.en_US || {};
+                const startTime = new Date(s.startTime);
+                const dateVal = startTime.toISOString().slice(0, 10);
+                const timeVal = startTime.toISOString().slice(11, 16);
+
+                container.innerHTML = `
+                    <div class="back-btn" onclick="history.back()">← Back</div>
+                    <h1>Edit Session</h1>
+
+                    <div class="section">
+                        <div class="label">Title</div>
+                        <div class="hint">Only change the <mark>"Topic TBD"</mark> part — keep the rest (e.g. language/level) as is.</div>
+                        <input class="sub" id="title_en" value="${s.title || ''}">
+                    </div>
+
+                    <div class="section">
+                        <div class="label">Description</div>
+                        <div class="hint">Change only the <mark>📌 topic line</mark>. Example: 📌 Talk about your home, rooms, furniture, and favorite place.</span>
+                        <textarea class="sub" id="fullDescription_en">${s.fullDescription || ''}</textarea>
+                    </div>
+
+                    <div class="section">
+                        <div class="label">Hosts</div>
+                        <input class="sub" readonly value="${(s.hosts || []).map(h => h.profile?.displayName || h.displayName).join(', ')}">
+                        <input type="hidden" id="hostIds" value="${(s.hosts || []).map(h => h._id || h).join(',')}">
+                    </div>
+
+                    <div class="section">
+                        <div class="label">Date</div>
+                        <input class="sub" readonly type="date" id="date" value="${dateVal}">
+                    </div>
+                    <div class="section">
+                        <div class="label">Time (UTC)</div>
+                        <input class="sub" readonly type="time" id="time" value="${timeVal}">
+                    </div>
+                    <div class="section">
+                        <div class="label">Duration (mins)</div>
+                        <input class="sub" readonly type="number" id="durationMins" value="${s.durationMins || ''}">
+                    </div>
+
+                    <div class="section">
+                        <div class="label">Location</div>
+                        <input class="sub" id="location_en" value="${s.location || ''}">
+                    </div>
+                    <div class="section">
+                        <div class="label">Location Google Map URL</div>
+                        <input class="sub" id="locationUrl" value="${s.locationUrl || ''}">
+                    </div>
+
+                    <div class="section">
+                        <div class="label">Max Participants</div>
+                        <input class="sub" type="number" id="maxParticipants" value="${s.maxParticipants || ''}">
+                    </div>
+                `;
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p>Failed to load session.</p>';
+            }
+        }
+
+        function val(id) {
+            return document.getElementById(id).value.trim();
+        }
+
+        function idList(id) {
+            return val(id) ? val(id).split(',').map(x => x.trim()).filter(Boolean) : undefined;
+        }
+
+        async function saveSession() {
+            const date = val('date');
+            const time = val('time');
+
+            const body = {
+                startTime: date && time ? new Date(`${date}T${time}:00.000Z`) : undefined,
+                durationMins: Number(val('durationMins')) || undefined,
+                locationUrl: val('locationUrl') || undefined,
+                hostIds: idList('hostIds'),
+                maxParticipants: Number(val('maxParticipants')) || undefined,
+                translations: {
+                    en_US: {
+                        title: val('title_en'),
+                        location: val('location_en'),
+                        fullDescription: val('fullDescription_en'),
+                    }
+                }
+            };
+
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+
+            try {
+                const res = await fetch(`${BASE_URL}/reading-sessions/${sessionId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-KEY': API_KEY
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const json = await res.json();
+
+                if (res.ok && json.status) {
+                    alert('Session updated ✅');
+                } else {
+                    alert(json.message || 'Failed to update session.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to update session.');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+            }
+        }
+    </script>
+
+</body>
+
+</html>
