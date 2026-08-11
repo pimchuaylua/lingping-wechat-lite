@@ -198,6 +198,7 @@
 
                 if (res.ok && json.status) {
                     alert('Session updated ✅');
+                    window.location.href = '/my-bookings.html?type=hosting';
                 } else {
                     alert(json.message || 'Failed to update session.');
                 }
