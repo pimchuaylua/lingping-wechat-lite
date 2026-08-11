@@ -50,6 +50,26 @@
             font-weight: 600;
             font-style: normal;
         }
+
+        .section select.sub {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff;
+            color: #111827;
+            font-size: 15px;
+            font-family: inherit;
+            line-height: 1.4;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .section select.sub:focus {
+            outline: none;
+            border-color: var(--theme);
+            box-shadow: 0 0 0 3px rgba(255, 176, 80, 0.18);
+        }
     </style>
 </head>
 
@@ -127,9 +147,27 @@
                         <input class="sub" readonly type="date" id="date" value="${dateVal}">
                     </div>
                     <div class="section">
-                        <div class="label">Time (UTC)</div>
-                        <input class="sub" readonly type="time" id="time" value="${timeVal}">
+                        <div class="label">Time Zone</div>
+
+                        <select class="sub" id="timezone">
+                            <option value="Asia/Bangkok">Bangkok (UTC+7)</option>
+                            <option value="Asia/Shanghai">Shanghai (UTC+8)</option>
+                            <option value="Asia/Tokyo">Tokyo (UTC+9)</option>
+                            <option value="Asia/Seoul">Seoul (UTC+9)</option>
+                            <option value="Asia/Singapore">Singapore (UTC+8)</option>
+                            <option value="Europe/Berlin">Berlin</option>
+                            <option value="America/Los_Angeles">Los Angeles</option>
+                            <option value="America/New_York">New York</option>
+                            <option value="UTC">UTC</option>
+                        </select>
                     </div>
+
+                    <div class="section">
+                        <div class="label">Time</div>
+                        <input class="sub" readonly type="time" id="time"
+                            value="${utcTimeToTimezone(timeVal, 'Asia/Bangkok')}">
+                    </div>
+
                     <div class="section">
                         <div class="label">Duration (mins)</div>
                         <input class="sub" readonly type="number" id="durationMins" value="${s.durationMins || ''}">
@@ -149,6 +187,15 @@
                         <input class="sub" type="number" id="maxParticipants" value="${s.maxParticipants || ''}">
                     </div>
                 `;
+
+                const timezoneEl = document.getElementById('timezone');
+                const timeEl = document.getElementById('time');
+
+                if (timezoneEl && timeEl) {
+                    timezoneEl.addEventListener('change', function () {
+                        timeEl.value = utcTimeToTimezone(timeVal, this.value);
+                    });
+                }
             } catch (err) {
                 console.error(err);
                 container.innerHTML = '<p>Failed to load session.</p>';
@@ -166,9 +213,14 @@
         async function saveSession() {
             const date = val('date');
             const time = val('time');
+            const timezone = val('timezone');
+
+            const startTime = date && time
+                ? timezoneToUTC(date, time, timezone)
+                : undefined;
 
             const body = {
-                startTime: date && time ? new Date(`${date}T${time}:00.000Z`) : undefined,
+                startTime,
                 durationMins: Number(val('durationMins')) || undefined,
                 locationUrl: val('locationUrl') || undefined,
                 hostIds: idList('hostIds'),
@@ -210,6 +262,59 @@
                 saveBtn.disabled = false;
                 saveBtn.textContent = 'Save Changes';
             }
+        }
+
+        function utcTimeToTimezone(utcTime, timezone) {
+            if (!utcTime) return '';
+
+            const [hours, minutes] = utcTime.split(':').map(Number);
+
+            const date = new Date();
+            date.setUTCHours(hours, minutes, 0, 0);
+
+            return new Intl.DateTimeFormat('en-GB', {
+                timeZone: timezone,
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }).format(date);
+        }
+
+        function timezoneToUTC(dateValue, timeValue, timezone) {
+            if (!dateValue || !timeValue) return null;
+
+            // Create a date representing the selected local time.
+            // Use a temporary UTC date, then calculate the timezone offset.
+            const [year, month, day] = dateValue.split('-').map(Number);
+            const [hours, minutes] = timeValue.split(':').map(Number);
+
+            const guess = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+
+            const parts = new Intl.DateTimeFormat('en-US', {
+                timeZone: timezone,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }).formatToParts(guess);
+
+            const get = (type) => Number(
+                parts.find(p => p.type === type)?.value
+            );
+
+            const localAtGuess = Date.UTC(
+                get('year'),
+                get('month') - 1,
+                get('day'),
+                get('hour') === 24 ? 0 : get('hour'),
+                get('minute')
+            );
+
+            const offset = localAtGuess - guess.getTime();
+
+            return new Date(guess.getTime() - offset);
         }
     </script>
 
