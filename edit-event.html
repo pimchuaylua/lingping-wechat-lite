@@ -8,6 +8,49 @@
     <script src="config.js"></script>
     <script src="js/utils.js?v=20250210"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
+    <style>
+        .section input.sub,
+        .section textarea.sub {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff;
+            color: #111827;
+            font-size: 15px;
+            font-family: inherit;
+            line-height: 1.4;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .section input.sub:focus,
+        .section textarea.sub:focus {
+            outline: none;
+            border-color: var(--theme);
+            box-shadow: 0 0 0 3px rgba(255, 176, 80, 0.18);
+        }
+
+        .section input.sub[readonly] {
+            background: #f9fafb;
+            color: #6b7280;
+            cursor: default;
+        }
+
+        .section textarea.sub {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .hint mark {
+            background: #FFF3B0;
+            color: #78350f;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-style: normal;
+        }
+    </style>
 </head>
 
 <body>
@@ -61,12 +104,14 @@
 
                     <div class="section">
                         <div class="label">Title</div>
-                        <input class="sub" id="title_en" value="${en.title || ''}">
+                        <div class="hint">Only change the <mark>"Topic TBD"</mark> part — keep the rest (e.g. language/level) as is.</div>
+                        <input class="sub" id="title_en" value="${s.title || ''}">
                     </div>
 
                     <div class="section">
                         <div class="label">Full Description</div>
-                        <textarea class="sub" id="fullDescription_en">${en.fullDescription || ''}</textarea>
+                        <div class="hint">Only change the <mark>📌 first line</mark> (topic) — keep the rest of the description as is.</div>
+                        <textarea class="sub" id="fullDescription_en">${s.fullDescription || ''}</textarea>
                     </div>
 
                     <div class="section">
@@ -77,15 +122,15 @@
 
                     <div class="section">
                         <div class="label">Date</div>
-                        <input class="sub" type="date" id="date" value="${dateVal}">
+                        <input class="sub" readonly type="date" id="date" value="${dateVal}">
                     </div>
                     <div class="section">
                         <div class="label">Time (UTC)</div>
-                        <input class="sub" type="time" id="time" value="${timeVal}">
+                        <input class="sub" readonly type="time" id="time" value="${timeVal}">
                     </div>
                     <div class="section">
                         <div class="label">Duration (mins)</div>
-                        <input class="sub" type="number" id="durationMins" value="${s.durationMins || ''}">
+                        <input class="sub" readonly type="number" id="durationMins" value="${s.durationMins || ''}">
                     </div>
 
                     <div class="section">
