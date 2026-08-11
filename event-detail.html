@@ -279,7 +279,6 @@
                         } else {
                             seatText = `${joined} joined · ${left} seats left`;
                         }
-
                         section.innerHTML = `
                 <div class="label">
                     People You'll Meet (${seatText})
@@ -295,7 +294,7 @@
                             <img
                                 class="attendee-avatar"
                                 src="${a.profile?.profilePic || 'assets/logos/lingping_logo.png'}"
-                                alt="${a.name}"
+                                alt="${a.profile?.displayName || a.name}"
                                 onclick="viewProfile('${a.userId}')"
                             />
 
@@ -303,7 +302,7 @@
                                 class="attendee-link"
                                 onclick="viewProfile('${a.userId}')"
                             >
-                                ${a.name}
+                                ${a.profile?.displayName || a.name}
                             </span>
                         </div>
                     `).join("")}
