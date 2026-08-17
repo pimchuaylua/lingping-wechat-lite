@@ -9,6 +9,7 @@
     <script src="js/hosts.js?v=9"></script>
     <script src="js/booking.js?v=202605162"></script>
     <script src="js/utils.js?v=20250210"></script>
+    <script src="js/render-langague-level.js"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
 </head>
@@ -194,9 +195,21 @@
                     <div id="hostsContainer"></div>
                 </div>
 
+                <!-- Language & level -->
+                <div class="section">
+                    <div class="label">Perfect For</div>
+                    <div class="chip-row">${renderLanguageChipsForEventDetails(s.languages, s.options)}</div>
+                </div>
+
+                <!-- Format -->
+                <div class="section">
+                    <div class="label">What We’ll Do</div>
+                    <div class="chip-row">${renderFormatChips(s.categories, s.options)}</div>
+                </div>
+
                 <!-- Description -->
                 <div class="section">
-                    <div class="label">What We’ll Talk About</div>
+                    <div class="label">Our Theme</div>
                     <div class="description">${fullDescHTML}</div>
                 </div>
 
