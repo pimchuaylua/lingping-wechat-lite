@@ -17,6 +17,7 @@
     <script src="js/booking.js?v=202605162"></script>
     <script src="js/utils.js?v=20250210"></script>
     <script src="js/dropdown.js?v=20260516"></script>
+    <script src="js/render-langague-level.js"></script>
 </head>
 
 <body>
@@ -78,6 +79,10 @@
 
             let sessions = [];
 
+            const [eventOptions] = await Promise.all([
+                loadSessionOptions(),
+            ]);
+
             if (type === "attending") {
                 const bookings = await getMyBookings();
 
@@ -85,14 +90,14 @@
                     eventList.innerHTML = `<div class="empty">You have no upcoming bookings.</div>`;
                     return;
                 }
-                sessions = mapBookingsToSessions(bookings);
+                sessions = mapBookingsToSessions(bookings, eventOptions);
             } else if (type === "hosting") {
                 const hostingEvents = await getEventsToHost();
                 if (!hostingEvents || !hostingEvents.length) {
                     eventList.innerHTML = `<div class="empty">You have no upcoming hosted events.</div>`;
                     return;
                 }
-                sessions = hostingEvents.map(formatReadingSessionToDisplay);
+                sessions = hostingEvents.map(s => formatReadingSessionToDisplay(s, eventOptions));
             }
 
             renderEvents(sessions);

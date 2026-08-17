@@ -476,8 +476,6 @@
                 filtered = filtered.filter(s => {
 
                     const codes = (s.languages || []).map(l => l.language.toLowerCase());
-                    console.log('codes', codes);
-                    console.log('selectedLanguage', selectedLanguage);
                     return codes.includes(selectedLanguage.toLowerCase());
                 });
             }

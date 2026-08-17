@@ -43,8 +43,27 @@ function findMeta(list, value) {
     return list.find(item => item.value === value);
 }
 
+async function loadSessionOptions() {
+    const res = await fetch(`${BASE_URL}/reading-sessions/options`, {
+        headers: {
+            "Content-Type": "application/json",
+            "X-API-KEY": API_KEY
+        }
+    });
+    const json = await res.json();
+    return json.data;
+}
+
 function renderLanguageChipsForEventDetails(languages = [], options) {
-    if (!languages.length || !options) return '';
+    if (!languages.length) {
+        return `
+      <div class="lang-level-row">
+        <span class="level-desc">All Lingping members who want to hang out, connect, and catch up. You can speak any language you’re comfortable with.</span>
+      </div>
+    `;
+    }
+
+    if (!options) return '';
 
     return languages.map(({ language, proficiencyLevel }) => {
         const lang = findMeta(options.languages, language);

@@ -117,6 +117,9 @@
         if (!s) {
             container.innerHTML = "<p>Session not found.</p>";
         } else {
+
+            console.log('s22222')
+            console.log('s', s)
             const fullDescHTML = (s.fullDescription || s.description)
                 .split("\n")
                 .map(line => `<p>${line}</p>`)
