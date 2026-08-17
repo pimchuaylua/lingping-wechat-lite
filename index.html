@@ -94,9 +94,9 @@
                 <!-- Topics -->
                 <div class="topics-inline">
                     <span class="topic active" data-topic="">All</span>
-                    <span class="topic" data-topic="english">EN</span>
-                    <span class="topic" data-topic="thai">TH</span>
-                    <span class="topic" data-topic="chinese">CH</span>
+                    <span class="topic" data-topic="en">EN</span>
+                    <span class="topic" data-topic="th">TH</span>
+                    <span class="topic" data-topic="zh">CH</span>
                 </div>
 
             </div>
@@ -406,7 +406,7 @@
 
         const dates = getNextNDays(9);
         let activeDate = null;
-        let selectedTopic = "";
+        let selectedLanguage = "";
         let sessions = [];
 
         const dateFilter = document.getElementById("dateFilter");
@@ -422,7 +422,7 @@
 
                 btn.onclick = () => {
                     activeDate = d.date;
-                    selectedTopic = "";
+                    selectedLanguage = "";
                     document.querySelectorAll(".topic").forEach(t => t.classList.remove("active"));
                     document.querySelector('.topic[data-topic=""]').classList.add("active");
                     renderDates();
@@ -472,10 +472,14 @@
             }
 
             // 🔹 Community topic filter
-            if (membershipType === "community" && selectedTopic) {
-                filtered = filtered.filter(s =>
-                    s.title.toLowerCase().includes(selectedTopic)
-                );
+            if (membershipType === "community" && selectedLanguage) {
+                filtered = filtered.filter(s => {
+
+                    const codes = (s.languages || []).map(l => l.language.toLowerCase());
+                    console.log('codes', codes);
+                    console.log('selectedLanguage', selectedLanguage);
+                    return codes.includes(selectedLanguage.toLowerCase());
+                });
             }
 
             // 🔹 Date filter
@@ -630,7 +634,7 @@
             btn.onclick = () => {
                 document.querySelectorAll(".topic").forEach(b => b.classList.remove("active"));
                 btn.classList.add("active");
-                selectedTopic = btn.dataset.topic;
+                selectedLanguage = btn.dataset.topic;
                 activeDate = null;
                 renderDates();
                 renderEvents();
@@ -676,7 +680,6 @@
                         .map(host => host.displayName)
                         .join(", ");
 
-                    console.log(eventOptions);
                     return {
                         id: s._id,
                         date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
