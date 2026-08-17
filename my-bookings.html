@@ -18,6 +18,7 @@
     <script src="js/utils.js?v=20250210"></script>
     <script src="js/dropdown.js?v=20260516"></script>
     <script src="js/render-langague-level.js"></script>
+    <link rel="stylesheet" href="assets/chip_style.css">
 </head>
 
 <body>
@@ -165,7 +166,7 @@
             <!-- Title + Status -->
             <div class="event-row">
                 <div class="event-title">${s.title}</div>
-
+                
                 <div class="status ${s.maxParticipants === -1
                         ? "canceled"
                         : s.isFull
@@ -180,6 +181,8 @@
                     }
                 </div>
             </div>
+
+            ${renderLanguageChips(s.languages)}
 
             ${s.level.includes("Online")
                         ? `<div class="event-location">🌐 Online</div>`
@@ -198,7 +201,7 @@
 
             <div class="event-row">
                             <div class="event-time">
-                    ${Utils.formatDate(s.date)} · ${s.startTime} (${Utils.getTimeZoneName()})
+                    ${Utils.formatDate(s.date)} · ${s.startTime}
                 </div>
                         </div>
             <div class="event-row">${hostHtml} </div>

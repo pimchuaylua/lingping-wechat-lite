@@ -507,19 +507,3 @@ h1 {
 .attendee-link:hover {
     text-decoration-color: rgba(68, 68, 68, 0.8);
 }
-
-.chip-row {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin: 8px 0;
-    height: auto;
-    min-height: 0;
-    overflow: visible;
-    line-height: normal;
-}
-
-.chip-format {
-    background: #eef1e9;
-    color: #4a5a3d;
-}

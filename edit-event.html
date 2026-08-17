@@ -8,6 +8,8 @@
     <script src="config.js"></script>
     <script src="js/utils.js?v=20250210"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
+    <link rel="stylesheet" href="assets/chip_style.css">
+    <script src="js/render-langague-level.js"></script>
     <style>
         .input-invalid {
             border-color: #b3441f !important;
@@ -149,6 +151,9 @@
                 const isDescriptionTBD = /TBD|TBA/i.test(desc);
                 const placeholderDesc = "Where did you grow up? Share your hometown, favorite places, local food, childhood memories, and what makes your hometown special to you. Discover where everyone comes from and the stories behind each place.";
 
+                const eventOptions = await loadSessionOptions();
+                s.options = eventOptions;
+
                 container.innerHTML = `
                     <div class="back-btn" onclick="history.back()">← Back</div>
                     <h1>Edit Session</h1>
@@ -174,6 +179,11 @@
                             placeholder="${isDescriptionTBD ? placeholderDesc : ''}"
                         >${isDescriptionTBD ? '' : desc}</textarea>
                         <div class="char-count" id="fullDescription_en_count"></div>
+                    </div>
+
+                    <div class="section">
+                        <div class="label">Perfect For</div>
+                        ${renderLanguageChipsForEventDetails(s.languages, s.options)}
                     </div>
 
                     <div class="section">

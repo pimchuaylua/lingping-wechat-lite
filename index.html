@@ -20,6 +20,7 @@
     <script src="js/quotes.js"></script>
     <script src="js/render-langague-level.js"></script>
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
+    <link rel="stylesheet" href="assets/chip_style.css">
 
     <meta property="og:title" content="Lingping Club" />
     <meta property="og:description"
@@ -638,17 +639,6 @@
                 renderEvents();
             };
         });
-
-        async function loadSessionOptions() {
-            const res = await fetch(`${BASE_URL}/reading-sessions/options`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-API-KEY": API_KEY
-                }
-            });
-            const json = await res.json();
-            return json.data;
-        }
 
         async function init() {
             renderUserWelcome();

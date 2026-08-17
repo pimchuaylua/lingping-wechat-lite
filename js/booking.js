@@ -153,7 +153,7 @@ function formatReadingSessionToDisplay(s, eventOptions) {
         id: s._id,
         startTime: start, // 🔑 keep for sorting
         date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
-        startTime: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+        startTime: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
         time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
         title: s.title,
         description: s.shortDescription,
