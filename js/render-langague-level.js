@@ -56,8 +56,6 @@ async function loadSessionOptions() {
 
 function renderLanguageChipsForEventDetails(languages = [], options) {
 
-    console.log('languages', languages)
-    console.log('options', options)
     if (!languages.length) {
         return `
       <div class="lang-level-row">
