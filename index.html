@@ -18,6 +18,7 @@
     <script src="js/booking.js?v=202605162"></script>
     <script src="js/utils.js?v=20250210?v=20260113"></script>
     <script src="js/quotes.js"></script>
+    <script src="js/render-langague-level.js"></script>
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
 
     <meta property="og:title" content="Lingping Club" />
@@ -498,21 +499,22 @@
                 let flagImg = "";
 
                 const isCanceled = s.maxParticipants === -1;
-                const title = s.title.toLowerCase();
+                const languages = s.languages || [];
+                const languageCodes = languages.map(l => l.language);
 
-                if (title.includes("english") && title.includes("thai")) {
+                if (languageCodes.includes("en") && languageCodes.includes("th")) {
                     flagImg = "assets/flags/thai-eng.png";
-                } else if (title.includes("english")) {
+                } else if (languageCodes.includes("en")) {
                     flagImg = "assets/flags/english.png";
-                } else if (title.includes("thai")) {
+                } else if (languageCodes.includes("th")) {
                     flagImg = "assets/flags/thai.png";
-                } else if (title.includes("chinese")) {
+                } else if (languageCodes.includes("zh")) {
                     flagImg = "assets/flags/chinese.png";
-                } else if (title.includes("russian")) {
+                } else if (languageCodes.includes("ru")) {
                     flagImg = "assets/flags/russian.png";
-                } else if (title.includes("japanese")) {
+                } else if (languageCodes.includes("ja")) {
                     flagImg = "assets/flags/japanese.png";
-                } else if (title.includes("spanish")) {
+                } else if (languageCodes.includes("es")) {
                     flagImg = "assets/flags/spanish.png";
                 }
 
@@ -591,7 +593,7 @@
                             <div class="event-title">${s.title}</div>
                             <div class="status ${statusClass}"> ${status} </div>
                         </div class="event-row">
-                         <!-- Time + Book -->
+                         ${renderLanguageChips(s.languages)}
                         
                         <div class="event-row">
                             ${readableDateTime}
@@ -635,15 +637,27 @@
             };
         });
 
+        async function loadSessionOptions() {
+            const res = await fetch(`${BASE_URL}/reading-sessions/options`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                }
+            });
+            const json = await res.json();
+            return json.data;
+        }
+
         async function init() {
             renderUserWelcome();
             // await renderMembershipStatus();
             renderDates();
 
-            const raw = await getReadingSessions(
-                dates[0].date,
-                dates[dates.length - 1].date
-            );
+            // Fetch options and sessions in parallel — they don't depend on each other
+            const [eventOptions, raw] = await Promise.all([
+                loadSessionOptions(),
+                getReadingSessions(dates[0].date, dates[dates.length - 1].date)
+            ]);
 
             const now = Date.now();
 
@@ -662,6 +676,7 @@
                         .map(host => host.displayName)
                         .join(", ");
 
+                    console.log(eventOptions);
                     return {
                         id: s._id,
                         date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
@@ -675,12 +690,15 @@
                         isFull: s.isFull,
                         seatsLeft: s.numberOfSeatsLeft,
                         photoUrl: s.photoUrl,
+                        languages: s.languages,
+                        categories: s.categories,
                         location: s.location,
                         maxParticipants: s.maxParticipants,
                         locationUrl: s.locationUrl,
                         hostObjects: hostObjects,
                         levelId: currentLevel,
                         levelName: s.level,
+                        options: eventOptions
 
                     };
                 });
@@ -877,6 +895,8 @@
             localStorage.setItem("viewUserId", userId);
             window.location.href = "view-profile.html";
         }
+
+
     </script>
 
 </body>

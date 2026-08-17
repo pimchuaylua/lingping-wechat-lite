@@ -397,32 +397,20 @@ h1 {
     line-height: 1.4;
 }
 
-.chip {
-    padding: 6px 10px;
-    border-radius: 999px;
-    background: #fff7ed;
-    /* very light orange */
-    color: #9a3412;
-    /* warm dark orange text */
+.chip,
+.chip-lang {
+    display: inline-flex;
+    align-items: center;
     font-size: 13px;
-    cursor: pointer;
-    transition: 0.15s;
-    border: 1px solid #fed7aa;
+    font-weight: 500;
+    padding: 5px 11px;
+    border-radius: 20px;
 }
 
-.chip:hover {
-    background: #ffedd5;
-    border-color: #fdba74;
+.chip-lang {
+    background: #fdece0;
+    color: #a3480c;
 }
-
-.chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 8px;
-    padding-bottom: 35px;
-}
-
 
 .host-help {
     margin-top: 8px;
@@ -518,4 +506,20 @@ h1 {
 
 .attendee-link:hover {
     text-decoration-color: rgba(68, 68, 68, 0.8);
+}
+
+.chip-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 8px 0;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    line-height: normal;
+}
+
+.chip-format {
+    background: #eef1e9;
+    color: #4a5a3d;
 }
