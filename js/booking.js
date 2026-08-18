@@ -168,6 +168,7 @@ function formatReadingSessionToDisplay(s, eventOptions) {
         location: s.location,
         locationUrl: s.locationUrl,
         level: s.level,
+        levelName: s.level,
         languages: s.languages,
         categories: s.categories,
         options: eventOptions
