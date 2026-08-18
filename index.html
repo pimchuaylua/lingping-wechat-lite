@@ -87,6 +87,14 @@
                             📍 Chengdu
                         </div>
 
+                        <div class="location-category">
+                            <strong>HONG KONG</strong>
+                        </div>
+
+                        <div class="location-option" data-level="6a841f58cca7afd6cad9dd14">
+                            📍 Hong Kong
+                        </div>
+
                     </div>
                 </div>
 
@@ -405,7 +413,7 @@
             return days;
         }
 
-        const dates = getNextNDays(9);
+        const dates = getNextNDays(20);
         let activeDate = null;
         let selectedLanguage = "";
         let sessions = [];
@@ -519,6 +527,8 @@
                     flagImg = "assets/flags/japanese.png";
                 } else if (languageCodes.includes("es")) {
                     flagImg = "assets/flags/spanish.png";
+                } else if (languageCodes.includes("yue")) {
+                    flagImg = "assets/flags/hk.png";
                 }
 
                 const status = s.maxParticipants === -1
