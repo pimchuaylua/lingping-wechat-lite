@@ -13,6 +13,7 @@ const LANG_META = {
     en: { label: 'English', flag: '🇬🇧' },
     th: { label: 'Thai', flag: '🇹🇭' },
     zh: { label: 'Chinese', flag: '🇨🇳' },
+    yue: { label: 'Cantonese', flag: '🇭🇰' },
 };
 
 const LEVEL_META = {
