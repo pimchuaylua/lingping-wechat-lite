@@ -535,12 +535,19 @@
 
                 const readableDateTime = `${Utils.formatDate(s.date)} · ${s.shortTime} (${Utils.getTimeZoneName()})`;
 
+                console.log('s', s);
                 const isOnline =
                     currentLevel === "695c763e2d652e065db71030" ||
                     currentLevel === "6982e63b245037c5977a9390";
 
+                let onlinePlatform = "Tencent";
+                if (s.online) {
+                    const platformMeta = findMeta(s.options.platforms, s.online.platform);
+                    onlinePlatform = platformMeta?.label || s.online.platform;
+                }
+
                 const locationHtml = isOnline
-                    ? `<div class="event-location">🌐 Online</div>`
+                    ? `<div class="event-location">🌐 Online · ${onlinePlatform}</div>`
                     : s.locationUrl
                         ? `<div class="event-location">
                 📍 <a href="${s.locationUrl}"
@@ -691,8 +698,8 @@
                         hostObjects: hostObjects,
                         levelId: currentLevel,
                         levelName: s.level,
-                        options: eventOptions
-
+                        options: eventOptions,
+                        online: s.online
                     };
                 });
 

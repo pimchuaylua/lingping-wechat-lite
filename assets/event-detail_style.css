@@ -72,6 +72,7 @@ h1 {
     margin-bottom: 8px;
     color: #666;
     margin: 8px 0;
+    line-height: 1.8;
 }
 
 @media (min-width: 768px) {
@@ -82,6 +83,7 @@ h1 {
     .sub {
         font-size: 16px;
         margin: 8px 0;
+        line-height: 1.8;
     }
 }
 
@@ -506,4 +508,28 @@ h1 {
 
 .attendee-link:hover {
     text-decoration-color: rgba(68, 68, 68, 0.8);
+}
+
+.meeting-number {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'SF Mono', 'Courier New', monospace;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 2px 8px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #333333;
+    transition: background 0.15s ease;
+}
+
+.meeting-number:hover {
+    background: #e5e5e5;
+}
+
+.copy-icon {
+    flex-shrink: 0;
+    color: #888;
 }

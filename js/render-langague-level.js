@@ -40,7 +40,7 @@ let categoryOptions = [];   // [{ value, label, description }, ...]
 let levelOptions = [];      // [{ value, label, description }, ...]
 
 function findMeta(list, value) {
-    return list.find(item => item.value === value);
+    return (list || []).find(item => item.value === value);
 }
 
 async function loadSessionOptions() {
