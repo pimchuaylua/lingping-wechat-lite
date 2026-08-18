@@ -206,11 +206,21 @@
                 </div>
                         </div>
             <div class="event-row">${hostHtml} </div>
+            
             <div class="event-row">
     ${s.booked
                         ? `<div class="${isHosting ? "hosting-label" : "booked-label"}">
             ✓ ${isHosting ? "Hosting" : "Joining"} 
         </div>
+
+        <button class="edit-btn calendar-disabled" disabled>
+                <svg class="edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="4" width="18" height="17" rx="2" stroke="currentColor" stroke-width="2"/>
+                    <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Add
+            </button>
+            
         ${isHosting
                             ? `<button class="edit-btn" onclick="event.stopPropagation(); location.href='edit-event.html?readingSessionId=${s.id}'">
                 <svg class="edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
