@@ -171,7 +171,8 @@ function formatReadingSessionToDisplay(s, eventOptions) {
         levelName: s.level,
         languages: s.languages,
         categories: s.categories,
-        options: eventOptions
+        options: eventOptions,
+        online: s.online
     };
 
 }
