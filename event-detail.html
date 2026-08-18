@@ -125,6 +125,14 @@
                 .map(line => `<p>${line}</p>`)
                 .join("");
 
+            const platformLabel = s.online
+                ? (findMeta(s.options.platforms, s.online.platform)?.label || s.online.platform)
+                : 'Tencent Meeting 腾讯会议';
+
+            const meetingValue = s.online
+                ? s.online.meetingNumber
+                : getMeetingNumber(s?.levelName);
+
             container.innerHTML = `
                 <div class="back-btn" onclick="history.back()">← Back</div>
                 <img class="event-photo" src="${s.photoUrl || 'https://via.placeholder.com/480x200'}">
@@ -150,9 +158,9 @@
 
                             <!-- Platform Info -->
                             <div style="text-align:center; font-size:13px; color:#666; margin-bottom:8px;">
-                                Tencent Meeting 腾讯会议 
-                                <span 
-                                    onclick="openMeetingInfo()" 
+                                Platform: ${platformLabel}
+                                <span
+                                    onclick="openMeetingInfo()"
                                     style="cursor:pointer; color:#007bff; font-weight:bold;"
                                     title="Platform information"
                                 >
@@ -162,10 +170,10 @@
 
                             <!-- Join Button -->
                             <div
-                                onclick="copyMeetingNumber('${getMeetingNumber(s?.levelName)}')"
+                                onclick="copyMeetingNumber('${meetingValue}')"
                                 class="meeting-room"
                             >
-                                ${getMeetingNumber(s?.levelName)} 📋
+                                Meeting number: ${meetingValue} 📋
                             </div>
                         </div>
 
