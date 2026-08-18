@@ -1,0 +1,50 @@
+.chip-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 8px 0;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    line-height: normal;
+}
+
+.chip-format {
+    background: #eef1e9;
+    color: #4a5a3d;
+}
+
+.chip,
+.chip-lang {
+    display: inline-flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 20px;
+}
+
+.chip-lang {
+    background: #fdece0;
+    color: #a3480c;
+}
+
+.chip-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.lang-level-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+
+.level-desc {
+    display: inline-flex;
+    align-items: center;
+}

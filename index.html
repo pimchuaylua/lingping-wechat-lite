@@ -7,7 +7,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-
+    <link rel="icon" type="image/png" href="assets/logos/lingping_logo.png">
     <!-- Styles -->
     <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
 
@@ -20,6 +20,7 @@
     <script src="js/quotes.js"></script>
     <script src="js/render-langague-level.js"></script>
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
+    <link rel="stylesheet" href="assets/chip_style.css">
 
     <meta property="og:title" content="Lingping Club" />
     <meta property="og:description"
@@ -94,9 +95,9 @@
                 <!-- Topics -->
                 <div class="topics-inline">
                     <span class="topic active" data-topic="">All</span>
-                    <span class="topic" data-topic="english">EN</span>
-                    <span class="topic" data-topic="thai">TH</span>
-                    <span class="topic" data-topic="chinese">CH</span>
+                    <span class="topic" data-topic="en">EN</span>
+                    <span class="topic" data-topic="th">TH</span>
+                    <span class="topic" data-topic="zh">CH</span>
                 </div>
 
             </div>
@@ -406,7 +407,7 @@
 
         const dates = getNextNDays(9);
         let activeDate = null;
-        let selectedTopic = "";
+        let selectedLanguage = "";
         let sessions = [];
 
         const dateFilter = document.getElementById("dateFilter");
@@ -422,7 +423,7 @@
 
                 btn.onclick = () => {
                     activeDate = d.date;
-                    selectedTopic = "";
+                    selectedLanguage = "";
                     document.querySelectorAll(".topic").forEach(t => t.classList.remove("active"));
                     document.querySelector('.topic[data-topic=""]').classList.add("active");
                     renderDates();
@@ -472,10 +473,12 @@
             }
 
             // 🔹 Community topic filter
-            if (membershipType === "community" && selectedTopic) {
-                filtered = filtered.filter(s =>
-                    s.title.toLowerCase().includes(selectedTopic)
-                );
+            if (membershipType === "community" && selectedLanguage) {
+                filtered = filtered.filter(s => {
+
+                    const codes = (s.languages || []).map(l => l.language.toLowerCase());
+                    return codes.includes(selectedLanguage.toLowerCase());
+                });
             }
 
             // 🔹 Date filter
@@ -630,23 +633,12 @@
             btn.onclick = () => {
                 document.querySelectorAll(".topic").forEach(b => b.classList.remove("active"));
                 btn.classList.add("active");
-                selectedTopic = btn.dataset.topic;
+                selectedLanguage = btn.dataset.topic;
                 activeDate = null;
                 renderDates();
                 renderEvents();
             };
         });
-
-        async function loadSessionOptions() {
-            const res = await fetch(`${BASE_URL}/reading-sessions/options`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-API-KEY": API_KEY
-                }
-            });
-            const json = await res.json();
-            return json.data;
-        }
 
         async function init() {
             renderUserWelcome();
@@ -676,7 +668,6 @@
                         .map(host => host.displayName)
                         .join(", ");
 
-                    console.log(eventOptions);
                     return {
                         id: s._id,
                         date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,

@@ -139,7 +139,7 @@ async function cancelBooking(sessionId) {
     }
 }
 
-function formatReadingSessionToDisplay(s) {
+function formatReadingSessionToDisplay(s, eventOptions) {
     const start = new Date(s.startTime);
     const end = new Date(start.getTime() + s.durationMins * 60000);
 
@@ -148,11 +148,12 @@ function formatReadingSessionToDisplay(s) {
         ? hostObjects.map(h => h.name).join(", ")
         : "TBA";
 
+    console.log(s);
     return {
         id: s._id,
         startTime: start, // 🔑 keep for sorting
         date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
-        startTime: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+        startTime: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
         time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
         title: s.title,
         description: s.shortDescription,
@@ -166,14 +167,17 @@ function formatReadingSessionToDisplay(s) {
         booked: true,
         location: s.location,
         locationUrl: s.locationUrl,
-        level: s.level
+        level: s.level,
+        languages: s.languages,
+        categories: s.categories,
+        options: eventOptions
     };
 
 }
-function mapBookingsToSessions(bookings) {
+function mapBookingsToSessions(bookings, eventOptions) {
     return bookings
         .map(b => {
-            return formatReadingSessionToDisplay(b.readingSession)
+            return formatReadingSessionToDisplay(b.readingSession, eventOptions)
         })
         .sort((a, b) => a.startTime - b.startTime); // 🔽 order by time
 }

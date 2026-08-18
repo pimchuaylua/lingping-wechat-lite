@@ -8,7 +8,19 @@
     <script src="config.js"></script>
     <script src="js/utils.js?v=20250210"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
+    <link rel="stylesheet" href="assets/chip_style.css">
+    <script src="js/render-langague-level.js"></script>
     <style>
+        .input-invalid {
+            border-color: #b3441f !important;
+        }
+
+        .validation-error {
+            font-size: 12px;
+            color: #b3441f;
+            margin-top: 4px;
+        }
+
         .section input.sub,
         .section textarea.sub {
             width: 100%;
@@ -70,6 +82,21 @@
             border-color: var(--theme);
             box-shadow: 0 0 0 3px rgba(255, 176, 80, 0.18);
         }
+
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: #5a5a56;
+            margin-top: 4px;
+        }
+
+        .char-count-invalid {
+            color: #b3441f;
+        }
+
+        .sub::placeholder {
+            color: #b3b0a6;
+        }
     </style>
 </head>
 
@@ -118,23 +145,46 @@
                 const dateVal = startTime.toISOString().slice(0, 10);
                 const timeVal = startTime.toISOString().slice(11, 16);
 
+                const isTopicTBD = (s.title || '').includes('TBD');
+
+                const desc = s.fullDescription || '';
+                const isDescriptionTBD = /TBD|TBA/i.test(desc);
+                const placeholderDesc = "Where did you grow up? Share your hometown, favorite places, local food, childhood memories, and what makes your hometown special to you. Discover where everyone comes from and the stories behind each place.";
+
+                const eventOptions = await loadSessionOptions();
+                s.options = eventOptions;
+
                 container.innerHTML = `
                     <div class="back-btn" onclick="history.back()">← Back</div>
                     <h1>Edit Session</h1>
 
                     <div class="section">
-                        <div class="label">Title</div>
-                        <div class="hint">Only change the <mark>"Topic TBD"</mark> part — keep the rest (e.g. language/level) as is.</div>
-                        <input class="sub" id="title_en" value="${s.title || ''}">
-                    </div>
+                    <div class="label">Title</div>
+                    <input
+                        class="sub"
+                        id="title_en"
+                        value="${isTopicTBD ? '' : (s.title || '')}"
+                        placeholder="${isTopicTBD ? '🏡 Your Hometown' : ''}"
+                    >
+                </div>
 
                     <div class="section">
                         <div class="label">Description</div>
-                        <div class="hint">Share briefly what we'll talk about! Example: "Share about your hometown — food, weather, childhood memories, and how it shaped you."
-                        <br><br>Change only the <mark>📌 TBD</mark>. Keep the rest the same.</div>
-                        <textarea class="sub" id="fullDescription_en">${s.fullDescription || ''}</textarea>
+                        <div class="hint">Give a brief idea of what we'll talk about—not a list of questions.</div>
+                        <textarea
+                        style="min-height: 150px;"
+                            class="sub"
+                            id="fullDescription_en"
+                            oninput="updateWordCount(this)"
+                            placeholder="${isDescriptionTBD ? placeholderDesc : ''}"
+                        >${isDescriptionTBD ? '' : desc}</textarea>
+                        <div class="char-count" id="fullDescription_en_count"></div>
                     </div>
 
+                    <div class="section">
+                        <div class="label">Perfect For</div>
+                        ${renderLanguageChipsForEventDetails(s.languages, s.options)}
+                    </div>
 
                     <div class="section">
                         <div class="label">Hosts</div>
@@ -188,6 +238,7 @@
                     </div>
                 `;
 
+                document.querySelectorAll('textarea[id^="fullDescription"]').forEach(updateWordCount);
                 const timezoneEl = document.getElementById('timezone');
                 const timeEl = document.getElementById('time');
 
@@ -202,6 +253,8 @@
             }
         }
 
+        const MIN_WORDS = 20; // adjust to whatever threshold you want
+
         function val(id) {
             return document.getElementById(id).value.trim();
         }
@@ -210,7 +263,36 @@
             return val(id) ? val(id).split(',').map(x => x.trim()).filter(Boolean) : undefined;
         }
 
+        function showValidationError(el, message) {
+            let errorEl = document.getElementById(`${el.id}_error`);
+            if (!errorEl) {
+                errorEl = document.createElement('div');
+                errorEl.id = `${el.id}_error`;
+                errorEl.className = 'validation-error';
+                el.insertAdjacentElement('afterend', errorEl);
+            }
+            errorEl.textContent = message;
+            el.classList.add('input-invalid');
+        }
+
+        function clearValidationError(el) {
+            const errorEl = document.getElementById(`${el.id}_error`);
+            if (errorEl) errorEl.remove();
+            el.classList.remove('input-invalid');
+        }
+
         async function saveSession() {
+            const descriptionEl = document.getElementById('fullDescription_en');
+            const wordCount = countWords(descriptionEl.value);
+
+            if (wordCount < MIN_WORDS) {
+                showValidationError(descriptionEl, `Description needs at least ${MIN_WORDS} words (currently ${wordCount}).`);
+                descriptionEl.focus();
+                return;
+            }
+
+            clearValidationError(descriptionEl);
+
             const date = val('date');
             const time = val('time');
             const timezone = val('timezone');
@@ -227,7 +309,7 @@
                 maxParticipants: Number(val('maxParticipants')) || undefined,
                 translations: {
                     en_US: {
-                        title: val('title_en'),
+                        title: toTitleCase(val('title_en')),
                         location: val('location_en'),
                         fullDescription: val('fullDescription_en'),
                     }
@@ -315,6 +397,36 @@
             const offset = localAtGuess - guess.getTime();
 
             return new Date(guess.getTime() - offset);
+        }
+
+        function countWords(text) {
+            return text.trim().split(/\s+/).filter(Boolean).length;
+        }
+
+        function toTitleCase(str) {
+            const minorWords = new Set(['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor',
+                'in', 'on', 'at', 'to', 'of', 'with', 'as', 'by']);
+
+            return str
+                .toLowerCase()
+                .split(' ')
+                .map((word, i) => {
+                    if (i !== 0 && minorWords.has(word)) return word;
+                    return word.charAt(0).toUpperCase() + word.slice(1);
+                })
+                .join(' ');
+        }
+
+        toTitleCase('hello world'); // "Hello World"
+        toTitleCase('a day in the life'); // "A Day in the Life"
+
+        function updateWordCount(el) {
+            const words = countWords(el.value);
+            const countEl = document.getElementById(`${el.id}_count`);
+            const isValid = words >= MIN_WORDS;
+
+            countEl.textContent = `${words} words${isValid ? '' : ` (min ${MIN_WORDS})`}`;
+            countEl.classList.toggle('char-count-invalid', !isValid);
         }
     </script>
 

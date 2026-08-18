@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="icon" type="image/png" href="assets/logos/lingping_logo.png">
     <meta charset="UTF-8">
     <title>Session Detail</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <script src="js/utils.js?v=20250210"></script>
     <script src="js/render-langague-level.js"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
+    <link rel="stylesheet" href="assets/chip_style.css">
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
 </head>
 
@@ -117,6 +119,7 @@
         if (!s) {
             container.innerHTML = "<p>Session not found.</p>";
         } else {
+
             const fullDescHTML = (s.fullDescription || s.description)
                 .split("\n")
                 .map(line => `<p>${line}</p>`)
