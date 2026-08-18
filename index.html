@@ -606,14 +606,16 @@
                             ${locationHtml}
                         </div>
 
-                        <div class="event-row">
+                        <div class="event-row event-footer">
                             ${hostHtml}
+
+                             <button class="book-btn ${s.isFull ? "" : "available"}" ${s.isFull || isCanceled ? "disabled" : ""} onclick='event.stopPropagation(); handleBookClick("${s.id}")'>
+                            Book
+                        </button>
                         </div>
                         
 
-                        <button class="book-btn ${s.isFull ? "" : "available"}" ${s.isFull || isCanceled ? "disabled" : ""} onclick='event.stopPropagation(); handleBookClick("${s.id}")'>
-                            Book
-                        </button>
+                       
                     </div class="event-body">
                 </div class="event-card">
         `;

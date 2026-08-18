@@ -134,6 +134,6 @@ function renderLanguageChips(languages = []) {
             return `<span class="chip" style="background:${meta.bg};color:${meta.color};">${meta.label}</span>`;
         }).join('');
 
-    return `<div class="event-row chip-row">${langChips}${levelChips}</div>`;
+    return `<div class="event-row"><div class="chip-row">${langChips}${levelChips}</div></div>`;
 }
 
