@@ -8,345 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="config.js"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
+    <link rel="stylesheet" href="assets/view-profile_style.css">
     <link rel="icon" type="image/png" href="assets/logos/lingping_logo.png">
     <style>
-        :root {
-            --theme: #FFB050;
-            --progress-fill: #90C2C8;
-            --badge-bg: #FFE8D6;
-        }
 
-        body {
-            background: linear-gradient(180deg, rgba(255, 176, 80, 0.18), #f5f5f5 220px);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        .back-btn {
-            margin-bottom: 14px;
-            font-size: 14px;
-            color: var(--theme);
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .back-btn:hover {
-            text-decoration: underline;
-        }
-
-        .profile-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 28px 20px;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
-        }
-
-        /* ─── RESPONSIVE LAYOUT ─── */
-        .layout-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 12%;
-        }
-
-        @media (min-width: 768px) {
-            .layout-wrapper {
-                flex-direction: row;
-                align-items: flex-start;
-                padding: 40px;
-            }
-
-            .left-col {
-                width: 300px;
-                flex-shrink: 0;
-            }
-
-            .right-col {
-                flex-grow: 1;
-            }
-
-            .profile-section:first-child {
-                margin-top: 0;
-            }
-        }
-
-        /* ─── LEFT COLUMN (STATS & AVATAR) ─── */
-        .profile-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .profile-header img {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #eee;
-            margin-bottom: 14px;
-            cursor: zoom-in;
-        }
-
-        .profile-header h2 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .user-badge {
-            display: inline-block;
-            background: var(--badge-bg);
-            color: #333;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-top: 8px;
-        }
-
-        .stats-container {
-            margin-top: 24px;
-        }
-
-        .stat-group {
-            margin-bottom: 18px;
-        }
-
-        .stat-title {
-            font-weight: 600;
-            font-size: 15px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #222;
-        }
-
-        .progress-bar-bg {
-            background: #E8E8E8;
-            border-radius: 8px;
-            height: 6px;
-            width: 100%;
-            overflow: hidden;
-            margin-bottom: 8px;
-        }
-
-        .progress-bar-fill {
-            background: var(--progress-fill);
-            height: 100%;
-            border-radius: 8px;
-            transition: width 0.4s ease;
-        }
-
-        .stat-detail {
-            font-size: 13px;
-            color: #555;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .stat-detail strong {
-            color: #222;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            color: #444;
-            margin-top: 14px;
-        }
-
-        /* ─── RIGHT COLUMN (ABOUT & FUN FACTS) ─── */
-        .profile-section {
-            margin-top: 28px;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 14px;
-        }
-
-        .profile-description {
-            color: #444;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-
-        .topic {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: rgba(255, 176, 80, 0.15);
-            color: #333;
-            font-size: 13px;
-            font-weight: 500;
-            margin: 6px 6px 0 0;
-            border: 1px solid rgba(255, 176, 80, 0.4);
-        }
-
-        .fun-prompt {
-            background: #fff;
-            border: 1px solid #eaeaea;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            font-size: 14px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-        }
-
-        .fun-prompt strong {
-            font-weight: 600;
-            color: #222;
-        }
-
-        .fun-answer {
-            margin-top: 8px;
-            color: #555;
-            white-space: pre-line;
-            line-height: 1.5;
-            font-size: 16px;
-        }
-
-        /* ─── IMAGE MODAL ─── */
-        .image-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .85);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .image-modal.show {
-            display: flex;
-        }
-
-        .modal-image {
-            max-width: 95vw;
-            max-height: 95vh;
-            border-radius: 8px;
-            object-fit: contain;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: white;
-            font-size: 40px;
-            cursor: pointer;
-            line-height: 1;
-        }
-
-        .badges-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: center;
-            margin-top: 14px;
-        }
-
-        /* Base Matte Stamp Badge */
-        .user-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-
-            width: 200px;
-            height: 48px;
-            padding: 0 16px;
-            box-sizing: border-box;
-
-            background: #FFFFFF;
-            border-radius: 16px;
-            border-width: 2px;
-            border-style: solid;
-
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: -0.1px;
-
-            /* Matte look: No shiny gradients or heavy shadows */
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-            transition: transform 0.15s ease;
-        }
-
-        .user-badge:hover {
-            transform: translateY(-1px);
-        }
-
-        .user-badge span {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .badge-laurel-svg {
-            width: 22px;
-            height: 22px;
-            flex-shrink: 0;
-        }
-
-        /* 🎨 Matte Color Themes (Matching the Stamp Palette) */
-
-        /* Theme 1: Matte Ocher / Amber Warm */
-        .badge-theme-1 {
-            border-color: #C88A2B;
-            color: #A36B18;
-            background-color: #FFFDF8;
-        }
-
-        /* Theme 2: Matte Coral / Red */
-        .badge-theme-2 {
-            border-color: #FF5A5F;
-            color: #E03E43;
-            background-color: #FFF8F8;
-        }
-
-        /* Theme 3: Matte Sky / Air Blue */
-        .badge-theme-3 {
-            border-color: #3C82C8;
-            color: #2A68A8;
-            background-color: #F8FBFF;
-        }
-
-        .profile-card {
-            position: relative;
-            /* Needed to anchor the top-right edit button */
-        }
-
-        .edit-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #FFFFFF;
-            border: 1px solid #E2E2E2;
-            color: #333333;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-            transition: all 0.2s ease;
-        }
-
-        .edit-btn:hover {
-            background: #F8F8F8;
-            border-color: #CCCCCC;
-            transform: translateY(-1px);
-        }
     </style>
 </head>
 
@@ -370,7 +35,11 @@
 
         async function loadProfile() {
             try {
-                const res = await fetch(`${BASE_URL}/users/${userId}/profile`, {
+
+                const myUserId = localStorage.getItem("userId");
+                const viewUserId = new URLSearchParams(window.location.search).get("userId") || myUserId;
+
+                const res = await fetch(`${BASE_URL}/users/${viewUserId}/profile`, {
                     headers: {
                         "Content-Type": "application/json",
                         "X-API-KEY": API_KEY
@@ -391,13 +60,11 @@
                 const p = json.data;
                 const pi = p.progressInfo || {}; // Fallback for safety
 
-                // Check if user is viewing their own profile
-                const myUserId = localStorage.getItem("userId") || localStorage.getItem("currentUserId");
-                const viewUserId = localStorage.getItem("viewUserId");
-                const isOwnProfile = myUserId && viewUserId && myUserId === viewUserId;
+                // If they match (and you are logged in), it's your profile
+                const isOwnProfile = !!myUserId && myUserId === viewUserId;
 
                 // Safe avatar string to prevent inline onclick quote breaking
-                const avatarSrc = p.profilePic || 'https://via.placeholder.com/140';
+                const avatarSrc = p.profilePic || 'assets/logos/lingping_logo.png';
 
                 // Determine if valid progress data exists
                 const hasProgress = pi.host && pi.learn;
@@ -417,10 +84,9 @@
                     <div class="profile-header">
                         <img
                             src="${avatarSrc}"
-                            alt="${p.displayName}"
                             onclick="openImageModal('${avatarSrc}')"
                         >
-                        <h2>${p.displayName}</h2>
+                        <h2>${p.displayName || p.user?.displayName || 'Member'}</h2>
                         
                         ${(pi.badges && pi.badges.length) ? `
                             <div class="badges-container">
