@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <!-- Single Laurel Branch Definition -->
+    <g id="laurel-branch">
+      <!-- Curved Stem -->
+      <path d="M 90 175 A 75 75 0 0 1 35 65" 
+            fill="none" 
+            stroke="#000000" 
+            stroke-width="5" 
+            stroke-linecap="round" />
+
+      <!-- Top Leaf -->
+      <path d="M 35 65 C 30 50 40 35 48 30 C 52 42 45 58 35 65 Z" 
+            fill="#ffffff" 
+            stroke="#000000" 
+            stroke-width="4" 
+            stroke-linejoin="round" />
+
+      <!-- Leaf Pair 1 (Top) -->
+      <path d="M 38 72 C 22 66 12 52 20 42 C 32 48 35 62 38 72 Z" 
+            fill="#ffffff" 
+            stroke="#000000" 
+            stroke-width="4" 
+            stroke-linejoin="round" />
+      <path d="M 40 76 C 54 66 68 70 68 82 C 55 86 44 80 40 76 Z" 
+            fill="#ffffff" 
+            stroke="#000000" 
+            stroke-width="4" 
+            stroke-linejoin="round" />
+
+      <!-- Leaf Pair 2 -->
+      <path d="M 30 92 C 12 90 2 78 10 67 C 22 71 27 83 30 92 Z" 
+            fill="#ffffff" 
+            stroke="#000000" 
+            stroke-width="4" 
+            stroke-linejoin="round" />
+      <path d="M 33 97 C 49 90 62 96 60 108 C 48 111 38 103 33 97 Z" 
+            fill="#ffffff" 
+            stroke="#000000" 
+            stroke-width="4" 
+            stroke-linejoin="round" />
+
+      <!-- Leaf Pair 3 -->
+      <path d="M 28 116 C 10 118 2 106 12 94 C 23 98 26 108 28 116 Z" 
+            fill="#ffffff" 
+            stroke="#000000" 
+            stroke-width="4" 
+            stroke-linejoin="round" />
+      <path d="M 33 121 C 49 117 60 125 56 137 C 44 138 36 128 33 121 Z" 
+            fill="#ffffff" 
+            stroke="#000000" 
+            stroke-width="4" 
+            stroke-linejoin="round" />
+
+      <!-- Leaf Pair 4 -->
+      <path d="M 36 140 C 20 148 10 138 20 124 C 31 126 33 134 36 140 Z" 
+            fill="#ffffff" 
+            stroke="#000000" 
+            stroke-width="4" 
+            stroke-linejoin="round" />
+      <path d="M 43 144 C 58 144 67 154 61 165 C 50 164 44 152 43 144 Z" 
+            fill="#ffffff" 
+            stroke="#000000" 
+            stroke-width="4" 
+            stroke-linejoin="round" />
+
+      <!-- Leaf Pair 5 (Bottom) -->
+      <path d="M 52 161 C 38 172 26 164 34 149 C 45 150 49 157 52 161 Z" 
+            fill="#ffffff" 
+            stroke="#000000" 
+            stroke-width="4" 
+            stroke-linejoin="round" />
+      <path d="M 60 163 C 74 167 81 179 73 189 C 63 186 59 173 60 163 Z" 
+            fill="#ffffff" 
+            stroke="#000000" 
+            stroke-width="4" 
+            stroke-linejoin="round" />
+    </g>
+  </defs>
+
+  <!-- Left Branch -->
+  <use href="#laurel-branch" />
+
+  <!-- Right Branch (Mirrored) -->
+  <use href="#laurel-branch" transform="translate(200, 0) scale(-1, 1)" />
+</svg>

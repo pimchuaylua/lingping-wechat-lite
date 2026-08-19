@@ -8,179 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="config.js"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
+    <link rel="stylesheet" href="assets/view-profile_style.css">
     <link rel="icon" type="image/png" href="assets/logos/lingping_logo.png">
     <style>
-        :root {
-            --theme: #FFB050;
-        }
 
-        .profile-section {
-            margin-top: 28px;
-        }
-
-        .profile-pic {
-            width: 140px;
-            height: 140px;
-            object-fit: cover;
-            border-radius: 50%;
-            cursor: zoom-in;
-            display: block;
-        }
-
-        .image-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, .85);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .image-modal.show {
-            display: flex;
-        }
-
-        .modal-image {
-            max-width: 95vw;
-            max-height: 95vh;
-            border-radius: 8px;
-            object-fit: contain;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: white;
-            font-size: 40px;
-            cursor: pointer;
-            line-height: 1;
-        }
-
-        body {
-            background:
-                linear-gradient(180deg,
-                    rgba(255, 176, 80, 0.18),
-                    #f5f5f5 220px);
-        }
-
-        /* Back button */
-        .back-btn {
-            margin-bottom: 14px;
-            font-size: 14px;
-            color: var(--theme);
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .back-btn:hover {
-            text-decoration: underline;
-        }
-
-        /* Profile card — soft, no borders */
-        .profile-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 28px 20px;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
-        }
-
-        /* Header section */
-        .profile-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            margin-bottom: 18px;
-        }
-
-        /* Avatar — bigger, clean */
-        .profile-header img {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #eee;
-            margin-bottom: 14px;
-        }
-
-        /* Name */
-        .profile-header h2 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 600;
-            color: #333;
-        }
-
-
-
-        /* Short bio */
-        .profile-header .sub {
-            font-size: 14px;
-            color: #666;
-            margin-top: 6px;
-        }
-
-        /* Description */
-        .profile-card p {
-            font-size: 14px;
-            color: #444;
-            line-height: 1.55;
-        }
-
-        /* Section titles */
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 12px;
-        }
-
-
-        /* Topics — keep capsule style */
-        .topic {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: rgba(255, 176, 80, 0.22);
-            color: #333;
-            font-size: 13px;
-            font-weight: 500;
-            margin: 6px 6px 0 0;
-            border: 1px solid rgba(255, 176, 80, 0.5);
-        }
-
-        .fun-prompt {
-            background: #fff;
-            border: 1px solid #eee;
-            padding: 12px 14px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .fun-prompt strong {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .fun-answer {
-            margin-top: 6px;
-            white-space: pre-line;
-        }
-
-        .profile-description {
-            padding: 0;
-            background: transparent;
-            border-radius: 0;
-            color: #555;
-            font-size: 15px;
-            line-height: 1.7;
-        }
     </style>
-
 </head>
 
 <body>
@@ -194,6 +26,7 @@
         const userId = localStorage.getItem("viewUserId");
         const container = document.getElementById("profileContent");
 
+
         if (!userId) {
             container.innerHTML = "<p>User not found.</p>";
         } else {
@@ -202,103 +35,172 @@
 
         async function loadProfile() {
             try {
-                const res = await fetch(`${BASE_URL}/users/${userId}/profile`, {
+
+                const myUserId = localStorage.getItem("userId");
+                const viewUserId = new URLSearchParams(window.location.search).get("userId") || myUserId;
+
+                const res = await fetch(`${BASE_URL}/users/${viewUserId}/profile`, {
                     headers: {
                         "Content-Type": "application/json",
                         "X-API-KEY": API_KEY
                     }
                 });
 
-                // ✅ Handle no-profile case
                 if (res.status === 404) {
                     container.innerHTML = `
-                    <div class="profile-card">
-                        <h2>Profile not available</h2>
-                        <p class="sub">
-                            This member hasn’t created a public profile yet.
-                        </p>
-                        <p class="sub">
-                            You can still see them in sessions and activities 😊
-                        </p>
-                    </div>
-                `;
+            <div class="profile-card">
+                <h2>Profile not available</h2>
+                <p class="sub">This member hasn’t created a public profile yet.</p>
+                <p class="sub">You can still see them in sessions and activities 😊</p>
+            </div>`;
                     return;
                 }
+
                 const json = await res.json();
                 const p = json.data;
+                const pi = p.progressInfo || {}; // Fallback for safety
+
+                // If they match (and you are logged in), it's your profile
+                const isOwnProfile = !!myUserId && myUserId === viewUserId;
+
+                // Safe avatar string to prevent inline onclick quote breaking
+                const avatarSrc = p.profilePic || 'assets/logos/lingping_logo.png';
+
+                // Determine if valid progress data exists
+                const hasProgress = pi.host && pi.learn;
 
                 container.innerHTML = `
-                    <div class="profile-card">
+            <div class="profile-card layout-wrapper">
+                
+                <!-- Top-Right Edit Button (Renders only on your own profile) -->
+                ${isOwnProfile ? `
+                    <a href="community-profile.html" class="edit-btn">
+                        ✏️ Edit
+                    </a>
+                ` : ''}
 
-                        <div class="profile-header">
-                            <img
-                                src="${p.profilePic || 'https://via.placeholder.com/140'}"
-                                alt="${p.displayName}"
-                                class="profile-pic"
-                                onclick="openImageModal('${p.profilePic || 'https://via.placeholder.com/140'}')"
-                            >
-
-                            <h2>${p.displayName}</h2>
-                            <div class="sub">${p.bio || ''}</div>
-                        </div>
-
-                        <!-- Image Modal -->
-                        <div id="imageModal" class="image-modal" onclick="closeImageModal()">
-                            <span class="close-btn">&times;</span>
-                            <img id="modalImage" class="modal-image">
-                        </div>
-
-                        ${p.description && p.description.trim() ? `
-                        <div class="profile-section">
-                            <div class="section-title">More About Me</div>
-                            <div class="profile-description">
-                                ${p.description}
+                <!-- LEFT COLUMN: Avatar & Gamification Stats -->
+                <div class="left-col">
+                    <div class="profile-header">
+                        <img
+                            src="${avatarSrc}"
+                            onclick="openImageModal('${avatarSrc}')"
+                        >
+                        <h2>${p.displayName || p.user?.displayName || 'Member'}</h2>
+                        
+                        ${(pi.badges && pi.badges.length) ? `
+                            <div class="badges-container">
+                                ${pi.badges.map((badge, idx) => `
+                                    <div class="user-badge badge-theme-${(idx % 3) + 1}">
+                                        <svg class="badge-laurel-svg" viewBox="0 0 200 200">
+                                            <defs>
+                                                <g id="laurel-branch">
+                                                    <path d="M 90 175 A 75 75 0 0 1 35 65" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" />
+                                                    <path d="M 35 65 C 30 50 40 35 48 30 C 52 42 45 58 35 65 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 38 72 C 22 66 12 52 20 42 C 32 48 35 62 38 72 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 40 76 C 54 66 68 70 68 82 C 55 86 44 80 40 76 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 30 92 C 12 90 2 78 10 67 C 22 71 27 83 30 92 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 33 97 C 49 90 62 96 60 108 C 48 111 38 103 33 97 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 28 116 C 10 118 2 106 12 94 C 23 98 26 108 28 116 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 33 121 C 49 117 60 125 56 137 C 44 138 36 128 33 121 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 36 140 C 20 148 10 138 20 124 C 31 126 33 134 36 140 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 43 144 C 58 144 67 154 61 165 C 50 164 44 152 43 144 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 52 161 C 38 172 26 164 34 149 C 45 150 49 157 52 161 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 60 163 C 74 167 81 179 73 189 C 63 186 59 173 60 163 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                </g>
+                                            </defs>
+                                            <use href="#laurel-branch" />
+                                            <use href="#laurel-branch" transform="translate(200, 0) scale(-1, 1)" />
+                                        </svg>
+                                        <span>${badge}</span>
+                                    </div>
+                                `).join('')}
                             </div>
-                        </div>
-                    ` : ""}
-
-                        ${p.topicsOfInterests && p.topicsOfInterests.length ? `
-                            <div class="profile-section">
-                                <div class="section-title">Topics of Interest</div>
-                                <div>
-                                    ${p.topicsOfInterests.map(t =>
-                    `<span class="topic">${t.name}</span>`
-                ).join("")}
-                                </div>
-                            </div>
-                        ` : ""}
-
-                        ${(p.funPrompts || []).filter(fp => fp.answer && fp.answer.trim()).length ? `
-                            <div class="profile-section">
-                                <div class="section-title">Fun Facts</div>
-
-                                ${(p.funPrompts || [])
-                            .filter(fp => fp.answer && fp.answer.trim())
-                            .map(fp => `
-                                        <div class="fun-prompt">
-                                            <strong>${fp.question}</strong>
-                                            <div class="fun-answer">${fp.answer}</div>
-                                        </div>
-                                    `).join("")}
-                            </div>
-                        ` : ""}
-
+                        ` : ''}
                     </div>
 
-                `;
+                    ${hasProgress ? `
+                    <div class="stats-container">
+                        <!-- Host Progress -->
+                        <div class="stat-group">
+                            <div class="stat-title">🎙️ Host Progress <span>(${pi.host.currentPoints} points)</span></div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: ${pi.host.progressPercentage}%"></div>
+                            </div>
+                            <div class="stat-detail">
+                                <span>Lvl ${pi.host.level} • ${pi.host.badgeName || pi.host.badge || 'No Hosting Activity'}</span>
+                                <strong>${pi.host.currentPoints} / ${pi.host.maxPoints} pts</strong>
+                            </div>
+                        </div>
+
+                        <!-- Learn Progress -->
+                        <div class="stat-group">
+                            <div class="stat-title">📚 Learn Progress <span>(${pi.learn.currentPoints} points)</span></div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: ${pi.learn.progressPercentage}%"></div>
+                            </div>
+                            <div class="stat-detail">
+                                <span>Lvl ${pi.learn.level} • ${pi.learn.badgeName || pi.learn.badge}</span>
+                                <strong>${pi.learn.currentPoints} / ${pi.learn.maxPoints} pts</strong>
+                            </div>
+                        </div>
+
+                        <!-- Metadata Rows -->
+                        ${pi.membershipTenure ? `<div class="info-row">📅 ${pi.membershipTenure.displayText}</div>` : ''}
+                    </div>
+                    ` : ''}
+                </div>
+
+                <!-- RIGHT COLUMN: About & Fun Facts -->
+                <div class="right-col">
+                    ${p.description?.trim().length > 1 ? `
+                        <div class="profile-section">
+                            <div class="section-title">About ${p.displayName}</div>
+                            ${renderDescription(p.description)}
+                        </div>
+                        ` : ""}
+
+                    ${p.topicsOfInterests && p.topicsOfInterests.length ? `
+                    <div class="profile-section">
+                        <div class="section-title">Topics of Interest</div>
+                        <div>
+                            ${p.topicsOfInterests.map(t => `<span class="topic">${t.name}</span>`).join("")}
+                        </div>
+                    </div>
+                    ` : ""}
+
+                    ${(p.funPrompts || []).filter(fp => fp.answer && fp.answer.trim()).length ? `
+                    <div class="profile-section">
+                        <div class="section-title">Fun Facts</div>
+                        ${(p.funPrompts || []).filter(fp => fp.answer && fp.answer.trim()).map(fp => `
+                            <div class="fun-prompt">
+                                <strong>${fp.question}</strong>
+                                <div class="fun-answer">${fp.answer}</div>
+                            </div>
+                        `).join("")}
+                    </div>
+                    ` : ""}
+                </div>
+
+            </div>
+
+            <!-- Image Modal -->
+            <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+                <span class="close-btn">&times;</span>
+                <img id="modalImage" class="modal-image">
+            </div>
+        `;
             } catch (err) {
                 console.error(err);
                 container.innerHTML = "<p>Failed to load profile.</p>";
             }
         }
 
+        // Modal scripts
         function openImageModal(src) {
             const modal = document.getElementById('imageModal');
-            const img = document.getElementById('modalImage');
-
-            img.src = src;
+            document.getElementById('modalImage').src = src;
             modal.classList.add('show');
-
             document.body.style.overflow = 'hidden';
         }
 
@@ -307,17 +209,48 @@
             document.body.style.overflow = '';
         }
 
-        // Prevent closing when clicking the image itself
-        document.getElementById('modalImage').addEventListener('click', function (e) {
-            e.stopPropagation();
+        document.addEventListener('click', function (e) {
+            if (e.target.id === 'modalImage') e.stopPropagation();
         });
 
-        // Close with Escape
         document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                closeImageModal();
-            }
+            if (e.key === 'Escape') closeImageModal();
         });
+
+        function renderDescription(text) {
+            if (!text || !text.trim()) return '';
+
+            const words = text.trim().split(/\s+/);
+
+            if (words.length <= 50) {
+                return `<p class="profile-description">${text}</p>`;
+            }
+
+            const shortText = words.slice(0, 50).join(" ");
+
+            // Clean text for safe inline HTML attribute passing
+            const safeFull = encodeURIComponent(text);
+            const safeShort = encodeURIComponent(shortText);
+
+            return `
+        <p class="profile-description"><span class="desc-content">${shortText}...</span><button type="button" class="desc-toggle-btn" onclick="toggleDescription(this, '${safeFull}', '${safeShort}')">Show more <span class="arrow">▼</span></button></p>
+    `;
+        }
+
+        window.toggleDescription = function (btn, safeFull, safeShort) {
+            const textSpan = btn.previousElementSibling;
+            const isExpanded = btn.classList.contains("expanded");
+
+            if (isExpanded) {
+                textSpan.innerText = decodeURIComponent(safeShort) + "...";
+                btn.innerHTML = 'Show more <span class="arrow">▼</span>';
+                btn.classList.remove("expanded");
+            } else {
+                textSpan.innerText = decodeURIComponent(safeFull) + " ";
+                btn.innerHTML = 'Show less <span class="arrow">▲</span>';
+                btn.classList.add("expanded");
+            }
+        };
     </script>
 </body>
 

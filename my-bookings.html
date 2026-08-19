@@ -258,8 +258,11 @@
                 : "Events I'm Attending";
 
         function viewProfile(userId) {
-            localStorage.setItem("viewUserId", userId);
-            window.location.href = "view-profile.html";
+            if (userId) {
+                window.location.href = `view-profile.html?userId=${encodeURIComponent(userId)}`;
+            } else {
+                window.location.href = "view-profile.html";
+            }
         }
     </script>
 </body>
