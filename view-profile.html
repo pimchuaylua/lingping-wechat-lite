@@ -44,7 +44,7 @@
         .layout-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 32px;
+            gap: 12%;
         }
 
         @media (min-width: 768px) {
@@ -172,7 +172,7 @@
 
         .profile-description {
             color: #444;
-            font-size: 15px;
+            font-size: 16px;
             line-height: 1.6;
         }
 
@@ -208,6 +208,7 @@
             color: #555;
             white-space: pre-line;
             line-height: 1.5;
+            font-size: 16px;
         }
 
         /* ─── IMAGE MODAL ─── */
@@ -315,6 +316,37 @@
             color: #2A68A8;
             background-color: #F8FBFF;
         }
+
+        .profile-card {
+            position: relative;
+            /* Needed to anchor the top-right edit button */
+        }
+
+        .edit-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #FFFFFF;
+            border: 1px solid #E2E2E2;
+            color: #333333;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease;
+        }
+
+        .edit-btn:hover {
+            background: #F8F8F8;
+            border-color: #CCCCCC;
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 
@@ -328,6 +360,7 @@
         const { BASE_URL, API_KEY } = window.CONFIG;
         const userId = localStorage.getItem("viewUserId");
         const container = document.getElementById("profileContent");
+
 
         if (!userId) {
             container.innerHTML = "<p>User not found.</p>";
@@ -346,11 +379,11 @@
 
                 if (res.status === 404) {
                     container.innerHTML = `
-                    <div class="profile-card">
-                        <h2>Profile not available</h2>
-                        <p class="sub">This member hasn’t created a public profile yet.</p>
-                        <p class="sub">You can still see them in sessions and activities 😊</p>
-                    </div>`;
+            <div class="profile-card">
+                <h2>Profile not available</h2>
+                <p class="sub">This member hasn’t created a public profile yet.</p>
+                <p class="sub">You can still see them in sessions and activities 😊</p>
+            </div>`;
                     return;
                 }
 
@@ -358,124 +391,139 @@
                 const p = json.data;
                 const pi = p.progressInfo || {}; // Fallback for safety
 
+                // Check if user is viewing their own profile
+                const myUserId = localStorage.getItem("userId") || localStorage.getItem("currentUserId");
+                const viewUserId = localStorage.getItem("viewUserId");
+                const isOwnProfile = myUserId && viewUserId && myUserId === viewUserId;
+
+                // Safe avatar string to prevent inline onclick quote breaking
+                const avatarSrc = p.profilePic || 'https://via.placeholder.com/140';
+
                 // Determine if valid progress data exists
                 const hasProgress = pi.host && pi.learn;
 
                 container.innerHTML = `
-                    <div class="profile-card layout-wrapper">
+            <div class="profile-card layout-wrapper">
+                
+                <!-- Top-Right Edit Button (Renders only on your own profile) -->
+                ${isOwnProfile ? `
+                    <a href="community-profile.html" class="edit-btn">
+                        ✏️ Edit
+                    </a>
+                ` : ''}
+
+                <!-- LEFT COLUMN: Avatar & Gamification Stats -->
+                <div class="left-col">
+                    <div class="profile-header">
+                        <img
+                            src="${avatarSrc}"
+                            alt="${p.displayName}"
+                            onclick="openImageModal('${avatarSrc}')"
+                        >
+                        <h2>${p.displayName}</h2>
                         
-                        <!-- LEFT COLUMN: Avatar & Gamification Stats -->
-                        <div class="left-col">
-<div class="profile-header">
-    <img
-        src="${p.profilePic || 'https://via.placeholder.com/140'}"
-        alt="${p.displayName}"
-        onclick="openImageModal('${p.profilePic || 'https://via.placeholder.com/140'}')"
-    >
-    <h2>${p.displayName}</h2>
-    
-    ${(pi.badges && pi.badges.length) ? `
-        <div class="badges-container">
-            ${pi.badges.map((badge, idx) => `
-                <div class="user-badge badge-theme-${(idx % 3) + 1}">
-                    <svg class="badge-laurel-svg" viewBox="0 0 200 200">
-                        <defs>
-                            <g id="laurel-branch">
-                                <path d="M 90 175 A 75 75 0 0 1 35 65" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" />
-                                <path d="M 35 65 C 30 50 40 35 48 30 C 52 42 45 58 35 65 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-                                <path d="M 38 72 C 22 66 12 52 20 42 C 32 48 35 62 38 72 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-                                <path d="M 40 76 C 54 66 68 70 68 82 C 55 86 44 80 40 76 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-                                <path d="M 30 92 C 12 90 2 78 10 67 C 22 71 27 83 30 92 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-                                <path d="M 33 97 C 49 90 62 96 60 108 C 48 111 38 103 33 97 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-                                <path d="M 28 116 C 10 118 2 106 12 94 C 23 98 26 108 28 116 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-                                <path d="M 33 121 C 49 117 60 125 56 137 C 44 138 36 128 33 121 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-                                <path d="M 36 140 C 20 148 10 138 20 124 C 31 126 33 134 36 140 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-                                <path d="M 43 144 C 58 144 67 154 61 165 C 50 164 44 152 43 144 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-                                <path d="M 52 161 C 38 172 26 164 34 149 C 45 150 49 157 52 161 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-                                <path d="M 60 163 C 74 167 81 179 73 189 C 63 186 59 173 60 163 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
-                            </g>
-                        </defs>
-                        <use href="#laurel-branch" />
-                        <use href="#laurel-branch" transform="translate(200, 0) scale(-1, 1)" />
-                    </svg>
-                    <span>${badge}</span>
+                        ${(pi.badges && pi.badges.length) ? `
+                            <div class="badges-container">
+                                ${pi.badges.map((badge, idx) => `
+                                    <div class="user-badge badge-theme-${(idx % 3) + 1}">
+                                        <svg class="badge-laurel-svg" viewBox="0 0 200 200">
+                                            <defs>
+                                                <g id="laurel-branch">
+                                                    <path d="M 90 175 A 75 75 0 0 1 35 65" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" />
+                                                    <path d="M 35 65 C 30 50 40 35 48 30 C 52 42 45 58 35 65 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 38 72 C 22 66 12 52 20 42 C 32 48 35 62 38 72 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 40 76 C 54 66 68 70 68 82 C 55 86 44 80 40 76 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 30 92 C 12 90 2 78 10 67 C 22 71 27 83 30 92 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 33 97 C 49 90 62 96 60 108 C 48 111 38 103 33 97 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 28 116 C 10 118 2 106 12 94 C 23 98 26 108 28 116 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 33 121 C 49 117 60 125 56 137 C 44 138 36 128 33 121 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 36 140 C 20 148 10 138 20 124 C 31 126 33 134 36 140 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 43 144 C 58 144 67 154 61 165 C 50 164 44 152 43 144 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 52 161 C 38 172 26 164 34 149 C 45 150 49 157 52 161 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                    <path d="M 60 163 C 74 167 81 179 73 189 C 63 186 59 173 60 163 Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round" />
+                                                </g>
+                                            </defs>
+                                            <use href="#laurel-branch" />
+                                            <use href="#laurel-branch" transform="translate(200, 0) scale(-1, 1)" />
+                                        </svg>
+                                        <span>${badge}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    ${hasProgress ? `
+                    <div class="stats-container">
+                        <!-- Host Progress -->
+                        <div class="stat-group">
+                            <div class="stat-title">🎙️ Host Progress <span>(${pi.host.currentPoints} points)</span></div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: ${pi.host.progressPercentage}%"></div>
+                            </div>
+                            <div class="stat-detail">
+                                <span>Lvl ${pi.host.level} • ${pi.host.badgeName || pi.host.badge || 'No Hosting Activity'}</span>
+                                <strong>${pi.host.currentPoints} / ${pi.host.maxPoints} pts</strong>
+                            </div>
+                        </div>
+
+                        <!-- Learn Progress -->
+                        <div class="stat-group">
+                            <div class="stat-title">📚 Learn Progress <span>(${pi.learn.currentPoints} points)</span></div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: ${pi.learn.progressPercentage}%"></div>
+                            </div>
+                            <div class="stat-detail">
+                                <span>Lvl ${pi.learn.level} • ${pi.learn.badgeName || pi.learn.badge}</span>
+                                <strong>${pi.learn.currentPoints} / ${pi.learn.maxPoints} pts</strong>
+                            </div>
+                        </div>
+
+                        <!-- Metadata Rows -->
+                        ${pi.membershipTenure ? `<div class="info-row">📅 ${pi.membershipTenure.displayText}</div>` : ''}
+                    </div>
+                    ` : ''}
                 </div>
-            `).join('')}
-        </div>
-    ` : ''}
-</div>
 
-                            ${hasProgress ? `
-                            <div class="stats-container">
-                                <!-- Host Progress -->
-                                <div class="stat-group">
-                                    <div class="stat-title">🎙️ Host Progress <span>(${pi.host.currentPoints} points)</span></div>
-                                    <div class="progress-bar-bg">
-                                        <div class="progress-bar-fill" style="width: ${pi.host.progressPercentage}%"></div>
-                                    </div>
-                                    <div class="stat-detail">
-                                        <span>Lvl ${pi.host.level} • ${pi.host.badgeName}</span>
-                                        <strong>${pi.host.currentPoints} / ${pi.host.maxPoints} pts</strong>
-                                    </div>
-                                </div>
-
-                                <!-- Learn Progress -->
-                                <div class="stat-group">
-                                    <div class="stat-title">📚 Learn Progress <span>(${pi.learn.currentPoints} points)</span></div>
-                                    <div class="progress-bar-bg">
-                                        <div class="progress-bar-fill" style="width: ${pi.learn.progressPercentage}%"></div>
-                                    </div>
-                                    <div class="stat-detail">
-                                        <span>Lvl ${pi.learn.level} • ${pi.learn.badgeName}</span>
-                                        <strong>${pi.learn.currentPoints} / ${pi.learn.maxPoints} pts</strong>
-                                    </div>
-                                </div>
-
-                                <!-- Metadata Rows -->
-                                ${pi.membershipTenure ? `<div class="info-row">📅 ${pi.membershipTenure.displayText}</div>` : ''}
-                            </div>
-                            ` : ''}
-                        </div>
-
-                        <!-- RIGHT COLUMN: About & Fun Facts -->
-                        <div class="right-col">
-                            ${p.description && p.description.trim() ? `
-                            <div class="profile-section">
-                                <div class="section-title">About ${p.displayName}</div>
-                                <div class="profile-description">${p.description}</div>
-                            </div>
-                            ` : ""}
-
-                            ${p.topicsOfInterests && p.topicsOfInterests.length ? `
-                            <div class="profile-section">
-                                <div class="section-title">Topics of Interest</div>
-                                <div>
-                                    ${p.topicsOfInterests.map(t => `<span class="topic">${t.name}</span>`).join("")}
-                                </div>
-                            </div>
-                            ` : ""}
-
-                            ${(p.funPrompts || []).filter(fp => fp.answer && fp.answer.trim()).length ? `
-                            <div class="profile-section">
-                                <div class="section-title">Fun Facts</div>
-                                ${(p.funPrompts || []).filter(fp => fp.answer && fp.answer.trim()).map(fp => `
-                                    <div class="fun-prompt">
-                                        <strong>${fp.question}</strong>
-                                        <div class="fun-answer">${fp.answer}</div>
-                                    </div>
-                                `).join("")}
-                            </div>
-                            ` : ""}
-                        </div>
-
+                <!-- RIGHT COLUMN: About & Fun Facts -->
+                <div class="right-col">
+                    ${p.description && p.description.trim() ? `
+                    <div class="profile-section">
+                        <div class="section-title">About ${p.displayName}</div>
+                        <div class="profile-description">${p.description}</div>
                     </div>
+                    ` : ""}
 
-                    <!-- Image Modal -->
-                    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
-                        <span class="close-btn">&times;</span>
-                        <img id="modalImage" class="modal-image">
+                    ${p.topicsOfInterests && p.topicsOfInterests.length ? `
+                    <div class="profile-section">
+                        <div class="section-title">Topics of Interest</div>
+                        <div>
+                            ${p.topicsOfInterests.map(t => `<span class="topic">${t.name}</span>`).join("")}
+                        </div>
                     </div>
-                `;
+                    ` : ""}
+
+                    ${(p.funPrompts || []).filter(fp => fp.answer && fp.answer.trim()).length ? `
+                    <div class="profile-section">
+                        <div class="section-title">Fun Facts</div>
+                        ${(p.funPrompts || []).filter(fp => fp.answer && fp.answer.trim()).map(fp => `
+                            <div class="fun-prompt">
+                                <strong>${fp.question}</strong>
+                                <div class="fun-answer">${fp.answer}</div>
+                            </div>
+                        `).join("")}
+                    </div>
+                    ` : ""}
+                </div>
+
+            </div>
+
+            <!-- Image Modal -->
+            <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+                <span class="close-btn">&times;</span>
+                <img id="modalImage" class="modal-image">
+            </div>
+        `;
             } catch (err) {
                 console.error(err);
                 container.innerHTML = "<p>Failed to load profile.</p>";
