@@ -153,12 +153,12 @@
 
                 <!-- RIGHT COLUMN: About & Fun Facts -->
                 <div class="right-col">
-                    ${p.description && p.description.trim() ? `
-                    <div class="profile-section">
-                        <div class="section-title">About ${p.displayName}</div>
-                        <div class="profile-description">${p.description}</div>
-                    </div>
-                    ` : ""}
+                    ${p.description?.trim().length > 1 ? `
+                        <div class="profile-section">
+                            <div class="section-title">About ${p.displayName}</div>
+                            ${renderDescription(p.description)}
+                        </div>
+                        ` : ""}
 
                     ${p.topicsOfInterests && p.topicsOfInterests.length ? `
                     <div class="profile-section">
@@ -216,6 +216,41 @@
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') closeImageModal();
         });
+
+        function renderDescription(text) {
+            if (!text || !text.trim()) return '';
+
+            const words = text.trim().split(/\s+/);
+
+            if (words.length <= 50) {
+                return `<p class="profile-description">${text}</p>`;
+            }
+
+            const shortText = words.slice(0, 50).join(" ");
+
+            // Clean text for safe inline HTML attribute passing
+            const safeFull = encodeURIComponent(text);
+            const safeShort = encodeURIComponent(shortText);
+
+            return `
+        <p class="profile-description"><span class="desc-content">${shortText}...</span><button type="button" class="desc-toggle-btn" onclick="toggleDescription(this, '${safeFull}', '${safeShort}')">Show more <span class="arrow">▼</span></button></p>
+    `;
+        }
+
+        window.toggleDescription = function (btn, safeFull, safeShort) {
+            const textSpan = btn.previousElementSibling;
+            const isExpanded = btn.classList.contains("expanded");
+
+            if (isExpanded) {
+                textSpan.innerText = decodeURIComponent(safeShort) + "...";
+                btn.innerHTML = 'Show more <span class="arrow">▼</span>';
+                btn.classList.remove("expanded");
+            } else {
+                textSpan.innerText = decodeURIComponent(safeFull) + " ";
+                btn.innerHTML = 'Show less <span class="arrow">▲</span>';
+                btn.classList.add("expanded");
+            }
+        };
     </script>
 </body>
 

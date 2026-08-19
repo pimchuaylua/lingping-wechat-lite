@@ -335,3 +335,28 @@ body {
     border-color: #CCCCCC;
     transform: translateY(-1px);
 }
+
+/* Strictly Inline Toggle Button */
+.desc-toggle-btn {
+    background: transparent;
+    border: none;
+    color: #444;
+    /* Lingping Primary Blue */
+    font-size: 14px;
+    font-weight: 300;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    display: inline;
+    /* Strictly inline with text flow */
+    vertical-align: middle;
+}
+
+.desc-toggle-btn:hover {
+    text-decoration: underline;
+}
+
+.desc-toggle-btn .arrow {
+    font-size: 10px;
+    display: inline-block;
+}
