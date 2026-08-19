@@ -249,7 +249,8 @@ body {
 
     width: 200px;
     height: 48px;
-    padding: 0 16px;
+    padding: 4px 12px;
+    /* Decreased vertical padding to fit 2 text lines */
     box-sizing: border-box;
 
     background: #FFFFFF;
@@ -257,9 +258,13 @@ body {
     border-width: 2px;
     border-style: solid;
 
-    font-size: 13px;
+    font-size: 14px;
+    /* Slightly adjusted font size for tight multi-line fits */
     font-weight: 600;
+    line-height: 1.25;
+    /* Tighter line-height to fit inside 48px box */
     letter-spacing: -0.1px;
+    text-align: center;
 
     /* Matte look: No shiny gradients or heavy shadows */
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
@@ -271,15 +276,22 @@ body {
 }
 
 .user-badge span {
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    /* Wrap up to 2 lines before truncating with ellipsis */
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    /* Enables text wrapping */
+    word-break: break-word;
+    /* Wraps long words seamlessly */
 }
 
 .badge-laurel-svg {
     width: 22px;
     height: 22px;
     flex-shrink: 0;
+    /* Ensures the SVG size never shrinks when text wraps */
 }
 
 /* 🎨 Matte Color Themes (Matching the Stamp Palette) */
