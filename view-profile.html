@@ -12,21 +12,205 @@
     <style>
         :root {
             --theme: #FFB050;
+            --progress-fill: #90C2C8;
+            --badge-bg: #FFE8D6;
         }
 
+        body {
+            background: linear-gradient(180deg, rgba(255, 176, 80, 0.18), #f5f5f5 220px);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .back-btn {
+            margin-bottom: 14px;
+            font-size: 14px;
+            color: var(--theme);
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        .profile-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 28px 20px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+        }
+
+        /* ─── RESPONSIVE LAYOUT ─── */
+        .layout-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        @media (min-width: 768px) {
+            .layout-wrapper {
+                flex-direction: row;
+                align-items: flex-start;
+                padding: 40px;
+            }
+
+            .left-col {
+                width: 300px;
+                flex-shrink: 0;
+            }
+
+            .right-col {
+                flex-grow: 1;
+            }
+
+            .profile-section:first-child {
+                margin-top: 0;
+            }
+        }
+
+        /* ─── LEFT COLUMN (STATS & AVATAR) ─── */
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .profile-header img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #eee;
+            margin-bottom: 14px;
+            cursor: zoom-in;
+        }
+
+        .profile-header h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-badge {
+            display: inline-block;
+            background: var(--badge-bg);
+            color: #333;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .stats-container {
+            margin-top: 24px;
+        }
+
+        .stat-group {
+            margin-bottom: 18px;
+        }
+
+        .stat-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #222;
+        }
+
+        .progress-bar-bg {
+            background: #E8E8E8;
+            border-radius: 8px;
+            height: 6px;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-fill {
+            background: var(--progress-fill);
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.4s ease;
+        }
+
+        .stat-detail {
+            font-size: 13px;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .stat-detail strong {
+            color: #222;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #444;
+            margin-top: 14px;
+        }
+
+        /* ─── RIGHT COLUMN (ABOUT & FUN FACTS) ─── */
         .profile-section {
             margin-top: 28px;
         }
 
-        .profile-pic {
-            width: 140px;
-            height: 140px;
-            object-fit: cover;
-            border-radius: 50%;
-            cursor: zoom-in;
-            display: block;
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 14px;
         }
 
+        .profile-description {
+            color: #444;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .topic {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(255, 176, 80, 0.15);
+            color: #333;
+            font-size: 13px;
+            font-weight: 500;
+            margin: 6px 6px 0 0;
+            border: 1px solid rgba(255, 176, 80, 0.4);
+        }
+
+        .fun-prompt {
+            background: #fff;
+            border: 1px solid #eaeaea;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .fun-prompt strong {
+            font-weight: 600;
+            color: #222;
+        }
+
+        .fun-answer {
+            margin-top: 8px;
+            color: #555;
+            white-space: pre-line;
+            line-height: 1.5;
+        }
+
+        /* ─── IMAGE MODAL ─── */
         .image-modal {
             display: none;
             position: fixed;
@@ -59,128 +243,87 @@
             line-height: 1;
         }
 
-        body {
-            background:
-                linear-gradient(180deg,
-                    rgba(255, 176, 80, 0.18),
-                    #f5f5f5 220px);
-        }
-
-        /* Back button */
-        .back-btn {
-            margin-bottom: 14px;
-            font-size: 14px;
-            color: var(--theme);
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .back-btn:hover {
-            text-decoration: underline;
-        }
-
-        /* Profile card — soft, no borders */
-        .profile-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 28px 20px;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
-        }
-
-        /* Header section */
-        .profile-header {
+        .badges-container {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 14px;
+        }
+
+        .badges-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 14px;
+        }
+
+        /* Prestigious Award Card */
+        .user-badge {
+            position: relative;
+            display: inline-flex;
             align-items: center;
-            text-align: center;
-            margin-bottom: 18px;
-        }
+            justify-content: center;
 
-        /* Avatar — bigger, clean */
-        .profile-header img {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #eee;
-            margin-bottom: 14px;
-        }
+            /* Fixed equal badge dimensions */
+            width: 230px;
+            height: 56px;
+            padding: 0 36px;
+            /* Spacing so text doesn't overlap corner laurels */
+            box-sizing: border-box;
 
-        /* Name */
-        .profile-header h2 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 600;
-            color: #333;
-        }
+            /* Lingping Warm Gold Theme */
+            background: linear-gradient(135deg, #FFFDF9 0%, #FFF2E0 100%);
+            color: #3B2A1A;
+            border: 1px solid rgba(212, 160, 23, 0.45);
+            border-radius: 16px;
 
-
-
-        /* Short bio */
-        .profile-header .sub {
-            font-size: 14px;
-            color: #666;
-            margin-top: 6px;
-        }
-
-        /* Description */
-        .profile-card p {
-            font-size: 14px;
-            color: #444;
-            line-height: 1.55;
-        }
-
-        /* Section titles */
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 12px;
-        }
-
-
-        /* Topics — keep capsule style */
-        .topic {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 999px;
-            background: rgba(255, 176, 80, 0.22);
-            color: #333;
             font-size: 13px;
-            font-weight: 500;
-            margin: 6px 6px 0 0;
-            border: 1px solid rgba(255, 176, 80, 0.5);
-        }
-
-        .fun-prompt {
-            background: #fff;
-            border: 1px solid #eee;
-            padding: 12px 14px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .fun-prompt strong {
             font-weight: 600;
-            color: #333;
+            letter-spacing: -0.1px;
+            box-shadow: 0 4px 12px rgba(255, 176, 80, 0.12);
+            transition: all 0.2s ease;
+            overflow: hidden;
         }
 
-        .fun-answer {
-            margin-top: 6px;
-            white-space: pre-line;
+        .user-badge:hover {
+            border-color: rgba(212, 160, 23, 0.75);
+            box-shadow: 0 6px 16px rgba(255, 176, 80, 0.22);
+            transform: translateY(-1px);
         }
 
-        .profile-description {
-            padding: 0;
-            background: transparent;
-            border-radius: 0;
-            color: #555;
-            font-size: 15px;
-            line-height: 1.7;
+        .user-badge span {
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            z-index: 1;
+        }
+
+        /* Base Laurel Styling */
+        .laurel-icon {
+            position: absolute;
+            width: 28px;
+            height: 32px;
+            color: #D4A017;
+            pointer-events: none;
+        }
+
+        /* Bottom Left Corner Alignment & Rotation */
+        .laurel-icon.corner-left {
+            bottom: -2px;
+            left: 6px;
+            transform: rotate(-18deg);
+        }
+
+        /* Bottom Right Corner Alignment & Rotation (Flipped) */
+        .laurel-icon.corner-right {
+            bottom: -2px;
+            right: 6px;
+            transform: scaleX(-1) rotate(-18deg);
         }
     </style>
-
 </head>
 
 <body>
@@ -209,82 +352,133 @@
                     }
                 });
 
-                // ✅ Handle no-profile case
                 if (res.status === 404) {
                     container.innerHTML = `
                     <div class="profile-card">
                         <h2>Profile not available</h2>
-                        <p class="sub">
-                            This member hasn’t created a public profile yet.
-                        </p>
-                        <p class="sub">
-                            You can still see them in sessions and activities 😊
-                        </p>
-                    </div>
-                `;
+                        <p class="sub">This member hasn’t created a public profile yet.</p>
+                        <p class="sub">You can still see them in sessions and activities 😊</p>
+                    </div>`;
                     return;
                 }
+
                 const json = await res.json();
                 const p = json.data;
+                const pi = p.progressInfo || {}; // Fallback for safety
+
+                // Determine if valid progress data exists
+                const hasProgress = pi.host && pi.learn;
 
                 container.innerHTML = `
-                    <div class="profile-card">
+                    <div class="profile-card layout-wrapper">
+                        
+                        <!-- LEFT COLUMN: Avatar & Gamification Stats -->
+                        <div class="left-col">
+                            <div class="profile-header">
+    <img
+        src="${p.profilePic || 'https://via.placeholder.com/140'}"
+        alt="${p.displayName}"
+        onclick="openImageModal('${p.profilePic || 'https://via.placeholder.com/140'}')"
+    >
+    <h2>${p.displayName}</h2>
+    
+    ${(pi.badges && pi.badges.length) ? `
+        <div class="badges-container">
+            ${pi.badges.map(badge => `
+                <div class="user-badge">
+                    <!-- Bottom-Left Laurel Branch -->
+                    <svg class="laurel-icon corner-left" viewBox="0 0 24 30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 26C12 22 7 16 7 10C7 6 9 3 11 1" />
+                        <path d="M12 21C8 19 6 15 7 11C9 13 11 15 12 21Z" fill="currentColor" />
+                        <path d="M16 15C12 13 10 9 11 5C13 7 15 9 16 15Z" fill="currentColor" />
+                        <path d="M18 9C15 7 13 4 14 1C16 2 17 5 18 9Z" fill="currentColor" />
+                    </svg>
 
-                        <div class="profile-header">
-                            <img
-                                src="${p.profilePic || 'https://via.placeholder.com/140'}"
-                                alt="${p.displayName}"
-                                class="profile-pic"
-                                onclick="openImageModal('${p.profilePic || 'https://via.placeholder.com/140'}')"
-                            >
+                    <span>${badge}</span>
 
-                            <h2>${p.displayName}</h2>
-                            <div class="sub">${p.bio || ''}</div>
-                        </div>
+                    <!-- Bottom-Right Laurel Branch -->
+                    <svg class="laurel-icon corner-right" viewBox="0 0 24 30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 26C12 22 7 16 7 10C7 6 9 3 11 1" />
+                        <path d="M12 21C8 19 6 15 7 11C9 13 11 15 12 21Z" fill="currentColor" />
+                        <path d="M16 15C12 13 10 9 11 5C13 7 15 9 16 15Z" fill="currentColor" />
+                        <path d="M18 9C15 7 13 4 14 1C16 2 17 5 18 9Z" fill="currentColor" />
+                    </svg>
+                </div>
+            `).join('')}
+        </div>
+    ` : ''}
+</div>
 
-                        <!-- Image Modal -->
-                        <div id="imageModal" class="image-modal" onclick="closeImageModal()">
-                            <span class="close-btn">&times;</span>
-                            <img id="modalImage" class="modal-image">
-                        </div>
+                            ${hasProgress ? `
+                            <div class="stats-container">
+                                <!-- Host Progress -->
+                                <div class="stat-group">
+                                    <div class="stat-title">🎙️ Host Progress <span>(${pi.host.currentPoints} points)</span></div>
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" style="width: ${pi.host.progressPercentage}%"></div>
+                                    </div>
+                                    <div class="stat-detail">
+                                        <span>Lvl ${pi.host.level} • ${pi.host.badgeName}</span>
+                                        <strong>${pi.host.currentPoints} / ${pi.host.maxPoints} pts</strong>
+                                    </div>
+                                </div>
 
-                        ${p.description && p.description.trim() ? `
-                        <div class="profile-section">
-                            <div class="section-title">More About Me</div>
-                            <div class="profile-description">
-                                ${p.description}
+                                <!-- Learn Progress -->
+                                <div class="stat-group">
+                                    <div class="stat-title">📚 Learn Progress <span>(${pi.learn.currentPoints} points)</span></div>
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" style="width: ${pi.learn.progressPercentage}%"></div>
+                                    </div>
+                                    <div class="stat-detail">
+                                        <span>Lvl ${pi.learn.level} • ${pi.learn.badgeName}</span>
+                                        <strong>${pi.learn.currentPoints} / ${pi.learn.maxPoints} pts</strong>
+                                    </div>
+                                </div>
+
+                                <!-- Metadata Rows -->
+                                ${pi.membershipTenure ? `<div class="info-row">📅 ${pi.membershipTenure.displayText}</div>` : ''}
                             </div>
+                            ` : ''}
                         </div>
-                    ` : ""}
 
-                        ${p.topicsOfInterests && p.topicsOfInterests.length ? `
+                        <!-- RIGHT COLUMN: About & Fun Facts -->
+                        <div class="right-col">
+                            ${p.description && p.description.trim() ? `
+                            <div class="profile-section">
+                                <div class="section-title">About ${p.displayName}</div>
+                                <div class="profile-description">${p.description}</div>
+                            </div>
+                            ` : ""}
+
+                            ${p.topicsOfInterests && p.topicsOfInterests.length ? `
                             <div class="profile-section">
                                 <div class="section-title">Topics of Interest</div>
                                 <div>
-                                    ${p.topicsOfInterests.map(t =>
-                    `<span class="topic">${t.name}</span>`
-                ).join("")}
+                                    ${p.topicsOfInterests.map(t => `<span class="topic">${t.name}</span>`).join("")}
                                 </div>
                             </div>
-                        ` : ""}
+                            ` : ""}
 
-                        ${(p.funPrompts || []).filter(fp => fp.answer && fp.answer.trim()).length ? `
+                            ${(p.funPrompts || []).filter(fp => fp.answer && fp.answer.trim()).length ? `
                             <div class="profile-section">
                                 <div class="section-title">Fun Facts</div>
-
-                                ${(p.funPrompts || [])
-                            .filter(fp => fp.answer && fp.answer.trim())
-                            .map(fp => `
-                                        <div class="fun-prompt">
-                                            <strong>${fp.question}</strong>
-                                            <div class="fun-answer">${fp.answer}</div>
-                                        </div>
-                                    `).join("")}
+                                ${(p.funPrompts || []).filter(fp => fp.answer && fp.answer.trim()).map(fp => `
+                                    <div class="fun-prompt">
+                                        <strong>${fp.question}</strong>
+                                        <div class="fun-answer">${fp.answer}</div>
+                                    </div>
+                                `).join("")}
                             </div>
-                        ` : ""}
+                            ` : ""}
+                        </div>
 
                     </div>
 
+                    <!-- Image Modal -->
+                    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+                        <span class="close-btn">&times;</span>
+                        <img id="modalImage" class="modal-image">
+                    </div>
                 `;
             } catch (err) {
                 console.error(err);
@@ -292,13 +486,11 @@
             }
         }
 
+        // Modal scripts
         function openImageModal(src) {
             const modal = document.getElementById('imageModal');
-            const img = document.getElementById('modalImage');
-
-            img.src = src;
+            document.getElementById('modalImage').src = src;
             modal.classList.add('show');
-
             document.body.style.overflow = 'hidden';
         }
 
@@ -307,16 +499,12 @@
             document.body.style.overflow = '';
         }
 
-        // Prevent closing when clicking the image itself
-        document.getElementById('modalImage').addEventListener('click', function (e) {
-            e.stopPropagation();
+        document.addEventListener('click', function (e) {
+            if (e.target.id === 'modalImage') e.stopPropagation();
         });
 
-        // Close with Escape
         document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                closeImageModal();
-            }
+            if (e.key === 'Escape') closeImageModal();
         });
     </script>
 </body>
