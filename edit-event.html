@@ -285,6 +285,13 @@
             const descriptionEl = document.getElementById('fullDescription_en');
             const wordCount = countWords(descriptionEl.value);
 
+            const title = document.getElementById('title_en').value.trim();
+
+            if (!title) {
+                alert('Title cannot be empty.');
+                return;
+            }
+
             if (wordCount < MIN_WORDS) {
                 showValidationError(descriptionEl, `Description needs at least ${MIN_WORDS} words (currently ${wordCount}).`);
                 descriptionEl.focus();
