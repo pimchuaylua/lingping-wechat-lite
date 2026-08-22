@@ -298,6 +298,13 @@
                 return;
             }
 
+            const questionMarkCount = (descriptionEl.value.match(/\?/g) || []).length;
+            console.log('questionMarkCount', questionMarkCount)
+            if (questionMarkCount >= 5) {
+                alert("Host reminder: Please share a brief topic blurb, not a list of questions. We want conversations to flow naturally and avoid people over-preparing or making the discussion feel scripted.");
+                return;
+            }
+
             clearValidationError(descriptionEl);
 
             const date = val('date');
