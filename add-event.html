@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Add Event</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="config.js"></script>
+    <script src="js/utils.js?v=20250210"></script>
+    <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
+    <link rel="stylesheet" href="assets/chip_style.css">
+    <script src="js/render-langague-level.js"></script>
+    <style>
+        .input-invalid {
+            border-color: #b3441f !important;
+        }
+
+        .validation-error {
+            font-size: 12px;
+            color: #b3441f;
+            margin-top: 4px;
+        }
+
+        .section input.sub,
+        .section textarea.sub {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff;
+            color: #111827;
+            font-size: 15px;
+            font-family: inherit;
+            line-height: 1.4;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .section input.sub:focus,
+        .section textarea.sub:focus {
+            outline: none;
+            border-color: var(--theme);
+            box-shadow: 0 0 0 3px rgba(255, 176, 80, 0.18);
+        }
+
+        .section input.sub[readonly] {
+            background: #f9fafb;
+            color: #6b7280;
+            cursor: default;
+        }
+
+        .section textarea.sub {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .hint mark {
+            background: #FFF3B0;
+            color: #78350f;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        .section select.sub {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 40px 12px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7280' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 16px center;
+            background-size: 12px 8px;
+            color: #111827;
+            font-size: 15px;
+            font-family: inherit;
+            line-height: 1.4;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .section select.sub:focus {
+            outline: none;
+            border-color: var(--theme);
+            box-shadow: 0 0 0 3px rgba(255, 176, 80, 0.18);
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: #5a5a56;
+            margin-top: 4px;
+        }
+
+        .char-count-invalid {
+            color: #b3441f;
+        }
+
+        .sub::placeholder {
+            color: #b3b0a6;
+        }
+
+        .section input[type="file"].sub {
+            padding: 10px;
+            border: 1px dashed #e5e7eb;
+            background: #fafafa;
+            color: #6b7280;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .section input[type="file"].sub::file-selector-button,
+        .section input[type="file"].sub::-webkit-file-upload-button {
+            margin-right: 12px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background: var(--theme);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .section input[type="file"].sub::file-selector-button:hover,
+        .section input[type="file"].sub::-webkit-file-upload-button:hover {
+            background: #f0a03d;
+        }
+
+        .check-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            margin-top: 10px;
+        }
+
+        .check-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #111827;
+            cursor: pointer;
+        }
+
+        .check-row input {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--theme);
+            cursor: pointer;
+        }
+
+        .lang-row {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0efe9;
+        }
+
+        .lang-row:last-child {
+            border-bottom: none;
+        }
+
+        .lang-levels {
+            margin-top: 10px;
+            margin-left: 24px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" id="formContainer">Loading...</div>
+
+    <div class="book-bar">
+        <button class="book-btn" id="saveBtn" onclick="createSession()">
+            Create Event
+        </button>
+    </div>
+
+    <script>
+        const { BASE_URL, API_KEY } = window.CONFIG;
+        const container = document.getElementById('formContainer');
+        const userId = localStorage.getItem('userId');
+        const username = localStorage.getItem('username');
+
+        let eventOptions = null;
+        let levels = [];
+        let hostDisplayName = username || 'You';
+        let onlineCommunityLevelId = '695c763e2d652e065db71030';
+        let uploadedPhotoUrl = null;
+        const DEFAULT_PHOTO_URL = 'https://lingping-club.s3.ap-southeast-1.amazonaws.com/cm+pim.jpg';
+
+        if (!userId) {
+            container.innerHTML = `
+                <div class="back-btn" onclick="history.back()">← Back</div>
+                <h1>Add Event</h1>
+                <p>Please log in to create an event.</p>
+            `;
+        } else {
+            init();
+        }
+
+        async function loadLevels() {
+            const res = await fetch(`${BASE_URL}/levels/`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-API-KEY': API_KEY
+                }
+            });
+            const json = await res.json();
+            return json.data || [];
+        }
+
+        async function loadHostDisplayName() {
+            try {
+                const res = await fetch(`${BASE_URL}/users/${userId}/profile`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-KEY': API_KEY
+                    }
+                });
+                const json = await res.json();
+                return json?.data?.displayName || json?.displayName || username || 'You';
+            } catch (err) {
+                console.error(err);
+                return username || 'You';
+            }
+        }
+
+        async function init() {
+            try {
+                [eventOptions, levels, hostDisplayName] = await Promise.all([
+                    loadSessionOptions(),
+                    loadLevels(),
+                    loadHostDisplayName()
+                ]);
+                renderForm();
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p>Failed to load form options.</p>';
+            }
+        }
+
+        function renderForm() {
+            const placeholderDesc = "Where did you grow up? Share your hometown, favorite places, local food, childhood memories, and what makes your hometown special to you. Discover where everyone comes from and the stories behind each place.";
+
+            const CITY_LEVEL_META = {
+                'Community: Chiang Mai': { label: 'Chiang Mai', emoji: '🏔️' },
+                'Community: Bangkok': { label: 'Bangkok', emoji: '🌆' },
+                'Community: Chengdu': { label: 'Chengdu', emoji: '🐼' },
+                'Community: Hong Kong': { label: 'Hong Kong', emoji: '🏙️' },
+                'Community: Phuket': { label: 'Phuket', emoji: '🏝️' },
+            };
+            // Country grouping + order mirrors the location selector on index.html
+            const COUNTRY_GROUPS = [
+                { country: 'Thailand', levelNames: ['Community: Bangkok', 'Community: Chiang Mai', 'Community: Phuket'] },
+                { country: 'China', levelNames: ['Community: Chengdu'] },
+                { country: 'Hong Kong', levelNames: ['Community: Hong Kong'] },
+            ];
+            const ONLINE_COMMUNITY_LEVEL_NAME = 'Online: Community';
+
+            const levelOptionsHtml = COUNTRY_GROUPS.map(group => {
+                const optionsHtml = group.levelNames
+                    .map(name => levels.find(l => l.name === name))
+                    .filter(Boolean)
+                    .map(l => {
+                        const meta = CITY_LEVEL_META[l.name];
+                        return `<option value="${l._id}">${meta.emoji} ${meta.label}</option>`;
+                    }).join('');
+                return optionsHtml ? `<optgroup label="${group.country}">${optionsHtml}</optgroup>` : '';
+            }).join('');
+            onlineCommunityLevelId = (levels.find(l => l.name === ONLINE_COMMUNITY_LEVEL_NAME) || {})._id || '';
+            const typeOptionsHtml = (eventOptions.types || [])
+                .filter(t => t.value !== 'hybrid')
+                .map(t => `<option value="${t.value}">${t.label}</option>`).join('');
+            const platformOptionsHtml = (eventOptions.platforms || []).map(p => `<option value="${p.value}">${p.label}</option>`).join('');
+
+            const categoriesHtml = (eventOptions.categories || []).map(c => `
+                <label class="check-row">
+                    <input type="checkbox" value="${c.value}" class="cat-check">
+                    ${c.label}
+                </label>
+            `).join('');
+
+            const LANG_FLAGS = { en: '🇬🇧', th: '🇹🇭', zh: '🇨🇳', yue: '🇭🇰', ja: '🇯🇵' };
+
+            const languagesHtml = (eventOptions.languages || []).map(lang => `
+                <div class="lang-row">
+                    <label class="check-row">
+                        <input type="checkbox" class="lang-toggle" onchange="toggleLangLevels('${lang.value}', this)">
+                        ${LANG_FLAGS[lang.value] || ''} ${lang.label}
+                    </label>
+                    <div class="check-grid lang-levels" id="langLevels_${lang.value}" style="display:none;">
+                        ${(eventOptions.proficiencyLevels || []).map(l => `
+                            <label class="check-row">
+                                <input type="checkbox" class="lang-level-check" data-language="${lang.value}" value="${l.value}">
+                                ${l.label}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="back-btn" onclick="history.back()">← Back</div>
+                <h1>Add Event</h1>
+
+                <div class="section">
+                    <div class="label">Title</div>
+                    <input
+                        class="sub"
+                        id="title_en"
+                        placeholder="🏡 Your Hometown"
+                    >
+                </div>
+
+                <div class="section">
+                    <div class="label">Description</div>
+                    <div class="hint">Give a brief idea of what we'll talk about—not a list of questions.</div>
+                    <textarea
+                        style="min-height: 150px;"
+                        class="sub"
+                        id="fullDescription_en"
+                        oninput="updateWordCount(this)"
+                        placeholder="${placeholderDesc}"
+                    ></textarea>
+                    <div class="char-count" id="fullDescription_en_count"></div>
+                </div>
+
+                <div class="section">
+                    <div class="label">Host</div>
+                    <input class="sub" readonly value="${hostDisplayName}">
+                </div>
+
+                <div class="section">
+                    <div class="label">Event Type</div>
+                    <select class="sub" id="type" onchange="toggleTypeFields()">${typeOptionsHtml}</select>
+                </div>
+
+                <div class="section" id="onlineSection">
+                    <div class="label">Platform</div>
+                    <select class="sub" id="platform">${platformOptionsHtml}</select>
+                    <div class="label" style="margin-top:12px;">Meeting Link / Number</div>
+                    <input class="sub" id="meetingNumber" placeholder="Zoom link, meeting ID, etc.">
+                </div>
+
+                <div class="section" id="communitySection">
+                    <div class="label">Community</div>
+                    <select class="sub" id="levelId">${levelOptionsHtml}</select>
+                </div>
+
+                <div class="section">
+                    <div class="label">Date</div>
+                    <input class="sub" type="date" id="date">
+                </div>
+                <div class="section">
+                    <div class="label">Time Zone</div>
+
+                    <select class="sub" id="timezone">
+                        <option value="Asia/Bangkok">Bangkok (UTC+7)</option>
+                        <option value="Asia/Shanghai">Shanghai (UTC+8)</option>
+                        <option value="Asia/Tokyo">Tokyo (UTC+9)</option>
+                        <option value="Asia/Seoul">Seoul (UTC+9)</option>
+                        <option value="Asia/Singapore">Singapore (UTC+8)</option>
+                        <option value="Europe/Berlin">Berlin</option>
+                        <option value="America/Los_Angeles">Los Angeles</option>
+                        <option value="America/New_York">New York</option>
+                        <option value="UTC">UTC</option>
+                    </select>
+                </div>
+
+                <div class="section">
+                    <div class="label">Time</div>
+                    <input class="sub" type="time" id="time">
+                </div>
+
+                <div class="section">
+                    <div class="label">Duration (mins)</div>
+                    <input class="sub" type="number" id="durationMins" value="60">
+                </div>
+
+                <div class="section" id="locationSection">
+                    <div class="label">Location</div>
+                    <input class="sub" id="location_en" placeholder="e.g. Central World, Bangkok">
+                    <div class="label" style="margin-top:12px;">Location Google Map URL</div>
+                    <input class="sub" id="locationUrl" placeholder="https://maps.google.com/...">
+                </div>
+
+                <div class="section">
+                    <div class="label">Categories</div>
+                    <div class="check-grid">${categoriesHtml}</div>
+                </div>
+
+                <div class="section">
+                    <div class="label">Languages & Levels</div>
+                    <div class="hint">Select the languages this event is for, and the level for each. Leave all unchecked if it's open to any language.</div>
+                    ${languagesHtml}
+                </div>
+
+                <div class="section">
+                    <div class="label">Max Participants</div>
+                    <input class="sub" type="number" id="maxParticipants" value="6">
+                </div>
+
+                <div class="section">
+                    <div class="label">Photo</div>
+                    <div class="hint">Optional. Leave blank to use the default photo.</div>
+                    <input class="sub" type="file" accept="image/*" id="photoInput" onchange="handlePhotoUpload(event)">
+                    <div id="photoPreviewWrap" style="display:none; margin-top:10px;">
+                        <img id="photoPreview" style="max-width:100%; border-radius:10px; display:block;">
+                    </div>
+                    <div class="char-count" id="photoStatus"></div>
+                </div>
+            `;
+
+            document.querySelectorAll('textarea[id^="fullDescription"]').forEach(updateWordCount);
+
+            const typeEl = document.getElementById('type');
+            const offlineType = (eventOptions.types || []).find(t => t.value === 'offline');
+            if (offlineType) typeEl.value = 'offline';
+            toggleTypeFields();
+        }
+
+        function toggleTypeFields() {
+            const type = document.getElementById('type').value;
+            const onlineSection = document.getElementById('onlineSection');
+            const locationSection = document.getElementById('locationSection');
+            const communitySection = document.getElementById('communitySection');
+
+            onlineSection.style.display = (type === 'online' || type === 'hybrid') ? 'block' : 'none';
+            locationSection.style.display = (type === 'offline' || type === 'hybrid') ? 'block' : 'none';
+            communitySection.style.display = (type === 'online') ? 'none' : 'block';
+        }
+
+        function toggleLangLevels(code, checkbox) {
+            const levelsEl = document.getElementById(`langLevels_${code}`);
+            levelsEl.style.display = checkbox.checked ? 'flex' : 'none';
+
+            if (!checkbox.checked) {
+                levelsEl.querySelectorAll('.lang-level-check:checked').forEach(el => el.checked = false);
+            }
+        }
+
+        async function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const previewWrap = document.getElementById('photoPreviewWrap');
+            const preview = document.getElementById('photoPreview');
+            const status = document.getElementById('photoStatus');
+
+            preview.src = URL.createObjectURL(file);
+            previewWrap.style.display = 'block';
+            status.textContent = 'Uploading...';
+            status.classList.remove('char-count-invalid');
+            uploadedPhotoUrl = null;
+
+            try {
+                const formData = new FormData();
+                formData.append('photo', file);
+
+                const res = await fetch(`${BASE_URL}/reading-sessions/photo`, {
+                    method: 'POST',
+                    headers: {
+                        'X-API-KEY': API_KEY
+                    },
+                    body: formData
+                });
+
+                const json = await res.json();
+
+                if (!res.ok || !json.status || !json.data?.photoUrl) {
+                    throw new Error(json.message || 'Upload failed');
+                }
+
+                uploadedPhotoUrl = json.data.photoUrl;
+                status.textContent = 'Photo uploaded ✓';
+            } catch (err) {
+                console.error('Photo upload failed:', err);
+                status.textContent = 'Failed to upload photo. The default photo will be used instead.';
+                status.classList.add('char-count-invalid');
+            }
+        }
+
+        const MIN_WORDS = 20;
+
+        function val(id) {
+            return document.getElementById(id).value.trim();
+        }
+
+        function showValidationError(el, message) {
+            let errorEl = document.getElementById(`${el.id}_error`);
+            if (!errorEl) {
+                errorEl = document.createElement('div');
+                errorEl.id = `${el.id}_error`;
+                errorEl.className = 'validation-error';
+                el.insertAdjacentElement('afterend', errorEl);
+            }
+            errorEl.textContent = message;
+            el.classList.add('input-invalid');
+        }
+
+        function clearValidationError(el) {
+            const errorEl = document.getElementById(`${el.id}_error`);
+            if (errorEl) errorEl.remove();
+            el.classList.remove('input-invalid');
+        }
+
+        async function createSession() {
+            const descriptionEl = document.getElementById('fullDescription_en');
+            const wordCount = countWords(descriptionEl.value);
+
+            const title = document.getElementById('title_en').value.trim();
+
+            if (!title) {
+                alert('Title cannot be empty.');
+                return;
+            }
+
+            if (wordCount < MIN_WORDS) {
+                showValidationError(descriptionEl, `Description needs at least ${MIN_WORDS} words (currently ${wordCount}).`);
+                descriptionEl.focus();
+                return;
+            }
+
+            const questionMarkCount = (descriptionEl.value.match(/\?/g) || []).length;
+            if (questionMarkCount >= 5) {
+                alert("Host reminder: Please share a brief topic blurb, not a list of questions. We want conversations to flow naturally and avoid people over-preparing or making the discussion feel scripted.");
+                return;
+            }
+
+            clearValidationError(descriptionEl);
+
+            const date = val('date');
+            const time = val('time');
+            const timezone = val('timezone');
+
+            if (!date || !time) {
+                alert('Please choose a date and time.');
+                return;
+            }
+
+            const type = val('type');
+
+            if ((type === 'offline' || type === 'hybrid') && !val('location_en')) {
+                alert('Please add a location for this event.');
+                return;
+            }
+
+            const startTime = timezoneToUTC(date, time, timezone);
+
+            const categories = Array.from(document.querySelectorAll('.cat-check:checked')).map(el => el.value);
+
+            const languages = Array.from(document.querySelectorAll('.lang-level-check:checked')).map(el => ({
+                language: el.dataset.language,
+                proficiencyLevel: el.value
+            }));
+
+            const online = (type === 'online' || type === 'hybrid')
+                ? { platform: val('platform'), meetingNumber: val('meetingNumber') || undefined }
+                : undefined;
+
+            const levelId = type === 'online' ? onlineCommunityLevelId : val('levelId');
+
+            const translationContent = {
+                title: toTitleCase(val('title_en')),
+                location: val('location_en') || 'TBA',
+                fullDescription: val('fullDescription_en'),
+                shortDescription: "NA",
+            };
+
+            const body = {
+                startTime,
+                durationMins: Number(val('durationMins')) || undefined,
+                locationUrl: val('locationUrl') || '',
+                photoUrl: uploadedPhotoUrl || DEFAULT_PHOTO_URL,
+                hostIds: [userId],
+                maxParticipants: Number(val('maxParticipants')) || undefined,
+                levelId,
+                isFull: false,
+                topicIds: [],
+                readingSourceIds: [],
+                type,
+                online,
+                categories: categories.length ? categories : undefined,
+                languages: languages.length ? languages : undefined,
+                translations: {
+                    en_US: translationContent,
+                    zh_CN: translationContent,
+                }
+            };
+
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Creating...';
+
+            console.log('Create event request body:', body);
+
+            try {
+                const res = await fetch(`${BASE_URL}/reading-sessions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-KEY': API_KEY
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const json = await res.json();
+
+                if (res.ok && json.status) {
+                    alert('Event created ✅');
+                    window.location.href = 'my-bookings.html?type=hosting';
+                } else {
+                    console.error('Create event error response:', json);
+                    const detail = Array.isArray(json.message)
+                        ? json.message.join('\n')
+                        : (json.message || json.error || JSON.stringify(json));
+                    alert(`Failed to create event:\n${detail}`);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to create event.');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Create Event';
+            }
+        }
+
+        function timezoneToUTC(dateValue, timeValue, timezone) {
+            if (!dateValue || !timeValue) return null;
+
+            const [year, month, day] = dateValue.split('-').map(Number);
+            const [hours, minutes] = timeValue.split(':').map(Number);
+
+            const guess = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+
+            const parts = new Intl.DateTimeFormat('en-US', {
+                timeZone: timezone,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            }).formatToParts(guess);
+
+            const get = (type) => Number(
+                parts.find(p => p.type === type)?.value
+            );
+
+            const localAtGuess = Date.UTC(
+                get('year'),
+                get('month') - 1,
+                get('day'),
+                get('hour') === 24 ? 0 : get('hour'),
+                get('minute')
+            );
+
+            const offset = localAtGuess - guess.getTime();
+
+            return new Date(guess.getTime() - offset);
+        }
+
+        function countWords(text) {
+            return text.trim().split(/\s+/).filter(Boolean).length;
+        }
+
+        function toTitleCase(str) {
+            const minorWords = new Set(['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor',
+                'in', 'on', 'at', 'to', 'of', 'with', 'as', 'by']);
+
+            return str
+                .toLowerCase()
+                .split(' ')
+                .map((word, i) => {
+                    if (i !== 0 && minorWords.has(word)) return word;
+                    return word.charAt(0).toUpperCase() + word.slice(1);
+                })
+                .join(' ');
+        }
+
+        function updateWordCount(el) {
+            const words = countWords(el.value);
+            const countEl = document.getElementById(`${el.id}_count`);
+            const isValid = words >= MIN_WORDS;
+
+            countEl.textContent = `${words} words${isValid ? '' : ` (min ${MIN_WORDS})`}`;
+            countEl.classList.toggle('char-count-invalid', !isValid);
+        }
+    </script>
+
+</body>
+
+</html>
