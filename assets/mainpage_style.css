@@ -255,6 +255,11 @@ nav a:hover {
     cursor: pointer;
 }
 
+.book-btn.waitlist {
+    background: #4C6FA5;
+    cursor: pointer;
+}
+
 .book-btn:disabled {
     background: #ccc;
     cursor: not-allowed;

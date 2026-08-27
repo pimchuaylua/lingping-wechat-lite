@@ -626,8 +626,8 @@
                         <div class="event-row event-footer">
                             ${hostHtml}
 
-                             <button class="book-btn ${s.isFull ? "" : "available"}" ${s.isFull || isCanceled ? "disabled" : ""} onclick='event.stopPropagation(); handleBookClick("${s.id}")'>
-                            Book
+                             <button class="book-btn ${isCanceled ? "" : s.isFull ? "waitlist" : "available"}" ${isCanceled ? "disabled" : ""} onclick='event.stopPropagation(); handleBookClick("${s.id}")'>
+                            ${s.isFull ? "Stay on Waitlist" : "Book"}
                         </button>
                         </div>
                         
@@ -768,6 +768,12 @@
 
             const session = sessions.find(x => x.id === sessionId);
             console.log(session);
+
+            if (session?.isFull) {
+                joinWaitlist(sessionId);
+                return;
+            }
+
             if (membershipType !== "english") {
 
                 currentSessionId = sessionId;
@@ -881,6 +887,21 @@
             const userId = localStorage.getItem("userId");
             if (!userId) {
                 document.getElementById("promoModal").style.display = "flex";
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const pendingWaitlistSessionId = localStorage.getItem("pendingWaitlistSessionId");
+            const waitlistUserId = localStorage.getItem("userId");
+
+            if (pendingWaitlistSessionId && waitlistUserId) {
+                localStorage.removeItem("pendingWaitlistSessionId");
+
+                try {
+                    await joinWaitlist(pendingWaitlistSessionId);
+                } catch (err) {
+                    console.error(err);
+                }
             }
         });
 

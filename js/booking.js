@@ -139,6 +139,50 @@ async function cancelBooking(sessionId) {
     }
 }
 
+async function joinWaitlist(sessionId) {
+    const { BASE_URL, API_KEY } = window.CONFIG;
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+        localStorage.setItem("pendingWaitlistSessionId", sessionId);
+        localStorage.setItem("redirectAfterLogin", window.location.href);
+        window.location.href = "login.html";
+        return;
+    }
+
+    if (!confirm("This session is full. Join the waitlist?")) {
+        return;
+    }
+
+    try {
+        const res = await fetch(`${BASE_URL}/waitlist`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-API-KEY": API_KEY
+            },
+            body: JSON.stringify({
+                userId,
+                sessionId,
+                numberOfSeats: 1
+            })
+        });
+
+        const json = await res.json();
+
+        if (res.ok && json.status) {
+            alert("You're on the waitlist ✅");
+        } else {
+            const detail = json.result?.message || json.message;
+            const text = Array.isArray(detail) ? detail.join("\n") : detail;
+            alert(text || "Failed to join waitlist.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Failed to join waitlist. Please try again.");
+    }
+}
+
 function formatReadingSessionToDisplay(s, eventOptions) {
     const start = new Date(s.startTime);
     const end = new Date(start.getTime() + s.durationMins * 60000);

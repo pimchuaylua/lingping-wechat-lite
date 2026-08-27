@@ -46,7 +46,7 @@
     <div class="container" id="sessionContainer">Loading...</div>
 
     <div class="book-bar">
-        <button class="book-btn" onclick="event.stopPropagation(); handleBookClick(s.id,s.levelName, s)">
+        <button id="bookBtn" class="book-btn" onclick="event.stopPropagation(); handleBookClick(s.id,s.levelName, s)">
             Book Session
         </button>
 
@@ -394,9 +394,26 @@
             document.getElementById("cancelBtn").style.display = "inline-block";
         }
 
+        if (s) {
+            const bookBtn = document.getElementById("bookBtn");
+            const isCanceled = s.maxParticipants === -1;
+
+            if (isCanceled) {
+                bookBtn.disabled = true;
+            } else if (s.isFull) {
+                bookBtn.textContent = "Stay on Waitlist";
+                bookBtn.classList.add("waitlist");
+            }
+        }
+
         function handleBookClick(sessionId, levelName, session) {
 
             console.log(session);
+
+            if (session?.isFull) {
+                joinWaitlist(sessionId);
+                return;
+            }
 
             const isEnglish = levelName
                 ? levelName.toLowerCase().includes('english')
@@ -483,6 +500,21 @@
 
             document.body.appendChild(modal);
         }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const pendingWaitlistSessionId = localStorage.getItem("pendingWaitlistSessionId");
+            const waitlistUserId = localStorage.getItem("userId");
+
+            if (pendingWaitlistSessionId && waitlistUserId) {
+                localStorage.removeItem("pendingWaitlistSessionId");
+
+                try {
+                    await joinWaitlist(pendingWaitlistSessionId);
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        });
 
         document.addEventListener("DOMContentLoaded", async () => {
             const pendingSessionId = localStorage.getItem("pendingSessionId");
