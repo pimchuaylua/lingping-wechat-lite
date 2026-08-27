@@ -153,6 +153,10 @@ h1 {
     cursor: not-allowed;
 }
 
+.book-btn.waitlist {
+    background: #4C6FA5;
+}
+
 .info-box {
     background: #f7f9fc;
     border: 1px solid #e3e7ef;
