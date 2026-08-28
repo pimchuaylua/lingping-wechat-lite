@@ -101,9 +101,8 @@
     <script>
         const { BASE_URL, API_KEY } = window.CONFIG;
         const container = document.getElementById("sessionContainer");
-        const s = JSON.parse(localStorage.getItem("selectedSession"));
+        let s = JSON.parse(localStorage.getItem("selectedSession") || "null");
         const userId = localStorage.getItem("userId");
-        const isOnline = s?.levelName?.toLowerCase().includes("online");
 
         //write function is onlineEnglishClass c
         function getMeetingNumber(levelName) {
@@ -116,9 +115,49 @@
             return "730-0491-0441";
         }
 
-        if (!s) {
-            container.innerHTML = "<p>Session not found.</p>";
-        } else {
+        async function loadSessionById(sessionId) {
+            const [sessionRes, eventOptions] = await Promise.all([
+                fetch(`${BASE_URL}/reading-sessions/${sessionId}?locale=en_US`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-KEY": API_KEY
+                    }
+                }).then(res => res.json()),
+                loadSessionOptions()
+            ]);
+
+            if (!sessionRes.status || !sessionRes.data) return null;
+
+            return formatReadingSessionToDisplay(sessionRes.data, eventOptions);
+        }
+
+        function updateBookBar() {
+            if (userId) {
+                document.getElementById("cancelBtn").style.display = "inline-block";
+            }
+
+            if (!s) return;
+
+            const bookBtn = document.getElementById("bookBtn");
+            const isCanceled = s.maxParticipants === -1;
+
+            if (isCanceled) {
+                bookBtn.disabled = true;
+            } else if (s.isFull) {
+                bookBtn.textContent = "Stay on Waitlist";
+                bookBtn.classList.add("waitlist");
+            }
+        }
+
+        function renderSession() {
+            updateBookBar();
+
+            if (!s) {
+                container.innerHTML = "<p>Session not found.</p>";
+                return;
+            }
+
+            const isOnline = s?.levelName?.toLowerCase().includes("online");
 
             const fullDescHTML = (s.fullDescription || s.description)
                 .split("\n")
@@ -355,6 +394,24 @@
             alert("Meeting number copied ✅");
         }
 
+        async function init() {
+            const sessionId = new URLSearchParams(window.location.search).get("sessionId");
+
+            if (sessionId) {
+                try {
+                    s = await loadSessionById(sessionId);
+                } catch (err) {
+                    console.error(err);
+                    s = null;
+                }
+
+                if (s) localStorage.setItem("selectedSession", JSON.stringify(s));
+            }
+
+            renderSession();
+        }
+
+        init();
     </script>
 
     <script>
@@ -389,22 +446,6 @@
     </script>
 
     <script>
-
-        if (userId) {
-            document.getElementById("cancelBtn").style.display = "inline-block";
-        }
-
-        if (s) {
-            const bookBtn = document.getElementById("bookBtn");
-            const isCanceled = s.maxParticipants === -1;
-
-            if (isCanceled) {
-                bookBtn.disabled = true;
-            } else if (s.isFull) {
-                bookBtn.textContent = "Stay on Waitlist";
-                bookBtn.classList.add("waitlist");
-            }
-        }
 
         function handleBookClick(sessionId, levelName, session) {
 
