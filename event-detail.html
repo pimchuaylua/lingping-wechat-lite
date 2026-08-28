@@ -101,9 +101,8 @@
     <script>
         const { BASE_URL, API_KEY } = window.CONFIG;
         const container = document.getElementById("sessionContainer");
-        const s = JSON.parse(localStorage.getItem("selectedSession"));
+        let s = JSON.parse(localStorage.getItem("selectedSession") || "null");
         const userId = localStorage.getItem("userId");
-        const isOnline = s?.levelName?.toLowerCase().includes("online");
 
         //write function is onlineEnglishClass c
         function getMeetingNumber(levelName) {
@@ -116,9 +115,49 @@
             return "730-0491-0441";
         }
 
-        if (!s) {
-            container.innerHTML = "<p>Session not found.</p>";
-        } else {
+        async function loadSessionById(sessionId) {
+            const [sessionRes, eventOptions] = await Promise.all([
+                fetch(`${BASE_URL}/reading-sessions/${sessionId}?locale=en_US`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-KEY": API_KEY
+                    }
+                }).then(res => res.json()),
+                loadSessionOptions()
+            ]);
+
+            if (!sessionRes.status || !sessionRes.data) return null;
+
+            return formatReadingSessionToDisplay(sessionRes.data, eventOptions);
+        }
+
+        function updateBookBar() {
+            if (userId) {
+                document.getElementById("cancelBtn").style.display = "inline-block";
+            }
+
+            if (!s) return;
+
+            const bookBtn = document.getElementById("bookBtn");
+            const isCanceled = s.maxParticipants === -1;
+
+            if (isCanceled) {
+                bookBtn.disabled = true;
+            } else if (s.isFull) {
+                bookBtn.textContent = "Stay on Waitlist";
+                bookBtn.classList.add("waitlist");
+            }
+        }
+
+        function renderSession() {
+            updateBookBar();
+
+            if (!s) {
+                container.innerHTML = "<p>Session not found.</p>";
+                return;
+            }
+
+            const isOnline = s?.levelName?.toLowerCase().includes("online");
 
             const fullDescHTML = (s.fullDescription || s.description)
                 .split("\n")
@@ -134,7 +173,25 @@
                 : getMeetingNumber(s?.levelName);
 
             container.innerHTML = `
-                <div class="back-btn" onclick="history.back()">← Back</div>
+                <div class="detail-topbar">
+                    <div class="back-btn" onclick="goBack()">← Back</div>
+                    <div class="topbar-actions">
+                        <button class="icon-btn" onclick="copyLink()" aria-label="Copy link" title="Copy link">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                        </button>
+                        <button class="share-btn" onclick="shareSession()" aria-label="Share">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"></path>
+                                <polyline points="16 6 12 2 8 6"></polyline>
+                                <line x1="12" y1="2" x2="12" y2="15"></line>
+                            </svg>
+                            Share
+                        </button>
+                    </div>
+                </div>
                 <img class="event-photo" src="${s.photoUrl || 'https://via.placeholder.com/480x200'}">
                 <h1>${s.title}</h1>
 
@@ -342,6 +399,70 @@
             }
         }
 
+        function goBack() {
+            const cameFromSameSite = document.referrer &&
+                new URL(document.referrer).origin === window.location.origin;
+
+            if (cameFromSameSite && window.history.length > 1) {
+                history.back();
+            } else {
+                window.location.href = "index.html";
+            }
+        }
+
+        function getShareUrl() {
+            return `${window.location.origin}${window.location.pathname}?sessionId=${s.id}`;
+        }
+
+        async function copyLink() {
+            if (!s) return;
+
+            try {
+                await navigator.clipboard.writeText(getShareUrl());
+                showToast("Link copied ✅");
+            } catch (err) {
+                console.error(err);
+                alert(getShareUrl());
+            }
+        }
+
+        async function shareSession() {
+            if (!s) return;
+
+            const url = getShareUrl();
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({ title: s.title, url });
+                } catch (err) {
+                    // user canceled the share sheet
+                }
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(url);
+                showToast("Link copied ✅");
+            } catch (err) {
+                console.error(err);
+                alert(url);
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            requestAnimationFrame(() => toast.classList.add("show"));
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+                setTimeout(() => toast.remove(), 200);
+            }, 2000);
+        }
+
         function copyMeetingNumber(number) {
             if (!number) return;
 
@@ -355,6 +476,24 @@
             alert("Meeting number copied ✅");
         }
 
+        async function init() {
+            const sessionId = new URLSearchParams(window.location.search).get("sessionId");
+
+            if (sessionId) {
+                try {
+                    s = await loadSessionById(sessionId);
+                } catch (err) {
+                    console.error(err);
+                    s = null;
+                }
+
+                if (s) localStorage.setItem("selectedSession", JSON.stringify(s));
+            }
+
+            renderSession();
+        }
+
+        init();
     </script>
 
     <script>
@@ -389,22 +528,6 @@
     </script>
 
     <script>
-
-        if (userId) {
-            document.getElementById("cancelBtn").style.display = "inline-block";
-        }
-
-        if (s) {
-            const bookBtn = document.getElementById("bookBtn");
-            const isCanceled = s.maxParticipants === -1;
-
-            if (isCanceled) {
-                bookBtn.disabled = true;
-            } else if (s.isFull) {
-                bookBtn.textContent = "Stay on Waitlist";
-                bookBtn.classList.add("waitlist");
-            }
-        }
 
         function handleBookClick(sessionId, levelName, session) {
 
