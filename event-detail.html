@@ -173,7 +173,25 @@
                 : getMeetingNumber(s?.levelName);
 
             container.innerHTML = `
-                <div class="back-btn" onclick="history.back()">← Back</div>
+                <div class="detail-topbar">
+                    <div class="back-btn" onclick="goBack()">← Back</div>
+                    <div class="topbar-actions">
+                        <button class="icon-btn" onclick="copyLink()" aria-label="Copy link" title="Copy link">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                        </button>
+                        <button class="share-btn" onclick="shareSession()" aria-label="Share">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"></path>
+                                <polyline points="16 6 12 2 8 6"></polyline>
+                                <line x1="12" y1="2" x2="12" y2="15"></line>
+                            </svg>
+                            Share
+                        </button>
+                    </div>
+                </div>
                 <img class="event-photo" src="${s.photoUrl || 'https://via.placeholder.com/480x200'}">
                 <h1>${s.title}</h1>
 
@@ -379,6 +397,70 @@
             } else {
                 window.location.href = "view-profile.html";
             }
+        }
+
+        function goBack() {
+            const cameFromSameSite = document.referrer &&
+                new URL(document.referrer).origin === window.location.origin;
+
+            if (cameFromSameSite && window.history.length > 1) {
+                history.back();
+            } else {
+                window.location.href = "index.html";
+            }
+        }
+
+        function getShareUrl() {
+            return `${window.location.origin}${window.location.pathname}?sessionId=${s.id}`;
+        }
+
+        async function copyLink() {
+            if (!s) return;
+
+            try {
+                await navigator.clipboard.writeText(getShareUrl());
+                showToast("Link copied ✅");
+            } catch (err) {
+                console.error(err);
+                alert(getShareUrl());
+            }
+        }
+
+        async function shareSession() {
+            if (!s) return;
+
+            const url = getShareUrl();
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({ title: s.title, url });
+                } catch (err) {
+                    // user canceled the share sheet
+                }
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(url);
+                showToast("Link copied ✅");
+            } catch (err) {
+                console.error(err);
+                alert(url);
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            requestAnimationFrame(() => toast.classList.add("show"));
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+                setTimeout(() => toast.remove(), 200);
+            }, 2000);
         }
 
         function copyMeetingNumber(number) {
