@@ -6,6 +6,13 @@
     <meta charset="UTF-8">
     <title>Session Detail</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta property="og:title" content="Lingping Club — Language & Culture Exchange" />
+    <meta property="og:description"
+        content="Come meet people from different backgrounds, explore ideas, and share your perspectives. Join a Lingping Club session!" />
+    <meta property="og:image" content="https://lingpingclub.com/assets/logos/lingping_logo.png" />
+    <meta property="og:type" content="website" />
+
     <script src="config.js"></script>
     <script src="js/hosts.js?v=9"></script>
     <script src="js/booking.js?v=202605162"></script>
@@ -156,6 +163,8 @@
                 container.innerHTML = "<p>Session not found.</p>";
                 return;
             }
+
+            document.title = `${s.title} | Lingping Club`;
 
             const isOnline = s?.levelName?.toLowerCase().includes("online");
 
