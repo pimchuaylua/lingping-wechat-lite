@@ -203,26 +203,56 @@
 
     /* ---------------- GOOGLE LOGIN ---------------- */
 
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Retries a login a few times with a short backoff. Guards against the
+    // backend not having fully committed a just-registered user yet, which
+    // otherwise makes the very next login attempt fail intermittently.
+    async function loginUserWithRetry(username, password, attempts = 3, delayMs = 600) {
+        for (let i = 0; i < attempts; i++) {
+            const result = await loginUser(username, password);
+            if (result.success) return result;
+            if (i < attempts - 1) await delay(delayMs);
+        }
+        return { success: false };
+    }
+
+    let googleLoginInProgress = false;
+
     async function handleCredentialResponse(response) {
+        // Some mobile browsers fire the Google credential callback more than
+        // once in quick succession — ignore re-entrant calls.
+        if (googleLoginInProgress) return;
+        googleLoginInProgress = true;
+
         try {
             const data = parseJwt(response.credential);
 
             const email = data.email;
             const displayName = data.name || email;
 
-            let loginResult = await loginUser(email, "1234");
+            let loginResult = await loginUserWithRetry(email, "1234", 1);
 
             if (!loginResult.success) {
                 const registerResult = await registerUser(email, displayName);
 
                 if (!registerResult.success) {
-                    throw new Error("Registration failed");
-                }
+                    // Registration may have failed because the account
+                    // already exists (e.g. a retried/duplicate callback) —
+                    // try logging in again before giving up.
+                    loginResult = await loginUserWithRetry(email, "1234");
 
-                loginResult = await loginUser(email, "1234");
+                    if (!loginResult.success) {
+                        throw new Error("Registration failed");
+                    }
+                } else {
+                    loginResult = await loginUserWithRetry(email, "1234");
 
-                if (!loginResult.success) {
-                    throw new Error("Login after registration failed");
+                    if (!loginResult.success) {
+                        throw new Error("Login after registration failed");
+                    }
                 }
             }
 
@@ -240,6 +270,8 @@
         } catch (error) {
             console.error("Login flow error:", error);
             alert("Login failed. Please try again.");
+        } finally {
+            googleLoginInProgress = false;
         }
     }
 
@@ -361,6 +393,25 @@
 
     /* ---------------- PHONE LOGIN ---------------- */
 
+    // Normalizes whatever the user typed (with/without country code,
+    // with/without leading 0, with/without a "+") down to the local
+    // significant digits, so it can be safely prefixed with countryCode
+    // without duplicating it (e.g. "+66611923366" -> "611923366").
+    function normalizePhoneNumber(phone, countryCode) {
+        let digits = phone.replace(/\D/g, "");
+        const ccDigits = countryCode.replace(/\D/g, "");
+
+        if (digits.startsWith(ccDigits)) {
+            digits = digits.slice(ccDigits.length);
+        }
+
+        if (digits.startsWith("0")) {
+            digits = digits.slice(1);
+        }
+
+        return digits;
+    }
+
     function showPhoneLogin() {
         const panel = document.getElementById("phoneLoginPanel");
 
@@ -381,10 +432,7 @@
             return;
         }
 
-        // remove leading 0 (Thai format)
-        if (phone.startsWith("0")) {
-            phone = phone.substring(1);
-        }
+        phone = normalizePhoneNumber(phone, countryCode);
 
         const fullPhone = countryCode + phone;
 
@@ -453,9 +501,7 @@
             return;
         }
 
-        if (phone.startsWith("0")) {
-            phone = phone.substring(1);
-        }
+        phone = normalizePhoneNumber(phone, countryCode);
 
         const fullPhone = countryCode + phone;
 

@@ -154,6 +154,58 @@
             cursor: pointer;
         }
 
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .cat-chip {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background: #fff;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+
+        .cat-chip:hover {
+            border-color: #d1d5db;
+        }
+
+        .cat-chip input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .cat-icon {
+            font-size: 18px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .cat-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .cat-chip:has(input:checked) {
+            background: rgba(255, 176, 80, 0.14);
+            border-color: var(--theme);
+        }
+
+        .cat-chip:has(input:checked) .cat-label {
+            color: #8a520a;
+            font-weight: 600;
+        }
+
         .lang-row {
             padding: 10px 0;
             border-bottom: 1px solid #f0efe9;
@@ -279,9 +331,10 @@
             const platformOptionsHtml = (eventOptions.platforms || []).map(p => `<option value="${p.value}">${p.label}</option>`).join('');
 
             const categoriesHtml = (eventOptions.categories || []).map(c => `
-                <label class="check-row">
+                <label class="cat-chip">
                     <input type="checkbox" value="${c.value}" class="cat-check">
-                    ${c.label}
+                    <span class="cat-icon">${CATEGORY_ICONS[c.value] || '🏷️'}</span>
+                    <span class="cat-label">${c.label}</span>
                 </label>
             `).join('');
 
@@ -391,7 +444,7 @@
 
                 <div class="section">
                     <div class="label">Categories</div>
-                    <div class="check-grid">${categoriesHtml}</div>
+                    <div class="cat-grid">${categoriesHtml}</div>
                 </div>
 
                 <div class="section">
