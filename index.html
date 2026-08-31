@@ -782,6 +782,8 @@
                 return;
             }
 
+            currentSession = session;
+
             showCancelPolicyModal(() => {
                 // user agreed
                 bookSession({ sessionId });
