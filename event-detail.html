@@ -426,14 +426,101 @@
             }
         }
 
+        function formatShareDate(dateStr) {
+            const d = new Date(dateStr);
+            if (isNaN(d)) return dateStr;
+
+            return d.toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric"
+            });
+        }
+
+        const SHARE_LANG_FLAGS = { en: '🇬🇧', th: '🇹🇭', zh: '🇨🇳', yue: '🇭🇰', ja: '🇯🇵' };
+
+        function formatLanguageLevelLines() {
+            if (!s.languages?.length) return ["🌐 Level: All languages welcome"];
+
+            const byLanguage = new Map();
+            s.languages.forEach(({ language, proficiencyLevel }) => {
+                const levelLabel = findMeta(s.options.proficiencyLevels, proficiencyLevel)?.label || proficiencyLevel;
+                if (!byLanguage.has(language)) byLanguage.set(language, []);
+                byLanguage.get(language).push(levelLabel);
+            });
+
+            return Array.from(byLanguage.entries()).map(([language, levels]) => {
+                const langLabel = findMeta(s.options.languages, language)?.label || language;
+                const flag = SHARE_LANG_FLAGS[language] || '🗣️';
+                return `${flag} Level: ${langLabel} (${levels.join(" / ")})`;
+            });
+        }
+
+        function formatShareTimeRange(timeStr) {
+            const parts = (timeStr || "").split("–").map(p => p.trim());
+            if (parts.length !== 2) return timeStr;
+
+            const [start, end] = parts;
+            const startMatch = start.match(/^(.*?)\s*(AM|PM)?$/i);
+            const endMatch = end.match(/^(.*?)\s*(AM|PM)?$/i);
+
+            const startTime = startMatch?.[1] || start;
+            const startPeriod = (startMatch?.[2] || "").toUpperCase();
+            const endTime = endMatch?.[1] || end;
+            const endPeriod = (endMatch?.[2] || "").toUpperCase();
+
+            if (startPeriod && startPeriod === endPeriod) {
+                return `${startTime}–${endTime} ${endPeriod}`;
+            }
+
+            return timeStr;
+        }
+
+        function buildShareText() {
+            const isOnline = s?.levelName?.toLowerCase().includes("online");
+
+            const lines = [
+                "🌏 Join Lingping Club — a language & culture exchange community!",
+                "",
+                "Come meet people from different backgrounds, explore ideas, and share your perspectives.",
+                "",
+                `💬 Topic: ${s.title}`,
+                ...formatLanguageLevelLines(),
+                `📅 ${formatShareDate(s.date)}`,
+                `🕗 ${formatShareTimeRange(s.time)}`,
+            ];
+
+            if (isOnline) {
+                lines.push(`🌐 Time zone: ${Utils.getUserTimeZone()}`);
+
+                if (userId && s.online) {
+                    const platformLabel = findMeta(s.options.platforms, s.online.platform)?.label || s.online.platform;
+                    lines.push(`💻 Platform: ${platformLabel}`);
+                } else if (!userId) {
+                    lines.push("💻 Log in to see the meeting details ✨");
+                }
+            } else {
+                lines.push(`📍 Location: ${s.location || "TBA"}`);
+            }
+
+            lines.push("");
+            lines.push("🔗 RSVP required:");
+            lines.push(getShareUrl());
+            lines.push("");
+            lines.push("💬 How it works:");
+            lines.push("We’ll have relaxed conversations, just like friends chatting in the language of the session. We’re not a class — just come relaxed, curious, and ready to share!");
+
+            return lines.join("\n");
+        }
+
         async function shareSession() {
             if (!s) return;
 
-            const url = getShareUrl();
+            const text = buildShareText();
 
             if (navigator.share) {
                 try {
-                    await navigator.share({ title: s.title, url });
+                    await navigator.share({ text });
                 } catch (err) {
                     // user canceled the share sheet
                 }
@@ -441,11 +528,11 @@
             }
 
             try {
-                await navigator.clipboard.writeText(url);
-                showToast("Link copied ✅");
+                await navigator.clipboard.writeText(text);
+                showToast("Copied to clipboard ✅");
             } catch (err) {
                 console.error(err);
-                alert(url);
+                alert(text);
             }
         }
 
