@@ -3,6 +3,8 @@
  * Shared booking logic for Lingping
  */
 
+let currentSession = null;
+
 window.bookSession = async function ({ sessionId }) {
     const { BASE_URL, API_KEY } = window.CONFIG;
 
@@ -234,12 +236,34 @@ function closeMembershipPopup() {
 }
 
 function goToMembership() {
-    window.location.href = "subscriptions/subscription_main.html"; // change to your membership page
+    const levelName = (currentSession?.levelName || "").toLowerCase();
+    const base = "subscriptions/";
+    let target = "subscription_main.html"; // fallback: we don't know the session's level
+
+    if (levelName.includes("english")) {
+        target = "english-classes.html";
+    } else if (levelName.includes("online")) {
+        target = "community-plans-online.html";
+    } else if (levelName.includes("bangkok")) {
+        target = "community-plans-bangkok.html";
+    } else if (levelName.includes("chiang")) {
+        target = "community-plans-chiangmai.html";
+    } else if (levelName.includes("phuket")) {
+        target = "community-plans-phuket.html";
+    } else if (levelName.includes("chengdu")) {
+        target = "community-plans-chengdu.html";
+    } else if (levelName) {
+        // e.g. Hong Kong or any other community level without its own plan page yet
+        target = "community-access.html";
+    }
+
+    window.location.href = base + target;
 }
 
 function preBookingModal(sessionId, session) {
     // session = JSON.parse(session);
     currentSessionId = sessionId;
+    currentSession = session;
 
     document.getElementById("modalSessionName").innerText = session.title;
     document.getElementById("modalSessionTime").innerText = `${Utils.formatDate(session.date)} · ${session.time} (${Utils.getTimeZoneName()})`

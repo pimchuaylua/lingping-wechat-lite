@@ -7,6 +7,9 @@ const CATEGORY_META = {
     food: { label: '🍜 Food' },
     movie: { label: '🎬 Movie' },
     book: { label: '📚 Book club' },
+    music: { label: '🎵 Music' },
+    arts: { label: '🎨 Arts' },
+    social: { label: '❤️ Social' },
 };
 
 const LANG_META = {
@@ -117,7 +120,8 @@ const LEVEL_COLORS = {
 const CATEGORY_ICONS = {
     discussion: '💬', language: '🗣️', sports: '⚽',
     explore_the_city: '🏙️', culture: '🎎', food: '🍜',
-    movie: '🎬', book: '📚',
+    movie: '🎬', book: '📚', music: '🎵', arts: '🎨',
+    social: '❤️',
 };
 
 function renderLanguageChips(languages = []) {
