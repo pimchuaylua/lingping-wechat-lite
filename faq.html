@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>FAQ | Lingping Club</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="assets/style.css?v=20260530">
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
+    <script src="js/dropdown.js?v=20260516"></script>
+    <style>
+        .faq-hero {
+            max-width: 700px;
+            margin: 40px 0 44px;
+        }
+
+        .faq-eyebrow {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--theme);
+            margin-bottom: 12px;
+        }
+
+        .faq-hero h1 {
+            font-size: 40px;
+            line-height: 1.1;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #17140f;
+            margin: 0 0 14px;
+        }
+
+        .faq-subtitle {
+            font-size: 17px;
+            line-height: 1.55;
+            color: #666;
+            margin: 0;
+            max-width: 56ch;
+        }
+
+        .faq-layout {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 680px) 240px;
+            gap: 56px;
+        }
+
+        .faq-article h2 {
+            font-size: 21px;
+            font-weight: 700;
+            color: #17140f;
+            margin: 44px 0 10px;
+            scroll-margin-top: 24px;
+        }
+
+        .faq-article h2:first-child {
+            margin-top: 0;
+        }
+
+        .faq-article p,
+        .faq-article ul {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #444;
+        }
+
+        .faq-article ul {
+            padding-left: 20px;
+        }
+
+        .faq-article li {
+            margin-bottom: 6px;
+        }
+
+        .faq-article a {
+            color: var(--theme);
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 176, 80, 0.4);
+        }
+
+        .faq-article a:hover {
+            border-bottom-color: var(--theme);
+        }
+
+        .faq-toc {
+            display: block;
+        }
+
+        .faq-toc-title {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 12px;
+        }
+
+        .faq-toc ol {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            border-left: 2px solid #eee;
+        }
+
+        .faq-toc li {
+            margin: 0;
+        }
+
+        .faq-toc a {
+            display: block;
+            padding: 7px 0 7px 16px;
+            margin-left: -2px;
+            border-left: 2px solid transparent;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #777;
+            text-decoration: none;
+            transition: color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .faq-toc a:hover {
+            color: #333;
+        }
+
+        .faq-toc a.active {
+            color: var(--theme);
+            border-left-color: var(--theme);
+            font-weight: 600;
+        }
+
+        @media (max-width: 900px) {
+            .faq-layout {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .faq-toc {
+                position: static;
+                order: -1;
+                border: 1px solid #eee;
+                border-radius: 14px;
+                padding: 16px 18px;
+                background: #fff;
+                margin-bottom: 32px;
+            }
+
+            .faq-toc ol {
+                border-left: none;
+            }
+
+            .faq-toc a {
+                border-left: none;
+                padding: 6px 0;
+                margin-left: 0;
+            }
+
+            .faq-hero h1 {
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div id="header"></div>
+
+        <div class="faq-hero">
+            <div class="faq-eyebrow">Frequently Asked Questions</div>
+            <h1>Everything you need to know about Lingping</h1>
+            <p class="faq-subtitle">
+                From how sessions work to which city to join — here's what our community asks us most.
+            </p>
+        </div>
+
+        <div class="faq-layout">
+
+            <article class="faq-article">
+
+                <h2 id="join">How do I join?</h2>
+                <p>
+                    Simply get a <a href="subscriptions/subscription_main.html">membership or day pass</a>, book
+                    your first session, and show up!
+                </p>
+
+                <h2 id="language-class">Is Lingping a language class?</h2>
+                <p>
+                    No! We're not a language school or a traditional language class.
+                </p>
+                <p>
+                    We're a community of people who are curious about <strong>languages, cultures, and the
+                        world</strong>, coming together to have interesting conversations and learn from each other.
+                </p>
+
+                <h2 id="discussions">What are the discussions about?</h2>
+                <p>
+                    Every session has a different topic chosen by the host. It can be anything from
+                    <strong>food, travel, childhood, and lifestyle to AI, technology, philosophy, and more.</strong>
+                </p>
+                <p>
+                    We talk about things we're genuinely curious about.
+                </p>
+
+                <h2 id="group-size">How many people are in each session?</h2>
+                <p>
+                    <strong>Maximum 6 people per group. Strictly.</strong>
+                </p>
+                <p>
+                    We're proud of keeping Lingping small and cozy. We're not a big meetup where you meet 30
+                    people, exchange a few "Hi, how are you?"s, and move on.
+                </p>
+                <p>
+                    Instead, we get together in small groups to have deeper conversations, explore meaningful
+                    questions, and genuinely get to know the people around us.
+                </p>
+                <p>
+                    It's this small-group setting that creates the comfort and trust that makes Lingping feel
+                    different — a place where people can open up, share different perspectives, and leave having
+                    learned something new about the world and each other.
+                </p>
+
+                <h2 id="cities">Where can I join?</h2>
+                <p>You can currently join Lingping in:</p>
+                <p>
+                    🇹🇭 Bangkok<br>
+                    🇹🇭 Chiang Mai<br>
+                    🇹🇭 Phuket<br>
+                    🇨🇳 Chengdu<br>
+                    🇭🇰 Hong Kong<br>
+                    💻 Online
+                </p>
+                <p>And many more cities to come!</p>
+
+                <h2 id="hosts">Who are the hosts? Are they teachers?</h2>
+                <p>
+                    Our members take turns hosting sessions and choosing topics.
+                </p>
+                <p>
+                    We're not a language school, so our hosts aren't necessarily teachers. They're simply
+                    interesting people with different backgrounds and professions — from
+                    <strong>engineers and scientists to salespeople, lawyers, entrepreneurs, and more.</strong>
+                </p>
+                <p>
+                    We believe <strong>everyone has something to teach and something to learn.</strong>
+                </p>
+
+                <h2 id="in-person">How do in-person sessions work?</h2>
+                <p>
+                    The host introduces a topic and guides the conversation. We take turns sharing our thoughts,
+                    experiences, and perspectives.
+                </p>
+                <p>
+                    The main goal is to <strong>learn from each other and have a meaningful conversation.</strong>
+                </p>
+                <p>
+                    Language is simply the bridge.
+                </p>
+                <p>
+                    If you're still learning the language of the session, don't worry. Our hosts and native/fluent
+                    speakers are there to help when you get stuck or don't understand something.
+                </p>
+
+                <h2 id="language-level">My English / Thai / Chinese isn't very good. Can I join?</h2>
+                <p>
+                    <strong>Yes!</strong> There's no such thing as "bad" — you're just still learning. 🌱
+                </p>
+                <p>
+                    We split sessions by <strong>language and level</strong>, so you can choose the language and
+                    level you feel comfortable with — or the level you want to challenge yourself with.
+                </p>
+                <p>
+                    You don't need to speak perfectly. The goal is to communicate, not to be perfect. As long as
+                    you can get your point across and understand each other, you're communicating — and that's
+                    what matters.
+                </p>
+                <p>
+                    See our <a href="level-guide.html">level guide →</a>
+                </p>
+
+                <h2 id="online">How do online sessions work?</h2>
+                <p>
+                    Pretty much the same as in-person sessions — just online!
+                </p>
+                <p>
+                    A small group, a topic, and lots of conversation. 🌏
+                </p>
+
+                <h2 id="members">Who are the members?</h2>
+                <p>
+                    Lingping members come from all over the world.
+                </p>
+                <p>
+                    In each city, we try to bring together a good mix of <strong>locals and foreigners</strong> —
+                    people born and raised in the city alongside people from America, Europe, Asia, and beyond.
+                </p>
+                <p>
+                    The result is a community where you can hear different perspectives, cultures, and ways of
+                    thinking — all in the same conversation.
+                </p>
+
+                <h2 id="plans">What membership plans do you offer?</h2>
+                <p>We have different options depending on how you want to participate:</p>
+                <ul>
+                    <li><strong>City + Online Membership</strong> — join in-person sessions in your city + all
+                        online sessions</li>
+                    <li><strong>Online Only Membership</strong> — join our online sessions from anywhere</li>
+                    <li><strong>Day Passes</strong> — try individual sessions</li>
+                </ul>
+                <p>
+                    See our current plans and pricing for more details:
+                    <a href="subscriptions/subscription_main.html">View plans</a>
+                </p>
+
+            </article>
+
+            <nav class="faq-toc" aria-label="Table of contents">
+                <div class="faq-toc-title">On this page</div>
+                <ol>
+                    <li><a href="#join">How do I join?</a></li>
+                    <li><a href="#language-class">Is Lingping a language class?</a></li>
+                    <li><a href="#discussions">What are the discussions about?</a></li>
+                    <li><a href="#group-size">How many people per session?</a></li>
+                    <li><a href="#cities">Where can I join?</a></li>
+                    <li><a href="#hosts">Who are the hosts?</a></li>
+                    <li><a href="#in-person">In-person sessions</a></li>
+                    <li><a href="#language-level">My language isn't good — can I join?</a></li>
+                    <li><a href="#online">Online sessions</a></li>
+                    <li><a href="#members">Who are the members?</a></li>
+                    <li><a href="#plans">Membership plans</a></li>
+                </ol>
+            </nav>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tocLinks = Array.from(document.querySelectorAll('.faq-toc a'));
+            const sections = tocLinks
+                .map(link => document.getElementById(link.getAttribute('href').slice(1)))
+                .filter(Boolean);
+
+            if (!sections.length || !('IntersectionObserver' in window)) return;
+
+            const setActive = (id) => {
+                tocLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+                });
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                const visible = entries
+                    .filter(e => e.isIntersecting)
+                    .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+                if (visible.length) {
+                    setActive(visible[0].target.id);
+                }
+            }, {
+                rootMargin: '-15% 0px -70% 0px',
+                threshold: 0
+            });
+
+            sections.forEach(section => observer.observe(section));
+        });
+
+        // Manually pin the TOC to the viewport while scrolling through the
+        // article, and dock it at the bottom of the layout once the article
+        // runs out. Done in JS (instead of relying purely on CSS
+        // `position: sticky`) so it doesn't depend on how the browser
+        // computes grid track/containing-block sizing for a sticky item.
+        (function () {
+            const toc = document.querySelector('.faq-toc');
+            const layout = document.querySelector('.faq-layout');
+            if (!toc || !layout) return;
+
+            const TOP_OFFSET = 24;
+            let naturalLeft = 0;
+            let naturalWidth = 0;
+            let mode = 'static'; // 'static' | 'fixed' | 'docked'
+            let ticking = false;
+
+            function isDesktop() {
+                return window.matchMedia('(min-width: 901px)').matches;
+            }
+
+            function clearOverrides() {
+                toc.style.position = '';
+                toc.style.top = '';
+                toc.style.bottom = '';
+                toc.style.left = '';
+                toc.style.width = '';
+            }
+
+            function measureNatural() {
+                const hadMode = mode;
+                clearOverrides();
+                mode = 'static';
+
+                const rect = toc.getBoundingClientRect();
+                naturalWidth = rect.width;
+                naturalLeft = rect.left;
+
+                if (hadMode !== 'static') update();
+            }
+
+            function update() {
+                if (!isDesktop()) {
+                    if (mode !== 'static') {
+                        clearOverrides();
+                        mode = 'static';
+                    }
+                    return;
+                }
+
+                const layoutRect = layout.getBoundingClientRect();
+                const tocHeight = toc.offsetHeight || naturalWidth; // fallback, avoids 0-height edge case
+
+                const pastTopOffset = layoutRect.top <= TOP_OFFSET;
+                const outOfRoom = layoutRect.bottom <= TOP_OFFSET + tocHeight;
+
+                if (!pastTopOffset) {
+                    if (mode !== 'static') {
+                        clearOverrides();
+                        mode = 'static';
+                    }
+                    return;
+                }
+
+                if (outOfRoom) {
+                    if (mode !== 'docked') {
+                        toc.style.position = 'absolute';
+                        toc.style.top = '';
+                        toc.style.bottom = '0';
+                        toc.style.left = '';
+                        toc.style.width = '';
+                        mode = 'docked';
+                    }
+                    return;
+                }
+
+                if (mode !== 'fixed') {
+                    toc.style.position = 'fixed';
+                    toc.style.top = `${TOP_OFFSET}px`;
+                    toc.style.bottom = '';
+                    toc.style.left = `${naturalLeft}px`;
+                    toc.style.width = `${naturalWidth}px`;
+                    mode = 'fixed';
+                }
+            }
+
+            function onScroll() {
+                if (ticking) return;
+                ticking = true;
+                requestAnimationFrame(() => {
+                    update();
+                    ticking = false;
+                });
+            }
+
+            function onResize() {
+                measureNatural();
+                update();
+            }
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('resize', onResize);
+            window.addEventListener('load', onResize);
+
+            measureNatural();
+            update();
+        })();
+    </script>
+</body>
+
+</html>
