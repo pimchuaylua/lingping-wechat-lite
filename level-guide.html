@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Level Guide | Lingping Club</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="assets/style.css?v=20260530">
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
+    <script src="config.js"></script>
+    <script src="js/dropdown.js?v=20260516"></script>
+    <script src="js/render-langague-level.js"></script>
+    <style>
+        .level-hero {
+            max-width: 700px;
+            margin: 40px 0 8px;
+        }
+
+        .level-eyebrow {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--theme);
+            margin-bottom: 12px;
+        }
+
+        .level-hero h1 {
+            font-size: 34px;
+            line-height: 1.15;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #17140f;
+            margin: 0 0 12px;
+        }
+
+        .level-subtitle {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #666;
+            margin: 0 0 24px;
+            max-width: 56ch;
+        }
+
+        .level-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #999;
+            margin: 32px 0 12px;
+        }
+
+        .lang-chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .lang-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: #fff;
+            border: 1px solid #eee;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .level-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 12px;
+        }
+
+        .level-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 14px;
+            padding: 18px 20px;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .level-desc {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #444;
+            margin: 0;
+        }
+
+        .back-link {
+            margin: 36px 0 12px;
+        }
+
+        .back-link a {
+            color: var(--theme);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div id="header"></div>
+
+        <div class="level-hero">
+            <div class="level-eyebrow">Level Guide</div>
+            <h1>Find your language level</h1>
+            <p class="level-subtitle">
+                Not sure which level fits you? Here's what each one means — pick whichever feels comfortable, or
+                one that pushes you a little.
+            </p>
+        </div>
+
+        <div class="level-section-title">Languages we host in</div>
+        <div class="lang-chip-row" id="langChips">Loading…</div>
+
+        <div class="level-section-title">Proficiency levels</div>
+        <div class="level-cards" id="levelCards">Loading…</div>
+
+        <div class="back-link">
+            <a href="faq.html">← Back to FAQ</a>
+        </div>
+
+    </div>
+
+    <script>
+        const { BASE_URL, API_KEY } = window.CONFIG;
+
+        async function loadOptions() {
+            try {
+                const res = await fetch(`${BASE_URL}/reading-sessions/options`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-KEY": API_KEY
+                    }
+                });
+                const json = await res.json();
+
+                if (!json.status || !json.data) throw new Error("Failed to load options");
+
+                render(json.data);
+            } catch (err) {
+                console.error(err);
+                document.getElementById("langChips").innerHTML = "<p>Failed to load.</p>";
+                document.getElementById("levelCards").innerHTML = "";
+            }
+        }
+
+        function render(data) {
+            const langChips = document.getElementById("langChips");
+            langChips.innerHTML = (data.languages || []).map(lang => {
+                const meta = LANG_META[lang.value] || {};
+                return `<span class="lang-chip">${meta.flag || ""} ${lang.label}</span>`;
+            }).join("");
+
+            const levelCards = document.getElementById("levelCards");
+            levelCards.innerHTML = (data.proficiencyLevels || []).map(level => {
+                const meta = LEVEL_COLORS[level.value] || { bg: "#eef0e4", color: "#4d5c2a" };
+                return `
+                    <div class="level-card">
+                        <div class="level-badge" style="background:${meta.bg}; color:${meta.color};">
+                            ${level.label}
+                        </div>
+                        <p class="level-desc">${level.description || ""}</p>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        loadOptions();
+    </script>
+</body>
+
+</html>

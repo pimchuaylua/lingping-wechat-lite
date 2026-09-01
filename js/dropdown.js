@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.text())
             .then(data => {
                 header.innerHTML = data;
+                updateAuthNav();
             });
     }
 
@@ -29,4 +30,14 @@ function toggleMoreDropdown() {
     if (!menu) return;
 
     menu.classList.toggle("hidden");
+}
+
+// Show only "Profile" when logged in, or "Log In" when logged out
+function updateAuthNav() {
+    const userId = localStorage.getItem("userId");
+    const profileLink = document.getElementById("navProfile");
+    const loginLink = document.getElementById("navLogin");
+
+    if (profileLink) profileLink.style.display = userId ? "" : "none";
+    if (loginLink) loginLink.style.display = userId ? "none" : "";
 }
