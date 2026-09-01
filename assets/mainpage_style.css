@@ -1061,11 +1061,11 @@ body {
 
 .menu-section-title {
     font-size: 12px;
-    font-weight: 600;
-    color: #888;
-    padding: 10px 14px 6px;
+    font-weight: 700;
+    color: var(--theme);
+    padding: 14px 14px 6px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
 }
 
 .menu-divider {
