@@ -465,6 +465,13 @@
             });
         }
 
+        function truncateWords(text, wordCount) {
+            if (!text) return "";
+            const words = text.trim().split(/\s+/);
+            if (words.length <= wordCount) return text.trim();
+            return words.slice(0, wordCount).join(" ") + "…";
+        }
+
         function formatShareTimeRange(timeStr) {
             const parts = (timeStr || "").split("–").map(p => p.trim());
             if (parts.length !== 2) return timeStr;
@@ -489,9 +496,7 @@
             const isOnline = s?.levelName?.toLowerCase().includes("online");
 
             const lines = [
-                "🌏 Join Lingping Club — a language & culture exchange community!",
-                "",
-                "Come meet people from different backgrounds, explore ideas, and share your perspectives.",
+                "🌏 Join Lingping Club! Meet people from different backgrounds, explore the world through stories, and discover new perspectives.",
                 "",
                 `💬 Topic: ${s.title}`,
                 ...formatLanguageLevelLines(),
@@ -510,6 +515,13 @@
                 }
             } else {
                 lines.push(`📍 Location: ${s.location || "TBA"}`);
+            }
+
+            const descExcerpt = truncateWords(s.fullDescription || s.description, 30);
+            if (descExcerpt) {
+                lines.push("");
+                lines.push("📖 About the session");
+                lines.push(`${descExcerpt} (see more in link)`);
             }
 
             lines.push("");
