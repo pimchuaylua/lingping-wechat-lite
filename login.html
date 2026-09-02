@@ -12,6 +12,27 @@
     <script src="js/booking.js?v=202605162"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="config.js"></script>
+    <style>
+        .email-hint {
+            font-size: 13px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .email-suggestion {
+            color: #0a7cff;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .email-error {
+            font-size: 13px;
+            color: #e63946;
+            margin-top: 8px;
+        }
+
+    </style>
 </head>
 
 <body>
@@ -87,8 +108,28 @@
                 Continue with phone number
             </div>
 
+            <div class="login-option" style="font-size:14px; padding:10px 12px;" onclick="showEmailLogin()">
+                Continue with email
+                <div style="color:#999; font-weight:400; font-size:12px; margin-top:2px;">
+                    🇨🇳 Recommended for Mainland China users
+                </div>
+            </div>
+
             <div class="login-option" style="font-size:14px; padding:10px 12px;" onclick="loginWithUsername()">
                 Continue with username
+            </div>
+
+            <!-- EMAIL LOGIN PANEL -->
+            <div id="emailLoginPanel" style="display:none; margin-top:20px; width:100%;">
+                <input id="emailInput" type="email" class="input-field" placeholder="you@example.com"
+                    autocomplete="email">
+                <div id="emailHint" class="email-hint" style="display:none;"></div>
+                <div id="emailError" class="email-error" style="display:none;"></div>
+
+                <button id="emailSubmitBtn" class="primary-button" style="margin-top:12px;"
+                    onclick="continueWithEmail()">
+                    Continue
+                </button>
             </div>
 
             <!-- PHONE LOGIN PANEL -->
@@ -275,6 +316,160 @@
         }
     }
 
+    /* ---------------- EMAIL LOGIN ---------------- */
+
+    // Common providers to catch typos like "@gmial.com" — pure client-side,
+    // instant, no network call. Separate from (and not a substitute for) any
+    // MX-record check, which can only happen server-side since browsers have
+    // no DNS API.
+    const COMMON_EMAIL_DOMAINS = [
+        "gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "icloud.com",
+        "live.com", "aol.com", "qq.com", "163.com", "126.com", "hotmail.co.th"
+    ];
+
+    function levenshtein(a, b) {
+        const dp = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+        for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+        for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+
+        for (let i = 1; i <= a.length; i++) {
+            for (let j = 1; j <= b.length; j++) {
+                dp[i][j] = a[i - 1] === b[j - 1]
+                    ? dp[i - 1][j - 1]
+                    : 1 + Math.min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]);
+            }
+        }
+        return dp[a.length][b.length];
+    }
+
+    function isValidEmailSyntax(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function suggestEmailDomain(email) {
+        const at = email.lastIndexOf("@");
+        if (at === -1) return null;
+
+        const domain = email.slice(at + 1).toLowerCase();
+        if (!domain) return null;
+
+        let best = null;
+        let bestDist = Infinity;
+
+        for (const known of COMMON_EMAIL_DOMAINS) {
+            if (known === domain) return null; // exact match — no typo
+            const dist = levenshtein(domain, known);
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = known;
+            }
+        }
+
+        // Only flag close, plausible typos — not just any nearby domain.
+        if (best && bestDist > 0 && bestDist <= 2) {
+            return email.slice(0, at + 1) + best;
+        }
+        return null;
+    }
+
+    let pendingEmailSuggestion = null;
+    let emailLoginInProgress = false;
+
+    function showEmailLogin() {
+        const panel = document.getElementById("emailLoginPanel");
+        panel.style.display = panel.style.display === "none" ? "block" : "none";
+    }
+
+    function showEmailHint(html) {
+        const hint = document.getElementById("emailHint");
+        hint.innerHTML = html;
+        hint.style.display = "block";
+    }
+
+    function clearEmailHint() {
+        const hint = document.getElementById("emailHint");
+        hint.style.display = "none";
+        hint.innerHTML = "";
+    }
+
+    function applyEmailSuggestion(domain) {
+        const emailInput = document.getElementById("emailInput");
+        const at = emailInput.value.lastIndexOf("@");
+        emailInput.value = emailInput.value.slice(0, at + 1) + domain;
+        pendingEmailSuggestion = null;
+        clearEmailHint();
+        continueWithEmail();
+    }
+
+    // Password is hardcoded to "1234" for this flow (same as Google/Apple/
+    // username login) — no PIN entry in the UI for now.
+    async function continueWithEmail() {
+        const emailInput = document.getElementById("emailInput");
+        const email = emailInput.value.trim();
+        const errorEl = document.getElementById("emailError");
+
+        clearEmailHint();
+        errorEl.style.display = "none";
+
+        if (!isValidEmailSyntax(email)) {
+            emailInput.classList.add("input-error");
+            showEmailHint('<span style="color:#e63946;">Please enter a valid email address.</span>');
+            return;
+        }
+        emailInput.classList.remove("input-error");
+
+        const suggestion = suggestEmailDomain(email);
+        if (suggestion && suggestion !== pendingEmailSuggestion) {
+            pendingEmailSuggestion = suggestion;
+            showEmailHint(`Did you mean <span class="email-suggestion" onclick="applyEmailSuggestion('${suggestion.split("@")[1]}')">${suggestion}</span>?`);
+            return;
+        }
+        pendingEmailSuggestion = null;
+
+        if (emailLoginInProgress) return;
+        emailLoginInProgress = true;
+
+        const btn = document.getElementById("emailSubmitBtn");
+        btn.disabled = true;
+        btn.textContent = "Please wait...";
+
+        try {
+            let loginResult = await loginUserWithRetry(email, "1234", 1);
+
+            if (!loginResult.success) {
+                const registerResult = await registerUser(email, email);
+
+                if (!registerResult.success) {
+                    throw new Error("This email is already registered under a different login method. Try Google, phone, or username instead.");
+                }
+
+                loginResult = await loginUserWithRetry(email, "1234");
+
+                if (!loginResult.success) {
+                    throw new Error("Account created, but login failed. Please try again.");
+                }
+            }
+
+            saveSession(loginResult.data, email);
+            showSuccessPopup();
+
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    redirectBack();
+                }, 2000);
+            });
+
+        } catch (err) {
+            console.error("Email login flow error:", err);
+            errorEl.textContent = err.message || "Login failed. Please try again.";
+            errorEl.style.display = "block";
+        } finally {
+            emailLoginInProgress = false;
+            btn.disabled = false;
+            btn.textContent = "Continue";
+        }
+    }
+
     /* ---------------- USERNAME LOGIN ---------------- */
 
     async function loginWithUsername() {
@@ -282,7 +477,7 @@
             const username = prompt("Enter your username:")?.trim();
             if (!username) return;
 
-            const loginResult = await loginUser(username, "lingpingreading33");
+            const loginResult = await loginUser(username, "1234");
 
             if (!loginResult.success) {
                 throw new Error("Invalid username. Please check and try again.");
