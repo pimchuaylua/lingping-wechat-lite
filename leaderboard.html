@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard | Lingping Club</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="icon" type="image/png" href="assets/logos/lingping_logo.png">
+    <link rel="stylesheet" href="assets/style.css?v=20260530">
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
+    <script src="config.js"></script>
+    <script src="js/dropdown.js?v=20260516"></script>
+    <style>
+        .lb-hero {
+            max-width: 640px;
+            margin: 40px auto 24px;
+            text-align: center;
+        }
+
+        .lb-eyebrow {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--theme);
+            margin-bottom: 12px;
+        }
+
+        .lb-hero h1 {
+            font-size: 32px;
+            line-height: 1.15;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #17140f;
+            margin: 0 0 14px;
+        }
+
+        .lb-subtitle {
+            font-size: 16px;
+            line-height: 1.55;
+            color: #666;
+            margin: 0 auto;
+            max-width: 56ch;
+        }
+
+        .lb-controls {
+            display: flex;
+            justify-content: center;
+            margin: 0 auto 20px;
+            max-width: 640px;
+        }
+
+        .lb-filter {
+            width: 100%;
+            max-width: 260px;
+            padding: 12px 40px 12px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7280' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 16px center;
+            background-size: 12px 8px;
+            color: #111827;
+            font-size: 15px;
+            font-family: inherit;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+        }
+
+        .lb-filter:focus {
+            outline: none;
+            border-color: var(--theme);
+            box-shadow: 0 0 0 3px rgba(255, 176, 80, 0.18);
+        }
+
+        .lb-meta {
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .lb-list {
+            max-width: 640px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .lb-row,
+        .lb-header-row {
+            display: grid;
+            grid-template-columns: 26px 32px 1fr 44px 44px 52px;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+        }
+
+        .lb-header-row {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: #999;
+            background: #fafafa;
+            border-bottom: 1px solid #eee;
+        }
+
+        .lb-header-row span {
+            text-align: right;
+        }
+
+        .lb-header-row .lb-header-name {
+            text-align: left;
+        }
+
+        .lb-row {
+            border-bottom: 1px solid #f0efe9;
+        }
+
+        .lb-row:last-child {
+            border-bottom: none;
+        }
+
+        .lb-row.lb-you {
+            background: rgba(255, 176, 80, 0.12);
+        }
+
+        .lb-rank {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #999;
+        }
+
+        .lb-rank.medal {
+            font-size: 18px;
+        }
+
+        .lb-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #eee;
+            cursor: pointer;
+        }
+
+        .lb-name {
+            min-width: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #17140f;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .lb-you-tag {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--theme);
+            margin-left: 4px;
+        }
+
+        .lb-col-num {
+            text-align: right;
+            font-size: 13px;
+            font-weight: 600;
+            color: #777;
+        }
+
+        .lb-col-total {
+            font-size: 14px;
+            font-weight: 800;
+            color: #17140f;
+        }
+
+        .lb-empty,
+        .lb-loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        @media (min-width: 860px) {
+            .lb-hero {
+                max-width: 720px;
+                margin: 64px auto 32px;
+            }
+
+            .lb-eyebrow {
+                font-size: 14px;
+            }
+
+            .lb-hero h1 {
+                font-size: 44px;
+            }
+
+            .lb-subtitle {
+                font-size: 17px;
+            }
+
+            .lb-controls {
+                max-width: 760px;
+                margin-bottom: 24px;
+            }
+
+            .lb-filter {
+                max-width: 300px;
+                padding: 14px 44px 14px 18px;
+                font-size: 16px;
+            }
+
+            .lb-meta {
+                font-size: 14px;
+                margin-bottom: 24px;
+            }
+
+            .lb-list {
+                max-width: 760px;
+                border-radius: 18px;
+            }
+
+            .lb-row,
+            .lb-header-row {
+                grid-template-columns: 40px 44px 1fr 70px 70px 84px;
+                gap: 16px;
+                padding: 16px 28px;
+            }
+
+            .lb-header-row {
+                font-size: 12px;
+            }
+
+            .lb-rank {
+                font-size: 16px;
+            }
+
+            .lb-rank.medal {
+                font-size: 24px;
+            }
+
+            .lb-avatar {
+                width: 42px;
+                height: 42px;
+            }
+
+            .lb-name {
+                font-size: 16px;
+            }
+
+            .lb-you-tag {
+                font-size: 11px;
+            }
+
+            .lb-col-num {
+                font-size: 15px;
+            }
+
+            .lb-col-total {
+                font-size: 17px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <div id="header"></div>
+
+        <div class="lb-hero">
+            <div class="lb-eyebrow">Community Leaderboard</div>
+            <h1>🏆 Top Members</h1>
+            <p class="lb-subtitle">
+                Earn points by joining sessions and hosting conversations — see who's leading the community.
+            </p>
+        </div>
+
+        <div class="lb-controls">
+            <select class="lb-filter" id="lbFilter" onchange="loadLeaderboard(this.value)">
+                <option value="7" selected>Past 7 Days</option>
+                <option value="30">Past Month</option>
+                <option value="90">Past 3 Months</option>
+                <option value="year">This Year</option>
+                <option value="all">All Time</option>
+            </select>
+        </div>
+
+        <div class="lb-meta" id="lbMeta"></div>
+
+        <div class="lb-list" id="lbList">
+            <div class="lb-loading">Loading leaderboard…</div>
+        </div>
+
+    </div>
+
+    <script>
+        const { BASE_URL, API_KEY } = window.CONFIG;
+
+        function daysSinceStartOfYear() {
+            const now = new Date();
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            return Math.ceil((now - startOfYear) / 86400000);
+        }
+
+        const FILTERS = {
+            "7": { label: "past 7 days", days: 7 },
+            "30": { label: "past month", days: 30 },
+            "90": { label: "past 3 months", days: 90 },
+            "year": { label: "this year", days: daysSinceStartOfYear() },
+            "all": { label: "all time", days: null }
+        };
+
+        const MEDALS = { 1: "🥇", 2: "🥈", 3: "🥉" };
+
+        function viewProfile(userId) {
+            if (userId) {
+                window.location.href = `view-profile.html?userId=${encodeURIComponent(userId)}`;
+            } else {
+                window.location.href = "view-profile.html";
+            }
+        }
+
+        function renderRow(entry, currentUserId) {
+            const isYou = currentUserId && entry.userId === currentUserId;
+            const medal = MEDALS[entry.rank];
+            const name = (entry.displayName || "").trim() || "Member";
+            const avatar = entry.profilePic || "assets/logos/lingping_logo.png";
+
+            return `
+                <div class="lb-row ${isYou ? "lb-you" : ""}">
+                    <div class="lb-rank ${medal ? "medal" : ""}">${medal || entry.rank}</div>
+                    <img class="lb-avatar" src="${avatar}" alt="${name}" onclick="viewProfile('${entry.userId}')">
+                    <div class="lb-name">
+                        ${name}${isYou ? '<span class="lb-you-tag">YOU</span>' : ""}
+                    </div>
+                    <div class="lb-col-num">${entry.hostPoints}</div>
+                    <div class="lb-col-num">${entry.learnPoints}</div>
+                    <div class="lb-col-num lb-col-total">${entry.totalPoints}</div>
+                </div>
+            `;
+        }
+
+        const HEADER_ROW = `
+            <div class="lb-header-row">
+                <span></span>
+                <span></span>
+                <span class="lb-header-name">Member</span>
+                <span>Host</span>
+                <span>Learn</span>
+                <span>Total</span>
+            </div>
+        `;
+
+        async function loadLeaderboard(filterKey) {
+            const filter = FILTERS[filterKey] || FILTERS["7"];
+            const listEl = document.getElementById("lbList");
+            const metaEl = document.getElementById("lbMeta");
+
+            listEl.innerHTML = '<div class="lb-loading">Loading leaderboard…</div>';
+            metaEl.textContent = "";
+
+            const params = new URLSearchParams({ limit: 200 });
+            if (filter.days) params.set("days", filter.days);
+
+            try {
+                const res = await fetch(`${BASE_URL}/points/leaderboard?${params}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-KEY": API_KEY
+                    }
+                });
+                const json = await res.json();
+
+                if (!json.status || !json.data) throw new Error("Failed to load leaderboard");
+
+                const entries = json.data.leaderboard || [];
+                const currentUserId = localStorage.getItem("userId");
+
+                if (!entries.length) {
+                    listEl.innerHTML = '<div class="lb-empty">No points earned yet — be the first!</div>';
+                    return;
+                }
+
+                listEl.innerHTML = HEADER_ROW + entries.map(entry => renderRow(entry, currentUserId)).join("");
+                metaEl.textContent = `Top ${entries.length} · ${filter.label}`;
+
+            } catch (err) {
+                console.error(err);
+                listEl.innerHTML = '<div class="lb-empty">Failed to load leaderboard. Please try again.</div>';
+            }
+        }
+
+        loadLeaderboard("7");
+    </script>
+</body>
+
+</html>
