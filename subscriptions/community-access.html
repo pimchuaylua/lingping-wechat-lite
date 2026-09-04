@@ -63,6 +63,10 @@
                         <option value="chengdu">Chengdu</option>
                     </optgroup>
 
+                    <optgroup label="🇭🇰 Hong Kong">
+                        <option value="hongkong">Hong Kong</option>
+                    </optgroup>
+
                 </select>
             </div>
 
@@ -97,6 +101,8 @@
                 goMultiCity();
             } else if (city === "chengdu") {
                 goChengdu();
+            } else if (city === "hongkong") {
+                goHongKong();
             }
         }
 
@@ -118,6 +124,10 @@
 
         function goChengdu() {
             window.location.href = "community-plans-chengdu.html";
+        }
+
+        function goHongKong() {
+            window.location.href = "community-plans-hongkong.html";
         }
 
         function goMultiCity() {
