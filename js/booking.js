@@ -253,8 +253,10 @@ function goToMembership() {
         target = "community-plans-phuket.html";
     } else if (levelName.includes("chengdu")) {
         target = "community-plans-chengdu.html";
+    } else if (levelName.includes("hong kong")) {
+        target = "community-plans-hongkong.html";
     } else if (levelName) {
-        // e.g. Hong Kong or any other community level without its own plan page yet
+        // any other community level without its own plan page yet
         target = "community-access.html";
     }
 

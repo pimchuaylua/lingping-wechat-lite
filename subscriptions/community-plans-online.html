@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="../assets/subscription_main_style.css?v=20260513">
+    <link rel="stylesheet" href="../assets/plans_style.css?v=2">
     <script src="../config.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/payment.js"></script>
@@ -20,108 +21,66 @@
 
         <div class="back-btn" onclick="Utils.goBackOrHome()">← Back</div>
 
-        <h1 style="text-align:center;">🌐 Online Community</h1>
-        <div class="sub" style="text-align:center; margin-bottom:25px;">
-            Step 3: Choose your plan
+        <div class="plans-hero">
+            <div class="plans-eyebrow">Step 3 · Choose Your Plan</div>
+            <h1>🌐 Online Community</h1>
+            <p class="plans-subtitle">
+                Join conversations from anywhere — unlimited access to every online session, no travel required.
+            </p>
         </div>
 
-        <div class="plans-wrapper" style="flex-direction:column; gap:20px;">
+        <div class="plans-section-title">Pick your plan</div>
 
-            <!-- 1 DAY -->
-            <div class="plan-card">
-                <div class="plan-title">1 Day</div>
+        <div class="plans-grid">
 
-                <div style="font-size:26px; font-weight:600; margin-top:10px;">
-                    ฿100
+            <div class="plan-card-modern">
+                <div class="plan-card-info">
+                    <div class="plan-card-title">1 Day</div>
+                    <div class="plan-card-price">฿100</div>
+                    <div class="plan-card-features">
+                        <p>Try it for a day — join unlimited sessions</p>
+                    </div>
                 </div>
-
-                <div class="plan-sub">
-                    ฿100 / day
-                </div>
-
-                <div class="plan-features" style="margin-top:15px;">
-                    <p>• Try it for a day — join unlimited sessions</p>
-                </div>
-
-                <div class="plan-btn">
-                    <button class="book-btn" onclick="buyPlan('697f8f43d9adda8b3d78eaae')">
-                        Buy 1 Day
-                    </button>
-                </div>
+                <button class="book-btn plan-card-btn" onclick="buyPlan('697f8f43d9adda8b3d78eaae')">
+                    Buy
+                </button>
             </div>
 
-            <!-- 1 MONTH -->
-            <div class="plan-card">
-                <div class="plan-title">1 Month</div>
-
-                <div style="font-size:26px; font-weight:600; margin-top:10px;">
-                    ฿500
+            <div class="plan-card-modern">
+                <div class="plan-card-info">
+                    <div class="plan-card-title">1 Month</div>
+                    <div class="plan-card-price">฿500</div>
+                    <div class="plan-card-price-sub">฿500 / month</div>
+                    <div class="plan-card-features">
+                        <p>Unlimited online events</p>
+                        <p>Cancel anytime</p>
+                    </div>
                 </div>
-
-                <div class="plan-sub">
-                    ฿500 / month
-                </div>
-
-                <div class="plan-features" style="margin-top:15px;">
-                    <p>• Unlimited online events</p>
-                    <p>• Cancel anytime</p>
-                </div>
-
-                <div class="plan-btn">
-                    <button class="book-btn" onclick="buyPlan('697f8f71d9adda8b3d78eab0')">
-                        Buy 1 Month
-                    </button>
-                </div>
+                <button class="book-btn plan-card-btn" onclick="buyPlan('697f8f71d9adda8b3d78eab0')">
+                    Buy
+                </button>
             </div>
 
-
-            <!-- 3 MONTHS -->
-            <div class="plan-card" style="border:2px solid #FFB050; position:relative;">
-
-                <!-- Highlight badge -->
-                <div style="
-                    position:absolute;
-                    top:-12px;
-                    right:20px;
-                    background:#FFB050;
-                    color:#fff;
-                    font-size:12px;
-                    padding:4px 10px;
-                    border-radius:20px;
-                    font-weight:600;
-                ">
-                    Better Value
+            <div class="plan-card-modern featured">
+                <div class="plan-card-badge">Better Value</div>
+                <div class="plan-card-info">
+                    <div class="plan-card-title">3 Months</div>
+                    <div class="plan-card-price">฿1,350</div>
+                    <div class="plan-card-price-sub">฿450 / month</div>
+                    <div class="plan-card-features">
+                        <p>Unlimited online events</p>
+                        <p>Billed once every 3 months</p>
+                    </div>
                 </div>
-
-                <div class="plan-title">3 Months</div>
-
-                <div style="font-size:26px; font-weight:600; margin-top:10px;">
-                    ฿1,350
-                </div>
-
-                <div class="plan-sub">
-                    ฿450 / month
-                </div>
-
-                <div class="plan-features" style="margin-top:15px;">
-                    <p>• Unlimited online events</p>
-                    <p>• Billed once every 3 months</p>
-                </div>
-
-                <div class="plan-btn">
-                    <button class="book-btn" onclick="buyPlan('697f8f78d9adda8b3d78eab2')">
-                        Buy 3 Month
-                    </button>
-                </div>
+                <button class="book-btn plan-card-btn" onclick="buyPlan('697f8f78d9adda8b3d78eab2')">
+                    Buy
+                </button>
             </div>
 
         </div>
 
-        <!-- Info Note -->
-        <div class="section" style="margin-top:25px;">
-            <div class="sub" style="font-size:14px; color:#666;">
-                Access starts immediately after payment.
-            </div>
+        <div class="plans-footnote">
+            Access starts immediately after payment.
         </div>
 
     </div>
