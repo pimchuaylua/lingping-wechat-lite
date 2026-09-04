@@ -34,7 +34,8 @@ window.bookSession = async function ({ sessionId }) {
                 userId,
                 sessionId,
                 numberOfSeats: 1,
-                consent: true
+                consent: true,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
             })
         });
 
