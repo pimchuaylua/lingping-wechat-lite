@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="../assets/subscription_main_style.css?v=20260513">
+    <link rel="stylesheet" href="../assets/plans_style.css?v=2">
 </head>
 
 <body>
@@ -16,38 +17,50 @@
 
         <div class="back-btn" onclick="history.back()">← Back</div>
 
-        <h1 style="text-align:center;">Community Membership</h1>
-        <div class="sub" style="text-align:center; margin-bottom:25px;">
-            Step 2: Choose your access type
+        <div class="plans-hero">
+            <div class="plans-eyebrow">Step 2 · Choose Your Access</div>
+            <h1>Community Membership</h1>
+            <p class="plans-subtitle">
+                Pick how you'd like to join — online only, your city plus online, or every city we're in.
+            </p>
         </div>
 
-        <div class="plans-wrapper">
+        <div class="access-grid">
 
-            <!-- OPTION A -->
-            <div class="plan-card">
-                <div class="plan-title">🌐 Online Only</div>
-                <div class="plan-sub">Unlimited access to:</div>
+            <!-- ONLINE ONLY -->
+            <div class="access-card">
+                <div class="access-card-body">
+                    <div class="access-card-title">🌐 Online Only</div>
+                    <div class="access-card-sub">
+                        Daily online conversations in different languages, from English, Chinese to Thai. Join from
+                        home, fit conversations around your work, or stay connected while traveling. Keep in touch
+                        with the Lingping friends you've met along the way.
+                    </div>
 
-                <div class="plan-features">
-                    <p>• All online events</p>
-                    <p style="color:#999;">(No onsite access)</p>
+                    <ul>
+                        <li>All online events</li>
+                        <li class="disabled">No onsite access</li>
+                    </ul>
                 </div>
 
-                <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="goOnlineOnly()">
-                        Continue
-                    </button>
-                </div>
+                <button class="book-btn" onclick="goOnlineOnly()">
+                    Continue
+                </button>
             </div>
 
+            <!-- FULL ACCESS · YOUR CITY -->
+            <div class="access-card">
+                <div class="access-card-body">
+                    <div class="access-card-title">Full Access | 🏡 Your City + 🌐 Online</div>
+                    <div class="access-card-sub">
+                        Enjoy thoughtful conversations at cafes in your city, meet new friends in person, explore
+                        local food, and join city walks, sports, and book clubs in your local community.
+                    </div>
 
-            <div class="plan-card">
-                <div class="plan-title">🏡 Your City + <br> 🌐 Online</div>
-                <div class="plan-sub">Unlimited access to:</div>
-
-                <div class="plan-features">
-                    <p>• All online events</p>
-                    <p>• All onsite events in one city</p>
+                    <ul>
+                        <li>All online events</li>
+                        <li>All onsite events in your city</li>
+                    </ul>
                 </div>
 
                 <select class="city-dropdown" onchange="goToCity(this.value)">
@@ -70,16 +83,22 @@
                 </select>
             </div>
 
-            <div class="plan-card" onclick="goToCity('multi-city')" style="cursor:pointer;">
-                <div class="plan-title">🌍 All Cities + <br> 🌐 Online</div>
-                <div class="plan-sub">Perfect for travelers</div>
+            <!-- FULL ACCESS · ALL CITIES -->
+            <div class="access-card">
+                <div class="access-card-body">
+                    <div class="access-card-title">Full Access | 🌍 All Cities + 🌐 Online</div>
+                    <div class="access-card-sub">
+                        Perfect for travelers — stay connected with the Lingping community wherever you are, from
+                        Bangkok to Chiang Mai, from Thailand to China.
+                    </div>
 
-                <div class="plan-features">
-                    <p>• All online events</p>
-                    <p>• All onsite events in every city</p>
+                    <ul>
+                        <li>All online events</li>
+                        <li>All onsite events in every city</li>
+                    </ul>
                 </div>
 
-                <button class="book-btn" style="width:100%;">
+                <button class="book-btn" onclick="goMultiCity()">
                     View Multi-City Pass
                 </button>
             </div>
