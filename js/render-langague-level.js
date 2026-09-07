@@ -125,7 +125,7 @@ const CATEGORY_ICONS = {
 };
 
 function renderLanguageChips(languages = []) {
-    if (!languages.length) return '';
+    if (!languages || !languages.length) return '';
 
     const langChips = [...new Set(languages.map(l => l.language))]
         .map(code => {
