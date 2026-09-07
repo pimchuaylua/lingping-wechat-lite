@@ -38,6 +38,9 @@ function updateAuthNav() {
     const profileLink = document.getElementById("navProfile");
     const loginLink = document.getElementById("navLogin");
 
-    if (profileLink) profileLink.style.display = userId ? "" : "none";
+    if (profileLink) {
+        profileLink.style.display = userId ? "" : "none";
+        if (userId) profileLink.href = `view-profile.html?userId=${encodeURIComponent(userId)}`;
+    }
     if (loginLink) loginLink.style.display = userId ? "none" : "";
 }

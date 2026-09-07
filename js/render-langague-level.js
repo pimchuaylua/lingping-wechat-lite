@@ -60,7 +60,7 @@ async function loadSessionOptions() {
 
 function renderLanguageChipsForEventDetails(languages = [], options) {
 
-    if (!languages.length) {
+    if (!languages || !languages.length) {
         return `
       <div class="lang-level-row">
         <span class="level-desc">All Lingping members who want to hang out, connect, and catch up. You can speak any language you’re comfortable with.</span>
@@ -91,7 +91,7 @@ function renderLanguageChipsForEventDetails(languages = [], options) {
 }
 
 function renderFormatChips(categories = [], options) {
-    if (!categories.length || !options) return '';
+    if (!categories || !categories.length || !options) return '';
 
     return categories.map(cat => {
         const meta = findMeta(options.categories, cat);

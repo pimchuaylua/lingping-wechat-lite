@@ -23,11 +23,12 @@
 
     <script>
         const { BASE_URL, API_KEY } = window.CONFIG;
-        const userId = localStorage.getItem("viewUserId");
         const container = document.getElementById("profileContent");
 
+        const myUserId = localStorage.getItem("userId");
+        const viewUserId = new URLSearchParams(window.location.search).get("userId");
 
-        if (!userId) {
+        if (!viewUserId) {
             container.innerHTML = "<p>User not found.</p>";
         } else {
             loadProfile();
@@ -35,9 +36,6 @@
 
         async function loadProfile() {
             try {
-
-                const myUserId = localStorage.getItem("userId");
-                const viewUserId = new URLSearchParams(window.location.search).get("userId") || myUserId;
 
                 const res = await fetch(`${BASE_URL}/users/${viewUserId}/profile`, {
                     headers: {

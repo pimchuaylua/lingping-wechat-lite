@@ -111,6 +111,24 @@
         let s = JSON.parse(localStorage.getItem("selectedSession") || "null");
         const userId = localStorage.getItem("userId");
 
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        }
+
+        // Escapes the text first (so raw <, >, & in a host's description
+        // can't break the markup), then wraps any http(s) URLs in a link.
+        // Trailing punctuation like a period or closing paren is left out
+        // of the link so "...watch?v=abc123." doesn't swallow the period.
+        function linkify(text) {
+            return escapeHtml(text).replace(
+                /(https?:\/\/[^\s<]+[^\s<.,;:!?)])/g,
+                (url) => `<a href="${url}" target="_blank" rel="noopener">${url}</a>`
+            );
+        }
+
         //write function is onlineEnglishClass c
         function getMeetingNumber(levelName) {
             if (!levelName) return "395-0447-1911";
@@ -170,7 +188,7 @@
 
             const fullDescHTML = (s.fullDescription || s.description)
                 .split("\n")
-                .map(line => `<p>${line}</p>`)
+                .map(line => `<p>${linkify(line)}</p>`)
                 .join("");
 
             const platformLabel = s.online
