@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>English Classes | Lingping Club</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="icon" type="image/png" href="assets/logos/lingping_logo.png">
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
+
+    <!-- Config & Booking -->
+    <script src="config.js"></script>
+    <script src="js/dropdown.js?v=20260516"></script>
+    <script src="js/auth.js?v=20260312"></script>
+    <script src="js/booking.js?v=202605162"></script>
+    <script src="js/utils.js?v=20250210?v=20260113"></script>
+    <script src="js/render-langague-level.js"></script>
+    <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
+    <link rel="stylesheet" href="assets/chip_style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div id="header"></div>
+
+        <div class="sub" style="margin-top:12px;">📘 English Class sessions — book by difficulty and date.</div>
+
+        <div class="filters">
+            <div class="english-levels" id="englishLevels">
+                <div class="level active" data-level="all">All</div>
+                <div class="level" data-level="easy">Easy</div>
+                <div class="level" data-level="medium">Medium</div>
+            </div>
+
+            <!-- 🔹 Date Filter -->
+            <div class="date-filter" id="dateFilter"></div>
+        </div>
+
+        <!-- 🔹 Events -->
+        <div id="eventList"></div>
+    </div>
+
+    <div id="policyModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-text">
+
+                ⚠️ <strong>PLEASE READ: CANCELLATION POLICY</strong> 📌<br>
+                If you wish to cancel, you must do so at least <strong>1 day before the class</strong>. Cancelling on
+                the day of the class will result in your pass being deducted.
+                <br><br>
+
+                <div style="font-size:1.25em; font-weight:bold; color:#d32f2f; line-height:1.6;">
+                    ⚠️ 重要提醒：请务必阅读取消政策 📌<br>
+                    如果您想取消课程，<u>必须至少提前一天取消</u>。<br>
+                    当天取消将扣除您的课程券，恕不退款。
+                </div>
+
+            </div>
+
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closePolicyModal()">
+                    No / 不同意
+                </button>
+                <button class="modal-confirm" onclick="confirmPolicy()">
+                    Yes, I agree / 我同意
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="membershipModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-text">
+                ✨ <strong>Membership Needed</strong><br><br>
+
+                Your membership or passes have been used up 😊<br>
+                Renew your membership to continue booking sessions and joining discussions.
+            </div>
+
+            <div class="modal-actions">
+                <button class="modal-cancel" onclick="closeMembershipPopup()">
+                    Maybe Later
+                </button>
+
+                <button class="modal-confirm" onclick="goToMembership()">
+                    Get a Membership or Day Pass
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="preBookingModalContainer"></div>
+    <div id="bookingSuccessModalContainer"></div>
+
+    <script src="js/event-card.js"></script>
+    <script>
+
+        const { BASE_URL, API_KEY } = window.CONFIG;
+        const ENGLISH_LEVEL_ID = "6982e63b245037c5977a9390";
+
+        let englishDifficulty = "all";
+        let activeDate = null;
+        let sessions = [];
+        let eventOptions = null;
+
+        const dateFilter = document.getElementById("dateFilter");
+        const eventList = document.getElementById("eventList");
+
+        function getNextNDays(n) {
+            const days = [];
+            const today = new Date();
+
+            for (let i = 0; i < n; i++) {
+                const d = new Date(today);
+                d.setDate(today.getDate() + i);
+                days.push({
+                    date: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`,
+                    display: d.toLocaleDateString("en-US", {
+                        weekday: "short",
+                        day: "numeric",
+                        month: "short"
+                    })
+                });
+            }
+            return days;
+        }
+
+        const dates = getNextNDays(33);
+
+        function renderDates() {
+            dateFilter.innerHTML = "";
+
+            dates.forEach(d => {
+                const btn = document.createElement("div");
+                btn.className = "date-btn" + (activeDate === d.date ? " active" : "");
+                btn.innerText = d.display;
+
+                btn.onclick = () => {
+                    activeDate = activeDate === d.date ? null : d.date;
+                    renderDates();
+                    renderEvents();
+                };
+
+                dateFilter.appendChild(btn);
+            });
+        }
+
+        async function getReadingSessions(fromDate, toDate) {
+            const params = new URLSearchParams({
+                fromDate,
+                toDate,
+                level: ENGLISH_LEVEL_ID
+            });
+
+            const res = await fetch(`${BASE_URL}/reading-sessions?${params}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-KEY": API_KEY
+                }
+            });
+
+            if (res.status === 404) return [];
+            if (!res.ok) throw new Error(`Failed to fetch sessions: ${res.status}`);
+
+            const json = await res.json();
+            return Array.isArray(json.data) ? json.data : [];
+        }
+
+        function renderEvents() {
+            let filtered = [...sessions];
+
+            if (englishDifficulty !== "all") {
+                filtered = filtered.filter(s => s.title.toLowerCase().includes(englishDifficulty));
+            }
+
+            if (activeDate) {
+                filtered = filtered.filter(s => s.date === activeDate);
+            }
+
+            eventList.innerHTML = "";
+
+            if (!filtered.length) {
+                eventList.innerHTML = `<div class="empty">No sessions</div>`;
+                return;
+            }
+
+            filtered.forEach(s => {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.style.cursor = "pointer";
+                card.innerHTML = buildEventCard(s, { isOnline: true });
+
+                card.onclick = (e) => {
+                    if (e.target.closest(".book-btn")) return;
+
+                    localStorage.setItem("selectedSession", JSON.stringify(s));
+                    window.location.href = "event-detail.html";
+                };
+
+                eventList.appendChild(card);
+            });
+        }
+
+        document.querySelectorAll(".english-levels .level").forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll(".english-levels .level").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                englishDifficulty = btn.innerText.toLowerCase(); // "easy" or "medium"
+                renderEvents();
+            };
+        });
+
+        async function init() {
+            renderDates();
+
+            const [opts, raw] = await Promise.all([
+                loadSessionOptions(),
+                getReadingSessions(dates[0].date, dates[dates.length - 1].date)
+            ]);
+
+            eventOptions = opts;
+            const now = Date.now();
+
+            sessions = raw
+                .filter(s => {
+                    const start = new Date(s.startTime).getTime();
+                    const end = start + (s.durationMins * 60000);
+                    return now <= end;
+                })
+                .map(s => {
+                    const start = new Date(s.startTime);
+                    const end = new Date(start.getTime() + s.durationMins * 60000);
+
+                    return {
+                        id: s._id,
+                        date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
+                        time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+                        shortTime: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+                        title: s.title,
+                        description: s.shortDescription,
+                        fullDescription: s.fullDescription,
+                        hosts: s.hosts || [],
+                        isFull: s.isFull,
+                        seatsLeft: s.numberOfSeatsLeft,
+                        photoUrl: s.photoUrl,
+                        languages: s.languages,
+                        categories: s.categories,
+                        location: s.location,
+                        maxParticipants: s.maxParticipants,
+                        locationUrl: s.locationUrl,
+                        levelId: ENGLISH_LEVEL_ID,
+                        levelName: s.level,
+                        options: eventOptions,
+                        online: s.online
+                    };
+                });
+
+            renderEvents();
+        }
+
+        Auth.renderNav();
+        init();
+
+        function handleBookClick(sessionId) {
+            const session = sessions.find(x => x.id === sessionId);
+
+            if (session?.isFull) {
+                joinWaitlist(sessionId);
+                return;
+            }
+
+            currentSession = session;
+
+            showCancelPolicyModal(() => {
+                bookSession({ sessionId });
+            });
+        }
+
+        let policyConfirmCallback = null;
+
+        function showCancelPolicyModal(onConfirm) {
+            policyConfirmCallback = onConfirm;
+            document.getElementById("policyModal").classList.remove("hidden");
+        }
+
+        function closePolicyModal() {
+            policyConfirmCallback = null;
+            document.getElementById("policyModal").classList.add("hidden");
+        }
+
+        function confirmPolicy() {
+            if (typeof policyConfirmCallback === "function") {
+                policyConfirmCallback();
+            }
+            closePolicyModal();
+        }
+
+        function viewProfile(userId) {
+            if (userId) {
+                window.location.href = `view-profile.html?userId=${encodeURIComponent(userId)}`;
+            } else {
+                window.location.href = "view-profile.html";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
