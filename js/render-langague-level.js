@@ -17,6 +17,12 @@ const LANG_META = {
     th: { label: 'Thai', flag: '🇹🇭' },
     zh: { label: 'Chinese', flag: '🇨🇳' },
     yue: { label: 'Cantonese', flag: '🇭🇰' },
+    ja: { label: 'Japanese', flag: '🇯🇵' },
+    es: { label: 'Spanish', flag: '🇪🇸' },
+    fr: { label: 'French', flag: '🇫🇷' },
+    ru: { label: 'Russian', flag: '🇷🇺' },
+    it: { label: 'Italian', flag: '🇮🇹' },
+    de: { label: 'German', flag: '🇩🇪' },
 };
 
 const LEVEL_META = {
@@ -81,7 +87,7 @@ function renderLanguageChipsForEventDetails(languages = [], options) {
         return `
       <div class="lang-level-row">
         <div class="chip-row">
-          <span class="chip chip-lang">${LANG_META[language]['flag'] || ''} ${langLabel}</span>
+          <span class="chip chip-lang">${LANG_META[language]?.flag || ''} ${langLabel}</span>
           <span class="chip" style="background:${colors.bg};color:${colors.color};">${levelLabel}</span>
         </div>
         ${levelDesc ? `<span class="level-desc">${levelDesc}</span>` : ''}
