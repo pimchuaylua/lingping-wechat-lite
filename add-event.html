@@ -206,18 +206,72 @@
             font-weight: 600;
         }
 
-        .lang-row {
-            padding: 10px 0;
+        .lang-block {
+            padding: 14px 0;
             border-bottom: 1px solid #f0efe9;
         }
 
-        .lang-row:last-child {
+        .lang-block:first-child {
+            padding-top: 0;
+        }
+
+        .lang-block:last-child {
             border-bottom: none;
         }
 
+        .lang-block-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lang-select {
+            flex: 1;
+        }
+
+        .remove-lang-btn {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff;
+            color: #9ca3af;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .remove-lang-btn:hover {
+            background: #fef2f2;
+            color: #b3441f;
+            border-color: #f3d3c9;
+        }
+
         .lang-levels {
-            margin-top: 10px;
-            margin-left: 24px;
+            margin-top: 12px;
+        }
+
+        .add-lang-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            padding: 8px 14px;
+            border: 1px dashed #d1d5db;
+            border-radius: 10px;
+            background: #fafafa;
+            color: #444;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+
+        .add-lang-btn:hover {
+            background: #f5f5f5;
+            border-color: var(--theme);
+            color: var(--theme);
         }
     </style>
 </head>
@@ -244,6 +298,8 @@
         let onlineCommunityLevelId = '695c763e2d652e065db71030';
         let uploadedPhotoUrl = null;
         const DEFAULT_PHOTO_URL = 'https://lingping-club.s3.ap-southeast-1.amazonaws.com/cm+pim.jpg';
+        let langBlockCounter = 0;
+        let langBlocks = []; // { id, language, levels: [] }
 
         if (!userId) {
             container.innerHTML = `
@@ -338,24 +394,9 @@
                 </label>
             `).join('');
 
-            const LANG_FLAGS = { en: '🇬🇧', th: '🇹🇭', zh: '🇨🇳', yue: '🇭🇰', ja: '🇯🇵' };
-
-            const languagesHtml = (eventOptions.languages || []).map(lang => `
-                <div class="lang-row">
-                    <label class="check-row">
-                        <input type="checkbox" class="lang-toggle" onchange="toggleLangLevels('${lang.value}', this)">
-                        ${LANG_FLAGS[lang.value] || ''} ${lang.label}
-                    </label>
-                    <div class="check-grid lang-levels" id="langLevels_${lang.value}" style="display:none;">
-                        ${(eventOptions.proficiencyLevels || []).map(l => `
-                            <label class="check-row">
-                                <input type="checkbox" class="lang-level-check" data-language="${lang.value}" value="${l.value}">
-                                ${l.label}
-                            </label>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
+            if (!langBlocks.length) {
+                langBlocks.push({ id: langBlockCounter++, language: '', levels: [] });
+            }
 
             container.innerHTML = `
                 <div class="back-btn" onclick="history.back()">← Back</div>
@@ -449,8 +490,9 @@
 
                 <div class="section">
                     <div class="label">Languages & Levels</div>
-                    <div class="hint">Select the languages this event is for, and the level for each. Leave all unchecked if it's open to any language.</div>
-                    ${languagesHtml}
+                    <div class="hint">Choose a language, then select one or more levels for it. Leave empty if open to any language.</div>
+                    <div id="langBlocks"></div>
+                    <div class="add-lang-btn" onclick="addLangBlock()">+ Add another language</div>
                 </div>
 
                 <div class="section">
@@ -475,6 +517,8 @@
             const offlineType = (eventOptions.types || []).find(t => t.value === 'offline');
             if (offlineType) typeEl.value = 'offline';
             toggleTypeFields();
+
+            renderLangBlocks();
         }
 
         function toggleTypeFields() {
@@ -488,12 +532,83 @@
             communitySection.style.display = (type === 'online') ? 'none' : 'block';
         }
 
-        function toggleLangLevels(code, checkbox) {
-            const levelsEl = document.getElementById(`langLevels_${code}`);
-            levelsEl.style.display = checkbox.checked ? 'flex' : 'none';
+        function renderLangBlocks() {
+            const container = document.getElementById('langBlocks');
+            if (!container) return;
 
-            if (!checkbox.checked) {
-                levelsEl.querySelectorAll('.lang-level-check:checked').forEach(el => el.checked = false);
+            const selectedLangs = langBlocks.map(b => b.language).filter(Boolean);
+
+            container.innerHTML = langBlocks.map(block => {
+                const optionsHtml = [...(eventOptions.languages || [])]
+                    .filter(lang => lang.value === block.language || !selectedLangs.includes(lang.value))
+                    .sort((a, b) => a.label.localeCompare(b.label))
+                    .map(lang => `
+                        <option value="${lang.value}" ${lang.value === block.language ? 'selected' : ''}>
+                            ${lang.label}
+                        </option>
+                    `).join('');
+
+                const levelsHtml = block.language ? `
+                    <div class="check-grid lang-levels">
+                        ${(eventOptions.proficiencyLevels || []).map(l => `
+                            <label class="check-row">
+                                <input
+                                    type="checkbox"
+                                    class="lang-level-check"
+                                    onchange="onLevelToggle(${block.id}, '${l.value}', this.checked)"
+                                    ${block.levels.includes(l.value) ? 'checked' : ''}
+                                >
+                                ${l.label}
+                            </label>
+                        `).join('')}
+                    </div>
+                ` : '';
+
+                return `
+                    <div class="lang-block">
+                        <div class="lang-block-row">
+                            <select class="sub lang-select" onchange="onLangSelect(${block.id}, this)">
+                                <option value="">Select a language…</option>
+                                ${optionsHtml}
+                            </select>
+                            ${langBlocks.length > 1 ? `
+                                <button type="button" class="remove-lang-btn" onclick="removeLangBlock(${block.id})" aria-label="Remove language">✕</button>
+                            ` : ''}
+                        </div>
+                        ${levelsHtml}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addLangBlock() {
+            langBlocks.push({ id: langBlockCounter++, language: '', levels: [] });
+            renderLangBlocks();
+        }
+
+        function removeLangBlock(id) {
+            langBlocks = langBlocks.filter(b => b.id !== id);
+            if (!langBlocks.length) {
+                langBlocks.push({ id: langBlockCounter++, language: '', levels: [] });
+            }
+            renderLangBlocks();
+        }
+
+        function onLangSelect(id, selectEl) {
+            const block = langBlocks.find(b => b.id === id);
+            block.language = selectEl.value;
+            block.levels = [];
+            renderLangBlocks();
+        }
+
+        function onLevelToggle(id, levelValue, checked) {
+            const block = langBlocks.find(b => b.id === id);
+            if (!block) return;
+
+            if (checked) {
+                if (!block.levels.includes(levelValue)) block.levels.push(levelValue);
+            } else {
+                block.levels = block.levels.filter(l => l !== levelValue);
             }
         }
 
@@ -607,10 +722,9 @@
 
             const categories = Array.from(document.querySelectorAll('.cat-check:checked')).map(el => el.value);
 
-            const languages = Array.from(document.querySelectorAll('.lang-level-check:checked')).map(el => ({
-                language: el.dataset.language,
-                proficiencyLevel: el.value
-            }));
+            const languages = langBlocks
+                .filter(b => b.language && b.levels.length)
+                .flatMap(b => b.levels.map(level => ({ language: b.language, proficiencyLevel: level })));
 
             const online = (type === 'online' || type === 'hybrid')
                 ? { platform: val('platform'), meetingNumber: val('meetingNumber') || undefined }
