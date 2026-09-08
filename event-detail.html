@@ -240,6 +240,11 @@
                         ? `
                         <div class="sub" style="margin-top:10px;">
                             Platform: ${platformLabel}<br>
+                            ${s.online?.meetingUrl ? `
+                                <a href="${s.online.meetingUrl}" target="_blank" rel="noopener" class="meeting-link">
+                                    🔗 Join via Meeting Link
+                                </a><br>
+                            ` : ''}
                             Meeting Room Number:
                             <span class="meeting-number" onclick="copyMeetingNumber('${meetingValue}')">
                                 ${meetingValue}
