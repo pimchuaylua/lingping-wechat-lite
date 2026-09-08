@@ -6,26 +6,25 @@
   dropped in favor of the site's real header.html and real .card/.event-*
   card styles (assets/mainpage_style.css).
 
-  Tokens below are mapped to real brand values instead of the mockup's
-  colors — --lp-accent tracks the site's global --theme automatically.
+  Tokens below match the original mockup's warm palette, except --lp-bg
+  (site's real gray, not the mockup's cream) and --lp-accent (tracks the
+  site's global --theme orange automatically).
 */
 
 :root{
   --lp-bg:#F5F5F5;
   --lp-surface:#FFFFFF;
-  --lp-ink:#333333;
-  --lp-ink-soft:#666666;
-  --lp-ink-faint:#AAAAAA;
+  --lp-ink:#2E2A22;
+  --lp-ink-soft:#948A79;
+  --lp-ink-faint:#B7AD9C;
   --lp-accent:var(--theme);
   --lp-accent-rgb:255,176,80;
-  --lp-accent-ink:#A3480C;
-  --lp-line:#EEEEEE;
-  --lp-line-strong:#DDDDDD;
-  --lp-success-bg:rgba(34,197,94,0.2);
-  --lp-success-ink:#166534;
+  --lp-accent-ink:#7A4310;
+  --lp-line:#EFE7D8;
+  --lp-line-strong:#E1D5BE;
   --lp-info-bg:#E4EEF8;
   --lp-info-ink:#2E5F8A;
-  --lp-flag-bg:#FDECE0;
+  --lp-flag-bg:#FDEBE3;
 }
 
 .lp-container, .lp-overlay{
@@ -35,7 +34,7 @@
 }
 .lp-container *, .lp-overlay *{ box-sizing: border-box; }
 
-.lp-container{ max-width:480px; margin:0 auto; background:var(--lp-bg); }
+.lp-container{ width:100%; max-width:480px; margin:0 auto; background:var(--lp-bg); }
 
 /* ---------- location tabs + city dropdown ---------- */
 .lp-filterbar{ padding-top:6px; }
@@ -48,37 +47,36 @@
 }
 .lp-loc-tab--active{ background:var(--lp-accent); border-color:var(--lp-accent); color:#fff; }
 
-.lp-citywrap{ position:relative; padding:0 16px 14px; max-height:0; opacity:0; overflow:visible; transition:max-height .2s ease, opacity .2s ease; }
-.lp-citywrap.lp-show{ max-height:400px; opacity:1; }
+.lp-citywrap{ position:relative; padding:0 16px 14px; max-height:0; opacity:0; overflow:visible; pointer-events:none; transition:max-height .2s ease, opacity .2s ease; }
+.lp-citywrap.lp-show{ max-height:400px; opacity:1; pointer-events:auto; }
 .lp-citydrop-btn{ display:flex; align-items:center; gap:8px; width:100%; padding:10px 14px; background:var(--lp-surface); border:1.5px solid var(--lp-line-strong); border-radius:14px; font-size:0.85rem; font-weight:700; color:var(--lp-ink); cursor:pointer; }
 .lp-citydrop-btn .lp-chev{ margin-left:auto; transition:transform .15s ease; opacity:0.6; }
 .lp-citydrop-btn.lp-open .lp-chev{ transform:rotate(180deg); }
-.lp-citydrop-list{ position:absolute; left:16px; right:16px; top:calc(100% - 6px); background:var(--lp-surface); border:1px solid var(--lp-line-strong); border-radius:14px; box-shadow:0 12px 28px rgba(0,0,0,0.16); overflow:hidden; max-height:0; opacity:0; pointer-events:none; transition:max-height .18s ease, opacity .18s ease; z-index:20; }
-.lp-citydrop-list.lp-open{ max-height:320px; opacity:1; pointer-events:auto; overflow-y:auto; }
+.lp-citydrop-list{ position:absolute; left:16px; width:80%; top:calc(100% - 6px); background:var(--lp-surface); border:1px solid var(--lp-line-strong); border-radius:14px; box-shadow:0 12px 28px rgba(0,0,0,0.16); overflow:hidden; height:0; opacity:0; pointer-events:none; transition:height .18s ease, opacity .18s ease; z-index:20; }
+.lp-citydrop-list.lp-open{ height:320px; opacity:1; pointer-events:auto; overflow-y:auto; }
 .lp-citydrop-item{ padding:12px 14px; font-size:0.85rem; font-weight:600; color:var(--lp-ink); cursor:pointer; border-bottom:1px solid var(--lp-line); }
 .lp-citydrop-item:last-child{ border-bottom:none; }
 .lp-citydrop-item--active{ color:var(--lp-accent-ink); font-weight:800; background:var(--lp-flag-bg); }
 .lp-citydrop-category{ padding:10px 14px 4px; font-size:0.68rem; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; color:var(--lp-ink-soft); }
 
-/* ---------- date + filters row ---------- */
+/* ---------- "What do you feel like doing?" / "Language & Level" accordion buttons ---------- */
+.lp-acc{ margin:0 16px 10px; border-radius:14px; border:1.5px solid var(--lp-line-strong); background:var(--lp-surface); overflow:hidden; }
+.lp-acc-head{ display:flex; align-items:center; gap:8px; width:100%; padding:11px 14px; border:none; background:none; font-size:0.85rem; font-weight:700; color:var(--lp-ink); cursor:pointer; text-align:left; font-family:inherit; }
+.lp-acc-head.lp-placeholder{ color:var(--lp-ink-soft); font-weight:600; }
+.lp-acc-head .lp-chev{ margin-left:auto; flex:none; opacity:0.6; }
+
+/* ---------- date row ---------- */
 .lp-daterow{ display:flex; align-items:center; gap:8px; padding:0 16px 12px; }
 .lp-date-btn{ flex:1; display:flex; align-items:center; gap:8px; padding:9px 13px; border-radius:999px; background:var(--lp-surface); border:1px solid var(--lp-line); font-size:0.82rem; font-weight:700; color:var(--lp-ink); cursor:pointer; }
 .lp-date-btn .lp-chev{ margin-left:auto; opacity:0.55; }
-.lp-filter-btn{ flex:none; display:flex; align-items:center; gap:6px; padding:9px 13px; border-radius:999px; background:var(--lp-surface); border:1.5px solid var(--lp-ink); font-size:0.82rem; font-weight:800; color:var(--lp-ink); cursor:pointer; }
-.lp-badge{ background:var(--lp-accent); color:#fff; font-size:0.68rem; font-weight:800; min-width:17px; height:17px; border-radius:9px; display:flex;align-items:center;justify-content:center; padding:0 4px; }
 
-.lp-activechips{ display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 14px; min-height:14px; }
-.lp-achip{ display:flex; align-items:center; gap:6px; background:var(--lp-info-bg); color:var(--lp-info-ink); font-size:0.78rem; font-weight:700; padding:6px 6px 6px 12px; border-radius:999px; }
-.lp-achip button{ all:unset; display:flex; cursor:pointer; padding:2px; }
-
-/* ---------- full-screen overlays: Filters / Picker / Calendar ---------- */
+/* ---------- full-screen overlays: Mood / Language & Level / Calendar ---------- */
 .lp-overlay{
   position:fixed; inset:0; z-index:1000; background:var(--lp-bg);
   transform:translateX(100%); transition:transform .22s ease;
   display:flex; flex-direction:column; overflow:hidden;
 }
 .lp-overlay.lp-open{ transform:translateX(0); }
-#lpPickerPanel{ z-index:1010; } /* sits above the Filters overlay it was opened from */
 
 .lp-fs-inner{ max-width:480px; width:100%; margin:0 auto; height:100%; display:flex; flex-direction:column; }
 
@@ -88,28 +86,29 @@
 .lp-reset-link{ font-size:0.85rem; font-weight:800; color:var(--lp-ink-soft); cursor:pointer; background:none; border:none; padding:0; }
 
 .lp-fs-body{ flex:1; overflow-y:auto; padding:8px 16px 8px; }
+.lp-fs-headline{ font-weight:800; font-size:1rem; line-height:1.3; }
+.lp-fs-sub{ font-size:0.82rem; line-height:1.5; color:var(--lp-ink-soft); }
 
-.lp-sheet-row{ display:flex; align-items:center; justify-content:space-between; padding:16px 2px; border-bottom:1px solid var(--lp-line); cursor:pointer; }
-.lp-rowlabel{ font-size:0.92rem; font-weight:700; }
-.lp-rowval{ display:flex; align-items:center; gap:6px; font-size:0.85rem; color:var(--lp-ink-soft); font-weight:600; }
-.lp-rowval svg{ opacity:0.6; }
-
-.lp-sheet-group{ padding-top:18px; }
-.lp-sheet-label{ font-size:0.72rem; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; color:var(--lp-ink-soft); margin-bottom:10px; }
-.lp-chipwrap{ display:flex; flex-wrap:wrap; gap:8px; }
 .lp-chip{ display:flex; align-items:center; gap:6px; padding:10px 15px; border-radius:999px; border:1.5px solid var(--lp-line-strong); background:var(--lp-surface); font-size:0.82rem; font-weight:700; color:var(--lp-ink); cursor:pointer; user-select:none; transition:background .15s ease, border-color .15s ease, color .15s ease; }
 .lp-chip.lp-active{ background:var(--lp-accent); border-color:var(--lp-accent); color:#fff; }
-.lp-lvl-desc{ font-size:0.8rem; color:var(--lp-ink-soft); margin-top:10px; line-height:1.5; min-height:1.5em; }
 
 .lp-fs-foot{ flex:none; padding:12px 16px 20px; border-top:1px solid var(--lp-line); }
 .lp-apply-btn{ display:block; width:100%; text-align:center; background:var(--lp-accent); color:#fff; font-weight:800; font-size:0.92rem; padding:14px; border-radius:14px; cursor:pointer; border:none; }
 
+/* language list capped so "How comfortable are you?" always shows below it */
+.lp-langlvl-lang{ max-height:230px; overflow-y:auto; border:1px solid var(--lp-line); border-radius:12px; }
+
 .lp-picker-list{ flex:1; overflow-y:auto; padding:2px 16px 8px; }
+.lp-langlvl-lang .lp-picker-list{ flex:none; padding:2px 12px; }
 .lp-picker-item{ display:flex; align-items:flex-start; gap:12px; padding:12px 2px; border-bottom:1px solid var(--lp-line); cursor:pointer; }
+.lp-picker-item:last-child{ border-bottom:none; }
 .lp-picker-item .lp-ic{ font-size:18px; width:26px; text-align:center; flex:none; margin-top:1px; }
 .lp-picker-item .lp-txt{ flex:1; }
 .lp-picker-item .lp-lbl{ display:block; font-size:0.9rem; font-weight:700; }
-.lp-picker-item .lp-desc{ display:block; font-size:0.76rem; color:var(--lp-ink-soft); margin-top:2px; line-height:1.42; }
+.lp-picker-item .lp-info-btn{ display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:50%; border:1.3px solid var(--lp-ink-faint); background:none; padding:0; margin-left:4px; font-size:0.62rem; font-weight:800; font-style:italic; font-family:Georgia, serif; color:var(--lp-ink-soft); cursor:pointer; vertical-align:middle; line-height:1; }
+.lp-picker-item.lp-desc-open .lp-info-btn{ background:var(--lp-ink-soft); border-color:var(--lp-ink-soft); color:#fff; }
+.lp-picker-item .lp-desc{ display:none; font-size:0.76rem; color:var(--lp-ink-soft); margin-top:5px; line-height:1.42; }
+.lp-picker-item.lp-desc-open .lp-desc{ display:block; }
 .lp-picker-item .lp-check{ width:20px;height:20px; border-radius:6px; border:1.5px solid var(--lp-line-strong); display:flex; align-items:center; justify-content:center; flex:none; font-size:0.7rem; color:#fff; margin-top:2px; }
 .lp-picker-item.lp-active .lp-check{ background:var(--lp-accent); border-color:var(--lp-accent); }
 .lp-picker-item.lp-active .lp-lbl{ color:var(--lp-accent-ink); }

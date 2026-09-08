@@ -21,7 +21,7 @@
     <script src="js/render-langague-level.js"></script>
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
     <link rel="stylesheet" href="assets/chip_style.css">
-    <link rel="stylesheet" href="assets/filter-bar.css">
+    <link rel="stylesheet" href="assets/filter-bar.css?v=20260908">
 
     <meta property="og:title" content="Lingping Club" />
     <meta property="og:description"
@@ -58,20 +58,27 @@
                     <div class="lp-citydrop-list" id="lpCityListPanel"></div>
                 </div>
 
+                <div class="lp-acc">
+                    <button class="lp-acc-head lp-placeholder" id="lpMoodBtn" onclick="FilterBar.openMood()">
+                        💭 <span id="lpMoodLabel">What do you feel like doing?</span>
+                        <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                </div>
+
+                <div class="lp-acc">
+                    <button class="lp-acc-head lp-placeholder" id="lpLangLevelBtn" onclick="FilterBar.openLangLevel()">
+                        🗣️ <span id="lpLangLevelLabel">Which language?</span>
+                        <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                </div>
+
                 <div class="lp-daterow">
                     <button class="lp-date-btn" onclick="FilterBar.openCalendar()">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
                         <span id="lpDateLabel">Anytime</span>
                         <svg class="lp-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
-                    <button class="lp-filter-btn" onclick="FilterBar.openFilters()">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 5h16l-6 8v6l-4-2v-4z"/></svg>
-                        Filters
-                        <span class="lp-badge" id="lpBadgeCount" style="display:none;">0</span>
-                    </button>
                 </div>
-
-                <div class="lp-activechips" id="lpActiveChips"></div>
             </div>
         </div>
 
@@ -79,50 +86,45 @@
         <div id="eventList"></div>
     </div>
 
-    <!-- ===== Full-screen: Filters ===== -->
-    <div class="lp-overlay" id="lpFiltersPanel">
+    <!-- ===== Full-screen: What do you feel like doing? (categories) ===== -->
+    <div class="lp-overlay" id="lpMoodPanel">
         <div class="lp-fs-inner">
             <div class="lp-fs-head">
-                <button class="lp-navbtn" onclick="FilterBar.closeFilters()" aria-label="Back">‹</button>
-                <span class="lp-fs-title">Filters</span>
-                <button class="lp-reset-link" onclick="FilterBar.resetFilters()">Reset</button>
+                <button class="lp-navbtn" onclick="FilterBar.closeMood()" aria-label="Back">‹</button>
+                <span class="lp-fs-title">What do you feel like doing?</span>
+                <button class="lp-reset-link" onclick="FilterBar.resetMood()">Reset</button>
             </div>
             <div class="lp-fs-body">
-                <div class="lp-sheet-row" onclick="FilterBar.openPicker('cat')">
-                    <span class="lp-rowlabel">Category</span>
-                    <span class="lp-rowval"><span id="lpCatVal">Any</span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg>
-                    </span>
-                </div>
-                <div class="lp-sheet-row" onclick="FilterBar.openPicker('lang')">
-                    <span class="lp-rowlabel">Language</span>
-                    <span class="lp-rowval"><span id="lpLangVal">Any</span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg>
-                    </span>
-                </div>
-                <div class="lp-sheet-group">
-                    <p class="lp-sheet-label">Level</p>
-                    <div class="lp-chipwrap" id="lpLvlChips"></div>
-                    <p class="lp-lvl-desc" id="lpLvlDesc"></p>
-                </div>
+                <p class="lp-fs-sub" style="margin-bottom:12px;">Pick as many as you like.</p>
+                <div class="lp-picker-list" id="lpMoodList"></div>
             </div>
             <div class="lp-fs-foot">
-                <button class="lp-apply-btn" onclick="FilterBar.closeFilters()">Show <span id="lpResultCount">0</span> events</button>
+                <button class="lp-apply-btn" onclick="FilterBar.closeMood()">Done</button>
             </div>
         </div>
     </div>
 
-    <!-- ===== Full-screen: Category / Language checklist ===== -->
-    <div class="lp-overlay" id="lpPickerPanel">
+    <!-- ===== Full-screen: Language & Level ===== -->
+    <div class="lp-overlay" id="lpLangLevelPanel">
         <div class="lp-fs-inner">
             <div class="lp-fs-head">
-                <button class="lp-navbtn" onclick="FilterBar.closePicker()" aria-label="Back">‹</button>
-                <span class="lp-fs-title" id="lpPickerTitle">Category</span>
-                <span style="width:26px"></span>
+                <button class="lp-navbtn" onclick="FilterBar.closeLangLevel()" aria-label="Back">‹</button>
+                <span class="lp-fs-title">Language &amp; Level</span>
+                <button class="lp-reset-link" onclick="FilterBar.resetLangLevel()">Reset</button>
             </div>
-            <div class="lp-picker-list" id="lpPickerList"></div>
+            <div class="lp-fs-body">
+                <p class="lp-fs-headline">Which language?</p>
+                <p class="lp-fs-sub" style="margin-bottom:12px;">Pick any number — scroll for more.</p>
+                <div class="lp-langlvl-lang">
+                    <div class="lp-picker-list" id="lpLangList"></div>
+                </div>
+
+                <p class="lp-fs-headline" style="margin-top:22px;">How comfortable are you?</p>
+                <p class="lp-fs-sub" style="margin-bottom:12px;">Pick the kind of conversation that feels right for you.</p>
+                <div class="lp-picker-list" id="lpLevelList"></div>
+            </div>
             <div class="lp-fs-foot">
-                <button class="lp-apply-btn" onclick="FilterBar.closePicker()">Done</button>
+                <button class="lp-apply-btn" onclick="FilterBar.closeLangLevel()">Done</button>
             </div>
         </div>
     </div>
@@ -254,8 +256,8 @@
     </div>
     </div>
 
-    <script src="js/event-card.js"></script>
-    <script src="js/filter-bar.js"></script>
+    <script src="js/event-card.js?v=20260908"></script>
+    <script src="js/filter-bar.js?v=20260908"></script>
     <script>
 
         const { BASE_URL, API_KEY } = window.CONFIG;

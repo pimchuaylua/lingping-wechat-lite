@@ -1,7 +1,8 @@
 /**
  * filter-bar.js
- * Location tabs + city dropdown, Filters sheet (Category/Language/Level),
- * and a real single-date/date-range calendar.
+ * Location tabs + city dropdown, a "What do you feel like doing?" (category)
+ * page, a merged Language & Level page, and a real single-date/date-range
+ * calendar.
  *
  * Category/Language/Level options, icons and flags come from data already
  * loaded elsewhere on the page (eventOptions from /reading-sessions/options,
@@ -14,7 +15,8 @@
 
 const FilterBar = (function () {
     let cfg = null;
-    const state = { categories: new Set(), languages: new Set(), level: null };
+    const state = { categories: new Set(), languages: new Set(), levels: new Set() };
+    const LEVEL_ICONS = { beginner: '🌱', upper_beginner: '🌿', intermediate: '🗣️', advanced: '🔥' };
 
     let rangeStart = null; // Date at local midnight, or null = no date filter
     let rangeEnd = null;   // Date, or null = single day / no selection
@@ -36,9 +38,6 @@ const FilterBar = (function () {
     }
     function toISO(d) {
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-    }
-    function findMetaLocal(list, value) {
-        return (list || []).find(item => item.value === value);
     }
 
     /* ---------------- Location: Online / In Person + city dropdown ---------------- */
@@ -109,144 +108,137 @@ const FilterBar = (function () {
         }
     }
 
-    /* ---------------- Filters: Category / Language / Level ---------------- */
+    /* ---------------- Mood (category) page ---------------- */
 
-    function openFilters() { document.getElementById('lpFiltersPanel').classList.add('lp-open'); }
-    function closeFilters() { document.getElementById('lpFiltersPanel').classList.remove('lp-open'); }
-
-    function openPicker(facet) {
-        currentFacet = facet;
-        const items = facet === 'cat' ? cfg.eventOptions.categories : cfg.eventOptions.languages;
-        document.getElementById('lpPickerTitle').textContent = facet === 'cat' ? 'Category' : 'Language';
-        renderPickerList(items, facet === 'cat' ? state.categories : state.languages);
-        document.getElementById('lpPickerPanel').classList.add('lp-open');
+    function openMood() {
+        renderMoodList();
+        document.getElementById('lpMoodPanel').classList.add('lp-open');
     }
-    function closePicker() { document.getElementById('lpPickerPanel').classList.remove('lp-open'); }
-    let currentFacet = null;
-
-    function iconFor(facet, value) {
-        if (facet === 'cat') return CATEGORY_ICONS[value] || '';
-        return LANG_META[value]?.flag || '';
+    function closeMood() { document.getElementById('lpMoodPanel').classList.remove('lp-open'); }
+    function resetMood() {
+        state.categories = new Set();
+        renderMoodList();
+        cfg.onFiltersChange();
     }
 
-    function renderPickerList(items, selectedSet) {
-        const container = document.getElementById('lpPickerList');
+    function renderMoodList() {
+        renderCheckList(document.getElementById('lpMoodList'), cfg.eventOptions.categories, state.categories, {
+            iconFor: v => CATEGORY_ICONS[v] || '',
+            showDesc: false,
+            onChange: () => { updateMoodLabel(); cfg.onFiltersChange(); }
+        });
+        updateMoodLabel();
+    }
+
+    function updateMoodLabel() {
+        const btn = document.getElementById('lpMoodBtn');
+        const label = document.getElementById('lpMoodLabel');
+        const picked = (cfg.eventOptions.categories || []).filter(it => state.categories.has(it.value));
+        if (!picked.length) {
+            label.textContent = 'What do you feel like doing?';
+            btn.classList.add('lp-placeholder');
+            return;
+        }
+        btn.classList.remove('lp-placeholder');
+        const text = `${CATEGORY_ICONS[picked[0].value] || ''} ${picked[0].label}`;
+        label.textContent = picked.length === 1 ? text : `${text} +${picked.length - 1}`;
+    }
+
+    /* ---------------- Language & Level page ---------------- */
+
+    function openLangLevel() {
+        renderLangLevelLists();
+        document.getElementById('lpLangLevelPanel').classList.add('lp-open');
+    }
+    function closeLangLevel() { document.getElementById('lpLangLevelPanel').classList.remove('lp-open'); }
+    function resetLangLevel() {
+        state.languages = new Set();
+        state.levels = new Set();
+        renderLangLevelLists();
+        cfg.onFiltersChange();
+    }
+
+    function renderLangLevelLists() {
+        renderCheckList(document.getElementById('lpLangList'), cfg.eventOptions.languages, state.languages, {
+            iconFor: v => LANG_META[v]?.flag || '',
+            showDesc: false,
+            onChange: () => { updateLangLevelLabel(); cfg.onFiltersChange(); }
+        });
+        renderCheckList(document.getElementById('lpLevelList'), cfg.eventOptions.proficiencyLevels, state.levels, {
+            iconFor: v => LEVEL_ICONS[v] || '',
+            showDesc: true,
+            onChange: () => { updateLangLevelLabel(); cfg.onFiltersChange(); }
+        });
+        updateLangLevelLabel();
+    }
+
+    function updateLangLevelLabel() {
+        const btn = document.getElementById('lpLangLevelBtn');
+        const label = document.getElementById('lpLangLevelLabel');
+        const pickedLang = (cfg.eventOptions.languages || []).filter(it => state.languages.has(it.value));
+        const pickedLvl = (cfg.eventOptions.proficiencyLevels || []).filter(it => state.levels.has(it.value));
+
+        if (!pickedLang.length && !pickedLvl.length) {
+            label.textContent = 'Which language?';
+            btn.classList.add('lp-placeholder');
+            return;
+        }
+        btn.classList.remove('lp-placeholder');
+
+        const parts = [];
+        if (pickedLang.length) {
+            const t = `${LANG_META[pickedLang[0].value]?.flag || ''} ${pickedLang[0].label}`;
+            parts.push(pickedLang.length === 1 ? t : `${t} +${pickedLang.length - 1}`);
+        }
+        if (pickedLvl.length) {
+            parts.push(pickedLvl.length === 1 ? pickedLvl[0].label : `${pickedLvl[0].label} +${pickedLvl.length - 1}`);
+        }
+        label.textContent = parts.join(' · ');
+    }
+
+    /* ---------------- Shared checkbox-list renderer ---------------- */
+
+    /** Renders a multi-select checkbox list into `container`. Row tap toggles
+     * membership in `selectedSet`; when `showDesc` is true, an (i) button
+     * toggles the description open/closed without affecting selection. */
+    function renderCheckList(container, items, selectedSet, { iconFor, showDesc, onChange }) {
         container.innerHTML = (items || []).map(item => {
             const active = selectedSet.has(item.value);
+            const hasDesc = showDesc && item.description;
             return `
-                <div class="lp-picker-item${active ? ' lp-active' : ''}" onclick="FilterBar.toggleFacetValue('${currentFacet}', '${item.value}')">
-                    <span class="lp-ic">${iconFor(currentFacet, item.value)}</span>
+                <div class="lp-picker-item${active ? ' lp-active' : ''}" data-value="${item.value}">
+                    <span class="lp-ic">${iconFor(item.value)}</span>
                     <span class="lp-txt">
-                        <span class="lp-lbl">${item.label}</span>
-                        ${item.description ? `<span class="lp-desc">${item.description}</span>` : ''}
+                        <span class="lp-lbl">${item.label}${hasDesc ? ` <button type="button" class="lp-info-btn" aria-label="More info">i</button>` : ''}</span>
+                        ${hasDesc ? `<span class="lp-desc">${item.description}</span>` : ''}
                     </span>
                     <span class="lp-check">${active ? '✓' : ''}</span>
                 </div>
             `;
         }).join('');
-    }
 
-    function toggleFacetValue(facet, value) {
-        const set = facet === 'cat' ? state.categories : state.languages;
-        if (set.has(value)) set.delete(value); else set.add(value);
-        renderPickerList(facet === 'cat' ? cfg.eventOptions.categories : cfg.eventOptions.languages, set);
-        onFacetChange();
-    }
-
-    function summarize(set, items) {
-        if (!set.size) return 'Any';
-        const labels = (items || []).filter(it => set.has(it.value)).map(it => it.label);
-        return labels.length <= 1 ? (labels[0] || 'Any') : `${labels[0]} +${labels.length - 1}`;
-    }
-
-    function updateFilterRows() {
-        document.getElementById('lpCatVal').textContent = summarize(state.categories, cfg.eventOptions.categories);
-        document.getElementById('lpLangVal').textContent = summarize(state.languages, cfg.eventOptions.languages);
-    }
-
-    function updateBadge() {
-        const n = state.categories.size + state.languages.size + (state.level ? 1 : 0);
-        const badge = document.getElementById('lpBadgeCount');
-        badge.textContent = n;
-        badge.style.display = n ? 'flex' : 'none';
-    }
-
-    function makeChipEl(text, onRemove) {
-        const el = document.createElement('span');
-        el.className = 'lp-achip';
-        el.innerHTML = `${text} <button type="button" aria-label="Remove">✕</button>`;
-        el.querySelector('button').onclick = onRemove;
-        return el;
-    }
-
-    function renderActiveChips() {
-        const wrap = document.getElementById('lpActiveChips');
-        wrap.innerHTML = '';
-        (cfg.eventOptions.categories || []).filter(it => state.categories.has(it.value)).forEach(it => {
-            wrap.appendChild(makeChipEl(`${iconFor('cat', it.value)} ${it.label}`, () => { state.categories.delete(it.value); onFacetChange(); }));
-        });
-        (cfg.eventOptions.languages || []).filter(it => state.languages.has(it.value)).forEach(it => {
-            wrap.appendChild(makeChipEl(`${iconFor('lang', it.value)} ${it.label}`, () => { state.languages.delete(it.value); onFacetChange(); }));
-        });
-        if (state.level) {
-            const lv = findMetaLocal(cfg.eventOptions.proficiencyLevels, state.level);
-            wrap.appendChild(makeChipEl(lv?.label || state.level, () => { state.level = null; onFacetChange(); renderLevelChips(); }));
-        }
-    }
-
-    function renderLevelChips() {
-        const wrap = document.getElementById('lpLvlChips');
-        wrap.innerHTML = '';
-        (cfg.eventOptions.proficiencyLevels || []).forEach(lv => {
-            const chip = document.createElement('span');
-            chip.className = 'lp-chip' + (state.level === lv.value ? ' lp-active' : '');
-            chip.textContent = lv.label;
-            chip.onclick = () => {
-                state.level = state.level === lv.value ? null : lv.value;
-                renderLevelChips();
-                document.getElementById('lpLvlDesc').textContent = state.level
-                    ? (findMetaLocal(cfg.eventOptions.proficiencyLevels, state.level)?.description || '')
-                    : '';
-                updateBadge();
-                renderActiveChips();
-                updateResultCount();
-                cfg.onFiltersChange();
+        container.querySelectorAll('.lp-picker-item').forEach(row => {
+            const value = row.dataset.value;
+            row.onclick = () => {
+                if (selectedSet.has(value)) selectedSet.delete(value); else selectedSet.add(value);
+                renderCheckList(container, items, selectedSet, { iconFor, showDesc, onChange });
+                if (onChange) onChange();
             };
-            wrap.appendChild(chip);
+            const infoBtn = row.querySelector('.lp-info-btn');
+            if (infoBtn) {
+                infoBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    row.classList.toggle('lp-desc-open');
+                };
+            }
         });
-    }
-
-    function onFacetChange() {
-        updateFilterRows();
-        updateBadge();
-        renderActiveChips();
-        updateResultCount();
-        cfg.onFiltersChange();
-    }
-
-    function updateResultCount() {
-        const el = document.getElementById('lpResultCount');
-        if (el) el.textContent = filterSessions(cfg.getSessions()).length;
-    }
-
-    function resetFilters() {
-        state.categories = new Set();
-        state.languages = new Set();
-        state.level = null;
-        updateFilterRows();
-        renderLevelChips();
-        document.getElementById('lpLvlDesc').textContent = '';
-        updateBadge();
-        renderActiveChips();
-        updateResultCount();
-        cfg.onFiltersChange();
     }
 
     function filterSessions(sessions) {
         return (sessions || []).filter(s => {
             if (state.categories.size && !(s.categories || []).some(c => state.categories.has(c))) return false;
             if (state.languages.size && !(s.languages || []).some(l => state.languages.has(l.language))) return false;
-            if (state.level && !(s.languages || []).some(l => l.proficiencyLevel === state.level)) return false;
+            if (state.levels.size && !(s.languages || []).some(l => state.levels.has(l.proficiencyLevel))) return false;
             return true;
         });
     }
@@ -403,10 +395,8 @@ const FilterBar = (function () {
         buildCalMonths();
         renderCityList();
         setInitialLocation(config.initialLevelId);
-        updateFilterRows();
-        renderLevelChips();
-        updateBadge();
-        renderActiveChips();
+        renderMoodList();
+        renderLangLevelLists();
         updateDateLabel();
         updateCalFooter();
     }
@@ -418,12 +408,12 @@ const FilterBar = (function () {
         setLocation,
         toggleCityDrop,
         selectCity,
-        openFilters,
-        closeFilters,
-        resetFilters,
-        openPicker,
-        closePicker,
-        toggleFacetValue,
+        openMood,
+        closeMood,
+        resetMood,
+        openLangLevel,
+        closeLangLevel,
+        resetLangLevel,
         openCalendar,
         closeCalendar,
         resetDates,
