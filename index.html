@@ -7,7 +7,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link rel="icon" type="image/png" href="assets/logos/lingping_logo.png">
+    <link rel="icon" type="image/png" href="assets/logos/favicon.png">
     <!-- Styles -->
     <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
 
@@ -21,6 +21,7 @@
     <script src="js/render-langague-level.js"></script>
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
     <link rel="stylesheet" href="assets/chip_style.css">
+    <link rel="stylesheet" href="assets/filter-bar.css?v=20260908">
 
     <meta property="og:title" content="Lingping Club" />
     <meta property="og:description"
@@ -34,120 +35,258 @@
     <div class="container">
         <div id="header"></div>
 
-        <div class="membership-section">
-            <span class="membership-label">I'm here for</span>
-            <div class="membership-toggle">
-                <button class="membership-btn active" data-type="community">
-                    Community
-                </button>
-                <button class="membership-btn" data-type="english">
-                    English Class
-                </button>
-            </div>
-        </div>
-
-        <div class="filters">
-
-            <!-- 🔹 Inline Filters -->
-            <div class="filters-inline">
-
-                <!-- Location -->
-                <div class="location-selector">
-                    <button id="locationDisplay" class="location-btn active">
-                        🌐 Online
-                    </button>
-
-                    <div id="locationOptions" class="location-options hidden">
-
-                        <div class="location-option" data-level="695c763e2d652e065db71030">
-                            🌐 Online
+        <!-- ===== Desktop: search-pill nav (>=1024px). Mobile bar below stays untouched. ===== -->
+        <div class="lp-desktop-bar">
+            <div class="lp-dt-pill" id="lpDtPill">
+                <div class="lp-dt-seg" id="lpDtSegLoc" onclick="FilterBar.toggleDtSeg('loc')">
+                    <span class="lp-dt-seg-label">Where</span>
+                    <span class="lp-dt-seg-val" id="lpDtLocVal">🌐 Online</span>
+                    <div class="lp-dt-dropdown" onclick="event.stopPropagation()">
+                        <div class="lp-loc-tabs">
+                            <button class="lp-loc-tab lp-loc-tab--active" id="lpDtTabOnline"
+                                onclick="FilterBar.setLocation('online')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="12" cy="12" r="9" />
+                                    <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+                                </svg>
+                                Online
+                            </button>
+                            <button class="lp-loc-tab" id="lpDtTabPerson" onclick="FilterBar.setLocation('person')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z" />
+                                    <circle cx="12" cy="10" r="2.5" />
+                                </svg>
+                                In Person
+                            </button>
                         </div>
-
-                        <div class="location-category">
-                            <strong>THAILAND</strong>
+                        <div class="lp-dt-citylist" id="lpDtCityWrap">
+                            <div id="lpDtCityList"></div>
                         </div>
-
-                        <div class="location-option" data-level="69870890d9adda8b3d791661">
-                            📍 Bangkok
-                        </div>
-
-                        <div class="location-option" data-level="67eab5b337cd4b56a080743f">
-                            📍 Chiangmai
-                        </div>
-
-                        <div class="location-option" data-level="6a02e9e90c8f769c0cd9d2c8">
-                            📍 Phuket
-                        </div>
-
-                        <div class="location-category">
-                            <strong>CHINA</strong>
-                        </div>
-
-                        <div class="location-option" data-level="6a7164950117c11720df32be">
-                            📍 Chengdu
-                        </div>
-
-                        <div class="location-category">
-                            <strong>HONG KONG</strong>
-                        </div>
-
-                        <div class="location-option" data-level="6a841f58cca7afd6cad9dd14">
-                            📍 Hong Kong
-                        </div>
-
                     </div>
                 </div>
 
-                <div class="separator">·</div>
+                <div class="lp-dt-divider"></div>
 
-                <!-- Topics -->
-                <div class="topics-inline">
-                    <span class="topic active" data-topic="">All</span>
-                    <span class="topic" data-topic="en">EN</span>
-                    <span class="topic" data-topic="th">TH</span>
-                    <span class="topic" data-topic="zh">CH</span>
+                <div class="lp-dt-seg lp-placeholder" id="lpDtSegMood" onclick="FilterBar.toggleDtSeg('mood')">
+                    <span class="lp-dt-seg-label">Interests</span>
+                    <span class="lp-dt-seg-val" id="lpDtMoodVal">💭 What are you feeling?</span>
+                    <div class="lp-dt-dropdown" onclick="event.stopPropagation()">
+                        <div class="lp-picker-list" id="lpDtMoodList"></div>
+                    </div>
                 </div>
 
+                <div class="lp-dt-divider"></div>
+
+                <div class="lp-dt-seg lp-placeholder" id="lpDtSegLang" onclick="FilterBar.toggleDtSeg('lang')">
+                    <span class="lp-dt-seg-label">Language &amp; Level</span>
+                    <span class="lp-dt-seg-val" id="lpDtLangVal">🗣️ Which language?</span>
+                    <div class="lp-dt-dropdown lp-dt-dropdown--wide" onclick="event.stopPropagation()">
+                        <p class="lp-dt-sublabel">Language</p>
+                        <div class="lp-langlvl-lang">
+                            <div class="lp-picker-list" id="lpDtLangList"></div>
+                        </div>
+                        <p class="lp-dt-sublabel" style="margin-top:12px;">Level</p>
+                        <div class="lp-picker-list" id="lpDtLevelList"></div>
+                    </div>
+                </div>
+
+                <div class="lp-dt-divider"></div>
+
+                <div class="lp-dt-seg lp-placeholder" id="lpDtSegWhen" onclick="FilterBar.openCalendar()">
+                    <span class="lp-dt-seg-label">When</span>
+                    <span class="lp-dt-seg-val" id="lpDtDateVal">Anytime</span>
+                </div>
+
+                <div class="lp-dt-searchbtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.6">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </div>
             </div>
 
-            <!-- 🔹 English Class Levels -->
-            <div class="english-levels hidden" id="englishLevels">
-                <div class="level active" data-level="all">All</div>
-                <div class="level" data-level="easy">Easy</div>
-                <div class="level" data-level="medium">Medium</div>
+            <div class="lp-dt-chiprow">
+                <button class="lp-dt-filterbtn" onclick="FilterBar.toggleDtSeg('mood')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2">
+                        <path d="M4 5h16l-6 8v6l-4-2v-4z" />
+                    </svg>
+                    Filters
+                </button>
+                <button class="lp-dt-qchip" data-cat="discussion"
+                    onclick="FilterBar.toggleQuickCategory('discussion')">💬 Discussion</button>
+                <button class="lp-dt-qchip" data-cat="language"
+                    onclick="FilterBar.toggleQuickCategory('language')">🗣️ Language</button>
+                <button class="lp-dt-qchip" data-cat="food" onclick="FilterBar.toggleQuickCategory('food')">🍜
+                    Food</button>
+                <button class="lp-dt-qchip" data-cat="book" onclick="FilterBar.toggleQuickCategory('book')">📚
+                    Book Club</button>
+                <button class="lp-dt-qchip" data-cat="movie" onclick="FilterBar.toggleQuickCategory('movie')">🎬
+                    Movie</button>
+                <button class="lp-dt-reset" onclick="FilterBar.resetAllFilters()">Reset</button>
             </div>
-
-            <!-- 🔹 Date Filter -->
-            <div class="date-filter" id="dateFilter"></div>
         </div>
+
+        <div class="lp-container">
+            <div class="lp-filterbar">
+
+                <div class="lp-loc-tabs">
+                    <button class="lp-loc-tab lp-loc-tab--active" id="lpTabOnline"
+                        onclick="FilterBar.setLocation('online')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="9" />
+                            <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+                        </svg>
+                        Online
+                    </button>
+                    <button class="lp-loc-tab" id="lpTabPerson" onclick="FilterBar.setLocation('person')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z" />
+                            <circle cx="12" cy="10" r="2.5" />
+                        </svg>
+                        In Person
+                    </button>
+                </div>
+
+                <div class="lp-citywrap" id="lpCityWrap">
+                    <button class="lp-citydrop-btn" id="lpCityBtn" onclick="FilterBar.toggleCityDrop()">
+                        📍 <span id="lpCityLabel">Bangkok</span>
+                        <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.6">
+                            <path d="M6 9l6 6 6-6" />
+                        </svg>
+                    </button>
+                    <div class="lp-citydrop-list" id="lpCityListPanel"></div>
+                </div>
+
+                <button class="lp-searchbar" id="lpSearchbar" onclick="FilterBar.toggleSearchExpand()">
+                    <svg class="lp-mag" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.4">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <span class="lp-searchbar-label">Start exploring</span>
+                    <span class="lp-badge" id="lpSearchBadge" hidden>0</span>
+                    <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.6">
+                        <path d="M6 9l6 6 6-6" />
+                    </svg>
+                </button>
+                <div class="lp-searchexpand" id="lpSearchExpand">
+                    <div class="lp-erow" onclick="FilterBar.openMood()">
+                        <span class="lp-ic">💭</span>
+                        <span class="lp-erow-txt">What are you feeling?</span>
+                        <span class="lp-erow-val" id="lpMoodSummary"></span>
+                        <svg class="lp-chev2" width="11" height="11" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.6">
+                            <path d="M9 6l6 6-6 6" />
+                        </svg>
+                    </div>
+                    <div class="lp-erow" onclick="FilterBar.openLangLevel()">
+                        <span class="lp-ic">🗣️</span>
+                        <span class="lp-erow-txt">Language</span>
+                        <span class="lp-erow-val" id="lpLangSummary"></span>
+                        <svg class="lp-chev2" width="11" height="11" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.6">
+                            <path d="M9 6l6 6-6 6" />
+                        </svg>
+                    </div>
+                    <div class="lp-erow" onclick="FilterBar.openCalendar()">
+                        <span class="lp-ic">📅</span>
+                        <span class="lp-erow-txt">Date</span>
+                        <span class="lp-erow-val" id="lpDateSummary"></span>
+                        <svg class="lp-chev2" width="11" height="11" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.6">
+                            <path d="M9 6l6 6-6 6" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 🔹 Events -->
         <div id="eventList"></div>
     </div>
 
-    <div id="policyModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-text">
+    <!-- ===== Full-screen: What are you feeling? (categories) ===== -->
+    <div class="lp-overlay" id="lpMoodPanel">
+        <div class="lp-fs-inner">
+            <div class="lp-fs-head">
+                <button class="lp-navbtn" onclick="FilterBar.closeMood()" aria-label="Back">‹</button>
+                <span class="lp-fs-title">What are you feeling?</span>
+                <button class="lp-reset-link" onclick="FilterBar.resetMood()">Reset</button>
+            </div>
+            <div class="lp-fs-body">
+                <p class="lp-fs-sub" style="margin-bottom:12px;">Pick as many as you like.</p>
+                <div class="lp-picker-list" id="lpMoodList"></div>
+            </div>
+            <div class="lp-fs-foot">
+                <button class="lp-apply-btn" onclick="FilterBar.closeMood()">Done</button>
+            </div>
+        </div>
+    </div>
 
-                ⚠️ <strong>PLEASE READ: CANCELLATION POLICY</strong> 📌<br>
-                If you wish to cancel, you must do so at least <strong>1 day before the class</strong>. Cancelling on
-                the day of the class will result in your pass being deducted.
-                <br><br>
-
-                <div style="font-size:1.25em; font-weight:bold; color:#d32f2f; line-height:1.6;">
-                    ⚠️ 重要提醒：请务必阅读取消政策 📌<br>
-                    如果您想取消课程，<u>必须至少提前一天取消</u>。<br>
-                    当天取消将扣除您的课程券，恕不退款。
+    <!-- ===== Full-screen: Language & Level ===== -->
+    <div class="lp-overlay" id="lpLangLevelPanel">
+        <div class="lp-fs-inner">
+            <div class="lp-fs-head">
+                <button class="lp-navbtn" onclick="FilterBar.closeLangLevel()" aria-label="Back">‹</button>
+                <span class="lp-fs-title">Language &amp; Level</span>
+                <button class="lp-reset-link" onclick="FilterBar.resetLangLevel()">Reset</button>
+            </div>
+            <div class="lp-fs-body">
+                <p class="lp-fs-headline">Which language?</p>
+                <p class="lp-fs-sub" style="margin-bottom:12px;">Pick any number — scroll for more.</p>
+                <div class="lp-langlvl-lang">
+                    <div class="lp-picker-list" id="lpLangList"></div>
                 </div>
 
+                <p class="lp-fs-headline" style="margin-top:22px;">How comfortable are you?</p>
+                <p class="lp-fs-sub" style="margin-bottom:12px;">Pick the kind of conversation that feels right for you.
+                </p>
+                <div class="lp-picker-list" id="lpLevelList"></div>
             </div>
+            <div class="lp-fs-foot">
+                <button class="lp-apply-btn" onclick="FilterBar.closeLangLevel()">Done</button>
+            </div>
+        </div>
+    </div>
 
-            <div class="modal-actions">
-                <button class="modal-cancel" onclick="closePolicyModal()">
-                    No / 不同意
-                </button>
-                <button class="modal-confirm" onclick="confirmPolicy()">
-                    Yes, I agree / 我同意
-                </button>
+    <!-- ===== Full-screen: Calendar (single date or range) ===== -->
+    <div class="lp-overlay" id="lpCalendarPanel">
+        <div class="lp-fs-inner">
+            <div class="lp-fs-head">
+                <button class="lp-navbtn" onclick="FilterBar.closeCalendar()" aria-label="Back">‹</button>
+                <span class="lp-fs-title">When</span>
+                <button class="lp-reset-link" onclick="FilterBar.resetDates()">Reset</button>
+            </div>
+            <div class="lp-fs-body">
+                <p class="lp-cal-hint">Tap a day to pick one date, or tap a second day to select a range.</p>
+                <div class="lp-cal-quick">
+                    <span class="lp-chip" id="lpQToday" onclick="FilterBar.quickPick('today')">Today</span>
+                    <span class="lp-chip" id="lpQWeekend" onclick="FilterBar.quickPick('weekend')">This weekend</span>
+                    <span class="lp-chip" id="lpQWeek" onclick="FilterBar.quickPick('week')">Next 7 days</span>
+                </div>
+                <div class="lp-cal-nav">
+                    <button class="lp-cal-arrow" id="lpCalPrev" onclick="FilterBar.calShift(-1)"
+                        aria-label="Previous month">‹</button>
+                    <span class="lp-cal-month" id="lpCalMonthLabel"></span>
+                    <button class="lp-cal-arrow" id="lpCalNext" onclick="FilterBar.calShift(1)"
+                        aria-label="Next month">›</button>
+                </div>
+                <div class="lp-cal-weekdays">
+                    <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                </div>
+                <div class="lp-cal-grid" id="lpCalGrid"></div>
+            </div>
+            <div class="lp-fs-foot">
+                <button class="lp-apply-btn" id="lpCalFootBtn" onclick="FilterBar.closeCalendar()">Show upcoming
+                    events</button>
             </div>
         </div>
     </div>
@@ -250,14 +389,22 @@
     </div>
     </div>
 
+    <script src="js/event-card.js?v=20260908"></script>
+    <script src="js/filter-bar.js?v=20260908"></script>
     <script>
 
         const { BASE_URL, API_KEY } = window.CONFIG;
         const LAST_SELECTED_LOCATION_KEY = "lastSelectedLocation";
+        const ONLINE_LEVEL_ID = "695c763e2d652e065db71030";
+        const LP_CITIES = [
+            { name: "Bangkok", levelId: "69870890d9adda8b3d791661", country: "THAILAND" },
+            { name: "Chiang Mai", levelId: "67eab5b337cd4b56a080743f", country: "THAILAND" },
+            { name: "Phuket", levelId: "6a02e9e90c8f769c0cd9d2c8", country: "THAILAND" },
+            { name: "Chengdu", levelId: "6a7164950117c11720df32be", country: "CHINA" },
+            { name: "Hong Kong", levelId: "6a841f58cca7afd6cad9dd14", country: "HONG KONG" }
+        ];
 
-        let currentLevel = localStorage.getItem(LAST_SELECTED_LOCATION_KEY) ?? "695c763e2d652e065db71030";
-        let membershipType = "community";
-        let englishDifficulty = "all"; // default
+        let currentLevel = localStorage.getItem(LAST_SELECTED_LOCATION_KEY) ?? ONLINE_LEVEL_ID;
         let membershipStatusLoaded = false;
         let cachedCommunitySub = null;
 
@@ -394,53 +541,22 @@
 
         /* ---------------- DATE HELPERS ---------------- */
 
-        function getNextNDays(n) {
-            const days = [];
-            const today = new Date();
-
-            for (let i = 0; i < n; i++) {
-                const d = new Date(today);
-                d.setDate(today.getDate() + i);
-                days.push({
-                    date: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`,
-                    display: d.toLocaleDateString("en-US", {
-                        weekday: "short",
-                        day: "numeric",
-                        month: "short"
-                    })
-                });
-            }
-            return days;
+        function fmtISO(d) {
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
         }
 
-        const dates = getNextNDays(33);
-        let activeDate = null;
-        let selectedLanguage = "";
+        function defaultDateRange() {
+            const from = new Date();
+            const to = new Date();
+            to.setDate(to.getDate() + 33);
+            return { fromDate: fmtISO(from), toDate: fmtISO(to) };
+        }
+
         let sessions = [];
+        let eventOptions = null;
+        let currentFromDate, currentToDate;
 
-        const dateFilter = document.getElementById("dateFilter");
         const eventList = document.getElementById("eventList");
-
-        function renderDates() {
-            dateFilter.innerHTML = "";
-
-            dates.forEach(d => {
-                const btn = document.createElement("div");
-                btn.className = "date-btn" + (activeDate === d.date ? " active" : "");
-                btn.innerText = d.display;
-
-                btn.onclick = () => {
-                    activeDate = d.date;
-                    selectedLanguage = "";
-                    document.querySelectorAll(".topic").forEach(t => t.classList.remove("active"));
-                    document.querySelector('.topic[data-topic=""]').classList.add("active");
-                    renderDates();
-                    renderEvents();
-                };
-
-                dateFilter.appendChild(btn);
-            });
-        }
 
         async function getReadingSessions(fromDate, toDate) {
             const params = new URLSearchParams({
@@ -470,29 +586,8 @@
         }
 
         function renderEvents() {
-            let filtered = [...sessions];
-
-            // 🔹 English Class difficulty filter
-            // 🔹 English Class difficulty filter
-            if (membershipType === "english" && englishDifficulty !== "all") {
-                filtered = filtered.filter(s =>
-                    s.title.toLowerCase().includes(englishDifficulty)
-                );
-            }
-
-            // 🔹 Community topic filter
-            if (membershipType === "community" && selectedLanguage) {
-                filtered = filtered.filter(s => {
-
-                    const codes = (s.languages || []).map(l => l.language.toLowerCase());
-                    return codes.includes(selectedLanguage.toLowerCase());
-                });
-            }
-
-            // 🔹 Date filter
-            if (activeDate) {
-                filtered = filtered.filter(s => s.date === activeDate);
-            }
+            const filtered = FilterBar.filterSessions(sessions);
+            const isOnline = currentLevel === ONLINE_LEVEL_ID;
 
             eventList.innerHTML = "";
 
@@ -505,137 +600,7 @@
                 const card = document.createElement("div");
                 card.className = "card";
                 card.style.cursor = "pointer";
-
-                // ✅ FIXED: flag logic inside loop
-                let flagImg = "";
-
-                const isCanceled = s.maxParticipants === -1;
-                const languages = s.languages || [];
-                const languageCodes = languages.map(l => l.language);
-
-                if (languageCodes.includes("en") && languageCodes.includes("th")) {
-                    flagImg = "assets/flags/thai-eng.png";
-                } else if (languageCodes.includes("en")) {
-                    flagImg = "assets/flags/english.png";
-                } else if (languageCodes.includes("th")) {
-                    flagImg = "assets/flags/thai.png";
-                } else if (languageCodes.includes("zh")) {
-                    flagImg = "assets/flags/chinese.png";
-                } else if (languageCodes.includes("ru")) {
-                    flagImg = "assets/flags/russian.png";
-                } else if (languageCodes.includes("ja")) {
-                    flagImg = "assets/flags/japanese.png";
-                } else if (languageCodes.includes("es")) {
-                    flagImg = "assets/flags/spanish.png";
-                } else if (languageCodes.includes("yue")) {
-                    flagImg = "assets/flags/hk.png";
-                }
-
-                const status = s.maxParticipants === -1
-                    ? "Canceled"
-                    : s.isFull
-                        ? "Full"
-                        : "Available";
-
-                const statusClass = s.maxParticipants === -1
-                    ? "canceled"
-                    : s.isFull
-                        ? "full"
-                        : "available";
-
-                const readableDateTime = `${Utils.formatDate(s.date)} · ${s.shortTime} (${Utils.getTimeZoneName()})`;
-
-                console.log('s', s);
-                const isOnline =
-                    currentLevel === "695c763e2d652e065db71030" ||
-                    currentLevel === "6982e63b245037c5977a9390";
-
-                let onlinePlatform = "Tencent";
-                if (s.online) {
-                    const platformMeta = findMeta(s.options.platforms, s.online.platform);
-                    onlinePlatform = platformMeta?.label || s.online.platform;
-                }
-
-                const locationHtml = isOnline
-                    ? `<div class="event-location">🌐 Online · ${onlinePlatform}</div>`
-                    : s.locationUrl
-                        ? `<div class="event-location">
-                📍 <a href="${s.locationUrl}"
-                    target="_blank"
-                    rel="noopener"
-                    onclick="event.stopPropagation()"
-                >${s.location || "View location"}</a>
-           </div>`
-                        : s.location
-                            ? `<div class="event-location">📍 ${s.location}</div>`
-                            : "";
-
-                const hostHtml =
-                    s.hosts?.length
-                        ? `
-                <div class="event-hosts">
-                    <div class="host-avatars">
-                        ${s.hosts.map(host => `
-                            <img
-                                src="${host.profile?.profilePic || 'assets/logos/lingping_logo.png'}"
-                                class="host-avatar-small"
-                                alt="${host.profile?.displayName || host.displayName}"
-                                onclick="event.stopPropagation(); viewProfile('${host._id}')"
-                            />
-                        `).join("")}
-                    </div>
-
-                    <div class="host-names">
-                        Hosted by ${s.hosts.map(host => `
-                            <span
-                                class="host-link"
-                                onclick="event.stopPropagation(); viewProfile('${host._id}')"
-                            >
-                                ${host.profile?.displayName || host.displayName}
-                            </span>
-                        `).join(", ")}
-                    </div>
-                </div>`
-                        : "";
-
-                card.innerHTML = `
-                <div class="event-card">
-                    <div class="event-photo">
-                        <img class="event-img" src="${s.photoUrl}" alt="${s.title}">
-
-                        ${flagImg ? `
-                            <img class="lang-flag" src="${flagImg}" />
-                        ` : ""}
-                    </div>
-                    <div class="event-body">
-                        <!-- Title + Status -->
-                        <div class="event-row">
-                            <div class="event-title">${s.title}</div>
-                            <div class="status ${statusClass}"> ${status} </div>
-                        </div class="event-row">
-                         ${renderLanguageChips(s.languages)}
-                        
-                        <div class="event-row">
-                            ${readableDateTime}
-                        </div>
-
-                        <div class="event-row">
-                            ${locationHtml}
-                        </div>
-
-                        <div class="event-row event-footer">
-                            ${hostHtml}
-
-                             <button class="book-btn ${isCanceled ? "" : s.isFull ? "waitlist" : "available"}" ${isCanceled ? "disabled" : ""} onclick='event.stopPropagation(); handleBookClick("${s.id}")'>
-                            ${s.isFull ? "Join Waitlist" : "Book"}
-                        </button>
-                        </div>
-                        
-
-                       
-                    </div class="event-body">
-                </div class="event-card">
-        `;
+                card.innerHTML = buildEventCard(s, { isOnline });
 
                 card.onclick = (e) => {
                     if (e.target.closest(".book-btn")) return;
@@ -648,31 +613,10 @@
             });
         }
 
-        document.querySelectorAll(".topic").forEach(btn => {
-            btn.onclick = () => {
-                document.querySelectorAll(".topic").forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-                selectedLanguage = btn.dataset.topic;
-                activeDate = null;
-                renderDates();
-                renderEvents();
-            };
-        });
-
-        async function init() {
-            renderUserWelcome();
-            // await renderMembershipStatus();
-            renderDates();
-
-            // Fetch options and sessions in parallel — they don't depend on each other
-            const [eventOptions, raw] = await Promise.all([
-                loadSessionOptions(),
-                getReadingSessions(dates[0].date, dates[dates.length - 1].date)
-            ]);
-
+        function mapSessions(raw) {
             const now = Date.now();
 
-            sessions = raw
+            return raw
                 .filter(s => {
                     const start = new Date(s.startTime).getTime();
                     const end = start + (s.durationMins * 60000);
@@ -689,7 +633,7 @@
 
                     return {
                         id: s._id,
-                        date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
+                        date: fmtISO(start),
                         time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
                         shortTime: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
                         title: s.title,
@@ -712,156 +656,69 @@
                         online: s.online
                     };
                 });
+        }
 
+        async function loadSessions() {
+            const raw = await getReadingSessions(currentFromDate, currentToDate);
+            sessions = mapSessions(raw);
+            renderEvents();
+        }
+
+        async function init() {
+            renderUserWelcome();
+
+            const range = defaultDateRange();
+            currentFromDate = range.fromDate;
+            currentToDate = range.toDate;
+
+            // Fetch options and sessions in parallel — they don't depend on each other
+            const [opts, raw] = await Promise.all([
+                loadSessionOptions(),
+                getReadingSessions(currentFromDate, currentToDate)
+            ]);
+
+            eventOptions = opts;
+
+            FilterBar.init({
+                onlineLevelId: ONLINE_LEVEL_ID,
+                cities: LP_CITIES,
+                eventOptions,
+                initialLevelId: currentLevel,
+                getSessions: () => sessions,
+                onLocationChange(levelId) {
+                    currentLevel = levelId;
+                    localStorage.setItem(LAST_SELECTED_LOCATION_KEY, levelId);
+                    loadSessions();
+                },
+                onDateApply(fromDate, toDate) {
+                    const def = defaultDateRange();
+                    currentFromDate = fromDate || def.fromDate;
+                    currentToDate = toDate || def.toDate;
+                    loadSessions();
+                },
+                onFiltersChange() {
+                    renderEvents();
+                }
+            });
+
+            sessions = mapSessions(raw);
             renderEvents();
         }
 
         Auth.renderNav();
         init();
 
-        document.querySelectorAll(".membership-btn").forEach(btn => {
-            btn.onclick = async () => {
-                document.querySelectorAll(".membership-btn")
-                    .forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-
-                membershipType = btn.dataset.type;
-
-                // Toggle filters
-                document.querySelector(".topic").style.display =
-                    membershipType === "community" ? "flex" : "none";
-
-                document.getElementById("englishLevels").classList.toggle(
-                    "hidden",
-                    membershipType !== "english"
-                );
-
-                // Reset defaults
-                const filtersInline = document.querySelector(".filters-inline");
-                if (membershipType === "community") {
-                    filtersInline.style.display = "flex";
-                    currentLevel = "695c763e2d652e065db71030"; // community default
-                } else {
-                    currentLevel = "6982e63b245037c5977a9390"; // English Online default
-                    englishDifficulty = "all";
-
-                    filtersInline.style.display = "none";
-                }
-
-                await init();
-            };
-        });
-
-        document.querySelectorAll(".english-levels .level").forEach(btn => {
-            btn.onclick = () => {
-                document.querySelectorAll(".english-levels .level")
-                    .forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-
-                englishDifficulty = btn.innerText.toLowerCase(); // "easy" or "medium"
-                renderEvents(); // 🔥 client-side only
-            };
-        });
-
         function handleBookClick(sessionId) {
-            // Only English classes need consent
-
             const session = sessions.find(x => x.id === sessionId);
-            console.log(session);
 
             if (session?.isFull) {
                 joinWaitlist(sessionId);
                 return;
             }
 
-            if (membershipType !== "english") {
-
-                currentSessionId = sessionId;
-
-                preBookingModal(sessionId, session);
-                return;
-            }
-
-            currentSession = session;
-
-            showCancelPolicyModal(() => {
-                // user agreed
-                bookSession({ sessionId });
-            });
+            currentSessionId = sessionId;
+            preBookingModal(sessionId, session);
         }
-
-        let policyConfirmCallback = null;
-
-        function showCancelPolicyModal(onConfirm) {
-            policyConfirmCallback = onConfirm;
-            document.getElementById("policyModal").classList.remove("hidden");
-        }
-
-        function closePolicyModal() {
-            policyConfirmCallback = null;
-            document.getElementById("policyModal").classList.add("hidden");
-        }
-
-        function confirmPolicy() {
-            if (typeof policyConfirmCallback === "function") {
-                policyConfirmCallback();
-            }
-            closePolicyModal();
-        }
-
-        const displayBtn = document.getElementById("locationDisplay");
-        const options = document.getElementById("locationOptions");
-
-        const savedLevel = localStorage.getItem(LAST_SELECTED_LOCATION_KEY);
-        if (savedLevel) {
-            const savedOption = document.querySelector(`.location-option[data-level="${savedLevel}"]`);
-            if (savedOption) {
-                displayBtn.innerHTML = savedOption.innerHTML;
-                displayBtn.dataset.level = savedLevel;
-                currentLevel = savedLevel;
-            }
-        }
-
-        displayBtn.addEventListener("click", () => {
-            options.classList.toggle("hidden");
-        });
-
-        document.querySelectorAll(".location-option").forEach(option => {
-            option.addEventListener("click", () => {
-
-                const filtersInline = document.querySelector(".filters-inline");
-
-                if (membershipType === "english") {
-                    // hide filters for English
-                    currentLevel = "6982e63b245037c5977a9390";
-                } else {
-                    // show filters for community
-                    currentLevel = option?.dataset?.level;
-                }
-
-                init();
-
-                //now
-                const text = option.innerText;
-                const level = option.dataset.level;
-                currentLevel = option.dataset.level;
-
-                // ✅ FIX 1: guard against undefined
-                if (!level) {
-                    console.error("Missing data-level:", option);
-                    return;
-                }
-
-                localStorage.setItem(LAST_SELECTED_LOCATION_KEY, level);
-
-                displayBtn.innerHTML = `${text}`;
-                displayBtn.dataset.level = level;
-
-                options.classList.add("hidden");
-
-                // filterByLocation(level);
-            });
-        });
 
         function showSurprise() {
             loadQuote()

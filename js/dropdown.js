@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(data => {
                 header.innerHTML = data;
                 updateAuthNav();
+                updateMembershipCta();
             });
     }
 
@@ -30,6 +31,35 @@ function toggleMoreDropdown() {
     if (!menu) return;
 
     menu.classList.toggle("hidden");
+}
+
+function isIndexPage() {
+    const path = location.pathname;
+    return path === "/" || path.endsWith("/index.html");
+}
+
+// The header's CTA points at whichever plan page fits the page it's shown
+// on, instead of the generic plans hub.
+function updateMembershipCta() {
+    const cta = document.querySelector(".membership-cta");
+    if (!cta) return;
+
+    if (location.pathname.endsWith("english-sessions.html")) {
+        cta.textContent = "Choose Your English Package";
+        cta.href = "subscriptions/english-classes.html";
+    } else if (isIndexPage()) {
+        cta.href = "subscriptions/community-access.html";
+    }
+}
+
+// Logo: on the home page it keeps its existing easter-egg behavior; from
+// anywhere else it's just a way back home.
+function handleLogoClick() {
+    if (isIndexPage()) {
+        if (typeof showSurprise === "function") showSurprise();
+    } else {
+        window.location.href = "/";
+    }
 }
 
 // Show only "Profile" when logged in, or "Log In" when logged out
