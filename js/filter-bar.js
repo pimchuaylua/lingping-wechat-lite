@@ -48,6 +48,7 @@ const FilterBar = (function () {
         document.getElementById('lpDtTabOnline')?.classList.toggle('lp-loc-tab--active', which === 'online');
         document.getElementById('lpDtTabPerson')?.classList.toggle('lp-loc-tab--active', which === 'person');
         document.getElementById('lpCityWrap').classList.toggle('lp-show', which === 'person');
+        document.getElementById('lpDtCityWrap')?.classList.toggle('lp-show', which === 'person');
         if (which !== 'person') closeCityDrop();
 
         if (which === 'online') {
@@ -75,6 +76,7 @@ const FilterBar = (function () {
             item.classList.toggle('lp-citydrop-item--active', item.dataset.name === name);
         });
         closeCityDrop();
+        closeDtSegs();
         cfg.onLocationChange(city.levelId);
         updateWhereLabel('person');
     }
@@ -91,9 +93,9 @@ const FilterBar = (function () {
         }
     }
 
+    /** Renders the same city list into both the mobile dropdown and the
+     * desktop "Where" dropdown so they never drift out of sync. */
     function renderCityList() {
-        const panel = document.getElementById('lpCityListPanel');
-        if (!panel) return;
         let html = '';
         let lastCountry = null;
         cfg.cities.forEach(city => {
@@ -103,7 +105,10 @@ const FilterBar = (function () {
             }
             html += `<div class="lp-citydrop-item" data-name="${city.name}" onclick="FilterBar.selectCity('${city.name}')">${city.name}</div>`;
         });
-        panel.innerHTML = html;
+        const panel = document.getElementById('lpCityListPanel');
+        if (panel) panel.innerHTML = html;
+        const dtList = document.getElementById('lpDtCityList');
+        if (dtList) dtList.innerHTML = html;
     }
 
     /** Preselect the Online/In-Person tab + city to match a level id already in effect (e.g. restored from localStorage). */
@@ -119,6 +124,7 @@ const FilterBar = (function () {
             document.getElementById('lpDtTabOnline')?.classList.remove('lp-loc-tab--active');
             document.getElementById('lpDtTabPerson')?.classList.add('lp-loc-tab--active');
             document.getElementById('lpCityWrap').classList.add('lp-show');
+            document.getElementById('lpDtCityWrap')?.classList.add('lp-show');
             updateWhereLabel('person');
         } else {
             document.querySelector('.lp-citydrop-item')?.classList.add('lp-citydrop-item--active');

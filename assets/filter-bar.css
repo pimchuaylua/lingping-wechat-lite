@@ -167,6 +167,8 @@
 .lp-dt-dropdown--wide{ width:320px; }
 .lp-dt-dropdown .lp-loc-tabs{ padding:0; }
 .lp-dt-dropdown .lp-picker-list{ flex:none; padding:0; }
+.lp-dt-citylist{ display:none; margin-top:10px; padding-top:8px; border-top:1px solid var(--lp-line); max-height:220px; overflow-y:auto; }
+.lp-dt-citylist.lp-show{ display:block; }
 .lp-dt-sublabel{ font-size:0.68rem; font-weight:800; letter-spacing:0.05em; text-transform:uppercase; color:var(--lp-ink-soft); margin:0 0 4px; }
 
 .lp-dt-chiprow{ display:flex; align-items:center; gap:10px; padding:16px 4px 4px; flex-wrap:wrap; width:100%; margin:0 auto; }
