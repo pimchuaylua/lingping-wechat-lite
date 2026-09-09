@@ -35,48 +35,164 @@
     <div class="container">
         <div id="header"></div>
 
+        <!-- ===== Desktop: search-pill nav (>=1024px). Mobile bar below stays untouched. ===== -->
+        <div class="lp-desktop-bar">
+            <div class="lp-dt-pill" id="lpDtPill">
+                <div class="lp-dt-seg" id="lpDtSegLoc" onclick="FilterBar.toggleDtSeg('loc')">
+                    <span class="lp-dt-seg-label">Where</span>
+                    <span class="lp-dt-seg-val" id="lpDtLocVal">🌐 Online</span>
+                    <div class="lp-dt-dropdown" onclick="event.stopPropagation()">
+                        <div class="lp-loc-tabs">
+                            <button class="lp-loc-tab lp-loc-tab--active" id="lpDtTabOnline"
+                                onclick="FilterBar.setLocation('online')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="12" cy="12" r="9" />
+                                    <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+                                </svg>
+                                Online
+                            </button>
+                            <button class="lp-loc-tab" id="lpDtTabPerson" onclick="FilterBar.setLocation('person')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z" />
+                                    <circle cx="12" cy="10" r="2.5" />
+                                </svg>
+                                In Person
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lp-dt-divider"></div>
+
+                <div class="lp-dt-seg lp-placeholder" id="lpDtSegMood" onclick="FilterBar.toggleDtSeg('mood')">
+                    <span class="lp-dt-seg-label">Interests</span>
+                    <span class="lp-dt-seg-val" id="lpDtMoodVal">💭 What are you feeling?</span>
+                    <div class="lp-dt-dropdown" onclick="event.stopPropagation()">
+                        <div class="lp-picker-list" id="lpDtMoodList"></div>
+                    </div>
+                </div>
+
+                <div class="lp-dt-divider"></div>
+
+                <div class="lp-dt-seg lp-placeholder" id="lpDtSegLang" onclick="FilterBar.toggleDtSeg('lang')">
+                    <span class="lp-dt-seg-label">Language &amp; Level</span>
+                    <span class="lp-dt-seg-val" id="lpDtLangVal">🗣️ Which language?</span>
+                    <div class="lp-dt-dropdown lp-dt-dropdown--wide" onclick="event.stopPropagation()">
+                        <p class="lp-dt-sublabel">Language</p>
+                        <div class="lp-langlvl-lang">
+                            <div class="lp-picker-list" id="lpDtLangList"></div>
+                        </div>
+                        <p class="lp-dt-sublabel" style="margin-top:12px;">Level</p>
+                        <div class="lp-picker-list" id="lpDtLevelList"></div>
+                    </div>
+                </div>
+
+                <div class="lp-dt-divider"></div>
+
+                <div class="lp-dt-seg lp-placeholder" id="lpDtSegWhen" onclick="FilterBar.openCalendar()">
+                    <span class="lp-dt-seg-label">When</span>
+                    <span class="lp-dt-seg-val" id="lpDtDateVal">Anytime</span>
+                </div>
+
+                <div class="lp-dt-searchbtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.6">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="lp-dt-chiprow">
+                <button class="lp-dt-filterbtn" onclick="FilterBar.toggleDtSeg('mood')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.2">
+                        <path d="M4 5h16l-6 8v6l-4-2v-4z" />
+                    </svg>
+                    Filters
+                </button>
+                <button class="lp-dt-qchip" data-cat="discussion"
+                    onclick="FilterBar.toggleQuickCategory('discussion')">💬 Discussion</button>
+                <button class="lp-dt-qchip" data-cat="language"
+                    onclick="FilterBar.toggleQuickCategory('language')">🗣️ Language</button>
+                <button class="lp-dt-qchip" data-cat="food" onclick="FilterBar.toggleQuickCategory('food')">🍜
+                    Food</button>
+                <button class="lp-dt-qchip" data-cat="book" onclick="FilterBar.toggleQuickCategory('book')">📚
+                    Book Club</button>
+                <button class="lp-dt-qchip" data-cat="movie" onclick="FilterBar.toggleQuickCategory('movie')">🎬
+                    Movie</button>
+                <button class="lp-dt-reset" onclick="FilterBar.resetAllFilters()">Reset</button>
+            </div>
+        </div>
+
         <div class="lp-container">
             <div class="lp-filterbar">
 
                 <div class="lp-loc-tabs">
-                    <button class="lp-loc-tab lp-loc-tab--active" id="lpTabOnline" onclick="FilterBar.setLocation('online')">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
+                    <button class="lp-loc-tab lp-loc-tab--active" id="lpTabOnline"
+                        onclick="FilterBar.setLocation('online')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="9" />
+                            <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+                        </svg>
                         Online
                     </button>
                     <button class="lp-loc-tab" id="lpTabPerson" onclick="FilterBar.setLocation('person')">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z" />
+                            <circle cx="12" cy="10" r="2.5" />
+                        </svg>
                         In Person
                     </button>
                 </div>
 
                 <div class="lp-citywrap" id="lpCityWrap">
                     <button class="lp-citydrop-btn" id="lpCityBtn" onclick="FilterBar.toggleCityDrop()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
-                        <span id="lpCityLabel">Bangkok</span>
-                        <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
+                        📍 <span id="lpCityLabel">Bangkok</span>
+                        <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.6">
+                            <path d="M6 9l6 6 6-6" />
+                        </svg>
                     </button>
                     <div class="lp-citydrop-list" id="lpCityListPanel"></div>
                 </div>
 
                 <div class="lp-acc">
                     <button class="lp-acc-head lp-placeholder" id="lpMoodBtn" onclick="FilterBar.openMood()">
-                        💭 <span id="lpMoodLabel">What do you feel like doing?</span>
-                        <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
+                        💭 <span id="lpMoodLabel">What are you feeling?</span>
+                        <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.6">
+                            <path d="M6 9l6 6 6-6" />
+                        </svg>
                     </button>
                 </div>
 
                 <div class="lp-acc">
                     <button class="lp-acc-head lp-placeholder" id="lpLangLevelBtn" onclick="FilterBar.openLangLevel()">
                         🗣️ <span id="lpLangLevelLabel">Which language?</span>
-                        <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
+                        <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.6">
+                            <path d="M6 9l6 6 6-6" />
+                        </svg>
                     </button>
                 </div>
 
                 <div class="lp-daterow">
-                    <button class="lp-date-btn" onclick="FilterBar.openCalendar()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+                    <button class="lp-date-btn lp-placeholder" id="lpDateBtn" onclick="FilterBar.openCalendar()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="5" width="18" height="16" rx="3" />
+                            <path d="M3 10h18M8 3v4M16 3v4" />
+                        </svg>
                         <span id="lpDateLabel">Anytime</span>
-                        <svg class="lp-chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
+                        <svg class="lp-chev" width="11" height="11" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.6">
+                            <path d="M6 9l6 6 6-6" />
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -86,12 +202,12 @@
         <div id="eventList"></div>
     </div>
 
-    <!-- ===== Full-screen: What do you feel like doing? (categories) ===== -->
+    <!-- ===== Full-screen: What are you feeling? (categories) ===== -->
     <div class="lp-overlay" id="lpMoodPanel">
         <div class="lp-fs-inner">
             <div class="lp-fs-head">
                 <button class="lp-navbtn" onclick="FilterBar.closeMood()" aria-label="Back">‹</button>
-                <span class="lp-fs-title">What do you feel like doing?</span>
+                <span class="lp-fs-title">What are you feeling?</span>
                 <button class="lp-reset-link" onclick="FilterBar.resetMood()">Reset</button>
             </div>
             <div class="lp-fs-body">
@@ -120,7 +236,8 @@
                 </div>
 
                 <p class="lp-fs-headline" style="margin-top:22px;">How comfortable are you?</p>
-                <p class="lp-fs-sub" style="margin-bottom:12px;">Pick the kind of conversation that feels right for you.</p>
+                <p class="lp-fs-sub" style="margin-bottom:12px;">Pick the kind of conversation that feels right for you.
+                </p>
                 <div class="lp-picker-list" id="lpLevelList"></div>
             </div>
             <div class="lp-fs-foot">
@@ -145,15 +262,20 @@
                     <span class="lp-chip" id="lpQWeek" onclick="FilterBar.quickPick('week')">Next 7 days</span>
                 </div>
                 <div class="lp-cal-nav">
-                    <button class="lp-cal-arrow" id="lpCalPrev" onclick="FilterBar.calShift(-1)" aria-label="Previous month">‹</button>
+                    <button class="lp-cal-arrow" id="lpCalPrev" onclick="FilterBar.calShift(-1)"
+                        aria-label="Previous month">‹</button>
                     <span class="lp-cal-month" id="lpCalMonthLabel"></span>
-                    <button class="lp-cal-arrow" id="lpCalNext" onclick="FilterBar.calShift(1)" aria-label="Next month">›</button>
+                    <button class="lp-cal-arrow" id="lpCalNext" onclick="FilterBar.calShift(1)"
+                        aria-label="Next month">›</button>
                 </div>
-                <div class="lp-cal-weekdays"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+                <div class="lp-cal-weekdays">
+                    <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                </div>
                 <div class="lp-cal-grid" id="lpCalGrid"></div>
             </div>
             <div class="lp-fs-foot">
-                <button class="lp-apply-btn" id="lpCalFootBtn" onclick="FilterBar.closeCalendar()">Show upcoming events</button>
+                <button class="lp-apply-btn" id="lpCalFootBtn" onclick="FilterBar.closeCalendar()">Show upcoming
+                    events</button>
             </div>
         </div>
     </div>
