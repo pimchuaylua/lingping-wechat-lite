@@ -164,39 +164,47 @@
                     <div class="lp-citydrop-list" id="lpCityListPanel"></div>
                 </div>
 
-                <div class="lp-acc">
-                    <button class="lp-acc-head lp-placeholder" id="lpMoodBtn" onclick="FilterBar.openMood()">
-                        💭 <span id="lpMoodLabel">What are you feeling?</span>
-                        <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                <button class="lp-searchbar" id="lpSearchbar" onclick="FilterBar.toggleSearchExpand()">
+                    <svg class="lp-mag" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.4">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <span class="lp-searchbar-label">Start exploring</span>
+                    <span class="lp-badge" id="lpSearchBadge" hidden>0</span>
+                    <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.6">
+                        <path d="M6 9l6 6 6-6" />
+                    </svg>
+                </button>
+                <div class="lp-searchexpand" id="lpSearchExpand">
+                    <div class="lp-erow" onclick="FilterBar.openMood()">
+                        <span class="lp-ic">💭</span>
+                        <span class="lp-erow-txt">What are you feeling?</span>
+                        <span class="lp-erow-val" id="lpMoodSummary"></span>
+                        <svg class="lp-chev2" width="11" height="11" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2.6">
-                            <path d="M6 9l6 6 6-6" />
+                            <path d="M9 6l6 6-6 6" />
                         </svg>
-                    </button>
-                </div>
-
-                <div class="lp-acc">
-                    <button class="lp-acc-head lp-placeholder" id="lpLangLevelBtn" onclick="FilterBar.openLangLevel()">
-                        🗣️ <span id="lpLangLevelLabel">Which language?</span>
-                        <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    </div>
+                    <div class="lp-erow" onclick="FilterBar.openLangLevel()">
+                        <span class="lp-ic">🗣️</span>
+                        <span class="lp-erow-txt">Language</span>
+                        <span class="lp-erow-val" id="lpLangSummary"></span>
+                        <svg class="lp-chev2" width="11" height="11" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2.6">
-                            <path d="M6 9l6 6 6-6" />
+                            <path d="M9 6l6 6-6 6" />
                         </svg>
-                    </button>
-                </div>
-
-                <div class="lp-daterow">
-                    <button class="lp-date-btn lp-placeholder" id="lpDateBtn" onclick="FilterBar.openCalendar()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <rect x="3" y="5" width="18" height="16" rx="3" />
-                            <path d="M3 10h18M8 3v4M16 3v4" />
-                        </svg>
-                        <span id="lpDateLabel">Anytime</span>
-                        <svg class="lp-chev" width="11" height="11" viewBox="0 0 24 24" fill="none"
+                    </div>
+                    <div class="lp-erow" onclick="FilterBar.openCalendar()">
+                        <span class="lp-ic">📅</span>
+                        <span class="lp-erow-txt">Date</span>
+                        <span class="lp-erow-val" id="lpDateSummary"></span>
+                        <svg class="lp-chev2" width="11" height="11" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2.6">
-                            <path d="M6 9l6 6 6-6" />
+                            <path d="M9 6l6 6-6 6" />
                         </svg>
-                    </button>
+                    </div>
                 </div>
             </div>
         </div>

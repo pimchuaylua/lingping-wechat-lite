@@ -77,6 +77,25 @@
 .lp-date-btn.lp-placeholder{ color:var(--lp-ink-soft); font-weight:400; }
 .lp-date-btn .lp-chev{ margin-left:auto; opacity:0.55; }
 
+/* ---------- collapsible mobile search bar (Mood/Language/Date rows) ---------- */
+.lp-searchbar{ display:flex; align-items:center; gap:8px; width:calc(100% - 32px); margin:0 16px 10px; padding:11px 14px; border-radius:14px; border:1.5px solid var(--lp-line-strong); background:var(--lp-surface); font-size:0.85rem; font-weight:700; color:var(--lp-ink); cursor:pointer; font-family:inherit; text-align:left; }
+.lp-searchbar .lp-mag{ flex:none; opacity:0.65; }
+.lp-searchbar-label{ flex:1; }
+.lp-searchbar .lp-badge{ background:var(--lp-accent); color:#fff; font-size:0.7rem; font-weight:800; min-width:18px; height:18px; border-radius:999px; display:flex; align-items:center; justify-content:center; padding:0 5px; flex:none; }
+.lp-searchbar .lp-badge[hidden]{ display:none; }
+.lp-searchbar .lp-chev{ flex:none; opacity:0.6; transition:transform .2s ease; }
+.lp-searchbar.lp-open .lp-chev{ transform:rotate(180deg); }
+
+.lp-searchexpand{ margin:0 16px; max-height:0; opacity:0; overflow:hidden; border-radius:14px; transition:max-height .2s ease, opacity .2s ease; }
+.lp-searchexpand.lp-open{ max-height:320px; opacity:1; margin-bottom:10px; border:1.5px solid var(--lp-line-strong); background:var(--lp-surface); padding:0 14px; }
+
+.lp-erow{ display:flex; align-items:center; gap:10px; padding:11px 0; border-bottom:1px solid var(--lp-line); cursor:pointer; }
+.lp-erow:last-child{ border-bottom:none; }
+.lp-erow .lp-ic{ font-size:16px; flex:none; width:20px; text-align:center; }
+.lp-erow-txt{ flex:1; font-size:0.85rem; font-weight:600; color:var(--lp-ink); }
+.lp-erow-val{ font-size:0.8rem; font-weight:700; color:var(--lp-accent-ink); text-align:right; max-width:45%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.lp-chev2{ flex:none; opacity:0.4; }
+
 /* ---------- full-screen overlays: Mood / Language & Level / Calendar ---------- */
 .lp-overlay{
   position:fixed; inset:0; z-index:1000; background:var(--lp-bg);

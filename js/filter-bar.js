@@ -161,6 +161,7 @@ const FilterBar = (function () {
         renderCheckList(document.getElementById('lpDtMoodList'), cfg.eventOptions.categories, state.categories, opts);
         updateMoodLabel();
         updateQuickChips();
+        updateSearchBadge();
         cfg.onFiltersChange();
     }
 
@@ -186,6 +187,9 @@ const FilterBar = (function () {
             label.textContent = text || placeholder;
             btn.classList.toggle('lp-placeholder', !text);
         });
+
+        const summary = document.getElementById('lpMoodSummary');
+        if (summary) summary.textContent = text(false) || '';
     }
 
     function updateQuickChips() {
@@ -226,6 +230,7 @@ const FilterBar = (function () {
         renderCheckList(document.getElementById('lpDtLevelList'), cfg.eventOptions.proficiencyLevels, state.levels, lvlOpts);
 
         updateLangLevelLabel();
+        updateSearchBadge();
         cfg.onFiltersChange();
     }
 
@@ -257,6 +262,24 @@ const FilterBar = (function () {
             label.textContent = text || placeholder;
             btn.classList.toggle('lp-placeholder', !text);
         });
+
+        const summary = document.getElementById('lpLangSummary');
+        if (summary) summary.textContent = text(false) || '';
+    }
+
+    /** Badge on the collapsed search pill: total facets selected across
+     * category/language/level, hidden entirely at 0. */
+    function updateSearchBadge() {
+        const badge = document.getElementById('lpSearchBadge');
+        if (!badge) return;
+        const count = state.categories.size + state.languages.size + state.levels.size;
+        badge.textContent = String(count);
+        badge.hidden = count === 0;
+    }
+
+    function toggleSearchExpand() {
+        document.getElementById('lpSearchbar')?.classList.toggle('lp-open');
+        document.getElementById('lpSearchExpand')?.classList.toggle('lp-open');
     }
 
     function resetAllFilters() {
@@ -412,11 +435,14 @@ const FilterBar = (function () {
             : !rangeEnd
                 ? Utils.formatDate(rangeStart)
                 : `${Utils.formatDate(rangeStart)} – ${Utils.formatDate(rangeEnd)}`;
-        document.getElementById('lpDateLabel').textContent = text;
+        const label = document.getElementById('lpDateLabel');
+        if (label) label.textContent = text;
         document.getElementById('lpDateBtn')?.classList.toggle('lp-placeholder', !rangeStart);
         const dtVal = document.getElementById('lpDtDateVal');
         if (dtVal) dtVal.textContent = text;
         document.getElementById('lpDtSegWhen')?.classList.toggle('lp-placeholder', !rangeStart);
+        const summary = document.getElementById('lpDateSummary');
+        if (summary) summary.textContent = text;
     }
 
     function updateCalFooter() {
@@ -494,6 +520,7 @@ const FilterBar = (function () {
         renderLangLevelLists();
         updateDateLabel();
         updateCalFooter();
+        updateSearchBadge();
     }
 
     return {
@@ -512,6 +539,7 @@ const FilterBar = (function () {
         resetAllFilters,
         toggleQuickCategory,
         toggleDtSeg,
+        toggleSearchExpand,
         openCalendar,
         closeCalendar,
         resetDates,
