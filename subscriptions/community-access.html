@@ -9,17 +9,19 @@
     <link rel="stylesheet" href="../assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="../assets/subscription_main_style.css?v=20260513">
     <link rel="stylesheet" href="../assets/plans_style.css?v=2">
+    <script src="../js/translate.js?v=20260911"></script>
+    <script src="../js/translations.js?v=20260911"></script>
 </head>
 
 <body>
 
     <div class="container">
 
-        <div class="back-btn" onclick="history.back()">← Back</div>
+        <div class="back-btn" onclick="history.back()" data-i18n="backBtn">← Back</div>
 
         <div class="plans-hero">
-            <h1>Community Membership</h1>
-            <p class="plans-subtitle">
+            <h1 data-i18n="communityMembership">Community Membership</h1>
+            <p class="plans-subtitle" data-i18n="accessSubtitle">
                 Pick how you'd like to join — online only, your city plus online, or every city we're in.
             </p>
         </div>
@@ -29,19 +31,19 @@
             <!-- ONLINE ONLY -->
             <div class="access-card">
                 <div class="access-card-body">
-                    <div class="access-card-title">🌐 Online Only</div>
-                    <div class="access-card-sub">
+                    <div class="access-card-title" data-i18n="onlineOnlyTitle">🌐 Online Only</div>
+                    <div class="access-card-sub" data-i18n="onlineOnlyDesc">
                         Daily online conversations in English, Chinese, and Thai. Join from home, fit it around work, or
                         stay connected while traveling. Keep in touch with your Lingping friends wherever you are.
                     </div>
 
                     <ul>
-                        <li>All online events</li>
-                        <li class="disabled">No onsite access</li>
+                        <li data-i18n="allOnlineEvents">All online events</li>
+                        <li class="disabled" data-i18n="noOnsiteAccess">No onsite access</li>
                     </ul>
                 </div>
 
-                <button class="book-btn" onclick="goOnlineOnly()">
+                <button class="book-btn" onclick="goOnlineOnly()" data-i18n="continueBtn2">
                     Continue
                 </button>
             </div>
@@ -49,33 +51,33 @@
             <!-- FULL ACCESS · YOUR CITY -->
             <div class="access-card">
                 <div class="access-card-body">
-                    <div class="access-card-title">🏡 Your City + 🌐 Online</div>
-                    <div class="access-card-sub">
+                    <div class="access-card-title" data-i18n="yourCityOnlineTitle">🏡 Your City + 🌐 Online</div>
+                    <div class="access-card-sub" data-i18n="yourCityOnlineDesc">
                         Enjoy thoughtful conversations at cafes in your city, meet new friends in person, explore
                         local food, and join city walks, sports, and book clubs in your local community.
                     </div>
 
                     <ul>
-                        <li>All online events</li>
-                        <li>All onsite events in your city</li>
+                        <li data-i18n="allOnlineEvents">All online events</li>
+                        <li data-i18n="allOnsiteYourCity">All onsite events in your city</li>
                     </ul>
                 </div>
 
                 <select class="city-dropdown" onchange="goToCity(this.value)">
-                    <option value="" selected disabled>Choose your city</option>
+                    <option value="" selected disabled data-i18n="chooseYourCity">Choose your city</option>
 
-                    <optgroup label="🇹🇭 Thailand">
-                        <option value="bangkok">Bangkok</option>
-                        <option value="chiangmai">Chiang Mai</option>
-                        <option value="phuket">Phuket</option>
+                    <optgroup label="🇹🇭 Thailand" data-i18n-label="optgroupThailand">
+                        <option value="bangkok" data-i18n="cityBangkok">Bangkok</option>
+                        <option value="chiangmai" data-i18n="cityChiangMai">Chiang Mai</option>
+                        <option value="phuket" data-i18n="cityPhuket">Phuket</option>
                     </optgroup>
 
-                    <optgroup label="🇨🇳 China">
-                        <option value="chengdu">Chengdu</option>
+                    <optgroup label="🇨🇳 China" data-i18n-label="optgroupChina">
+                        <option value="chengdu" data-i18n="cityChengdu">Chengdu</option>
                     </optgroup>
 
-                    <optgroup label="🇭🇰 Hong Kong">
-                        <option value="hongkong">Hong Kong</option>
+                    <optgroup label="🇭🇰 Hong Kong" data-i18n-label="optgroupHongKong">
+                        <option value="hongkong" data-i18n="cityHongKong">Hong Kong</option>
                     </optgroup>
 
                 </select>
@@ -84,19 +86,19 @@
             <!-- FULL ACCESS · ALL CITIES -->
             <div class="access-card">
                 <div class="access-card-body">
-                    <div class="access-card-title">🌍 All Cities + 🌐 Online</div>
-                    <div class="access-card-sub">
+                    <div class="access-card-title" data-i18n="allCitiesOnlineTitle">🌍 All Cities + 🌐 Online</div>
+                    <div class="access-card-sub" data-i18n="allCitiesOnlineDesc">
                         Perfect for travelers — stay connected with the Lingping community wherever you are, from
                         Bangkok to Chiang Mai, from Thailand to China.
                     </div>
 
                     <ul>
-                        <li>All online events</li>
-                        <li>All onsite events in every city</li>
+                        <li data-i18n="allOnlineEvents">All online events</li>
+                        <li data-i18n="allOnsiteEveryCity">All onsite events in every city</li>
                     </ul>
                 </div>
 
-                <button class="book-btn" onclick="goMultiCity()">
+                <button class="book-btn" onclick="goMultiCity()" data-i18n="viewMultiCityPass">
                     View Multi-City Pass
                 </button>
             </div>

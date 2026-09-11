@@ -58,12 +58,15 @@
 .lp-citydrop-btn{ display:flex; align-items:center; gap:8px; width:100%; padding:10px 14px; background:var(--lp-surface); border:1.5px solid var(--lp-line-strong); border-radius:14px; font-size:0.85rem; font-weight:700; color:var(--lp-ink); cursor:pointer; }
 .lp-citydrop-btn .lp-chev{ margin-left:auto; transition:transform .15s ease; opacity:0.6; }
 .lp-citydrop-btn.lp-open .lp-chev{ transform:rotate(180deg); }
-.lp-citydrop-list{ position:absolute; left:16px; width:80%; top:calc(100% - 6px); background:var(--lp-surface); border:1px solid var(--lp-line-strong); border-radius:14px; box-shadow:0 12px 28px rgba(0,0,0,0.16); overflow:hidden; height:0; opacity:0; pointer-events:none; transition:height .18s ease, opacity .18s ease; z-index:20; }
-.lp-citydrop-list.lp-open{ height:320px; opacity:1; pointer-events:auto; overflow-y:auto; }
+.lp-citydrop-list{ position:absolute; left:16px; width:80%; top:calc(100% - 6px); background:var(--lp-surface); border:1px solid var(--lp-line-strong); border-radius:14px; box-shadow:0 12px 28px rgba(0,0,0,0.16); overflow:hidden; max-height:0; opacity:0; pointer-events:none; transition:max-height .18s ease, opacity .18s ease; z-index:20; }
+.lp-citydrop-list.lp-open{ max-height:320px; opacity:1; pointer-events:auto; overflow-y:auto; }
 .lp-citydrop-item{ padding:12px 14px; font-size:0.85rem; font-weight:600; color:var(--lp-ink); cursor:pointer; border-bottom:1px solid var(--lp-line); }
 .lp-citydrop-item:last-child{ border-bottom:none; }
 .lp-citydrop-item--active{ color:var(--lp-accent-ink); font-weight:800; background:var(--lp-flag-bg); }
 .lp-citydrop-category{ padding:10px 14px 4px; font-size:0.68rem; font-weight:800; letter-spacing:0.06em; text-transform:uppercase; color:var(--lp-ink-soft); }
+.lp-city-search{ display:block; box-sizing:border-box; width:calc(100% - 20px); margin:10px 10px 6px; padding:8px 10px; border-radius:10px; border:1px solid var(--lp-line-strong); font-size:0.82rem; font-family:inherit; color:var(--lp-ink); position:sticky; top:0; background:var(--lp-surface); z-index:1; }
+.lp-city-search:focus{ outline:none; border-color:var(--lp-accent); }
+.lp-city-noresults{ padding:14px; font-size:0.82rem; color:var(--lp-ink-soft); text-align:center; }
 
 /* ---------- "What do you feel like doing?" / "Language & Level" accordion buttons ---------- */
 .lp-acc{ margin:0 16px 10px; border-radius:14px; border:1.5px solid var(--lp-line-strong); background:var(--lp-surface); overflow:hidden; }

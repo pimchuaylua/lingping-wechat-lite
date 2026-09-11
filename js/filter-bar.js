@@ -67,6 +67,7 @@ const FilterBar = (function () {
     function closeCityDrop() {
         document.getElementById('lpCityListPanel').classList.remove('lp-open');
         document.getElementById('lpCityBtn').classList.remove('lp-open');
+        resetCitySearch();
     }
     /** City names/country headers are hand-translated (they're a fixed,
      * short list we define, not database content) while the underlying
@@ -113,10 +114,50 @@ const FilterBar = (function () {
             }
             html += `<div class="lp-citydrop-item" data-name="${city.name}" onclick="FilterBar.selectCity('${city.name}')">${cityLabel(city.name)}</div>`;
         });
-        const panel = document.getElementById('lpCityListPanel');
-        if (panel) panel.innerHTML = html;
+        const items = document.getElementById('lpCityItems');
+        if (items) items.innerHTML = html;
         const dtList = document.getElementById('lpDtCityList');
         if (dtList) dtList.innerHTML = html;
+    }
+
+    /** Filters the city list (mobile + desktop) as the user types in the
+     * search box — matches against the currently-displayed label, so it
+     * works whichever language the site is in. Country headers with no
+     * remaining visible city are hidden too. */
+    function filterCityDrop(query) {
+        const q = (query || '').trim().toLowerCase();
+        [
+            { list: document.getElementById('lpCityItems'), noResults: document.getElementById('lpCityNoResults') },
+            { list: document.getElementById('lpDtCityList'), noResults: document.getElementById('lpDtCityNoResults') }
+        ].forEach(({ list, noResults }) => {
+            if (!list) return;
+            let currentHeader = null;
+            let headerHasVisible = false;
+            let anyVisible = false;
+            Array.from(list.children).forEach(el => {
+                if (el.classList.contains('lp-citydrop-category')) {
+                    if (currentHeader) currentHeader.hidden = !headerHasVisible;
+                    currentHeader = el;
+                    headerHasVisible = false;
+                } else {
+                    const match = !q || el.textContent.toLowerCase().includes(q);
+                    el.hidden = !match;
+                    if (match) { headerHasVisible = true; anyVisible = true; }
+                }
+            });
+            if (currentHeader) currentHeader.hidden = !headerHasVisible;
+            if (noResults) noResults.hidden = anyVisible;
+        });
+    }
+
+    /** Clears both search boxes and un-hides everything, so a fresh open
+     * of the dropdown never starts on a stale filter. */
+    function resetCitySearch() {
+        ['lpCitySearch', 'lpDtCitySearch'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        filterCityDrop('');
     }
 
     /** Preselect the Online/In-Person tab + city to match a level id already in effect (e.g. restored from localStorage). */
@@ -313,11 +354,13 @@ const FilterBar = (function () {
         if (!target) return;
         const wasOpen = target.classList.contains('lp-dt-open');
         Object.values(DT_SEG_IDS).forEach(id => document.getElementById(id)?.classList.remove('lp-dt-open'));
+        resetCitySearch();
         if (!wasOpen) target.classList.add('lp-dt-open');
     }
 
     function closeDtSegs() {
         Object.values(DT_SEG_IDS).forEach(id => document.getElementById(id)?.classList.remove('lp-dt-open'));
+        resetCitySearch();
     }
 
     document.addEventListener('click', (e) => {
@@ -549,6 +592,7 @@ const FilterBar = (function () {
         setLocation,
         toggleCityDrop,
         selectCity,
+        filterCityDrop,
         openMood,
         closeMood,
         resetMood,

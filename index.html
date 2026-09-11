@@ -64,7 +64,11 @@
                             </button>
                         </div>
                         <div class="lp-dt-citylist" id="lpDtCityWrap">
+                            <input type="text" class="lp-city-search" id="lpDtCitySearch"
+                                placeholder="Search cities" data-i18n-placeholder="searchCity"
+                                oninput="FilterBar.filterCityDrop(this.value)" onclick="event.stopPropagation()">
                             <div id="lpDtCityList"></div>
+                            <div class="lp-city-noresults" id="lpDtCityNoResults" hidden data-i18n="noCitiesFound">No cities found</div>
                         </div>
                     </div>
                 </div>
@@ -163,7 +167,13 @@
                             <path d="M6 9l6 6 6-6" />
                         </svg>
                     </button>
-                    <div class="lp-citydrop-list" id="lpCityListPanel"></div>
+                    <div class="lp-citydrop-list" id="lpCityListPanel">
+                        <input type="text" class="lp-city-search" id="lpCitySearch"
+                            placeholder="Search cities" data-i18n-placeholder="searchCity"
+                            oninput="FilterBar.filterCityDrop(this.value)" onclick="event.stopPropagation()">
+                        <div id="lpCityItems"></div>
+                        <div class="lp-city-noresults" id="lpCityNoResults" hidden data-i18n="noCitiesFound">No cities found</div>
+                    </div>
                 </div>
 
                 <button class="lp-searchbar" id="lpSearchbar" onclick="FilterBar.toggleSearchExpand()">

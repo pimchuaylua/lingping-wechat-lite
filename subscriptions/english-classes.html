@@ -11,6 +11,8 @@
     <script src="../js/auth.js"></script>
     <script src="../js/payment.js"></script>
     <script src="../js/utils.js"></script>
+    <script src="../js/translate.js?v=20260911"></script>
+    <script src="../js/translations.js?v=20260911"></script>
     <link rel="icon" type="image/png" href="../assets/logos/favicon.png">
 </head>
 
@@ -18,24 +20,24 @@
 
     <div class="container">
 
-        <div class="back-btn" onclick="Utils.goBackOrHome()">← Back</div>
+        <div class="back-btn" onclick="Utils.goBackOrHome()" data-i18n="backBtn">← Back</div>
 
-        <h1 style="text-align:center;">📘 English Classes</h1>
-        <div class="sub" style="text-align:center; margin-bottom:15px;">
+        <h1 style="text-align:center;" data-i18n="englishClassesTitle">📘 English Classes</h1>
+        <div class="sub" style="text-align:center; margin-bottom:15px;" data-i18n="chooseHourCard">
             Choose your hour card
         </div>
 
         <!-- Intro Description -->
         <div class="section" style="margin-bottom:20px;">
-            <div class="sub" style="font-size:15px; color:#444;">
+            <div class="sub" style="font-size:15px; color:#444;" data-i18n="engIntro">
                 Structured lessons with vocabulary training, personalized feedback, and skill-focused improvement.
             </div>
 
             <div style="margin-top:12px; font-size:14px;">
-                <strong>Includes:</strong>
-                <p>• Online & onsite classes</p>
-                <p>• Flexible booking</p>
-                <p>• Use anytime within validity period</p>
+                <strong data-i18n="includesLabel">Includes:</strong>
+                <p data-i18n="engIncludeOnsite">• Online & onsite classes</p>
+                <p data-i18n="engIncludeFlexible">• Flexible booking</p>
+                <p data-i18n="engIncludeValidity">• Use anytime within validity period</p>
             </div>
         </div>
 
@@ -43,14 +45,14 @@
 
             <!-- 1 HOUR Online Class-->
             <div class="plan-card">
-                <div class="plan-title">1 Class (Online, 1 hour)</div>
+                <div class="plan-title" data-i18n="eng1HourTitle">1 Class (Online, 1 hour)</div>
 
                 <div style="font-size:24px; font-weight:600; margin-top:10px;">
                     ฿300
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba74f3cd7353019f77568e')">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba74f3cd7353019f77568e')" data-i18n="buy1Hour">
                         Buy 1 Hour
                     </button>
                 </div>
@@ -58,18 +60,18 @@
 
             <!-- 2 HOURS (In-Person, Chiang Mai) -->
             <div class="plan-card">
-                <div class="plan-title">1 Class Chiangmai (2 hours)</div>
+                <div class="plan-title" data-i18n="eng2HourTitle">1 Class Chiangmai (2 hours)</div>
 
                 <div style="font-size:24px; font-weight:600; margin-top:10px;">
                     ฿600
                 </div>
 
-                <div style="font-size:13px; color:#666; margin-top:5px;">
+                <div style="font-size:13px; color:#666; margin-top:5px;" data-i18n="eng2HourNote">
                     Valid for 1 session, Chiang Mai location
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba78d8cd7353019f775692')">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba78d8cd7353019f775692')" data-i18n="buy2Hours">
                         Buy 2 Hours
                     </button>
                 </div>
@@ -77,26 +79,26 @@
 
             <!-- 10 HOURS -->
             <div class="plan-card">
-                <div class="plan-title">10 Hours – Flexible Use (Online/In-Person)</div>
+                <div class="plan-title" data-i18n="eng10HourTitle">10 Hours – Flexible Use (Online/In-Person)</div>
 
                 <div style="font-size:24px; font-weight:600; margin-top:10px;">
                     ฿2,850
                 </div>
 
-                <div style="margin-top:8px; font-size:14px;">
+                <div style="margin-top:8px; font-size:14px;" data-i18n="eng10PricePerHour">
                     Price per hour: ฿285
                 </div>
 
-                <div style="color:#2e7d32; font-weight:600; margin-top:5px;">
+                <div style="color:#2e7d32; font-weight:600; margin-top:5px;" data-i18n="eng10Save">
                     Save ฿150
                 </div>
 
-                <div style="font-size:13px; color:#666; margin-top:5px;">
+                <div style="font-size:13px; color:#666; margin-top:5px;" data-i18n="eng10Valid">
                     Valid 2 months
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buyPlan('698aebced9adda8b3d792466')">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('698aebced9adda8b3d792466')" data-i18n="buy10Hours">
                         Buy 10 Hours
                     </button>
                 </div>
@@ -115,30 +117,30 @@
                     padding:4px 10px;
                     border-radius:20px;
                     font-weight:600;
-                ">
+                " data-i18n="mostPopular">
                     ⭐ Most Popular
                 </div>
 
-                <div class="plan-title">20 Hours – Flexible Use (Online/In-Person)</div>
+                <div class="plan-title" data-i18n="eng20HourTitle">20 Hours – Flexible Use (Online/In-Person)</div>
 
                 <div style="font-size:24px; font-weight:600; margin-top:10px;">
                     ฿5,400
                 </div>
 
-                <div style="margin-top:8px; font-size:14px;">
+                <div style="margin-top:8px; font-size:14px;" data-i18n="eng20PricePerHour">
                     Price per hour: ฿270
                 </div>
 
-                <div style="color:#2e7d32; font-weight:600; margin-top:5px;">
+                <div style="color:#2e7d32; font-weight:600; margin-top:5px;" data-i18n="eng20Save">
                     Save ฿600
                 </div>
 
-                <div style="font-size:13px; color:#666; margin-top:5px;">
+                <div style="font-size:13px; color:#666; margin-top:5px;" data-i18n="eng20Valid">
                     Valid 4 months
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buyPlan('698b0785d9adda8b3d7928d6')">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('698b0785d9adda8b3d7928d6')" data-i18n="buy20Hours">
                         Buy 20 Hours
                     </button>
                 </div>
@@ -146,26 +148,26 @@
 
             <!-- 30 HOURS -->
             <div class="plan-card">
-                <div class="plan-title">30 Hours – Flexible Use (Online/In-Person)</div>
+                <div class="plan-title" data-i18n="eng30HourTitle">30 Hours – Flexible Use (Online/In-Person)</div>
 
                 <div style="font-size:24px; font-weight:600; margin-top:10px;">
                     ฿7,650
                 </div>
 
-                <div style="margin-top:8px; font-size:14px;">
+                <div style="margin-top:8px; font-size:14px;" data-i18n="eng30PricePerHour">
                     Price per hour: ฿255
                 </div>
 
-                <div style="color:#2e7d32; font-weight:600; margin-top:5px;">
+                <div style="color:#2e7d32; font-weight:600; margin-top:5px;" data-i18n="eng30Save">
                     Save ฿1,350
                 </div>
 
-                <div style="font-size:13px; color:#666; margin-top:5px;">
+                <div style="font-size:13px; color:#666; margin-top:5px;" data-i18n="eng30Valid">
                     Valid 5 months
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba7525cd7353019f77568f')">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba7525cd7353019f77568f')" data-i18n="buy30Hours">
                         Buy 30 Hours
                     </button>
                 </div>
@@ -173,26 +175,26 @@
 
             <!-- 40 HOURS -->
             <div class="plan-card">
-                <div class="plan-title">40 Hours – Flexible Use (Online/In-Person)</div>
+                <div class="plan-title" data-i18n="eng40HourTitle">40 Hours – Flexible Use (Online/In-Person)</div>
 
                 <div style="font-size:24px; font-weight:600; margin-top:10px;">
                     ฿9,600
                 </div>
 
-                <div style="margin-top:8px; font-size:14px;">
+                <div style="margin-top:8px; font-size:14px;" data-i18n="eng40PricePerHour">
                     Price per hour: ฿240
                 </div>
 
-                <div style="color:#2e7d32; font-weight:600; margin-top:5px;">
+                <div style="color:#2e7d32; font-weight:600; margin-top:5px;" data-i18n="eng40Save">
                     Save ฿1,920
                 </div>
 
-                <div style="font-size:13px; color:#666; margin-top:5px;">
+                <div style="font-size:13px; color:#666; margin-top:5px;" data-i18n="eng40Valid">
                     Valid 8 months
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba753bcd7353019f775690')">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba753bcd7353019f775690')" data-i18n="buy40Hours">
                         Buy 40 Hours
                     </button>
                 </div>
@@ -200,26 +202,26 @@
 
             <!-- 50 HOURS -->
             <div class="plan-card">
-                <div class="plan-title">50 Hours – Flexible Use (Online/In-Person)</div>
+                <div class="plan-title" data-i18n="eng50HourTitle">50 Hours – Flexible Use (Online/In-Person)</div>
 
                 <div style="font-size:24px; font-weight:600; margin-top:10px;">
                     ฿11,250
                 </div>
 
-                <div style="margin-top:8px; font-size:14px;">
+                <div style="margin-top:8px; font-size:14px;" data-i18n="eng50PricePerHour">
                     Price per hour: ฿225
                 </div>
 
-                <div style="color:#2e7d32; font-weight:600; margin-top:5px;">
+                <div style="color:#2e7d32; font-weight:600; margin-top:5px;" data-i18n="eng50Save">
                     Save ฿3,000
                 </div>
 
-                <div style="font-size:13px; color:#666; margin-top:5px;">
+                <div style="font-size:13px; color:#666; margin-top:5px;" data-i18n="eng50Valid">
                     Valid 10 months
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba7552cd7353019f775691')">
+                    <button class="book-btn" style="width:100%;" onclick="buyPlan('69ba7552cd7353019f775691')" data-i18n="buy50Hours">
                         Buy 50 Hours
                     </button>
                 </div>
@@ -229,7 +231,7 @@
 
         <!-- Info Note -->
         <div class="section" style="margin-top:25px;">
-            <div class="sub" style="font-size:14px; color:#666;">
+            <div class="sub" style="font-size:14px; color:#666;" data-i18n="hoursActivateImmediately">
                 Hours activate immediately after payment.
             </div>
         </div>
