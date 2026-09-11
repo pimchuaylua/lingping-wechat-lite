@@ -9,19 +9,21 @@
     <link rel="stylesheet" href="../assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="../assets/subscription_main_style.css?v=20260513">
     <script src="../js/utils.js"></script>
+    <script src="../js/translate.js?v=20260911"></script>
+    <script src="../js/translations.js?v=20260911"></script>
 </head>
 
 <body>
 
     <div class="container">
 
-        <div class="back-btn" onclick="Utils.goBackOrHome()">← Back</div>
+        <div class="back-btn" onclick="Utils.goBackOrHome()" data-i18n="backBtn">← Back</div>
 
-        <h1 style="text-align:center; margin-bottom:10px;">
+        <h1 style="text-align:center; margin-bottom:10px;" data-i18n="chooseWayTitle">
             🌏 Choose Your Way to Explore & Connect
         </h1>
 
-        <div class="sub" style="text-align:center;">
+        <div class="sub" style="text-align:center;" data-i18n="startHere">
             Start here 👇
         </div>
 
@@ -29,23 +31,23 @@
 
             <!-- COMMUNITY CARD -->
             <div class="plan-card" onclick="goCommunity()">
-                <div class="plan-title" style="text-align: center;">Community</div>
+                <div class="plan-title" style="text-align: center;" data-i18n="communityTitle">Community</div>
 
-                <div class="plan-sub">
+                <div class="plan-sub" data-i18n="communitySub">
                     Relaxed & thoughtful conversations. Discover cultures through people and stories. Language is the
                     bridge.
                 </div>
 
                 <div class="plan-features">
-                    <p>🌎 Unlimited events</p>
-                    <p>💬 Multilingual conversations</p>
-                    <p>🗣️ Language exchanges</p>
-                    <p>📚 Book & movie clubs</p>
-                    <p>🍜 City explorations & community dinners</p>
+                    <p data-i18n="featUnlimitedEvents">🌎 Unlimited events</p>
+                    <p data-i18n="featMultilingual">💬 Multilingual conversations</p>
+                    <p data-i18n="featLanguageExchange">🗣️ Language exchanges</p>
+                    <p data-i18n="featBookMovieClubs">📚 Book & movie clubs</p>
+                    <p data-i18n="featCityExplorations">🍜 City explorations & community dinners</p>
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;">
+                    <button class="book-btn" style="width:100%;" data-i18n="getStarted">
                         Get Started
                     </button>
                 </div>
@@ -53,19 +55,19 @@
 
             <!-- ENGLISH CARD -->
             <div class="plan-card" onclick="goEnglish()">
-                <div class="plan-title" style="text-align: center;">English Classes</div>
-                <div class="plan-sub">Structured & goal-based. A guided path to build foundations and communicate with
+                <div class="plan-title" style="text-align: center;" data-i18n="englishClassesTitle2">English Classes</div>
+                <div class="plan-sub" data-i18n="englishClassesSub">Structured & goal-based. A guided path to build foundations and communicate with
                     confidence.</div>
 
                 <div class="plan-features">
-                    <p>📖 Guided lessons</p>
-                    <p>📝 Vocabulary building</p>
-                    <p>✅ Feedback & correction</p>
-                    <p>📈 Skill improvement</p>
+                    <p data-i18n="featGuidedLessons">📖 Guided lessons</p>
+                    <p data-i18n="featVocabBuilding">📝 Vocabulary building</p>
+                    <p data-i18n="featFeedback">✅ Feedback & correction</p>
+                    <p data-i18n="featSkillImprovement">📈 Skill improvement</p>
                 </div>
 
                 <div class="plan-btn">
-                    <button class="book-btn" style="width:100%;">
+                    <button class="book-btn" style="width:100%;" data-i18n="getStarted">
                         Get Started
                     </button>
                 </div>
@@ -76,7 +78,7 @@
 
         <!-- Important Note -->
         <div class="section" style="margin-top:25px;">
-            <div class="sub" style="font-size:14px; color:#666;">
+            <div class="sub" style="font-size:14px; color:#666;" data-i18n="independentNote">
                 ⚠️ Community and English Classes are independent and purchased separately.
             </div>
         </div>

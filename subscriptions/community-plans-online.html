@@ -12,6 +12,8 @@
     <script src="../js/auth.js"></script>
     <script src="../js/payment.js"></script>
     <script src="../js/utils.js"></script>
+    <script src="../js/translate.js?v=20260911"></script>
+    <script src="../js/translations.js?v=20260911"></script>
     <link rel="icon" type="image/png" href="../assets/logos/favicon.png">
 </head>
 
@@ -19,67 +21,67 @@
 
     <div class="container">
 
-        <div class="back-btn" onclick="Utils.goBackOrHome()">← Back</div>
+        <div class="back-btn" onclick="Utils.goBackOrHome()" data-i18n="backBtn">← Back</div>
 
         <div class="plans-hero">
-            <div class="plans-eyebrow">Step 3 · Choose Your Plan</div>
-            <h1>🌐 Online Community</h1>
-            <p class="plans-subtitle">
+            <div class="plans-eyebrow" data-i18n="stepChoosePlan">Step 3 · Choose Your Plan</div>
+            <h1 data-i18n="heroOnline">🌐 Online Community</h1>
+            <p class="plans-subtitle" data-i18n="subOnline">
                 Join conversations from anywhere — unlimited access to every online session, no travel required.
             </p>
         </div>
 
-        <div class="plans-section-title">Pick your plan</div>
+        <div class="plans-section-title" data-i18n="pickYourPlan">Pick your plan</div>
 
         <div class="plans-grid">
 
             <div class="plan-card-modern">
                 <div class="plan-card-info">
-                    <div class="plan-card-title">1 Day</div>
+                    <div class="plan-card-title" data-i18n="duration1Day">1 Day</div>
                     <div class="plan-card-price">฿100</div>
                     <div class="plan-card-features">
-                        <p>Try it for a day — join unlimited sessions</p>
+                        <p data-i18n="tryItForADay">Try it for a day — join unlimited sessions</p>
                     </div>
                 </div>
-                <button class="book-btn plan-card-btn" onclick="buyPlan('697f8f43d9adda8b3d78eaae')">
+                <button class="book-btn plan-card-btn" onclick="buyPlan('697f8f43d9adda8b3d78eaae')" data-i18n="buy">
                     Buy
                 </button>
             </div>
 
             <div class="plan-card-modern">
                 <div class="plan-card-info">
-                    <div class="plan-card-title">1 Month</div>
+                    <div class="plan-card-title" data-i18n="duration1Month">1 Month</div>
                     <div class="plan-card-price">฿500</div>
                     <div class="plan-card-price-sub">฿500 / month</div>
                     <div class="plan-card-features">
-                        <p>Unlimited online events</p>
-                        <p>Cancel anytime</p>
+                        <p data-i18n="unlimitedOnlineEvents">Unlimited online events</p>
+                        <p data-i18n="cancelAnytime">Cancel anytime</p>
                     </div>
                 </div>
-                <button class="book-btn plan-card-btn" onclick="buyPlan('697f8f71d9adda8b3d78eab0')">
+                <button class="book-btn plan-card-btn" onclick="buyPlan('697f8f71d9adda8b3d78eab0')" data-i18n="buy">
                     Buy
                 </button>
             </div>
 
             <div class="plan-card-modern featured">
-                <div class="plan-card-badge">Better Value</div>
+                <div class="plan-card-badge" data-i18n="betterValue">Better Value</div>
                 <div class="plan-card-info">
-                    <div class="plan-card-title">3 Months</div>
+                    <div class="plan-card-title" data-i18n="duration3Months">3 Months</div>
                     <div class="plan-card-price">฿1,350</div>
                     <div class="plan-card-price-sub">฿450 / month</div>
                     <div class="plan-card-features">
-                        <p>Unlimited online events</p>
-                        <p>Billed once every 3 months</p>
+                        <p data-i18n="unlimitedOnlineEvents">Unlimited online events</p>
+                        <p data-i18n="billedEvery3Months">Billed once every 3 months</p>
                     </div>
                 </div>
-                <button class="book-btn plan-card-btn" onclick="buyPlan('697f8f78d9adda8b3d78eab2')">
+                <button class="book-btn plan-card-btn" onclick="buyPlan('697f8f78d9adda8b3d78eab2')" data-i18n="buy">
                     Buy
                 </button>
             </div>
 
         </div>
 
-        <div class="plans-footnote">
+        <div class="plans-footnote" data-i18n="accessImmediately">
             Access starts immediately after payment.
         </div>
 

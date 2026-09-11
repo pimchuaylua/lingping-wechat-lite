@@ -38,10 +38,12 @@
     /** Applies translations to every element with a data-i18n attribute
      * (sets textContent), data-i18n-html (sets innerHTML — only for
      * dictionary entries that intentionally contain markup like <br>/<b>),
-     * or data-i18n-placeholder (sets the placeholder attribute) under
-     * `root` (defaults to the whole document). Static markup gets
-     * translated this way; JS-generated strings should call t('key')
-     * directly instead. */
+     * data-i18n-placeholder (sets the placeholder attribute), or
+     * data-i18n-label (sets the label attribute — needed for <optgroup>,
+     * whose visible text is an attribute, not content) under `root`
+     * (defaults to the whole document). Static markup gets translated
+     * this way; JS-generated strings should call t('key') directly
+     * instead. */
     function applyTranslations(root) {
         if (typeof t !== 'function') return; // translations.js not loaded on this page
         (root || document).querySelectorAll('[data-i18n]').forEach(el => {
@@ -49,6 +51,9 @@
         });
         (root || document).querySelectorAll('[data-i18n-html]').forEach(el => {
             el.innerHTML = t(el.getAttribute('data-i18n-html'));
+        });
+        (root || document).querySelectorAll('[data-i18n-label]').forEach(el => {
+            el.label = t(el.getAttribute('data-i18n-label'));
         });
         (root || document).querySelectorAll('[data-i18n-placeholder]').forEach(el => {
             el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
