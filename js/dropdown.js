@@ -45,7 +45,8 @@ function updateMembershipCta() {
     if (!cta) return;
 
     if (location.pathname.endsWith("english-sessions.html")) {
-        cta.textContent = "Choose Your English Package";
+        cta.setAttribute("data-i18n", "membershipCtaEnglish");
+        if (typeof t === "function") cta.textContent = t("membershipCtaEnglish");
         cta.href = "subscriptions/english-classes.html";
     } else if (isIndexPage()) {
         cta.href = "subscriptions/community-access.html";

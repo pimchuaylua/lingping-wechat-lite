@@ -15,6 +15,8 @@
     <!-- Config & Logic -->
     <script src="config.js"></script>
     <script src="js/dropdown.js?v=20260516"></script>
+    <script src="js/translate.js?v=20260911"></script>
+    <script src="js/translations.js?v=20260911"></script>
     <script src="js/auth.js?v=20260312"></script>
     <script src="js/utils.js?v=20250210"></script>
 
@@ -115,12 +117,12 @@
 
             if (username) {
                 el.innerHTML = `
-                    👋 Hello <strong>${username}</strong>!
-                    <span class="logout" onclick="logout()">Logout</span>
+                    👋 ${t("helloUser")} <strong>${username}</strong>!
+                    <span class="logout" onclick="logout()">${t("logout")}</span>
                 `;
             } else {
                 el.innerHTML = `
-                    <button class="login-btn" onclick="goToLogin()">Log in</button>
+                    <button class="login-btn" onclick="goToLogin()">${t("logIn")}</button>
                 `;
             }
         }
@@ -131,7 +133,7 @@
             const userId = localStorage.getItem("userId");
 
             if (!userId) {
-                listEl.innerHTML = `<div class="empty">Please log in to see your subscriptions.</div>`;
+                listEl.innerHTML = `<div class="empty">${t("pleaseLogInSubs")}</div>`;
                 return;
             }
 
@@ -147,7 +149,7 @@
                 const subs = json.data || [];
 
                 if (!subs.length) {
-                    listEl.innerHTML = `<div class="empty">You have no subscriptions.</div>`;
+                    listEl.innerHTML = `<div class="empty">${t("noSubscriptions")}</div>`;
                     return;
                 }
 
@@ -163,7 +165,7 @@
                 renderSubscriptions(subs);
 
             } catch (err) {
-                listEl.innerHTML = `<div class="empty">Failed to load subscriptions.</div>`;
+                listEl.innerHTML = `<div class="empty">${t("failedLoadSubs")}</div>`;
             }
         }
 
@@ -199,23 +201,25 @@
                 return;
             }
 
-            const languageMap = {
-                TH: "🇹🇭 Thai",
-                ZH: "🇨🇳 Chinese",
-                EN: "🇬🇧 English",
-                JP: "🇯🇵 Japanese"
-            };
+            const languageFlags = { TH: "🇹🇭", ZH: "🇨🇳", EN: "🇬🇧", JP: "🇯🇵" };
+            const languageCodeMap = { TH: "th", ZH: "zh", EN: "en", JP: "ja" };
 
-            const language = languageMap[user.learningLanguageCode] || user.learningLanguageCode;
+            // TRANSLATIONS is defined in translations.js — check the key exists
+            // before using it, so codes outside our dictionary fall back cleanly.
+            const flag = languageFlags[user.learningLanguageCode] || "";
+            const langKey = `lang_${languageCodeMap[user.learningLanguageCode] || ""}`;
+            const language = TRANSLATIONS[langKey] ? t(langKey) : user.learningLanguageCode;
             const level = user.languageLevel;
+            const levelKey = `level_${level}`;
+            const levelLabel = TRANSLATIONS[levelKey] ? t(levelKey) : capitalize(level);
 
             el.innerHTML = `
         <div class="learning-card level-${level}">
 
             <div class="learning-content">
-                <div class="learning-label">LEARNING</div>
+                <div class="learning-label">${t("learningLabel")}</div>
                 <div class="learning-main">
-                    ${language} · ${capitalize(level)}
+                    ${flag} ${language} · ${levelLabel}
                 </div>
             </div>
         </div>
@@ -283,15 +287,15 @@
                 card.className = `subscription-card ${sub.isActive ? "active" : "inactive"}`;
 
                 const passesHtml = `<div>${sub.numberOfPassesLeft == null
-                    ? "Unlimited access"
-                    : `Passes Left: ${sub.numberOfPassesLeft}`
+                    ? t("unlimitedAccess")
+                    : `${t("passesLeft")}: ${sub.numberOfPassesLeft}`
                     }</div>`
 
                 card.innerHTML = `
                     <div class="sub-title">
                         ${sub.subscriptionPlan.name}
                         <span class="badge ${sub.isActive ? "active" : "inactive"}">
-                            ${sub.isActive ? "Active" : "Expired/No Passes Left"}
+                            ${sub.isActive ? t("active") : t("expiredNoPasses")}
                         </span>
                     </div>
 
@@ -300,20 +304,20 @@
                     </div>
 
                     <div class="sub-expire">
-                        Valid through: ${sub.expiredAt
+                        ${t("validThrough")}: ${sub.expiredAt
                         ? Utils.formatLastValidDay(sub.expiredAt)
-                        : "Day of first use"
+                        : t("dayOfFirstUse")
                     }
                     </div>
 
                     <div class="sub-expire">
-                        Activated: ${sub.activatedAt === undefined
+                        ${t("activatedLabel")}: ${sub.activatedAt === undefined
                         ? Utils.formatFullDate(sub.createdAt)
                         : sub.activatedAt === null
-                            ? "Not activated yet"
+                            ? t("notActivatedYet")
                             : Utils.formatFullDate(sub.activatedAt)
                     }
-                    </div> 
+                    </div>
                 `;
 
                 listEl.appendChild(card);

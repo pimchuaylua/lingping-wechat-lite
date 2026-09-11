@@ -14,6 +14,8 @@
     <!-- Config & Booking -->
     <script src="config.js"></script>
     <script src="js/dropdown.js?v=20260516"></script>
+    <script src="js/translate.js?v=20260911"></script>
+    <script src="js/translations.js?v=20260911"></script>
     <script src="js/auth.js?v=20260312"></script>
     <script src="js/booking.js?v=202605162"></script>
     <script src="js/utils.js?v=20250210?v=20260113"></script>
@@ -26,14 +28,14 @@
     <div class="container">
         <div id="header"></div>
 
-        <h1 style="text-align:center; margin-top:12px;">📘 English Classes</h1>
-        <div class="sub" style="text-align:center;">Learn at your level, build your vocabulary, and join when it works for you.</div>
+        <h1 style="text-align:center; margin-top:12px;" data-i18n="englishClassesTitle">📘 English Classes</h1>
+        <div class="sub" style="text-align:center;" data-i18n="englishClassesSubtitle">Learn at your level, build your vocabulary, and join when it works for you.</div>
 
         <div class="filters">
             <div class="english-levels" id="englishLevels">
-                <div class="level active" data-level="all">All</div>
-                <div class="level" data-level="easy">Easy</div>
-                <div class="level" data-level="medium">Medium</div>
+                <div class="level active" data-level="all" data-i18n="levelAll">All</div>
+                <div class="level" data-level="easy" data-i18n="levelEasy">Easy</div>
+                <div class="level" data-level="medium" data-i18n="levelMedium">Medium</div>
             </div>
 
             <!-- 🔹 Date Filter -->
@@ -75,18 +77,18 @@
     <div id="membershipModal" class="modal" style="display:none;">
         <div class="modal-content">
             <div class="modal-text">
-                ✨ <strong>Membership Needed</strong><br><br>
+                ✨ <strong data-i18n="membershipNeededTitle">Membership Needed</strong><br><br>
 
-                Your membership or passes have been used up 😊<br>
-                Renew your membership to continue booking sessions and joining discussions.
+                <span data-i18n="membershipNeededBody">Your membership or passes have been used up 😊
+                Renew your membership to continue booking sessions and joining discussions.</span>
             </div>
 
             <div class="modal-actions">
-                <button class="modal-cancel" onclick="closeMembershipPopup()">
+                <button class="modal-cancel" onclick="closeMembershipPopup()" data-i18n="maybeLater">
                     Maybe Later
                 </button>
 
-                <button class="modal-confirm" onclick="goToMembership()">
+                <button class="modal-confirm" onclick="goToMembership()" data-i18n="membershipCta">
                     Get a Membership or Day Pass
                 </button>
             </div>
@@ -184,7 +186,7 @@
             eventList.innerHTML = "";
 
             if (!filtered.length) {
-                eventList.innerHTML = `<div class="empty">No sessions</div>`;
+                eventList.innerHTML = `<div class="empty">${t("noSessions")}</div>`;
                 return;
             }
 
@@ -210,7 +212,7 @@
                 document.querySelectorAll(".english-levels .level").forEach(b => b.classList.remove("active"));
                 btn.classList.add("active");
 
-                englishDifficulty = btn.innerText.toLowerCase(); // "easy" or "medium"
+                englishDifficulty = btn.dataset.level; // "all" / "easy" / "medium" — read from the attribute, not the (now-translatable) label text
                 renderEvents();
             };
         });

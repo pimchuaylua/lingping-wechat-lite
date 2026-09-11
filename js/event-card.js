@@ -30,10 +30,10 @@ function buildEventCard(s, { isOnline }) {
     }
 
     const status = s.maxParticipants === -1
-        ? "Canceled"
+        ? t("statusCanceled")
         : s.isFull
-            ? "Full"
-            : "Available";
+            ? t("statusFull")
+            : t("statusAvailable");
 
     const statusClass = s.maxParticipants === -1
         ? "canceled"
@@ -50,7 +50,7 @@ function buildEventCard(s, { isOnline }) {
     }
 
     const locationHtml = isOnline
-        ? `<div class="event-location">🌐 Online · ${onlinePlatform}</div>`
+        ? `<div class="event-location">🌐 ${t("tabOnline")} · ${onlinePlatform}</div>`
         : s.locationUrl
             ? `<div class="event-location">
                 📍 <a href="${s.locationUrl}"
@@ -79,7 +79,7 @@ function buildEventCard(s, { isOnline }) {
                     </div>
 
                     <div class="host-names">
-                        Hosted by ${s.hosts.map(host => `
+                        ${t("hostedBy")} ${s.hosts.map(host => `
                             <span
                                 class="host-link"
                                 onclick="event.stopPropagation(); viewProfile('${host._id}')"
@@ -120,7 +120,7 @@ function buildEventCard(s, { isOnline }) {
                             ${hostHtml}
 
                              <button class="book-btn ${isCanceled ? "" : s.isFull ? "waitlist" : "available"}" ${isCanceled ? "disabled" : ""} onclick='event.stopPropagation(); handleBookClick("${s.id}")'>
-                            ${s.isFull ? "Join Waitlist" : "Book"}
+                            ${s.isFull ? t("joinWaitlist") : t("attend")}
                         </button>
                         </div>
 

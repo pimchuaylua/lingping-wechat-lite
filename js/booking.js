@@ -200,8 +200,8 @@ function formatReadingSessionToDisplay(s, eventOptions) {
         id: s._id,
         startTime: start, // 🔑 keep for sorting
         date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
-        startTime: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
-        time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+        startTime: `${Utils.formatTime(start)}`,
+        time: `${Utils.formatTime(start)}–${Utils.formatTime(end)}`,
         title: s.title,
         description: s.shortDescription,
         fullDescription: s.fullDescription,
@@ -272,8 +272,8 @@ function preBookingModal(sessionId, session) {
     document.getElementById("modalSessionTime").innerText = `${Utils.formatDate(session.date)} · ${session.time} (${Utils.getTimeZoneName()})`
     document.getElementById("modalSessionLocation").innerHTML =
         session.levelName?.toLowerCase().includes("online")
-            ? "🌐 Online"
-            : `📍 ${session.location || "Location TBA"} `;
+            ? `🌐 ${t("tabOnline")}`
+            : `📍 ${session.location || t("locationTBA")} `;
 
     document.getElementById("preBookingModal").style.display = "flex";
 }
@@ -292,13 +292,17 @@ function closePreBookingModal() {
 fetch("components/pre-booking-modal.html")
     .then(res => res.text())
     .then(html => {
-        document.getElementById("preBookingModalContainer").innerHTML = html;
+        const container = document.getElementById("preBookingModalContainer");
+        container.innerHTML = html;
+        if (typeof applyTranslations === "function") applyTranslations(container);
     });
 
 fetch("components/booking-success-modal.html")
     .then(res => res.text())
     .then(html => {
-        document.getElementById("bookingSuccessModalContainer").innerHTML = html;
+        const container = document.getElementById("bookingSuccessModalContainer");
+        container.innerHTML = html;
+        if (typeof applyTranslations === "function") applyTranslations(container);
     });
 
 function showBookingSuccessModal(bookData) {

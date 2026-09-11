@@ -53,6 +53,22 @@ function findMeta(list, value) {
     return (list || []).find(item => item.value === value);
 }
 
+// Looks up a hand-translated label by the stable code first (works
+// whether the fallback label came from our own LANG_META/LEVEL_META or
+// the live options API), falling back to whatever was already resolved.
+function translatedLangLabel(code, fallbackLabel) {
+    const key = `lang_${code}`;
+    return (window.t && TRANSLATIONS[key]) ? t(key) : fallbackLabel;
+}
+function translatedLevelLabel(code, fallbackLabel) {
+    const key = `level_${code}`;
+    return (window.t && TRANSLATIONS[key]) ? t(key) : fallbackLabel;
+}
+function translatedCategoryLabel(code, fallbackLabel) {
+    const key = `cat_${code}`;
+    return (window.t && TRANSLATIONS[key]) ? t(key) : fallbackLabel;
+}
+
 async function loadSessionOptions() {
     const res = await fetch(`${BASE_URL}/reading-sessions/options`, {
         headers: {
@@ -79,8 +95,8 @@ function renderLanguageChipsForEventDetails(languages = [], options) {
     return languages.map(({ language, proficiencyLevel }) => {
         const lang = findMeta(options.languages, language);
         const level = findMeta(options.proficiencyLevels, proficiencyLevel);
-        const langLabel = lang?.label || language;
-        const levelLabel = level?.label || proficiencyLevel;
+        const langLabel = translatedLangLabel(language, lang?.label || language);
+        const levelLabel = translatedLevelLabel(proficiencyLevel, level?.label || proficiencyLevel);
         const levelDesc = level?.description || '';
         const colors = LEVEL_COLORS[proficiencyLevel] || { bg: '#eef0e4', color: '#4d5c2a' };
 
@@ -136,13 +152,13 @@ function renderLanguageChips(languages = []) {
     const langChips = [...new Set(languages.map(l => l.language))]
         .map(code => {
             const meta = LANG_META[code] || { label: code, flag: '' };
-            return `<span class="chip chip-lang">${meta.flag} ${meta.label}</span>`;
+            return `<span class="chip chip-lang">${meta.flag} ${translatedLangLabel(code, meta.label)}</span>`;
         }).join('');
 
     const levelChips = [...new Set(languages.map(l => l.proficiencyLevel))]
         .map(lvl => {
             const meta = LEVEL_META[lvl] || { label: lvl, bg: '#eef0e4', color: '#4d5c2a' };
-            return `<span class="chip" style="background:${meta.bg};color:${meta.color};">${meta.label}</span>`;
+            return `<span class="chip" style="background:${meta.bg};color:${meta.color};">${translatedLevelLabel(lvl, meta.label)}</span>`;
         }).join('');
 
     return `<div class="event-row"><div class="chip-row">${langChips}${levelChips}</div></div>`;

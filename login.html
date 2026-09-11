@@ -12,6 +12,8 @@
     <script src="js/booking.js?v=202605162"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="config.js"></script>
+    <script src="js/translate.js?v=20260911"></script>
+    <script src="js/translations.js?v=20260911"></script>
     <style>
         .email-hint {
             font-size: 13px;
@@ -40,15 +42,15 @@
     <div id="browserPopup" class="browser-popup">
         <div class="browser-popup-card">
 
-            <h3><b>Open in Browser for the Best Experience</b></h3>
+            <h3><b data-i18n="browserPopupTitle">Open in Browser for the Best Experience</b></h3>
 
-            <p style="margin-top:12px; line-height:1.6; text-align:left;">
+            <p style="margin-top:12px; line-height:1.6; text-align:left;" data-i18n-html="browserPopupSteps">
                 1. Tap <b>⋯</b> in the app.<br>
                 2. Click <b>"Open in Browser"</b>
             </p>
 
             <p style="margin-top:14px; font-size:13px; color:#666;">
-                If you don't see that option, copy the login link and open it in Chrome or Safari. <br><br>
+                <span data-i18n="browserPopupHint">If you don't see that option, copy the login link and open it in Chrome or Safari.</span> <br><br>
                 <img src="assets/logos/chrome.png" alt="Chrome"
                     style="height:25px; width:auto; vertical-align:middle; margin-left:6px;">
                 <img src="assets/logos/safari.png" alt="Safari"
@@ -57,7 +59,7 @@
 
             <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
 
-                <button onclick="copyLoginLink()" class="primary-button" style="flex:1;">
+                <button onclick="copyLoginLink()" class="primary-button" style="flex:1;" data-i18n="copyLoginLink">
                     Copy Login Link
                 </button>
 
@@ -70,7 +72,7 @@
 
         <div class="login-card">
 
-            <h1 style="margin-bottom:10px;">Welcome Back</h1>
+            <h1 style="margin-bottom:10px;" data-i18n="welcomeBack">Welcome Back</h1>
 
             <!-- Google Login -->
             <div id="g_id_onload"
@@ -85,7 +87,7 @@
         font-weight:700;
         margin-bottom:10px;
     ">
-                    <span style="font-size:13px; font-weight:400; color:#666;">
+                    <span style="font-size:13px; font-weight:400; color:#666;" data-i18n="getUpdatesReminders">
                         Get Updates & Reminders
                     </span>
                 </div>
@@ -102,20 +104,20 @@
                 </div>
             </div>
 
-            <div class="login-divider">or</div>
+            <div class="login-divider" data-i18n="orDivider">or</div>
 
-            <div class="login-option" style="font-size:14px; padding:10px 12px;" onclick="showPhoneLogin()">
+            <div class="login-option" style="font-size:14px; padding:10px 12px;" onclick="showPhoneLogin()" data-i18n="continueWithPhone">
                 Continue with phone number
             </div>
 
             <div class="login-option" style="font-size:14px; padding:10px 12px;" onclick="showEmailLogin()">
-                Continue with email
-                <div style="color:#999; font-weight:400; font-size:12px; margin-top:2px;">
+                <span data-i18n="continueWithEmail">Continue with email</span>
+                <div style="color:#999; font-weight:400; font-size:12px; margin-top:2px;" data-i18n="recommendedMainlandChina">
                     🇨🇳 Recommended for Mainland China users
                 </div>
             </div>
 
-            <div class="login-option" style="font-size:14px; padding:10px 12px;" onclick="loginWithUsername()">
+            <div class="login-option" style="font-size:14px; padding:10px 12px;" onclick="loginWithUsername()" data-i18n="continueWithUsername">
                 Continue with username
             </div>
 
@@ -127,7 +129,7 @@
                 <div id="emailError" class="email-error" style="display:none;"></div>
 
                 <button id="emailSubmitBtn" class="primary-button" style="margin-top:12px;"
-                    onclick="continueWithEmail()">
+                    onclick="continueWithEmail()" data-i18n="continueBtn">
                     Continue
                 </button>
             </div>
@@ -160,14 +162,14 @@
                 </div>
 
                 <!-- OTP -->
-                <button class="primary-button" onclick="sendOTP()">
+                <button class="primary-button" onclick="sendOTP()" data-i18n="sendOTP">
                     Send OTP
                 </button>
 
                 <!-- NAME -->
                 <div style="margin-top:12px; margin-bottom:6px; width:100%;">
 
-                    <input id="phoneUserDisplayName" type="text" placeholder="Your name (required)" style="
+                    <input id="phoneUserDisplayName" type="text" placeholder="Your name (required)" data-i18n-placeholder="yourNameRequired" style="
                 width:100%;
                 padding:12px;
                 border-radius:8px;
@@ -177,9 +179,9 @@
             ">
                 </div>
 
-                <input id="otpInput" class="input-field" type="text" placeholder="Enter OTP">
+                <input id="otpInput" class="input-field" type="text" placeholder="Enter OTP" data-i18n-placeholder="enterOTPPlaceholder">
 
-                <button class="primary-button" onclick="verifyOTPWithValidation()">
+                <button class="primary-button" onclick="verifyOTPWithValidation()" data-i18n="verify">
                     Verify
                 </button>
 
@@ -191,10 +193,10 @@
 
     <div id="successPopup" class="success-popup" style="display:none;">
         <div class="success-card">
-            <h2>🎉 You're logged in!</h2>
-            <p>You can now get a membership and start booking activities!</p>
+            <h2 data-i18n="loggedInTitle">🎉 You're logged in!</h2>
+            <p data-i18n="loggedInBody">You can now get a membership and start booking activities!</p>
 
-            <button onclick="closeSuccessPopup()" class="primary-button" style="margin-top:15px;">
+            <button onclick="closeSuccessPopup()" class="primary-button" style="margin-top:15px;" data-i18n="ok">
                 OK
             </button>
         </div>
@@ -310,7 +312,7 @@
 
         } catch (error) {
             console.error("Login flow error:", error);
-            alert("Login failed. Please try again.");
+            alert(t("genericLoginFailed"));
         } finally {
             googleLoginInProgress = false;
         }
@@ -413,7 +415,7 @@
 
         if (!isValidEmailSyntax(email)) {
             emailInput.classList.add("input-error");
-            showEmailHint('<span style="color:#e63946;">Please enter a valid email address.</span>');
+            showEmailHint(`<span style="color:#e63946;">${t("invalidEmail")}</span>`);
             return;
         }
         emailInput.classList.remove("input-error");
@@ -421,7 +423,7 @@
         const suggestion = suggestEmailDomain(email);
         if (suggestion && suggestion !== pendingEmailSuggestion) {
             pendingEmailSuggestion = suggestion;
-            showEmailHint(`Did you mean <span class="email-suggestion" onclick="applyEmailSuggestion('${suggestion.split("@")[1]}')">${suggestion}</span>?`);
+            showEmailHint(`${t("didYouMean")} <span class="email-suggestion" onclick="applyEmailSuggestion('${suggestion.split("@")[1]}')">${suggestion}</span>?`);
             return;
         }
         pendingEmailSuggestion = null;
@@ -431,7 +433,7 @@
 
         const btn = document.getElementById("emailSubmitBtn");
         btn.disabled = true;
-        btn.textContent = "Please wait...";
+        btn.textContent = t("pleaseWait");
 
         try {
             let loginResult = await loginUserWithRetry(email, "1234", 1);
@@ -440,13 +442,13 @@
                 const registerResult = await registerUser(email, email);
 
                 if (!registerResult.success) {
-                    throw new Error("This email is already registered under a different login method. Try Google, phone, or username instead.");
+                    throw new Error(t("emailAlreadyRegistered"));
                 }
 
                 loginResult = await loginUserWithRetry(email, "1234");
 
                 if (!loginResult.success) {
-                    throw new Error("Account created, but login failed. Please try again.");
+                    throw new Error(t("accountCreatedLoginFailed"));
                 }
             }
 
@@ -461,12 +463,12 @@
 
         } catch (err) {
             console.error("Email login flow error:", err);
-            errorEl.textContent = err.message || "Login failed. Please try again.";
+            errorEl.textContent = err.message || t("genericLoginFailed");
             errorEl.style.display = "block";
         } finally {
             emailLoginInProgress = false;
             btn.disabled = false;
-            btn.textContent = "Continue";
+            btn.textContent = t("continueBtn");
         }
     }
 
@@ -474,13 +476,13 @@
 
     async function loginWithUsername() {
         try {
-            const username = prompt("Enter your username:")?.trim();
+            const username = prompt(t("enterUsernamePrompt"))?.trim();
             if (!username) return;
 
             const loginResult = await loginUser(username, "1234");
 
             if (!loginResult.success) {
-                throw new Error("Invalid username. Please check and try again.");
+                throw new Error(t("invalidUsername"));
             }
 
             saveSession(loginResult.data, username);
@@ -575,7 +577,7 @@
     function copyLoginLink() {
         const url = document.referrer || window.location.origin;
         navigator.clipboard.writeText(url);
-        alert("Link copied! Open it in Safari or Chrome.");
+        alert(t("linkCopiedOpenIn"));
     }
 
     window.addEventListener("load", () => {
@@ -623,7 +625,7 @@
         let phone = document.getElementById("phoneInput").value.trim();
 
         if (!phone) {
-            alert("Please enter your phone number");
+            alert(t("enterPhoneNumber"));
             return;
         }
 
@@ -648,7 +650,7 @@
 
             if (res.ok && json?.status && json?.data?.success) {
 
-                alert("OTP sent to " + fullPhone);
+                alert(t("otpSentTo") + " " + fullPhone);
 
             } else {
 
@@ -659,7 +661,7 @@
         } catch (err) {
 
             console.error(err);
-            alert("Failed to send OTP. Please try again.");
+            alert(t("otpSendFailed"));
 
         }
 
@@ -692,7 +694,7 @@
         const otp = document.getElementById("otpInput").value.trim();
         const phoneUserDisplayName = document.getElementById("phoneUserDisplayName").value.trim();
         if (!otp) {
-            alert("Enter OTP");
+            alert(t("enterOTPAlert"));
             return;
         }
 
@@ -732,14 +734,14 @@
 
             } else {
 
-                alert("Login failed. The OTP may be incorrect or expired. Please try again.");
+                alert(t("otpVerifyFailed"));
 
             }
 
         } catch (err) {
 
             console.error(err);
-            alert("Verification failed");
+            alert(t("verificationFailed"));
 
         }
 
