@@ -14,6 +14,8 @@
     <!-- Config & Booking -->
     <script src="config.js"></script>
     <script src="js/dropdown.js?v=20260516"></script>
+    <script src="js/translate.js?v=20260911"></script>
+    <script src="js/translations.js?v=20260911"></script>
     <script src="js/auth.js?v=20260312"></script>
     <script src="js/booking.js?v=202605162"></script>
     <script src="js/utils.js?v=20250210?v=20260113"></script>
@@ -39,7 +41,7 @@
         <div class="lp-desktop-bar">
             <div class="lp-dt-pill" id="lpDtPill">
                 <div class="lp-dt-seg" id="lpDtSegLoc" onclick="FilterBar.toggleDtSeg('loc')">
-                    <span class="lp-dt-seg-label">Where</span>
+                    <span class="lp-dt-seg-label" data-i18n="dtWhere">Where</span>
                     <span class="lp-dt-seg-val" id="lpDtLocVal">🌐 Online</span>
                     <div class="lp-dt-dropdown" onclick="event.stopPropagation()">
                         <div class="lp-loc-tabs">
@@ -50,7 +52,7 @@
                                     <circle cx="12" cy="12" r="9" />
                                     <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
                                 </svg>
-                                Online
+                                <span data-i18n="tabOnline">Online</span>
                             </button>
                             <button class="lp-loc-tab" id="lpDtTabPerson" onclick="FilterBar.setLocation('person')">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -58,7 +60,7 @@
                                     <path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z" />
                                     <circle cx="12" cy="10" r="2.5" />
                                 </svg>
-                                In Person
+                                <span data-i18n="tabInPerson">In Person</span>
                             </button>
                         </div>
                         <div class="lp-dt-citylist" id="lpDtCityWrap">
@@ -70,7 +72,7 @@
                 <div class="lp-dt-divider"></div>
 
                 <div class="lp-dt-seg lp-placeholder" id="lpDtSegMood" onclick="FilterBar.toggleDtSeg('mood')">
-                    <span class="lp-dt-seg-label">Interests</span>
+                    <span class="lp-dt-seg-label" data-i18n="dtInterests">Interests</span>
                     <span class="lp-dt-seg-val" id="lpDtMoodVal">💭 What are you feeling?</span>
                     <div class="lp-dt-dropdown" onclick="event.stopPropagation()">
                         <div class="lp-picker-list" id="lpDtMoodList"></div>
@@ -80,14 +82,14 @@
                 <div class="lp-dt-divider"></div>
 
                 <div class="lp-dt-seg lp-placeholder" id="lpDtSegLang" onclick="FilterBar.toggleDtSeg('lang')">
-                    <span class="lp-dt-seg-label">Language &amp; Level</span>
+                    <span class="lp-dt-seg-label" data-i18n="dtLangLevel">Language &amp; Level</span>
                     <span class="lp-dt-seg-val" id="lpDtLangVal">🗣️ Which language?</span>
                     <div class="lp-dt-dropdown lp-dt-dropdown--wide" onclick="event.stopPropagation()">
-                        <p class="lp-dt-sublabel">Language</p>
+                        <p class="lp-dt-sublabel" data-i18n="rowLanguage">Language</p>
                         <div class="lp-langlvl-lang">
                             <div class="lp-picker-list" id="lpDtLangList"></div>
                         </div>
-                        <p class="lp-dt-sublabel" style="margin-top:12px;">Level</p>
+                        <p class="lp-dt-sublabel" style="margin-top:12px;" data-i18n="rowLevel">Level</p>
                         <div class="lp-picker-list" id="lpDtLevelList"></div>
                     </div>
                 </div>
@@ -95,7 +97,7 @@
                 <div class="lp-dt-divider"></div>
 
                 <div class="lp-dt-seg lp-placeholder" id="lpDtSegWhen" onclick="FilterBar.openCalendar()">
-                    <span class="lp-dt-seg-label">When</span>
+                    <span class="lp-dt-seg-label" data-i18n="dtWhen">When</span>
                     <span class="lp-dt-seg-val" id="lpDtDateVal">Anytime</span>
                 </div>
 
@@ -114,7 +116,7 @@
                         stroke-width="2.2">
                         <path d="M4 5h16l-6 8v6l-4-2v-4z" />
                     </svg>
-                    Filters
+                    <span data-i18n="btnFilters">Filters</span>
                 </button>
                 <button class="lp-dt-qchip" data-cat="discussion"
                     onclick="FilterBar.toggleQuickCategory('discussion')">💬 Discussion</button>
@@ -126,7 +128,7 @@
                     Book Club</button>
                 <button class="lp-dt-qchip" data-cat="movie" onclick="FilterBar.toggleQuickCategory('movie')">🎬
                     Movie</button>
-                <button class="lp-dt-reset" onclick="FilterBar.resetAllFilters()">Reset</button>
+                <button class="lp-dt-reset" onclick="FilterBar.resetAllFilters()" data-i18n="btnReset">Reset</button>
             </div>
         </div>
 
@@ -141,7 +143,7 @@
                             <circle cx="12" cy="12" r="9" />
                             <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
                         </svg>
-                        Online
+                        <span data-i18n="tabOnline">Online</span>
                     </button>
                     <button class="lp-loc-tab" id="lpTabPerson" onclick="FilterBar.setLocation('person')">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -149,7 +151,7 @@
                             <path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z" />
                             <circle cx="12" cy="10" r="2.5" />
                         </svg>
-                        In Person
+                        <span data-i18n="tabInPerson">In Person</span>
                     </button>
                 </div>
 
@@ -170,7 +172,7 @@
                         <circle cx="11" cy="11" r="7" />
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
-                    <span class="lp-searchbar-label">Start exploring</span>
+                    <span class="lp-searchbar-label" data-i18n="searchStart">Start exploring</span>
                     <span class="lp-badge" id="lpSearchBadge" hidden>0</span>
                     <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2.6">
@@ -180,7 +182,7 @@
                 <div class="lp-searchexpand" id="lpSearchExpand">
                     <div class="lp-erow" onclick="FilterBar.openMood()">
                         <span class="lp-ic">💭</span>
-                        <span class="lp-erow-txt">What are you feeling?</span>
+                        <span class="lp-erow-txt" data-i18n="moodPlaceholder">What are you feeling?</span>
                         <span class="lp-erow-val" id="lpMoodSummary"></span>
                         <svg class="lp-chev2" width="11" height="11" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2.6">
@@ -189,7 +191,7 @@
                     </div>
                     <div class="lp-erow" onclick="FilterBar.openLangLevel()">
                         <span class="lp-ic">🗣️</span>
-                        <span class="lp-erow-txt">Language</span>
+                        <span class="lp-erow-txt" data-i18n="rowLanguage">Language</span>
                         <span class="lp-erow-val" id="lpLangSummary"></span>
                         <svg class="lp-chev2" width="11" height="11" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2.6">
@@ -198,7 +200,7 @@
                     </div>
                     <div class="lp-erow" onclick="FilterBar.openCalendar()">
                         <span class="lp-ic">📅</span>
-                        <span class="lp-erow-txt">Date</span>
+                        <span class="lp-erow-txt" data-i18n="rowDate">Date</span>
                         <span class="lp-erow-val" id="lpDateSummary"></span>
                         <svg class="lp-chev2" width="11" height="11" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2.6">
@@ -218,15 +220,15 @@
         <div class="lp-fs-inner">
             <div class="lp-fs-head">
                 <button class="lp-navbtn" onclick="FilterBar.closeMood()" aria-label="Back">‹</button>
-                <span class="lp-fs-title">What are you feeling?</span>
-                <button class="lp-reset-link" onclick="FilterBar.resetMood()">Reset</button>
+                <span class="lp-fs-title" data-i18n="moodPlaceholder">What are you feeling?</span>
+                <button class="lp-reset-link" onclick="FilterBar.resetMood()" data-i18n="btnReset">Reset</button>
             </div>
             <div class="lp-fs-body">
-                <p class="lp-fs-sub" style="margin-bottom:12px;">Pick as many as you like.</p>
+                <p class="lp-fs-sub" style="margin-bottom:12px;" data-i18n="pickMany">Pick as many as you like.</p>
                 <div class="lp-picker-list" id="lpMoodList"></div>
             </div>
             <div class="lp-fs-foot">
-                <button class="lp-apply-btn" onclick="FilterBar.closeMood()">Done</button>
+                <button class="lp-apply-btn" onclick="FilterBar.closeMood()" data-i18n="btnDone">Done</button>
             </div>
         </div>
     </div>
@@ -236,23 +238,23 @@
         <div class="lp-fs-inner">
             <div class="lp-fs-head">
                 <button class="lp-navbtn" onclick="FilterBar.closeLangLevel()" aria-label="Back">‹</button>
-                <span class="lp-fs-title">Language &amp; Level</span>
-                <button class="lp-reset-link" onclick="FilterBar.resetLangLevel()">Reset</button>
+                <span class="lp-fs-title" data-i18n="langLevelTitle">Language &amp; Level</span>
+                <button class="lp-reset-link" onclick="FilterBar.resetLangLevel()" data-i18n="btnReset">Reset</button>
             </div>
             <div class="lp-fs-body">
-                <p class="lp-fs-headline">Which language?</p>
-                <p class="lp-fs-sub" style="margin-bottom:12px;">Pick any number — scroll for more.</p>
+                <p class="lp-fs-headline" data-i18n="langLevelHeadline">Which language?</p>
+                <p class="lp-fs-sub" style="margin-bottom:12px;" data-i18n="pickAnyScroll">Pick any number — scroll for more.</p>
                 <div class="lp-langlvl-lang">
                     <div class="lp-picker-list" id="lpLangList"></div>
                 </div>
 
-                <p class="lp-fs-headline" style="margin-top:22px;">How comfortable are you?</p>
-                <p class="lp-fs-sub" style="margin-bottom:12px;">Pick the kind of conversation that feels right for you.
+                <p class="lp-fs-headline" style="margin-top:22px;" data-i18n="comfortHeadline">How comfortable are you?</p>
+                <p class="lp-fs-sub" style="margin-bottom:12px;" data-i18n="comfortSub">Pick the kind of conversation that feels right for you.
                 </p>
                 <div class="lp-picker-list" id="lpLevelList"></div>
             </div>
             <div class="lp-fs-foot">
-                <button class="lp-apply-btn" onclick="FilterBar.closeLangLevel()">Done</button>
+                <button class="lp-apply-btn" onclick="FilterBar.closeLangLevel()" data-i18n="btnDone">Done</button>
             </div>
         </div>
     </div>
@@ -262,15 +264,15 @@
         <div class="lp-fs-inner">
             <div class="lp-fs-head">
                 <button class="lp-navbtn" onclick="FilterBar.closeCalendar()" aria-label="Back">‹</button>
-                <span class="lp-fs-title">When</span>
-                <button class="lp-reset-link" onclick="FilterBar.resetDates()">Reset</button>
+                <span class="lp-fs-title" data-i18n="whenTitle">When</span>
+                <button class="lp-reset-link" onclick="FilterBar.resetDates()" data-i18n="btnReset">Reset</button>
             </div>
             <div class="lp-fs-body">
-                <p class="lp-cal-hint">Tap a day to pick one date, or tap a second day to select a range.</p>
+                <p class="lp-cal-hint" data-i18n="calHint">Tap a day to pick one date, or tap a second day to select a range.</p>
                 <div class="lp-cal-quick">
-                    <span class="lp-chip" id="lpQToday" onclick="FilterBar.quickPick('today')">Today</span>
-                    <span class="lp-chip" id="lpQWeekend" onclick="FilterBar.quickPick('weekend')">This weekend</span>
-                    <span class="lp-chip" id="lpQWeek" onclick="FilterBar.quickPick('week')">Next 7 days</span>
+                    <span class="lp-chip" id="lpQToday" onclick="FilterBar.quickPick('today')" data-i18n="calToday">Today</span>
+                    <span class="lp-chip" id="lpQWeekend" onclick="FilterBar.quickPick('weekend')" data-i18n="calWeekend">This weekend</span>
+                    <span class="lp-chip" id="lpQWeek" onclick="FilterBar.quickPick('week')" data-i18n="calWeek">Next 7 days</span>
                 </div>
                 <div class="lp-cal-nav">
                     <button class="lp-cal-arrow" id="lpCalPrev" onclick="FilterBar.calShift(-1)"
@@ -294,18 +296,18 @@
     <div id="membershipModal" class="modal" style="display:none;">
         <div class="modal-content">
             <div class="modal-text">
-                ✨ <strong>Membership Needed</strong><br><br>
+                ✨ <strong data-i18n="membershipNeededTitle">Membership Needed</strong><br><br>
 
-                Your membership or passes have been used up 😊<br>
-                Renew your membership to continue booking sessions and joining discussions.
+                <span data-i18n="membershipNeededBody">Your membership or passes have been used up 😊
+                Renew your membership to continue booking sessions and joining discussions.</span>
             </div>
 
             <div class="modal-actions">
-                <button class="modal-cancel" onclick="closeMembershipPopup()">
+                <button class="modal-cancel" onclick="closeMembershipPopup()" data-i18n="maybeLater">
                     Maybe Later
                 </button>
 
-                <button class="modal-confirm" onclick="goToMembership()">
+                <button class="modal-confirm" onclick="goToMembership()" data-i18n="membershipCta">
                     Get a Membership or Day Pass
                 </button>
             </div>
@@ -320,7 +322,7 @@
 
             <div class="modal-text" style="text-align:center;">
 
-                <div style="font-size:15px; font-weight:600; margin-bottom:12px; color:#555;">
+                <div style="font-size:15px; font-weight:600; margin-bottom:12px; color:#555;" data-i18n="promoWelcome">
                     Welcome to Lingping Club ✨
                 </div>
 
@@ -331,7 +333,7 @@
                     padding:16px;
                     margin-top:10px;
                 ">
-                    <div style="font-size:22px; line-height:1.4;">
+                    <div style="font-size:22px; line-height:1.4;" data-i18n="promoFreeTrials">
                         Log in for free trials in Bangkok, Phuket, Chengdu & online!
                     </div>
                 </div>
@@ -340,11 +342,11 @@
 
             <div class="modal-actions" style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
 
-                <button class="modal-cancel" onclick="closePromoModal()">
+                <button class="modal-cancel" onclick="closePromoModal()" data-i18n="continueBrowsing">
                     Continue browsing
                 </button>
 
-                <button class="modal-confirm" onclick="window.location.href='login.html'">
+                <button class="modal-confirm" onclick="window.location.href='login.html'" data-i18n="login">
                     Login
                 </button>
 
@@ -592,7 +594,7 @@
             eventList.innerHTML = "";
 
             if (!filtered.length) {
-                eventList.innerHTML = `<div class="empty">No sessions</div>`;
+                eventList.innerHTML = `<div class="empty">${t("noSessions")}</div>`;
                 return;
             }
 
@@ -634,8 +636,8 @@
                     return {
                         id: s._id,
                         date: fmtISO(start),
-                        time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
-                        shortTime: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+                        time: `${Utils.formatTime(start)}–${Utils.formatTime(end)}`,
+                        shortTime: `${Utils.formatTime(start)}`,
                         title: s.title,
                         description: s.shortDescription,
                         fullDescription: s.fullDescription,

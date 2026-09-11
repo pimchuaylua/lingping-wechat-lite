@@ -68,10 +68,18 @@ const FilterBar = (function () {
         document.getElementById('lpCityListPanel').classList.remove('lp-open');
         document.getElementById('lpCityBtn').classList.remove('lp-open');
     }
+    /** City names/country headers are hand-translated (they're a fixed,
+     * short list we define, not database content) while the underlying
+     * English `name` stays the canonical value used for matching/state. */
+    const CITY_KEYS = { 'Bangkok': 'cityBangkok', 'Chiang Mai': 'cityChiangMai', 'Phuket': 'cityPhuket', 'Chengdu': 'cityChengdu', 'Hong Kong': 'cityHongKong' };
+    const COUNTRY_KEYS = { 'THAILAND': 'countryThailand', 'CHINA': 'countryChina', 'HONG KONG': 'countryHongKong' };
+    function cityLabel(name) { return (window.t && CITY_KEYS[name]) ? t(CITY_KEYS[name]) : name; }
+    function countryLabel(country) { return (window.t && COUNTRY_KEYS[country]) ? t(COUNTRY_KEYS[country]) : country; }
+
     function selectCity(name) {
         const city = cfg.cities.find(c => c.name === name);
         if (!city) return;
-        document.getElementById('lpCityLabel').textContent = name;
+        document.getElementById('lpCityLabel').textContent = cityLabel(name);
         document.querySelectorAll('.lp-citydrop-item').forEach(item => {
             item.classList.toggle('lp-citydrop-item--active', item.dataset.name === name);
         });
@@ -86,9 +94,9 @@ const FilterBar = (function () {
         const val = document.getElementById('lpDtLocVal');
         if (!val) return;
         if (which === 'online') {
-            val.textContent = '🌐 Online';
+            val.textContent = `🌐 ${window.t ? t('tabOnline') : 'Online'}`;
         } else {
-            const cityName = document.getElementById('lpCityLabel')?.textContent || cfg.cities[0]?.name || '';
+            const cityName = document.getElementById('lpCityLabel')?.textContent || cityLabel(cfg.cities[0]?.name || '');
             val.textContent = `📍 ${cityName}`;
         }
     }
@@ -100,10 +108,10 @@ const FilterBar = (function () {
         let lastCountry = null;
         cfg.cities.forEach(city => {
             if (city.country && city.country !== lastCountry) {
-                html += `<div class="lp-citydrop-category">${city.country}</div>`;
+                html += `<div class="lp-citydrop-category">${countryLabel(city.country)}</div>`;
                 lastCountry = city.country;
             }
-            html += `<div class="lp-citydrop-item" data-name="${city.name}" onclick="FilterBar.selectCity('${city.name}')">${city.name}</div>`;
+            html += `<div class="lp-citydrop-item" data-name="${city.name}" onclick="FilterBar.selectCity('${city.name}')">${cityLabel(city.name)}</div>`;
         });
         const panel = document.getElementById('lpCityListPanel');
         if (panel) panel.innerHTML = html;
@@ -118,7 +126,7 @@ const FilterBar = (function () {
             document.querySelectorAll('.lp-citydrop-item').forEach(item => {
                 item.classList.toggle('lp-citydrop-item--active', item.dataset.name === city.name);
             });
-            document.getElementById('lpCityLabel').textContent = city.name;
+            document.getElementById('lpCityLabel').textContent = cityLabel(city.name);
             document.getElementById('lpTabOnline').classList.remove('lp-loc-tab--active');
             document.getElementById('lpTabPerson').classList.add('lp-loc-tab--active');
             document.getElementById('lpDtTabOnline')?.classList.remove('lp-loc-tab--active');
@@ -155,7 +163,8 @@ const FilterBar = (function () {
         const opts = {
             iconFor: v => CATEGORY_ICONS[v] || '',
             showDesc: false,
-            onToggle: renderMoodList
+            onToggle: renderMoodList,
+            labelFor: (v, fallback) => window.translatedCategoryLabel ? translatedCategoryLabel(v, fallback) : fallback
         };
         renderCheckList(document.getElementById('lpMoodList'), cfg.eventOptions.categories, state.categories, opts);
         renderCheckList(document.getElementById('lpDtMoodList'), cfg.eventOptions.categories, state.categories, opts);
@@ -175,13 +184,15 @@ const FilterBar = (function () {
         function text(withIcon) {
             if (!picked.length) return null;
             const icon = withIcon ? `${CATEGORY_ICONS[picked[0].value] || ''} ` : '';
-            const base = `${icon}${picked[0].label}`;
+            const label = translatedCategoryLabel(picked[0].value, picked[0].label);
+            const base = `${icon}${label}`;
             return picked.length === 1 ? base : `${base} +${picked.length - 1}`;
         }
 
+        const moodPlaceholder = window.t ? t('moodPlaceholder') : 'What are you feeling?';
         [
-            { btn: document.getElementById('lpMoodBtn'), label: document.getElementById('lpMoodLabel'), text: text(false), placeholder: 'What are you feeling?' },
-            { btn: document.getElementById('lpDtSegMood'), label: document.getElementById('lpDtMoodVal'), text: text(true), placeholder: '💭 What are you feeling?' }
+            { btn: document.getElementById('lpMoodBtn'), label: document.getElementById('lpMoodLabel'), text: text(false), placeholder: moodPlaceholder },
+            { btn: document.getElementById('lpDtSegMood'), label: document.getElementById('lpDtMoodVal'), text: text(true), placeholder: `💭 ${moodPlaceholder}` }
         ].forEach(({ btn, label, text, placeholder }) => {
             if (!btn || !label) return;
             label.textContent = text || placeholder;
@@ -197,7 +208,7 @@ const FilterBar = (function () {
             const value = el.dataset.cat;
             el.classList.toggle('lp-active', state.categories.has(value));
             const meta = (cfg.eventOptions.categories || []).find(c => c.value === value);
-            if (meta) el.textContent = `${CATEGORY_ICONS[value] || ''} ${meta.label}`;
+            if (meta) el.textContent = `${CATEGORY_ICONS[value] || ''} ${translatedCategoryLabel(value, meta.label)}`;
         });
     }
 
@@ -221,8 +232,8 @@ const FilterBar = (function () {
     }
 
     function renderLangLevelLists() {
-        const langOpts = { iconFor: v => LANG_META[v]?.flag || '', showDesc: false, onToggle: renderLangLevelLists };
-        const lvlOpts = { iconFor: v => LEVEL_ICONS[v] || '', showDesc: true, onToggle: renderLangLevelLists };
+        const langOpts = { iconFor: v => LANG_META[v]?.flag || '', showDesc: false, onToggle: renderLangLevelLists, labelFor: (v, fallback) => window.translatedLangLabel ? translatedLangLabel(v, fallback) : fallback };
+        const lvlOpts = { iconFor: v => LEVEL_ICONS[v] || '', showDesc: true, onToggle: renderLangLevelLists, labelFor: (v, fallback) => window.translatedLevelLabel ? translatedLevelLabel(v, fallback) : fallback };
 
         renderCheckList(document.getElementById('lpLangList'), cfg.eventOptions.languages, state.languages, langOpts);
         renderCheckList(document.getElementById('lpDtLangList'), cfg.eventOptions.languages, state.languages, langOpts);
@@ -245,18 +256,21 @@ const FilterBar = (function () {
             const parts = [];
             if (pickedLang.length) {
                 const icon = withIcon ? `${LANG_META[pickedLang[0].value]?.flag || ''} ` : '';
-                const t = `${icon}${pickedLang[0].label}`;
-                parts.push(pickedLang.length === 1 ? t : `${t} +${pickedLang.length - 1}`);
+                const label = translatedLangLabel(pickedLang[0].value, pickedLang[0].label);
+                const langText = `${icon}${label}`;
+                parts.push(pickedLang.length === 1 ? langText : `${langText} +${pickedLang.length - 1}`);
             }
             if (pickedLvl.length) {
-                parts.push(pickedLvl.length === 1 ? pickedLvl[0].label : `${pickedLvl[0].label} +${pickedLvl.length - 1}`);
+                const lvlLabel = translatedLevelLabel(pickedLvl[0].value, pickedLvl[0].label);
+                parts.push(pickedLvl.length === 1 ? lvlLabel : `${lvlLabel} +${pickedLvl.length - 1}`);
             }
             return parts.join(' · ');
         }
 
+        const langPlaceholder = window.t ? t('langLevelPlaceholder') : 'Which language?';
         [
-            { btn: document.getElementById('lpLangLevelBtn'), label: document.getElementById('lpLangLevelLabel'), text: text(false), placeholder: 'Which language?' },
-            { btn: document.getElementById('lpDtSegLang'), label: document.getElementById('lpDtLangVal'), text: text(true), placeholder: '🗣️ Which language?' }
+            { btn: document.getElementById('lpLangLevelBtn'), label: document.getElementById('lpLangLevelLabel'), text: text(false), placeholder: langPlaceholder },
+            { btn: document.getElementById('lpDtSegLang'), label: document.getElementById('lpDtLangVal'), text: text(true), placeholder: `🗣️ ${langPlaceholder}` }
         ].forEach(({ btn, label, text, placeholder }) => {
             if (!btn || !label) return;
             label.textContent = text || placeholder;
@@ -317,16 +331,17 @@ const FilterBar = (function () {
      * surface reading that Set — mobile and desktop stay in sync from one
      * source of truth); when `showDesc` is true, an (i) button toggles the
      * description open/closed without affecting selection or closing anything. */
-    function renderCheckList(container, items, selectedSet, { iconFor, showDesc, onToggle }) {
+    function renderCheckList(container, items, selectedSet, { iconFor, showDesc, onToggle, labelFor }) {
         if (!container) return;
         container.innerHTML = (items || []).map(item => {
             const active = selectedSet.has(item.value);
             const hasDesc = showDesc && item.description;
+            const label = labelFor ? labelFor(item.value, item.label) : item.label;
             return `
                 <div class="lp-picker-item${active ? ' lp-active' : ''}" data-value="${item.value}">
                     <span class="lp-ic">${iconFor(item.value)}</span>
                     <span class="lp-txt">
-                        <span class="lp-lbl">${item.label}${hasDesc ? ` <button type="button" class="lp-info-btn" aria-label="More info">i</button>` : ''}</span>
+                        <span class="lp-lbl">${label}${hasDesc ? ` <button type="button" class="lp-info-btn" aria-label="More info">i</button>` : ''}</span>
                         ${hasDesc ? `<span class="lp-desc">${item.description}</span>` : ''}
                     </span>
                     <span class="lp-check">${active ? '✓' : ''}</span>
@@ -431,7 +446,7 @@ const FilterBar = (function () {
 
     function updateDateLabel() {
         const text = !rangeStart
-            ? 'Anytime'
+            ? (window.t ? t('datePlaceholder') : 'Anytime')
             : !rangeEnd
                 ? Utils.formatDate(rangeStart)
                 : `${Utils.formatDate(rangeStart)} – ${Utils.formatDate(rangeEnd)}`;
@@ -447,12 +462,16 @@ const FilterBar = (function () {
 
     function updateCalFooter() {
         const btn = document.getElementById('lpCalFootBtn');
+        const lang = window.getSiteLanguage ? getSiteLanguage() : 'en';
+        const showEvents = lang === 'zh' ? '查看活动' : 'Show events';
         if (!rangeStart) {
-            btn.textContent = 'Show upcoming events';
+            btn.textContent = window.t ? t('calShowUpcoming') : 'Show upcoming events';
         } else if (!rangeEnd) {
-            btn.textContent = `Show events on ${Utils.formatDate(rangeStart)}`;
+            btn.textContent = lang === 'zh'
+                ? `${showEvents}：${Utils.formatDate(rangeStart)}`
+                : `${showEvents} on ${Utils.formatDate(rangeStart)}`;
         } else {
-            btn.textContent = `Show events ${Utils.formatDate(rangeStart)} – ${Utils.formatDate(rangeEnd)}`;
+            btn.textContent = `${showEvents} ${Utils.formatDate(rangeStart)} – ${Utils.formatDate(rangeEnd)}`;
         }
     }
 
