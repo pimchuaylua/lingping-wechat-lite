@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(data => {
                 header.innerHTML = data;
                 updateAuthNav();
+                updateMembershipCta();
             });
     }
 
@@ -32,12 +33,45 @@ function toggleMoreDropdown() {
     menu.classList.toggle("hidden");
 }
 
+function isIndexPage() {
+    const path = location.pathname;
+    return path === "/" || path.endsWith("/index.html");
+}
+
+// The header's CTA points at whichever plan page fits the page it's shown
+// on, instead of the generic plans hub.
+function updateMembershipCta() {
+    const cta = document.querySelector(".membership-cta");
+    if (!cta) return;
+
+    if (location.pathname.endsWith("english-sessions.html")) {
+        cta.setAttribute("data-i18n", "membershipCtaEnglish");
+        if (typeof t === "function") cta.textContent = t("membershipCtaEnglish");
+        cta.href = "subscriptions/english-classes.html";
+    } else if (isIndexPage()) {
+        cta.href = "subscriptions/community-access.html";
+    }
+}
+
+// Logo: on the home page it keeps its existing easter-egg behavior; from
+// anywhere else it's just a way back home.
+function handleLogoClick() {
+    if (isIndexPage()) {
+        if (typeof showSurprise === "function") showSurprise();
+    } else {
+        window.location.href = "/";
+    }
+}
+
 // Show only "Profile" when logged in, or "Log In" when logged out
 function updateAuthNav() {
     const userId = localStorage.getItem("userId");
     const profileLink = document.getElementById("navProfile");
     const loginLink = document.getElementById("navLogin");
 
-    if (profileLink) profileLink.style.display = userId ? "" : "none";
+    if (profileLink) {
+        profileLink.style.display = userId ? "" : "none";
+        if (userId) profileLink.href = `view-profile.html?userId=${encodeURIComponent(userId)}`;
+    }
     if (loginLink) loginLink.style.display = userId ? "none" : "";
 }

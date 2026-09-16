@@ -2,14 +2,14 @@
 <html lang="en">
 
 <head>
-    <link rel="icon" type="image/png" href="assets/logos/lingping_logo.png">
+    <link rel="icon" type="image/png" href="assets/logos/favicon.png">
     <meta charset="UTF-8">
     <title>View Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="config.js"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="assets/view-profile_style.css">
-    <link rel="icon" type="image/png" href="assets/logos/lingping_logo.png">
+    <link rel="icon" type="image/png" href="assets/logos/favicon.png">
     <style>
 
     </style>
@@ -23,11 +23,12 @@
 
     <script>
         const { BASE_URL, API_KEY } = window.CONFIG;
-        const userId = localStorage.getItem("viewUserId");
         const container = document.getElementById("profileContent");
 
+        const myUserId = localStorage.getItem("userId");
+        const viewUserId = new URLSearchParams(window.location.search).get("userId");
 
-        if (!userId) {
+        if (!viewUserId) {
             container.innerHTML = "<p>User not found.</p>";
         } else {
             loadProfile();
@@ -35,9 +36,6 @@
 
         async function loadProfile() {
             try {
-
-                const myUserId = localStorage.getItem("userId");
-                const viewUserId = new URLSearchParams(window.location.search).get("userId") || myUserId;
 
                 const res = await fetch(`${BASE_URL}/users/${viewUserId}/profile`, {
                     headers: {

@@ -2,7 +2,7 @@
     <div class="modal-content">
         <div class="modal-text">
 
-            <div style="font-size:20px; font-weight:600; margin-bottom:14px;">
+            <div style="font-size:20px; font-weight:600; margin-bottom:14px;" data-i18n="confirmBooking">
                 Confirm Booking
             </div>
 
@@ -30,11 +30,11 @@
                     border-radius:10px;
                     font-size:14px;
                 ">
-                    🌿 <strong>Community Reminder</strong><br>
-                    • Be on time.<br>
-                    • Be polite and respectful.<br>
-                    • Only booked participants. No walk-ins.<br>
-                    • For in-person events, order at least one drink to support the venue.
+                    <strong data-i18n="communityReminder">🌿 Community Reminder</strong><br>
+                    • <span data-i18n="reminderOnTime">Be on time.</span><br>
+                    • <span data-i18n="reminderPolite">Be polite and respectful.</span><br>
+                    • <span data-i18n="reminderNoWalkIns">Only booked participants. No walk-ins.</span><br>
+                    • <span data-i18n="reminderOrderDrink">For in-person events, order at least one drink to support the venue.</span>
                 </div>
 
                 <div style="
@@ -44,9 +44,9 @@
                     border-radius:10px;
                     font-size:14px;
                 ">
-                    📌 <strong>Cancellation Policy</strong><br>
-                    Please cancel at least 3 hours before your session if you can’t join so others can take your spot
-                    and hosts can plan better.
+                    <strong data-i18n="cancellationPolicyTitle">📌 Cancellation Policy</strong><br>
+                    <span data-i18n="cancellationPolicyBody">Please cancel at least 3 hours before your session if you can’t join so others can take your spot
+                    and hosts can plan better.</span>
                 </div>
 
                 <!-- AGREEMENT CHECKBOX -->
@@ -59,14 +59,14 @@
                 ">
                     <label style="display:flex; gap:10px; align-items:flex-start; cursor:pointer;">
                         <input type="checkbox" id="bookingAgreeCheckbox" style="margin-top:3px;">
-                        <span>
+                        <span data-i18n="agreeReminders">
                             I understand and agree to the community reminders and cancellation policy.
                         </span>
                     </label>
                 </div>
 
                 <div style="margin-top:12px; font-size:14px;">
-                    <a href="community_guidelines.html" target="_blank">
+                    <a href="community_guidelines.html" target="_blank" data-i18n="readFullRules">
                         Read full community rules
                     </a>
                 </div>
@@ -75,19 +75,19 @@
         </div>
 
         <div class="modal-actions">
-            <button class="modal-cancel" onclick="closePreBookingModal()">
+            <button class="modal-cancel" onclick="closePreBookingModal()" data-i18n="cancel">
                 Cancel
             </button>
 
             <button class="modal-confirm" onclick="
                 if (!document.getElementById('bookingAgreeCheckbox')?.checked) {
-                    alert('Please agree to the community reminders and cancellation policy.');
+                    alert(t('agreeRequiredAlert'));
                     return;
                 }
 
                 bookSession({ sessionId: currentSessionId });
                 closePreBookingModal();
-            ">
+            " data-i18n="okBook">
                 OK, Book
             </button>
         </div>
@@ -100,7 +100,7 @@
         const agreed = document.getElementById("bookingAgreeCheckbox")?.checked;
 
         if (!agreed) {
-            alert("Please agree to the community reminders and cancellation policy.");
+            alert(t("agreeRequiredAlert"));
             return;
         }
 
