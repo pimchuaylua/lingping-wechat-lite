@@ -5,6 +5,62 @@
     <meta charset="UTF-8">
     <title>Lingping Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/logos/lingping_logo.png">
+
+    <!-- Runs synchronously, before the login card is even parsed, so
+         WeChat / likely-mainland-China visitors never see the Google
+         button, divider, or phone option flash on screen before being
+         hidden. isWeChatBrowser()/isLikelyMainlandChina() below are the
+         single source of truth — also used later (for the "skip the
+         open-in-browser popup" decision) by the script near the bottom
+         of the page. -->
+    <script>
+        function isWeChatBrowser() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            return ua.includes("MicroMessenger");
+        }
+
+        function isLikelyMainlandChina() {
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            return ["Asia/Shanghai", "Asia/Urumqi", "Asia/Chongqing", "Asia/Harbin"].includes(tz);
+        }
+
+        if (isWeChatBrowser() || isLikelyMainlandChina()) {
+            document.documentElement.classList.add("lp-simplified-login");
+        }
+    </script>
+    <style>
+        .lp-simplified-login #googleLoginBlock,
+        .lp-simplified-login #loginDivider,
+        .lp-simplified-login #phoneLoginOption {
+            display: none !important;
+        }
+
+        /* With Google/divider/phone hidden, only two short options remain
+           — center the (now much shorter) card in the viewport instead of
+           leaving it pinned near the top with empty space below, and add
+           breathing room between the heading, the options, and each
+           option's sub-text. .container is already a full-height flex
+           column (shared rule from event-detail_style.css, used by other
+           pages) — it packs to the top by default, so centering its
+           content just needs justify-content here. */
+        .lp-simplified-login .container {
+            margin-top: 0 !important;
+            justify-content: center;
+        }
+
+        .lp-simplified-login .login-card h1 {
+            margin-bottom: 28px !important;
+        }
+
+        .lp-simplified-login .login-option {
+            margin-bottom: 18px;
+        }
+
+        .lp-simplified-login .option-subtext {
+            margin-top: 8px !important;
+        }
+    </style>
 
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="assets/subscription_main_style.css?v=20260513">
@@ -34,6 +90,20 @@
             margin-top: 8px;
         }
 
+        /* Phone panel's own action buttons match the Continue button's
+           orange rather than the shared .primary-button black. */
+        #phoneLoginPanel .primary-button {
+            background: var(--theme, #FFB050);
+        }
+
+        /* Whichever login method is currently open (or, for username,
+           last chosen) gets a clearly different look from the other two
+           — not just a hover state. */
+        .login-option.login-option-active {
+            border-color: var(--theme, #FFB050);
+            background: rgba(255, 176, 80, 0.08);
+            box-shadow: 0 0 0 1px var(--theme, #FFB050);
+        }
     </style>
 </head>
 
@@ -72,6 +142,9 @@
 
         <div class="login-card">
 
+            <img src="assets/logos/lingping_logo.png" alt="Lingping Club"
+                style="height:64px; width:64px; object-fit:cover; border-radius:50%; display:block; margin:0 auto 14px;">
+
             <h1 style="margin-bottom:10px;" data-i18n="welcomeBack">Welcome Back</h1>
 
             <!-- Google Login -->
@@ -81,7 +154,7 @@
             </div>
 
             <!-- Google Login -->
-            <div style="text-align:center; margin-bottom:10px;">
+            <div id="googleLoginBlock" style="text-align:center; margin-bottom:10px;">
                 <div style="
         font-size:18px;
         font-weight:700;
@@ -104,20 +177,24 @@
                 </div>
             </div>
 
-            <div class="login-divider" data-i18n="orDivider">or</div>
+            <div class="login-divider" id="loginDivider" data-i18n="orDivider">or</div>
 
-            <div class="login-option" style="font-size:14px; padding:10px 12px;" onclick="showPhoneLogin()" data-i18n="continueWithPhone">
+            <div class="login-option" id="phoneLoginOption" style="font-size:14px; padding:10px 12px;"
+                onclick="showPhoneLogin(this)" data-i18n="continueWithPhone">
                 Continue with phone number
             </div>
 
-            <div class="login-option" style="font-size:14px; padding:10px 12px;" onclick="showEmailLogin()">
+            <div class="login-option" id="emailLoginOption" style="font-size:14px; padding:10px 12px;"
+                onclick="showEmailLogin(this)">
                 <span data-i18n="continueWithEmail">Continue with email</span>
-                <div style="color:#999; font-weight:400; font-size:12px; margin-top:2px;" data-i18n="recommendedMainlandChina">
+                <div class="option-subtext" style="color:#999; font-weight:400; font-size:12px; margin-top:2px;"
+                    data-i18n="recommendedMainlandChina">
                     🇨🇳 Recommended for Mainland China users
                 </div>
             </div>
 
-            <div class="login-option" style="font-size:14px; padding:10px 12px;" onclick="loginWithUsername()" data-i18n="continueWithUsername">
+            <div class="login-option" id="usernameLoginOption" style="font-size:14px; padding:10px 12px;"
+                onclick="loginWithUsername(this)" data-i18n="continueWithUsername">
                 Continue with username
             </div>
 
@@ -128,8 +205,23 @@
                 <div id="emailHint" class="email-hint" style="display:none;"></div>
                 <div id="emailError" class="email-error" style="display:none;"></div>
 
-                <button id="emailSubmitBtn" class="primary-button" style="margin-top:12px;"
-                    onclick="continueWithEmail()" data-i18n="continueBtn">
+                <!-- NAME -->
+                <div style="margin-top:12px; margin-bottom:6px; width:100%;">
+
+                    <input id="emailUserDisplayName" type="text" placeholder="Your name (required)"
+                        data-i18n-placeholder="yourNameRequired" style="
+                width:100%;
+                padding:12px;
+                border-radius:8px;
+                border:1px solid #ddd;
+                font-weight:500;
+                box-sizing:border-box;
+            ">
+                </div>
+
+                <button id="emailSubmitBtn" class="primary-button"
+                    style="margin-top:12px; background:var(--theme, #FFB050);" onclick="continueWithEmail()"
+                    data-i18n="continueBtn">
                     Continue
                 </button>
             </div>
@@ -169,7 +261,8 @@
                 <!-- NAME -->
                 <div style="margin-top:12px; margin-bottom:6px; width:100%;">
 
-                    <input id="phoneUserDisplayName" type="text" placeholder="Your name (required)" data-i18n-placeholder="yourNameRequired" style="
+                    <input id="phoneUserDisplayName" type="text" placeholder="Your name (required)"
+                        data-i18n-placeholder="yourNameRequired" style="
                 width:100%;
                 padding:12px;
                 border-radius:8px;
@@ -179,7 +272,8 @@
             ">
                 </div>
 
-                <input id="otpInput" class="input-field" type="text" placeholder="Enter OTP" data-i18n-placeholder="enterOTPPlaceholder">
+                <input id="otpInput" class="input-field" type="text" placeholder="Enter OTP"
+                    data-i18n-placeholder="enterOTPPlaceholder">
 
                 <button class="primary-button" onclick="verifyOTPWithValidation()" data-i18n="verify">
                     Verify
@@ -205,6 +299,11 @@
 </body>
 
 <script>
+
+    // isWeChatBrowser() and isLikelyMainlandChina() are defined in the
+    // <head> script (run synchronously before the login card is parsed,
+    // to avoid a flash of the Google/phone options before they're
+    // hidden) — reused here as-is for the popup-skip decision below.
 
     function isInAppBrowser() {
         const ua = navigator.userAgent || navigator.vendor || window.opera;
@@ -377,9 +476,29 @@
     let pendingEmailSuggestion = null;
     let emailLoginInProgress = false;
 
-    function showEmailLogin() {
+    // Highlights whichever login option is currently selected (its panel
+    // open, or — for username, which has no panel — the last one clicked)
+    // and clears the highlight from the other two, so it's obvious at a
+    // glance which method is in use.
+    function setActiveLoginOption(optionEl) {
+        document.querySelectorAll(".login-option").forEach(o => o.classList.remove("login-option-active"));
+        if (optionEl) optionEl.classList.add("login-option-active");
+    }
+
+    // Only one method's fields should be visible at a time — opening one
+    // panel hides the others instead of leaving them stacked underneath.
+    function closeOtherLoginPanels(exceptId) {
+        ["emailLoginPanel", "phoneLoginPanel"].forEach(id => {
+            if (id !== exceptId) document.getElementById(id).style.display = "none";
+        });
+    }
+
+    function showEmailLogin(optionEl) {
         const panel = document.getElementById("emailLoginPanel");
-        panel.style.display = panel.style.display === "none" ? "block" : "none";
+        const opening = panel.style.display === "none";
+        closeOtherLoginPanels("emailLoginPanel");
+        panel.style.display = opening ? "block" : "none";
+        setActiveLoginOption(opening ? optionEl : null);
     }
 
     function showEmailHint(html) {
@@ -407,11 +526,21 @@
     // username login) — no PIN entry in the UI for now.
     async function continueWithEmail() {
         const emailInput = document.getElementById("emailInput");
+        const nameInput = document.getElementById("emailUserDisplayName");
         const email = emailInput.value.trim();
+        const name = nameInput.value.trim();
         const errorEl = document.getElementById("emailError");
 
         clearEmailHint();
         errorEl.style.display = "none";
+        nameInput.classList.remove("input-error");
+
+        // validate name (required, same as the phone login flow)
+        if (!name) {
+            nameInput.classList.add("input-error");
+            nameInput.focus();
+            return;
+        }
 
         if (!isValidEmailSyntax(email)) {
             emailInput.classList.add("input-error");
@@ -439,7 +568,7 @@
             let loginResult = await loginUserWithRetry(email, "1234", 1);
 
             if (!loginResult.success) {
-                const registerResult = await registerUser(email, email);
+                const registerResult = await registerUser(email, name);
 
                 if (!registerResult.success) {
                     throw new Error(t("emailAlreadyRegistered"));
@@ -474,7 +603,9 @@
 
     /* ---------------- USERNAME LOGIN ---------------- */
 
-    async function loginWithUsername() {
+    async function loginWithUsername(optionEl) {
+        closeOtherLoginPanels();
+        setActiveLoginOption(optionEl);
         try {
             const username = prompt(t("enterUsernamePrompt"))?.trim();
             if (!username) return;
@@ -582,7 +713,10 @@
 
     window.addEventListener("load", () => {
 
-        if (isInAppBrowser()) {
+        // WeChat already got the simplified view (and skips this popup)
+        // synchronously from the <head> script — Facebook/Instagram/Line
+        // still get the "open in browser" nudge as before.
+        if (!isWeChatBrowser() && isInAppBrowser()) {
             showBrowserPopup();
         }
 
@@ -609,14 +743,17 @@
         return digits;
     }
 
-    function showPhoneLogin() {
+    function showPhoneLogin(optionEl) {
         const panel = document.getElementById("phoneLoginPanel");
+        const opening = panel.style.display === "none";
 
-        if (panel.style.display === "none") {
+        closeOtherLoginPanels("phoneLoginPanel");
+        if (opening) {
             panel.style.display = "block";
         } else {
             panel.style.display = "none";
         }
+        setActiveLoginOption(opening ? optionEl : null);
     }
 
     async function sendOTP() {
