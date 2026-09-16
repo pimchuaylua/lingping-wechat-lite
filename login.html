@@ -48,12 +48,15 @@
             margin-top: 0 !important;
             justify-content: center;
         }
+
         .lp-simplified-login .login-card h1 {
             margin-bottom: 28px !important;
         }
+
         .lp-simplified-login .login-option {
             margin-bottom: 18px;
         }
+
         .lp-simplified-login .option-subtext {
             margin-top: 8px !important;
         }
@@ -117,7 +120,8 @@
             </p>
 
             <p style="margin-top:14px; font-size:13px; color:#666;">
-                <span data-i18n="browserPopupHint">If you don't see that option, copy the login link and open it in Chrome or Safari.</span> <br><br>
+                <span data-i18n="browserPopupHint">If you don't see that option, copy the login link and open it in
+                    Chrome or Safari.</span> <br><br>
                 <img src="assets/logos/chrome.png" alt="Chrome"
                     style="height:25px; width:auto; vertical-align:middle; margin-left:6px;">
                 <img src="assets/logos/safari.png" alt="Safari"
@@ -176,18 +180,22 @@
 
             <div class="login-divider" id="loginDivider" data-i18n="orDivider">or</div>
 
-            <div class="login-option" id="phoneLoginOption" style="font-size:14px; padding:10px 12px;" onclick="showPhoneLogin(this)" data-i18n="continueWithPhone">
+            <div class="login-option" id="phoneLoginOption" style="font-size:14px; padding:10px 12px;"
+                onclick="showPhoneLogin(this)" data-i18n="continueWithPhone">
                 Continue with phone number
             </div>
 
-            <div class="login-option" id="emailLoginOption" style="font-size:14px; padding:10px 12px;" onclick="showEmailLogin(this)">
+            <div class="login-option" id="emailLoginOption" style="font-size:14px; padding:10px 12px;"
+                onclick="showEmailLogin(this)">
                 <span data-i18n="continueWithEmail">Continue with email</span>
-                <div class="option-subtext" style="color:#999; font-weight:400; font-size:12px; margin-top:2px;" data-i18n="recommendedMainlandChina">
+                <div class="option-subtext" style="color:#999; font-weight:400; font-size:12px; margin-top:2px;"
+                    data-i18n="recommendedMainlandChina">
                     🇨🇳 Recommended for Mainland China users
                 </div>
             </div>
 
-            <div class="login-option" id="usernameLoginOption" style="font-size:14px; padding:10px 12px;" onclick="loginWithUsername(this)" data-i18n="continueWithUsername">
+            <div class="login-option" id="usernameLoginOption" style="font-size:14px; padding:10px 12px;"
+                onclick="loginWithUsername(this)" data-i18n="continueWithUsername">
                 Continue with username
             </div>
 
@@ -201,7 +209,8 @@
                 <!-- NAME -->
                 <div style="margin-top:12px; margin-bottom:6px; width:100%;">
 
-                    <input id="emailUserDisplayName" type="text" placeholder="Your name (required)" data-i18n-placeholder="yourNameRequired" style="
+                    <input id="emailUserDisplayName" type="text" placeholder="Your name (required)"
+                        data-i18n-placeholder="yourNameRequired" style="
                 width:100%;
                 padding:12px;
                 border-radius:8px;
@@ -211,8 +220,9 @@
             ">
                 </div>
 
-                <button id="emailSubmitBtn" class="primary-button" style="margin-top:12px; background:var(--theme, #FFB050);"
-                    onclick="continueWithEmail()" data-i18n="continueBtn">
+                <button id="emailSubmitBtn" class="primary-button"
+                    style="margin-top:12px; background:var(--theme, #FFB050);" onclick="continueWithEmail()"
+                    data-i18n="continueBtn">
                     Continue
                 </button>
             </div>
@@ -252,7 +262,8 @@
                 <!-- NAME -->
                 <div style="margin-top:12px; margin-bottom:6px; width:100%;">
 
-                    <input id="phoneUserDisplayName" type="text" placeholder="Your name (required)" data-i18n-placeholder="yourNameRequired" style="
+                    <input id="phoneUserDisplayName" type="text" placeholder="Your name (required)"
+                        data-i18n-placeholder="yourNameRequired" style="
                 width:100%;
                 padding:12px;
                 border-radius:8px;
@@ -262,7 +273,8 @@
             ">
                 </div>
 
-                <input id="otpInput" class="input-field" type="text" placeholder="Enter OTP" data-i18n-placeholder="enterOTPPlaceholder">
+                <input id="otpInput" class="input-field" type="text" placeholder="Enter OTP"
+                    data-i18n-placeholder="enterOTPPlaceholder">
 
                 <button class="primary-button" onclick="verifyOTPWithValidation()" data-i18n="verify">
                     Verify
