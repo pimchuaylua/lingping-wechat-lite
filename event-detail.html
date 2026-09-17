@@ -166,10 +166,11 @@
             if (!s) return;
 
             const bookBtn = document.getElementById("bookBtn");
-            const isCanceled = s.maxParticipants === -1;
+            const isCanceled = !!s.canceledAt;
 
             if (isCanceled) {
                 bookBtn.disabled = true;
+                bookBtn.textContent = t("statusCanceled");
             } else if (s.isFull) {
                 bookBtn.textContent = t("joinWaitlist");
                 bookBtn.classList.add("waitlist");
@@ -667,6 +668,10 @@
         function handleBookClick(sessionId, levelName, session) {
 
             console.log(session);
+
+            if (session?.canceledAt) {
+                return;
+            }
 
             if (session?.isFull) {
                 joinWaitlist(sessionId);

@@ -7,7 +7,7 @@
 function buildEventCard(s, { isOnline }) {
     let flagImg = "";
 
-    const isCanceled = s.maxParticipants === -1;
+    const isCanceled = !!s.canceledAt;
     const languages = s.languages || [];
     const languageCodes = languages.map(l => l.language);
 
@@ -29,13 +29,13 @@ function buildEventCard(s, { isOnline }) {
         flagImg = "assets/flags/hk.png";
     }
 
-    const status = s.maxParticipants === -1
+    const status = isCanceled
         ? t("statusCanceled")
         : s.isFull
             ? t("statusFull")
             : t("statusAvailable");
 
-    const statusClass = s.maxParticipants === -1
+    const statusClass = isCanceled
         ? "canceled"
         : s.isFull
             ? "full"
