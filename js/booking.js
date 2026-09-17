@@ -210,6 +210,7 @@ function formatReadingSessionToDisplay(s, eventOptions) {
         isFull: s.isFull,
         seatsLeft: s.numberOfSeatsLeft,
         maxParticipants: s.maxParticipants,
+        canceledAt: s.canceledAt,
         photoUrl: s.photoUrl,
         booked: true,
         location: s.location,
