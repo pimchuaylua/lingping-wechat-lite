@@ -272,10 +272,16 @@ function preBookingModal(sessionId, session) {
     document.getElementById("modalSessionName").innerText = session.title;
     document.getElementById("modalSessionDate").innerText = Utils.formatDate(session.date);
     document.getElementById("modalSessionTime").innerText = `${session.time} (${Utils.getTimeZoneName()})`;
-    document.getElementById("modalSessionLocation").innerText =
-        session.levelName?.toLowerCase().includes("online")
-            ? t("tabOnline")
-            : (session.location || t("locationTBA"));
+
+    const isOnline = session.levelName?.toLowerCase().includes("online");
+    document.getElementById("modalSessionLocation").innerText = isOnline
+        ? t("tabOnline")
+        : (session.location || t("locationTBA"));
+
+    const locationIconEl = document.getElementById("modalLocationIcon");
+    locationIconEl.innerHTML = isOnline
+        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="3" y1="12" x2="21" y2="12"></line><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"></path></svg>'
+        : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-11a7 7 0 1 1 14 0c0 4.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>';
 
     const categoryEl = document.getElementById("modalSessionCategory");
     const category = (session.categories || [])[0];
