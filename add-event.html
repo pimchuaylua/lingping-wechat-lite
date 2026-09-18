@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Add Event</title>
+    <title>Bring an Idea</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="config.js"></script>
     <script src="js/utils.js?v=20250210"></script>
@@ -11,6 +11,13 @@
     <link rel="stylesheet" href="assets/chip_style.css">
     <script src="js/render-langague-level.js"></script>
     <style>
+        .blurb {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0 0 12px;
+        }
+
         .input-invalid {
             border-color: #b3441f !important;
         }
@@ -304,7 +311,7 @@
         if (!userId) {
             container.innerHTML = `
                 <div class="back-btn" onclick="history.back()">← Back</div>
-                <h1>Add Event</h1>
+                <h1>Bring an Idea 💭</h1>
                 <p>Please log in to create an event.</p>
             `;
         } else {
@@ -400,7 +407,9 @@
 
             container.innerHTML = `
                 <div class="back-btn" onclick="history.back()">← Back</div>
-                <h1>Add Event</h1>
+                <h1>Bring an Idea 💭</h1>
+                <p class="blurb">Curious what other people think about something? Want to discuss a book or article you've read that's been on your mind? Explore a question, reflect on an experience, start a language practice group, or explore the city?</p>
+                <p class="blurb">Explore interesting questions, new perspectives, places, and cultures with Lingping friends!</p>
 
                 <div class="section">
                     <div class="label">Title</div>
@@ -741,6 +750,7 @@
 
             const body = {
                 startTime,
+                timezone,
                 durationMins: Number(val('durationMins')) || undefined,
                 locationUrl: val('locationUrl') || '',
                 photoUrl: uploadedPhotoUrl || DEFAULT_PHOTO_URL,

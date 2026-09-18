@@ -25,7 +25,7 @@ const TRANSLATIONS = {
     sectionEvents: { en: "Events", zh: "活动" },
     navAttending: { en: "Attending", zh: "已报名" },
     navHosting: { en: "Hosting", zh: "我主持的" },
-    navAddEvent: { en: "+ Add Event", zh: "+ 添加活动" },
+    navAddEvent: { en: "Bring an Idea", zh: "分享想法" },
     sectionCommunity: { en: "Community", zh: "社区" },
     navLeaderboard: { en: "Leaderboard 🏆", zh: "排行榜 🏆" },
     navCommunityRules: { en: "Community Rules", zh: "社区规则" },
@@ -91,7 +91,8 @@ const TRANSLATIONS = {
     // ---- event cards (event-card.js) ----
     attend: { en: "Attend", zh: "参加" },
     joinWaitlist: { en: "Join Waitlist", zh: "加入候补名单" },
-    hostedBy: { en: "Hosted by", zh: "主持人：" },
+    hostedBy: { en: "With", zh: "和" },
+    hostedByEnd: { en: "", zh: "一起" },
     statusAvailable: { en: "Available", zh: "可预订" },
     statusFull: { en: "Full", zh: "已满" },
     statusCanceled: { en: "Canceled", zh: "已取消" },

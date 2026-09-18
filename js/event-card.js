@@ -86,7 +86,7 @@ function buildEventCard(s, { isOnline }) {
                             >
                                 ${host.profile?.displayName || host.displayName}
                             </span>
-                        `).join(", ")}
+                        `).join(", ")} ${t("hostedByEnd")}
                     </div>
                 </div>`
             : "";

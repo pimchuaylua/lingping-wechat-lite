@@ -215,7 +215,7 @@
                     <div class="section">
                         <div class="label">Time</div>
                         <input class="sub" readonly type="time" id="time"
-                            value="${utcTimeToTimezone(timeVal, 'Asia/Bangkok')}">
+                            value="${utcTimeToTimezone(timeVal, s.timezone || 'Asia/Bangkok')}">
                     </div>
 
                     <div class="section">
@@ -243,6 +243,7 @@
                 const timeEl = document.getElementById('time');
 
                 if (timezoneEl && timeEl) {
+                    timezoneEl.value = s.timezone || 'Asia/Bangkok';
                     timezoneEl.addEventListener('change', function () {
                         timeEl.value = utcTimeToTimezone(timeVal, this.value);
                     });
@@ -317,6 +318,7 @@
 
             const body = {
                 startTime,
+                timezone,
                 durationMins: Number(val('durationMins')) || undefined,
                 locationUrl: val('locationUrl') || undefined,
                 hostIds: idList('hostIds'),
