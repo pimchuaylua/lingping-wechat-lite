@@ -270,16 +270,75 @@ function preBookingModal(sessionId, session) {
     currentSession = session;
 
     document.getElementById("modalSessionName").innerText = session.title;
-    document.getElementById("modalSessionTime").innerText = `${Utils.formatDate(session.date)} · ${session.time} (${Utils.getTimeZoneName()})`
-    document.getElementById("modalSessionLocation").innerHTML =
+    document.getElementById("modalSessionDate").innerText = Utils.formatDate(session.date);
+    document.getElementById("modalSessionTime").innerText = `${session.time} (${Utils.getTimeZoneName()})`;
+    document.getElementById("modalSessionLocation").innerText =
         session.levelName?.toLowerCase().includes("online")
-            ? `🌐 ${t("tabOnline")}`
-            : `📍 ${session.location || t("locationTBA")} `;
+            ? t("tabOnline")
+            : (session.location || t("locationTBA"));
+
+    const categoryEl = document.getElementById("modalSessionCategory");
+    const category = (session.categories || [])[0];
+    if (categoryEl) {
+        if (category) {
+            const meta = findMeta(session.options?.categories, category);
+            categoryEl.textContent = translatedCategoryLabel(category, meta?.label || category);
+            categoryEl.removeAttribute("hidden");
+        } else {
+            categoryEl.setAttribute("hidden", "");
+        }
+    }
+
+    const chipRow = document.getElementById("modalChipRow");
+    chipRow.querySelectorAll(".pbm-chip-dynamic").forEach(el => el.remove());
+
+    const languages = session.languages || [];
+    if (languages.length) {
+        const langNames = [...new Set(languages.map(({ language }) => {
+            const langMeta = findMeta(session.options?.languages, language);
+            const label = translatedLangLabel(language, langMeta?.label || language);
+            const flag = LANG_META[language]?.flag || "";
+            return flag ? `${flag} ${label}` : label;
+        }))].join(", ");
+
+        const langChip = document.createElement("span");
+        langChip.className = "pbm-chip pbm-chip-dynamic";
+        langChip.textContent = langNames;
+        chipRow.appendChild(langChip);
+
+        const levelNames = [...new Set(languages.map(l => l.proficiencyLevel).filter(Boolean).map(levelCode => {
+            const levelMeta = findMeta(session.options?.proficiencyLevels, levelCode);
+            return translatedLevelLabel(levelCode, levelMeta?.label || levelCode);
+        }))];
+
+        if (levelNames.length) {
+            const levelChip = document.createElement("span");
+            levelChip.className = "pbm-chip pbm-chip-dynamic";
+            levelChip.textContent = levelNames.join("–");
+            chipRow.appendChild(levelChip);
+        }
+    }
+
+    clearBookingAgreeError();
+    const agreeCheckbox = document.getElementById("bookingAgreeCheckbox");
+    if (agreeCheckbox) agreeCheckbox.checked = false;
 
     document.getElementById("preBookingModal").style.display = "flex";
 }
 
+function clearBookingAgreeError() {
+    document.getElementById("pbmAgreeRow")?.classList.remove("pbm-agree-row-error");
+    document.getElementById("pbmAgreeError")?.setAttribute("hidden", "");
+}
+
 function confirmPreBooking() {
+    const agreed = document.getElementById("bookingAgreeCheckbox")?.checked;
+
+    if (!agreed) {
+        document.getElementById("pbmAgreeRow")?.classList.add("pbm-agree-row-error");
+        document.getElementById("pbmAgreeError")?.removeAttribute("hidden");
+        return;
+    }
 
     document.getElementById("preBookingModal").style.display = "none";
 

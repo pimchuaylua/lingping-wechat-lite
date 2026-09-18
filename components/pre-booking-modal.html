@@ -1,71 +1,273 @@
+<style>
+    #preBookingModal.large-info-modal {
+        padding: 6px;
+    }
+
+    #preBookingModal .modal-content {
+        width: 95%;
+        max-width: 420px;
+        height: min(97vh, 740px);
+    }
+
+    #preBookingModal .modal-text {
+        padding: 16px 18px;
+    }
+
+    #preBookingModal .pbm-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 12px;
+    }
+
+    #preBookingModal .pbm-info-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    #preBookingModal .pbm-info-header strong {
+        font-size: 16px;
+        color: #111827;
+    }
+
+    #preBookingModal .pbm-category-pill {
+        background: #EDE9FE;
+        color: #6D28D9;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 2px 10px;
+        border-radius: 999px;
+    }
+
+    #preBookingModal .pbm-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+    }
+
+    #preBookingModal .pbm-chip {
+        display: inline-flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: #FFEDD5;
+        color: #9A3412;
+    }
+
+    #preBookingModal .pbm-plain-line {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        color: #374151;
+        margin-top: 8px;
+    }
+
+    #preBookingModal .pbm-icon {
+        color: #6B7280;
+        flex-shrink: 0;
+        display: inline-flex;
+    }
+
+    #preBookingModal .pbm-divider {
+        border-top: 1px solid #E5E7EB;
+        margin: 14px 0;
+    }
+
+    #preBookingModal .pbm-rules-eyebrow {
+        color: #6B7280;
+        font-size: 12.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 8px;
+    }
+
+    #preBookingModal .pbm-rules-line {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        color: #374151;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-top: 6px;
+    }
+
+    #preBookingModal .pbm-rules-line .pbm-icon {
+        margin-top: 1px;
+    }
+
+    #preBookingModal .pbm-agree-row {
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: #FAFAFA;
+        border: 1px solid #E5E7EB;
+        font-size: 14px;
+        transition: background 0.15s ease, border-color 0.15s ease;
+        box-sizing: border-box;
+    }
+
+    #preBookingModal .pbm-agree-row.pbm-agree-row-error {
+        border: 2px solid #DC2626;
+        background: #FEF2F2;
+    }
+
+    #preBookingModal .pbm-agree-label {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        cursor: pointer;
+    }
+
+    #preBookingModal .pbm-agree-label input {
+        margin-top: 3px;
+    }
+
+    #preBookingModal .pbm-agree-error {
+        margin-top: 6px;
+        font-size: 13px;
+        color: #DC2626;
+    }
+
+    #preBookingModal .pbm-rules-link {
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    #preBookingModal .modal-confirm {
+        background: #B45309;
+    }
+
+    @media (min-width: 768px) {
+        #preBookingModal.large-info-modal {
+            align-items: center;
+        }
+
+        #preBookingModal .modal-content {
+            max-width: 560px;
+            height: auto;
+            max-height: 85vh;
+        }
+
+        #preBookingModal .modal-text {
+            padding: 36px 44px;
+            flex: none;
+            overflow: visible;
+        }
+
+        #preBookingModal .pbm-title {
+            font-size: 26px;
+            text-align: center;
+            margin-bottom: 26px;
+        }
+
+        #preBookingModal .pbm-info-header strong {
+            font-size: 19px;
+        }
+
+        #preBookingModal .pbm-plain-line,
+        #preBookingModal .pbm-rules-line,
+        #preBookingModal .pbm-agree-row,
+        #preBookingModal .pbm-rules-link {
+            font-size: 16px;
+        }
+
+        #preBookingModal .pbm-divider {
+            margin: 20px 0;
+        }
+
+        #preBookingModal .pbm-agree-row {
+            padding: 18px 20px;
+        }
+
+        #preBookingModal .pbm-rules-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #preBookingModal .modal-actions {
+            padding: 20px 24px;
+        }
+
+        #preBookingModal .modal-actions button {
+            width: 170px;
+            min-height: 46px;
+            font-size: 15px;
+        }
+    }
+</style>
+
 <div id="preBookingModal" class="large-info-modal" style="display:none;">
     <div class="modal-content">
         <div class="modal-text">
 
-            <div style="font-size:20px; font-weight:600; margin-bottom:14px;" data-i18n="confirmBooking">
+            <div class="pbm-title" data-i18n="confirmBooking">
                 Confirm Booking
             </div>
 
-            <div style="line-height:1.7; text-align:left;">
+            <div style="text-align:left;">
 
-                <div style="
-                    margin-bottom:12px;
-                    background:#eaf6ff;
-                    padding:12px;
-                    border-radius:10px;
-                    border:1px solid #d6ebff;
-                ">
-                    <strong style="font-size:16px;">
-                        <span id="modalSessionName"></span>
-                    </strong><br>
+                <div class="pbm-info-block">
+                    <div class="pbm-info-header">
+                        <strong id="modalSessionName"></strong>
+                    </div>
 
-                    🕖 <span id="modalSessionTime"></span><br>
+                    <div class="pbm-chip-row" id="modalChipRow">
+                        <span id="modalSessionCategory" class="pbm-category-pill" hidden></span>
+                    </div>
 
-                    <span id="modalSessionLocation"></span>
+                    <div class="pbm-plain-line">
+                        <span class="pbm-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        </span>
+                        <span id="modalSessionDate"></span>
+                    </div>
+
+                    <div class="pbm-plain-line">
+                        <span class="pbm-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg>
+                        </span>
+                        <span id="modalSessionTime"></span>
+                    </div>
+
+                    <div class="pbm-plain-line">
+                        <span class="pbm-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-11a7 7 0 1 1 14 0c0 4.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+                        </span>
+                        <span id="modalSessionLocation"></span>
+                    </div>
                 </div>
 
-                <div style="
-                    background:#fff7cc;
-                    padding:12px;
-                    border-radius:10px;
-                    font-size:14px;
-                ">
-                    <strong data-i18n="communityReminder">🌿 Community Reminder</strong><br>
-                    • <span data-i18n="reminderOnTime">Be on time.</span><br>
-                    • <span data-i18n="reminderPolite">Be polite and respectful.</span><br>
-                    • <span data-i18n="reminderNoWalkIns">Only booked participants. No walk-ins.</span><br>
-                    • <span data-i18n="reminderOrderDrink">For in-person events, order at least one drink to support the venue.</span>
+                <div class="pbm-divider"></div>
+
+                <div class="pbm-rules-block">
+                    <div class="pbm-rules-eyebrow" data-i18n="pleaseNoteTitle">Please note</div>
+                    <div class="pbm-rules-line"><span class="pbm-icon">✓</span> <span data-i18n-html="ruleOnTime">Be polite and <strong>on time</strong></span></div>
+                    <div class="pbm-rules-line"><span class="pbm-icon">✓</span> <span data-i18n-html="ruleNoPlusOnes">Booked guests only — <strong>no plus-ones</strong></span></div>
+                    <div class="pbm-rules-line"><span class="pbm-icon">✓</span> <span data-i18n-html="ruleCancelAhead">Cancel <strong>3+ hrs ahead</strong> if you can't make it</span></div>
                 </div>
 
-                <div style="
-                    margin-top:12px;
-                    background:#ffe9e9;
-                    padding:12px;
-                    border-radius:10px;
-                    font-size:14px;
-                ">
-                    <strong data-i18n="cancellationPolicyTitle">📌 Cancellation Policy</strong><br>
-                    <span data-i18n="cancellationPolicyBody">Please cancel at least 3 hours before your session if you can’t join so others can take your spot
-                    and hosts can plan better.</span>
-                </div>
+                <div class="pbm-divider"></div>
 
                 <!-- AGREEMENT CHECKBOX -->
-                <div style="
-                    margin-top:14px;
-                    padding:12px;
-                    border-radius:10px;
-                    background:#f7f7f7;
-                    font-size:14px;
-                ">
-                    <label style="display:flex; gap:10px; align-items:flex-start; cursor:pointer;">
-                        <input type="checkbox" id="bookingAgreeCheckbox" style="margin-top:3px;">
+                <div class="pbm-agree-row" id="pbmAgreeRow">
+                    <label class="pbm-agree-label">
+                        <input type="checkbox" id="bookingAgreeCheckbox" onchange="clearBookingAgreeError()">
                         <span data-i18n="agreeReminders">
-                            I understand and agree to the community reminders and cancellation policy.
+                            I agree to the community guidelines & cancellation policy.
                         </span>
                     </label>
                 </div>
+                <div id="pbmAgreeError" class="pbm-agree-error" hidden data-i18n="agreeCheckboxError">
+                    Please check the box to continue
+                </div>
 
-                <div style="margin-top:12px; font-size:14px;">
+                <div class="pbm-rules-link">
                     <a href="community_guidelines.html" target="_blank" data-i18n="readFullRules">
                         Read full community rules
                     </a>
@@ -79,34 +281,9 @@
                 Cancel
             </button>
 
-            <button class="modal-confirm" onclick="
-                if (!document.getElementById('bookingAgreeCheckbox')?.checked) {
-                    alert(t('agreeRequiredAlert'));
-                    return;
-                }
-
-                bookSession({ sessionId: currentSessionId });
-                closePreBookingModal();
-            " data-i18n="okBook">
+            <button class="modal-confirm" onclick="confirmPreBooking()" data-i18n="okBook">
                 OK, Book
             </button>
         </div>
     </div>
 </div>
-
-<script>
-    function confirmPreBooking() {
-
-        const agreed = document.getElementById("bookingAgreeCheckbox")?.checked;
-
-        if (!agreed) {
-            alert(t("agreeRequiredAlert"));
-            return;
-        }
-
-        // continue booking here
-        bookSession({ sessionId: currentSessionId });
-
-        closePreBookingModal();
-    }
-</script>
