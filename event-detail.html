@@ -284,7 +284,7 @@
 
                 <!-- Host -->
                 <div class="section">
-                    <div class="label">${t("labelWith")}</div>
+                    <div class="label" id="hostsLabel">${t("labelWith")}</div>
                     <div id="hostsContainer"></div>
                 </div>
 
@@ -314,6 +314,18 @@
             `;
 
             const hostsContainer = document.getElementById("hostsContainer");
+            const hostsLabel = document.getElementById("hostsLabel");
+
+            if (hostsLabel) {
+                if (s.hostObjects && s.hostObjects.length) {
+                    const namesHtml = s.hostObjects.map(h => `
+                        <span class="host-link" onclick="event.stopPropagation(); viewProfile('${h._id}')">${h.profile?.displayName || h.displayName || 'Host'}</span>
+                    `).join(", ");
+                    hostsLabel.innerHTML = `${t("hostedBy")} ${namesHtml} ${t("hostedByEnd")}`;
+                } else {
+                    hostsLabel.textContent = t("labelWith");
+                }
+            }
 
             if (s.hostObjects && s.hostObjects.length) {
                 hostsContainer.innerHTML = s.hostObjects.map(h => {
