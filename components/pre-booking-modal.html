@@ -156,8 +156,8 @@
 
         #preBookingModal .modal-text {
             padding: 36px 44px;
-            flex: none;
-            overflow: visible;
+            flex: 1 1 auto;
+            overflow-y: auto;
         }
 
         #preBookingModal .pbm-title {
@@ -236,7 +236,7 @@
                     </div>
 
                     <div class="pbm-plain-line">
-                        <span class="pbm-icon">
+                        <span class="pbm-icon" id="modalLocationIcon">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-11a7 7 0 1 1 14 0c0 4.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
                         </span>
                         <span id="modalSessionLocation"></span>
@@ -281,7 +281,7 @@
                 Cancel
             </button>
 
-            <button class="modal-confirm" onclick="confirmPreBooking()" data-i18n="okBook">
+            <button class="modal-confirm" id="pbmConfirmBtn" onclick="confirmPreBooking()" data-i18n="okBook">
                 OK, Book
             </button>
         </div>
