@@ -254,10 +254,12 @@
     <script>
         const type = new URLSearchParams(window.location.search).get("type");
 
-        document.getElementById("pageTitle").textContent =
-            type === "hosting"
-                ? t("eventsHosting")
-                : t("eventsAttending");
+        const pageTitleText = type === "hosting"
+            ? t("eventsHosting")
+            : t("eventsAttending");
+
+        document.getElementById("pageTitle").textContent = pageTitleText;
+        document.title = `${pageTitleText} | Lingping Club`;
 
         function viewProfile(userId) {
             if (userId) {
