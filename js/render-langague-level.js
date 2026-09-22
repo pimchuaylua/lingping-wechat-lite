@@ -8,10 +8,11 @@ function formatEventCost(cost) {
         ? `${cost.amount} ${cost.currency}`
         : `${cost.amountMin}–${cost.amountMax} ${cost.currency}`;
 
+    const tt = window.t || (key => key);
     const pillByMode = {
-        payOnSpot: { label: `${amountLabel} · Pay at venue`, style: 'outline' },
-        prepayRequired: { label: `Prepay ${amountLabel} to confirm`, style: 'solid' },
-        prepayOptional: { label: `${amountLabel} · Prepay optional`, style: 'outline' },
+        payOnSpot: { label: tt('costPillPayOnSpot').replace('{amount}', amountLabel), style: 'outline' },
+        prepayRequired: { label: tt('costPillPrepayRequired').replace('{amount}', amountLabel), style: 'solid' },
+        prepayOptional: { label: tt('costPillPrepayOptional').replace('{amount}', amountLabel), style: 'outline' },
     };
 
     const pill = pillByMode[cost.paymentMode] || { label: amountLabel, style: 'outline' };
