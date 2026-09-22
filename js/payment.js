@@ -5,6 +5,10 @@
     const PENDING_PLAN_KEY = "pendingPlanId";
     const PENDING_PREPAYMENT_SESSION_KEY = "pendingSessionIdToBookBeforeCompletePayment";
 
+    function getPlatform() {
+        return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ? "mobile" : "web";
+    }
+
     async function createPayment(subscriptionPlanId) {
 
         // 0️⃣ If not logged in → remember plan + redirect
@@ -23,6 +27,8 @@
                 userId,
                 subscriptionPlanId,
                 quantity: 1,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                platform: getPlatform(),
             };
 
             const pendingSessionIdToBook = getPrePaymentPendingSessionId()
