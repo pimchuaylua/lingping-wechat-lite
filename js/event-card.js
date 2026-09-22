@@ -63,6 +63,14 @@ function buildEventCard(s, { isOnline }) {
                 ? `<div class="event-location">📍 ${s.location}</div>`
                 : "";
 
+    const cost = formatEventCost(s.cost);
+    const costHtml = cost
+        ? `<div class="cost-pill ${cost.style}">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
+                ${cost.label}
+           </div>`
+        : "";
+
     const hostHtml =
         s.hosts?.length
             ? `
@@ -115,6 +123,8 @@ function buildEventCard(s, { isOnline }) {
                         <div class="event-row">
                             ${locationHtml}
                         </div>
+
+                        ${costHtml ? `<div class="event-row">${costHtml}</div>` : ""}
 
                         <div class="event-row event-footer">
                             ${hostHtml}

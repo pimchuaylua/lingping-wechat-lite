@@ -288,6 +288,26 @@
                     <div id="hostsContainer"></div>
                 </div>
 
+                <!-- Cost (shown only when the session has a cost field) -->
+                <div class="section" id="costSection" hidden>
+                    <div class="cost-block">
+                        <div class="cost-header">
+                            <span class="cost-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><path d="M6 12h.01M18 12h.01"></path></svg>
+                            </span>
+                            <span data-i18n="costHeading">This event costs extra</span>
+                        </div>
+                        <div class="cost-subtext" data-i18n="costSubtext">
+                            Not covered by your Lingping membership — paid directly to the venue.
+                        </div>
+                        <div class="cost-amount-row">
+                            <span data-i18n="costPerPerson">Cost per person</span>
+                            <strong id="costAmount"></strong>
+                        </div>
+                        <div id="costModeContent"></div>
+                    </div>
+                </div>
+
                 <!-- Language & level -->
                 <div class="section">
                     <div class="label">${t("labelPerfectFor")}</div>
@@ -368,6 +388,56 @@
                 }).join("");
             } else {
                 hostsContainer.innerHTML = `<div class="sub">${t("hostTBA")}</div>`;
+            }
+
+            renderEventCost(s);
+
+            // Renders the "This event costs extra" section, shown only when
+            // s.cost is set (events fully covered by membership have none).
+            // Prepayment isn't built yet — prepayRequired/prepayOptional render
+            // their buttons as inert placeholders (no onclick) until a real
+            // checkout exists, matching the event-list/Confirm-Booking scope.
+            function renderEventCost(s) {
+                const costSection = document.getElementById("costSection");
+                const cost = formatEventCost(s.cost);
+
+                if (!cost) {
+                    costSection?.setAttribute("hidden", "");
+                    return;
+                }
+
+                costSection?.removeAttribute("hidden");
+                document.getElementById("costAmount").textContent = cost.amountLabel;
+
+                const modeContent = document.getElementById("costModeContent");
+
+                if (cost.paymentMode === "prepayRequired") {
+                    // TODO: wire this button up to a real payment/checkout flow once built.
+                    modeContent.innerHTML = `
+                        <div class="cost-note-label">${t("costPrepayRequiredLabel")}</div>
+                        <button class="cost-btn cost-btn-primary" disabled>
+                            ${t("costPayAmountNowBtn").replace("{amount}", cost.amountLabel)}
+                        </button>
+                    `;
+                } else if (cost.paymentMode === "prepayOptional") {
+                    // TODO: wire "Prepay now" up to a real payment/checkout flow once built.
+                    modeContent.innerHTML = `
+                        <div class="cost-btn-row">
+                            <button class="cost-btn cost-btn-outline">${t("costPrepayNowBtn")}</button>
+                            <button class="cost-btn cost-btn-neutral">${t("costPayAtVenueBtn")}</button>
+                        </div>
+                        <div class="cost-helper">${t("costPrepayOptionalHelper")}</div>
+                    `;
+                } else {
+                    modeContent.innerHTML = `
+                        <div class="cost-note">
+                            <span class="cost-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </span>
+                            <span>${t("costPayOnSpotNote")}</span>
+                        </div>
+                    `;
+                }
             }
 
             async function loadAttendees() {
