@@ -208,7 +208,7 @@
                 </div>
                         </div>
             <div class="event-row">${hostHtml} </div>
-            <div class="event-row">
+            <div class="event-row status-row">
     ${s.booked
                         ? `<div class="${isHosting ? "hosting-label" : "booked-label"}">
             ✓ ${isHosting ? t("hosting") : t("joining")}
@@ -224,6 +224,14 @@
                             : ""}`
                         : ""}
 </div>
+            ${s.googleCalendarLink
+                        ? `<div class="event-row gcal-row">
+                <a class="gcal-btn" href="${s.googleCalendarLink}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+                    <svg class="gcal-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    ${t("addToGoogleCalendar")}
+                </a>
+            </div>`
+                        : ""}
             </div>
         </div>
         </div class="event-card">

@@ -186,6 +186,44 @@ async function joinWaitlist(sessionId) {
     }
 }
 
+function buildGoogleCalendarLink(s, start, end, eventOptions) {
+    const fmt = d => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+    const text = encodeURIComponent(`[Lingping] ${s.title || ""}`);
+    const location = encodeURIComponent(s.locationUrl || s.location || "");
+    const description = s.fullDescription || s.shortDescription || "";
+
+    let detailsLines;
+    if (s.online) {
+        const platformLabel = findMeta(eventOptions?.platforms, s.online.platform)?.label || s.online.platform;
+        detailsLines = [`<b>Platform: ${platformLabel}</b>`];
+        if (s.online.meetingNumber) detailsLines.push(`<b>Meeting Number: ${s.online.meetingNumber}</b>`);
+        detailsLines.push(
+            "",
+            "Having trouble finding us or getting in? Contact us.",
+            `<a href="https://lingpingclub.com/join-us.html">https://lingpingclub.com/join-us.html</a>`,
+            "",
+            description
+        );
+    } else {
+        const locationLabel = s.locationUrl
+            ? `<a href="${s.locationUrl}">${s.location || ""}</a>`
+            : (s.location || "");
+        detailsLines = [
+            `<b>Location: ${locationLabel}</b>`,
+            "",
+            description,
+            "",
+            `<b>Having trouble finding us or getting in? Contact us.</b>`,
+            `📞 Call <b>+66 61 192 3366</b>`,
+            `🌐 Or reach us at <b><a href="https://lingpingclub.com/join-us.html">lingpingclub.com/join-us.html</a></b>`
+        ];
+    }
+
+    const details = encodeURIComponent(detailsLines.join("\n"));
+
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${fmt(start)}/${fmt(end)}&details=${details}&location=${location}`;
+}
+
 function formatReadingSessionToDisplay(s, eventOptions) {
     const start = new Date(s.startTime);
     const end = new Date(start.getTime() + s.durationMins * 60000);
@@ -220,14 +258,15 @@ function formatReadingSessionToDisplay(s, eventOptions) {
         languages: s.languages,
         categories: s.categories,
         options: eventOptions,
-        online: s.online
+        online: s.online,
+        googleCalendarLink: buildGoogleCalendarLink(s, start, end, eventOptions)
     };
 
 }
 function mapBookingsToSessions(bookings, eventOptions) {
     return bookings
         .map(b => {
-            return formatReadingSessionToDisplay(b.readingSession, eventOptions)
+            return formatReadingSessionToDisplay(b.readingSession, eventOptions);
         })
         .sort((a, b) => a.startTime - b.startTime); // 🔽 order by time
 }

@@ -1224,6 +1224,50 @@ body {
     flex-shrink: 0;
 }
 
+.gcal-row {
+    margin-top: 10px;
+}
+
+.status-row {
+    align-items: stretch;
+}
+
+.status-row .hosting-label,
+.status-row .booked-label,
+.status-row .edit-btn {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.gcal-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 14px;
+    border: 1px solid #d6d6d6;
+    border-radius: 20px;
+    background: #fff;
+    color: #3c4043;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.gcal-btn:hover {
+    background: #f7f7f7;
+}
+
+.gcal-btn .gcal-icon {
+    flex-shrink: 0;
+}
+
 .event-footer {
     justify-content: space-between;
 }

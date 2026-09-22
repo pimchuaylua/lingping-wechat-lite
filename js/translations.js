@@ -239,6 +239,7 @@ const TRANSLATIONS = {
     hosting: { en: "My Idea", zh: "我的点子" },
     joining: { en: "Joining", zh: "已参加" },
     edit: { en: "Edit", zh: "编辑" },
+    addToGoogleCalendar: { en: "Add to Google Calendar", zh: "添加到 Google 日历" },
 
     // ---- subscriptions.html (My Plan) ----
     pleaseLogInSubs: { en: "Please log in to see your subscriptions.", zh: "请登录以查看您的会员计划。" },
