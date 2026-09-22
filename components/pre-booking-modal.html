@@ -143,6 +143,115 @@
         background: #B45309;
     }
 
+    #preBookingModal .pbm-cost-block {
+        background: #FEF3E2;
+        border: 1px solid #F5C36B;
+        border-radius: 12px;
+        padding: 14px;
+    }
+
+    #preBookingModal .pbm-cost-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        color: #92400E;
+        font-size: 15px;
+    }
+
+    #preBookingModal .pbm-cost-header .pbm-icon {
+        color: #B45309;
+    }
+
+    #preBookingModal .pbm-cost-subtext {
+        margin-top: 6px;
+        font-size: 13px;
+        color: #92400E;
+        line-height: 1.4;
+    }
+
+    #preBookingModal .pbm-cost-amount-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+        font-size: 14px;
+        color: #78350F;
+    }
+
+    #preBookingModal .pbm-cost-amount-row strong {
+        font-size: 17px;
+        color: #111827;
+    }
+
+    #preBookingModal .pbm-cost-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-top: 12px;
+        padding: 10px 12px;
+        background: #fff;
+        border-radius: 10px;
+        font-size: 13px;
+        color: #374151;
+        line-height: 1.4;
+    }
+
+    #preBookingModal .pbm-cost-note .pbm-icon {
+        color: #16A34A;
+        margin-top: 1px;
+    }
+
+    #preBookingModal .pbm-cost-note-label {
+        margin-top: 12px;
+        font-size: 13px;
+        color: #92400E;
+        font-weight: 600;
+    }
+
+    #preBookingModal .pbm-cost-btn-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    #preBookingModal .pbm-cost-btn {
+        flex: 1;
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: not-allowed;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    #preBookingModal .pbm-cost-btn-primary {
+        background: #B45309;
+        color: #fff;
+        border: none;
+        opacity: 0.6;
+    }
+
+    #preBookingModal .pbm-cost-btn-outline {
+        background: #fff;
+        color: #B45309;
+        border: 1.5px solid #B45309;
+        opacity: 0.85;
+    }
+
+    #preBookingModal .pbm-cost-btn-neutral {
+        background: #fff;
+        color: #374151;
+        border: 1px solid #D1D5DB;
+    }
+
+    #preBookingModal .pbm-cost-helper {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #92400E;
+    }
+
     @media (min-width: 768px) {
         #preBookingModal.large-info-modal {
             align-items: center;
@@ -175,6 +284,18 @@
         #preBookingModal .pbm-agree-row,
         #preBookingModal .pbm-rules-link {
             font-size: 16px;
+        }
+
+        #preBookingModal .pbm-cost-header {
+            font-size: 17px;
+        }
+
+        #preBookingModal .pbm-cost-subtext,
+        #preBookingModal .pbm-cost-amount-row,
+        #preBookingModal .pbm-cost-note,
+        #preBookingModal .pbm-cost-note-label,
+        #preBookingModal .pbm-cost-btn {
+            font-size: 15px;
         }
 
         #preBookingModal .pbm-divider {
@@ -244,6 +365,25 @@
                 </div>
 
                 <div class="pbm-divider"></div>
+
+                <div class="pbm-cost-block" id="pbmCostBlock" hidden>
+                    <div class="pbm-cost-header">
+                        <span class="pbm-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        </span>
+                        <span data-i18n="costHeading">This event costs extra</span>
+                    </div>
+                    <div class="pbm-cost-subtext" data-i18n="costSubtext">
+                        Not covered by your Lingping membership — paid directly to the venue.
+                    </div>
+                    <div class="pbm-cost-amount-row">
+                        <span data-i18n="costPerPerson">Cost per person</span>
+                        <strong id="pbmCostAmount"></strong>
+                    </div>
+                    <div id="pbmCostModeContent"></div>
+                </div>
+
+                <div class="pbm-divider" id="pbmCostDivider" hidden></div>
 
                 <div class="pbm-rules-block">
                     <div class="pbm-rules-eyebrow" data-i18n="pleaseNoteTitle">Please note</div>

@@ -211,6 +211,32 @@ nav a:hover {
     color: #4b5563;
 }
 
+.cost-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 10px;
+    white-space: nowrap;
+}
+
+.cost-pill svg {
+    flex-shrink: 0;
+}
+
+.cost-pill.outline {
+    background: #fff;
+    color: #b45309;
+    border: 1.5px solid #d99b3f;
+}
+
+.cost-pill.solid {
+    background: #d99b3f;
+    color: #fff;
+}
+
 .book-btn {
     border: none;
     border-radius: 16px;

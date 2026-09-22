@@ -1,3 +1,31 @@
+// Formats an optional reading-session `cost` field into a display-ready
+// pill/label. Returns null when `cost` is absent — callers should render
+// no cost UI at all in that case (event is fully covered by membership).
+function formatEventCost(cost) {
+    if (!cost) return null;
+
+    const amountLabel = cost.amountType === 'fixed'
+        ? `${cost.amount} ${cost.currency}`
+        : `${cost.amountMin}–${cost.amountMax} ${cost.currency}`;
+
+    const pillByMode = {
+        payOnSpot: { label: `${amountLabel} · Pay at venue`, style: 'outline' },
+        prepayRequired: { label: `Prepay ${amountLabel} to confirm`, style: 'solid' },
+        prepayOptional: { label: `${amountLabel} · Prepay optional`, style: 'outline' },
+    };
+
+    const pill = pillByMode[cost.paymentMode] || { label: amountLabel, style: 'outline' };
+
+    return {
+        amountLabel,
+        label: pill.label,
+        style: pill.style,
+        paymentMode: cost.paymentMode,
+        currency: cost.currency,
+        prepayInstructions: cost.prepayInstructions || null,
+    };
+}
+
 const CATEGORY_META = {
     discussion: { label: '💬 Discussion' },
     language: { label: '🗣️ Language' },

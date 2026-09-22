@@ -259,6 +259,7 @@ function formatReadingSessionToDisplay(s, eventOptions) {
         categories: s.categories,
         options: eventOptions,
         online: s.online,
+        cost: s.cost,
         googleCalendarLink: buildGoogleCalendarLink(s, start, end, eventOptions)
     };
 
@@ -364,11 +365,63 @@ function preBookingModal(sessionId, session) {
         }
     }
 
+    renderPreBookingCost(session);
+
     clearBookingAgreeError();
     const agreeCheckbox = document.getElementById("bookingAgreeCheckbox");
     if (agreeCheckbox) agreeCheckbox.checked = false;
 
     document.getElementById("preBookingModal").style.display = "flex";
+}
+
+// Renders the "This event costs extra" section, shown only when session.cost
+// is set (events fully covered by membership have no cost field at all).
+// Prepayment isn't built yet — prepayRequired/prepayOptional render their
+// buttons as inert placeholders (no onclick) until a real checkout exists.
+function renderPreBookingCost(session) {
+    const costBlock = document.getElementById("pbmCostBlock");
+    const costDivider = document.getElementById("pbmCostDivider");
+    const cost = formatEventCost(session.cost);
+
+    if (!cost) {
+        costBlock?.setAttribute("hidden", "");
+        costDivider?.setAttribute("hidden", "");
+        return;
+    }
+
+    costBlock?.removeAttribute("hidden");
+    costDivider?.removeAttribute("hidden");
+    document.getElementById("pbmCostAmount").textContent = cost.amountLabel;
+
+    const modeContent = document.getElementById("pbmCostModeContent");
+
+    if (cost.paymentMode === "prepayRequired") {
+        // TODO: wire this button up to a real payment/checkout flow once built.
+        modeContent.innerHTML = `
+            <div class="pbm-cost-note-label">${t("costPrepayRequiredLabel")}</div>
+            <button class="pbm-cost-btn pbm-cost-btn-primary" disabled>
+                ${t("costPayAmountNowBtn").replace("{amount}", cost.amountLabel)}
+            </button>
+        `;
+    } else if (cost.paymentMode === "prepayOptional") {
+        // TODO: wire "Prepay now" up to a real payment/checkout flow once built.
+        modeContent.innerHTML = `
+            <div class="pbm-cost-btn-row">
+                <button class="pbm-cost-btn pbm-cost-btn-outline">${t("costPrepayNowBtn")}</button>
+                <button class="pbm-cost-btn pbm-cost-btn-neutral">${t("costPayAtVenueBtn")}</button>
+            </div>
+            <div class="pbm-cost-helper">${t("costPrepayOptionalHelper")}</div>
+        `;
+    } else {
+        modeContent.innerHTML = `
+            <div class="pbm-cost-note">
+                <span class="pbm-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </span>
+                <span>${t("costPayOnSpotNote")}</span>
+            </div>
+        `;
+    }
 }
 
 function clearBookingAgreeError() {
@@ -380,8 +433,10 @@ function confirmPreBooking() {
     const agreed = document.getElementById("bookingAgreeCheckbox")?.checked;
 
     if (!agreed) {
-        document.getElementById("pbmAgreeRow")?.classList.add("pbm-agree-row-error");
+        const agreeRow = document.getElementById("pbmAgreeRow");
+        agreeRow?.classList.add("pbm-agree-row-error");
         document.getElementById("pbmAgreeError")?.removeAttribute("hidden");
+        agreeRow?.scrollIntoView({ behavior: "smooth", block: "center" });
         return;
     }
 
