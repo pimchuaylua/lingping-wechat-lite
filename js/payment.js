@@ -47,6 +47,7 @@
             });
 
             const result = await response.json();
+            console.log("Payment response:", result);
 
             if (result.status && result.data?.paymentUrl) {
 

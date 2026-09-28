@@ -199,7 +199,7 @@ async function loadProfile() {
 
         document.getElementById("topics").value =
             (data.topicsOfInterests || [])
-                .map((t) => t.id ?? t)
+                .map((t) => t?._id ?? t)
                 .join(",");
 
         (data.funPrompts || []).forEach((fp, i) => {
@@ -232,8 +232,12 @@ async function saveProfile(e) {
         };
     });
 
-    const topicsInput = document.getElementById("topics")?.value || "";
-    const payload = {
+    const topicsOfInterests = (document.getElementById("topics")?.value || "")
+        .split(",")
+        .map((id) => id.trim())
+        .filter(Boolean);
+
+    const basePayload = {
         displayName:
             document.getElementById("displayName").value.trim() || " ",
         bio:
@@ -241,6 +245,7 @@ async function saveProfile(e) {
         description:
             document.getElementById("description").value.trim() || " ",
         funPrompts,
+        topicsOfInterests,
     };
 
     try {
@@ -249,9 +254,21 @@ async function saveProfile(e) {
             { headers }
         );
 
-        const exists = (await check.json())?.data;
+        // The GET endpoint always returns a truthy `data` object (user +
+        // progressInfo) even when no Profile document exists yet — only a
+        // real profile has its own `_id`, so that's what actually tells us
+        // whether to PATCH (update) or POST (create).
+        const existingProfile = (await check.json())?.data;
+        const exists = !!existingProfile?._id;
 
-        await fetch(
+        // userId is required to create a profile, but PATCH's DTO rejects
+        // it outright ("property userId should not exist") — only send it
+        // on create.
+        const payload = exists
+            ? basePayload
+            : { ...basePayload, userId: USER_ID };
+
+        const res = await fetch(
             `${API_BASE}/users/${USER_ID}/profile`,
             {
                 method: exists ? "PATCH" : "POST",
@@ -260,11 +277,16 @@ async function saveProfile(e) {
             }
         );
 
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err?.result?.message?.join?.(", ") || err?.message || "Save failed");
+        }
+
         alert("Profile saved successfully!");
 
     } catch (err) {
         console.error("Failed to save profile:", err);
-        alert("Failed to save profile. Please try again.");
+        alert(err.message || "Failed to save profile. Please try again.");
     }
 }
 
