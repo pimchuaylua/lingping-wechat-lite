@@ -246,7 +246,7 @@
                         <div class="sub" style="margin-top:10px;">
                             ${t("platformLabel")}: ${platformLabel}<br>
                             ${s.online?.meetingUrl ? `
-                                <a href="${s.online.meetingUrl}" target="_blank" rel="noopener" class="meeting-link">
+                                <a href="${/^https?:\/\//i.test(s.online.meetingUrl) ? s.online.meetingUrl : `https://${s.online.meetingUrl}`}" target="_blank" rel="noopener" class="meeting-link">
                                     ${t("joinViaMeetingLink")}
                                 </a><br>
                             ` : ''}
