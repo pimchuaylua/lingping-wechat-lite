@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Feed | Lingping Club</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="icon" type="image/png" href="assets/logos/favicon.png">
+
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
+    <link rel="stylesheet" href="assets/feed_style.css?v=20260929">
+
+    <script src="config.js"></script>
+    <script src="js/translate.js?v=20260911"></script>
+    <script src="js/translations.js?v=20260911"></script>
+</head>
+
+<body>
+    <div class="feed-detail-header">
+        <button class="feed-detail-back" onclick="history.back()" aria-label="Back">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+        </button>
+        <div class="feed-detail-title" data-i18n="tabFeed">Feed</div>
+        <div class="feed-detail-spacer"></div>
+    </div>
+
+    <div class="feed-detail-body" id="feedDetailBody"></div>
+
+    <div class="feed-viewer" id="feedPhotoViewer" hidden>
+        <button class="feed-viewer-close" onclick="closePhotoViewer()" aria-label="Close">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="feed-viewer-track" id="feedViewerTrack"></div>
+    </div>
+
+    <script src="js/feed-detail.js?v=20260929"></script>
+</body>
+
+</html>

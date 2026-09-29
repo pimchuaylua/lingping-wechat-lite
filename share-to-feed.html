@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Share to Feed | Lingping Club</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="icon" type="image/png" href="assets/logos/favicon.png">
+
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
+    <link rel="stylesheet" href="assets/feed_style.css?v=20260929">
+
+    <script src="config.js"></script>
+    <script src="js/auth.js?v=20260312"></script>
+    <script src="js/translate.js?v=20260911"></script>
+    <script src="js/translations.js?v=20260911"></script>
+</head>
+
+<body>
+    <div class="share-header">
+        <button class="share-header-cancel" onclick="handleCancel()" data-i18n="cancel">Cancel</button>
+        <div class="share-header-title" data-i18n="shareToFeedTitle">Share to Feed</div>
+        <button class="share-header-post" id="postBtn" onclick="submitPost()" disabled data-i18n="post">Post</button>
+    </div>
+
+    <div class="share-body">
+        <div class="share-card">
+            <div class="share-card-title" data-i18n="shareAnything">Share anything</div>
+            <textarea id="thoughtsInput" class="share-textarea" rows="9"
+                placeholder="A cultural wow moment, a reflection, something that inspired you, a word you learned…"
+                data-i18n-placeholder="shareAnythingPlaceholder" oninput="onComposeChange()"></textarea>
+        </div>
+
+        <div class="share-card">
+            <div class="share-card-title-row">
+                <div class="share-card-title" data-i18n="photos">Photos</div>
+                <div class="share-card-subtitle" data-i18n="photosOptional">Optional · up to 10</div>
+            </div>
+            <div class="share-photo-grid" id="photoGrid">
+                <label class="share-photo-add" id="photoAddTile">
+                    <input type="file" accept="image/*" id="photoInput" multiple hidden onchange="onPhotosSelected(event)">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    <span data-i18n="add">Add</span>
+                </label>
+            </div>
+        </div>
+
+        <div id="composeError" class="share-error" hidden></div>
+    </div>
+
+    <script src="js/share-to-feed.js?v=20260929"></script>
+</body>
+
+</html>
