@@ -22,6 +22,9 @@
     let hasUnsavedChanges = false;
     let isSubmitting = false;
 
+    let pastSessions = null; // null = not fetched yet
+    let selectedSession = null; // { _id, title, startTime }
+
     function resizeImage(file, maxDimension = 1600, quality = 0.8) {
         return new Promise((resolve, reject) => {
             const img = new Image();
@@ -123,6 +126,131 @@
         document.getElementById("composeError").hidden = true;
     }
 
+    /* ---------------- Attach a past session (optional) ---------------- */
+
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    function placeFromLevel(level) {
+        if (!level) return "";
+        const parts = level.split(":");
+        return parts.length > 1 ? parts[1].trim() : "";
+    }
+
+    function sessionSubtitle(session) {
+        const place = placeFromLevel(session.level);
+        const date = Utils.formatDate(session.startTime);
+        return place ? `${date} · ${place}` : date;
+    }
+
+    function renderSessionList(state) {
+        const list = document.getElementById("sessionList");
+
+        if (state === "loading") {
+            list.innerHTML = `<div class="share-session-status" data-i18n="loadingSessions">Loading your sessions…</div>`;
+        } else if (state === "error") {
+            list.innerHTML = `<div class="share-session-status" data-i18n="sessionsLoadError">Couldn't load your sessions.</div>`;
+        } else if (!pastSessions || !pastSessions.length) {
+            list.innerHTML = `<div class="share-session-status" data-i18n="noPastSessions">No past sessions yet</div>`;
+        } else {
+            list.innerHTML = pastSessions.map(session => `
+                <div class="session-row ${selectedSession?._id === session._id ? "session-row--selected" : ""}" data-id="${escapeHtml(session._id)}">
+                    <div class="session-row-thumb">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </div>
+                    <div class="session-row-text">
+                        <div class="session-row-title">${escapeHtml(session.title || "")}</div>
+                        <div class="session-row-subtitle">${escapeHtml(sessionSubtitle(session))}</div>
+                    </div>
+                    <div class="session-row-radio ${selectedSession?._id === session._id ? "session-row-radio--checked" : ""}"></div>
+                </div>
+            `).join("");
+
+            list.querySelectorAll(".session-row").forEach(el => {
+                el.addEventListener("click", () => {
+                    const session = pastSessions.find(s => s._id === el.getAttribute("data-id"));
+                    if (session) selectSession(session);
+                });
+            });
+        }
+
+        if (typeof applyTranslations === "function") applyTranslations(list);
+    }
+
+    async function fetchPastSessions() {
+        renderSessionList("loading");
+        try {
+            // GET /users/{userId}/session-history?pastOnly=true — merged
+            // host + attendee history, already filtered to past-only and
+            // sorted by session date descending server-side.
+            const res = await fetch(`${BASE_URL}/users/${userId}/session-history?limit=20&offset=0&pastOnly=true`, {
+                headers: { "X-API-KEY": API_KEY }
+            });
+            if (!res.ok) throw new Error("Failed to load past sessions");
+            const json = await res.json();
+            const items = Array.isArray(json?.data?.sessions) ? json.data.sessions : [];
+
+            pastSessions = items
+                .map(item => item.session)
+                .filter(Boolean)
+                .map(s => ({
+                    _id: s._id,
+                    title: s.title || "",
+                    startTime: s.startTime,
+                    level: s.level || ""
+                }));
+        } catch (err) {
+            console.error("Failed to load past sessions:", err);
+            pastSessions = null;
+            renderSessionList("error");
+            return;
+        }
+        renderSessionList();
+    }
+
+    window.openSessionPicker = function () {
+        document.getElementById("sessionSheetOverlay").hidden = false;
+        document.body.style.overflow = "hidden";
+
+        if (pastSessions === null) {
+            fetchPastSessions();
+        } else {
+            renderSessionList();
+        }
+    };
+
+    window.closeSessionPicker = function () {
+        document.getElementById("sessionSheetOverlay").hidden = true;
+        document.body.style.overflow = "";
+    };
+
+    function selectSession(session) {
+        selectedSession = session;
+        hasUnsavedChanges = true;
+        closeSessionPicker();
+
+        document.getElementById("sessionTrigger").hidden = true;
+
+        const chip = document.getElementById("sessionChip");
+        chip.hidden = false;
+        document.getElementById("sessionChipTitle").textContent = session.title || "";
+        document.getElementById("sessionChipDate").textContent = sessionSubtitle(session);
+    }
+
+    window.clearSelectedSession = function () {
+        selectedSession = null;
+        hasUnsavedChanges = true;
+
+        document.getElementById("sessionChip").hidden = true;
+        document.getElementById("sessionTrigger").hidden = false;
+    };
+
     async function uploadPhoto(file) {
         const resized = await resizeImage(file);
         const formData = new FormData();
@@ -161,17 +289,22 @@
                 photoUrls.push(await uploadPhoto(p.file));
             }
 
+            const body = {
+                thoughts,
+                wordsLearned: [""],
+                photoUrls
+            };
+            if (selectedSession) {
+                body.sessionId = selectedSession._id;
+            }
+
             const res = await fetch(`${BASE_URL}/users/${userId}/learnings`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-API-KEY": API_KEY
                 },
-                body: JSON.stringify({
-                    thoughts,
-                    wordsLearned: [""],
-                    photoUrls
-                })
+                body: JSON.stringify(body)
             });
 
             if (!res.ok) {

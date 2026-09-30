@@ -13,6 +13,7 @@
 
     <script src="config.js"></script>
     <script src="js/auth.js?v=20260312"></script>
+    <script src="js/utils.js?v=20250210"></script>
     <script src="js/translate.js?v=20260911"></script>
     <script src="js/translations.js?v=20260911"></script>
 </head>
@@ -30,6 +31,40 @@
             <textarea id="thoughtsInput" class="share-textarea" rows="9"
                 placeholder="A cultural wow moment, a reflection, something that inspired you, a word you learned…"
                 data-i18n-placeholder="shareAnythingPlaceholder" oninput="onComposeChange()"></textarea>
+        </div>
+
+        <div class="share-card" id="sessionPickerCard">
+            <div class="share-card-title-row">
+                <div class="share-card-title" data-i18n="attachSession">Attach a past session</div>
+                <div class="share-card-subtitle" data-i18n="optional">Optional</div>
+            </div>
+
+            <button type="button" class="share-session-trigger" id="sessionTrigger" onclick="openSessionPicker()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                <span data-i18n="chooseSession">Choose a session</span>
+            </button>
+
+            <div class="share-session-chip" id="sessionChip" hidden onclick="openSessionPicker()">
+                <div class="share-session-chip-thumb">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                </div>
+                <div class="share-session-chip-text">
+                    <div class="share-session-chip-title" id="sessionChipTitle"></div>
+                    <div class="share-session-chip-date" id="sessionChipDate"></div>
+                </div>
+                <button type="button" class="share-session-chip-remove" onclick="event.stopPropagation(); clearSelectedSession()" aria-label="Remove session">×</button>
+            </div>
+        </div>
+
+        <div class="session-sheet-overlay" id="sessionSheetOverlay" hidden onclick="if(event.target===this) closeSessionPicker()">
+            <div class="session-sheet">
+                <div class="session-sheet-handle"></div>
+                <div class="session-sheet-header">
+                    <div class="session-sheet-title" data-i18n="yourPastSessions">Your past sessions</div>
+                    <button type="button" class="session-sheet-close" onclick="closeSessionPicker()" aria-label="Close">×</button>
+                </div>
+                <div class="session-sheet-list" id="sessionList"></div>
+            </div>
         </div>
 
         <div class="share-card">

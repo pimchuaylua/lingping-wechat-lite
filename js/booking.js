@@ -236,6 +236,7 @@ function formatReadingSessionToDisplay(s, eventOptions) {
     console.log(s);
     return {
         id: s._id,
+        startTimeISO: s.startTime,
         startTime: start, // 🔑 keep for sorting
         date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
         startTime: `${Utils.formatTime(start)}`,

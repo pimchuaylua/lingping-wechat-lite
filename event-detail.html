@@ -159,6 +159,11 @@
         }
 
         function updateBookBar() {
+            if (s?.startTimeISO && new Date(s.startTimeISO) < new Date()) {
+                document.querySelector(".book-bar").style.display = "none";
+                return;
+            }
+
             if (userId) {
                 document.getElementById("cancelBtn").style.display = "inline-block";
             }

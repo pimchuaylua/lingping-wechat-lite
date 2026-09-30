@@ -240,6 +240,7 @@
 
                     return {
                         id: s._id,
+                        startTimeISO: s.startTime,
                         date: `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`,
                         time: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${end.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
                         shortTime: `${start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,

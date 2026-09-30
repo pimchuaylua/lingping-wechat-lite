@@ -127,6 +127,12 @@
     margin-bottom: 10px;
 }
 
+.feed-avatar-link {
+    display: block;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
 .feed-avatar {
     width: 40px;
     height: 40px;
@@ -162,6 +168,23 @@
     color: #6B6B6B;
 }
 
+.feed-location-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.feed-location-pin {
+    font-size: 12px;
+}
+
 .feed-body {
     font-size: 16px;
     line-height: 1.45;
@@ -183,9 +206,17 @@
 .feed-photo-single img {
     width: 100%;
     height: 190px;
-    object-fit: cover;
+    object-fit: contain;
+    background: #EEE;
     border-radius: 16px;
     display: block;
+    cursor: pointer;
+}
+
+@media (min-width: 1024px) {
+    .feed-photo-single img {
+        height: 380px;
+    }
 }
 
 .feed-photo-grid {
@@ -202,11 +233,19 @@
     overflow: hidden;
 }
 
+@media (min-width: 1024px) {
+    .feed-photo-tile {
+        aspect-ratio: 1 / 2;
+    }
+}
+
 .feed-photo-tile img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    background: #EEE;
     display: block;
+    cursor: pointer;
 }
 
 .feed-photo-more {
@@ -367,6 +406,250 @@
     text-decoration: none;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
     z-index: 30;
+}
+
+/* ==========================================================================
+   Desktop 3-column Feed layout — cities sidebar, inline compose bar,
+   "Coming up" events widget. Mobile keeps the dropdown + floating Share
+   button instead (all desktop-only elements are display:none by default).
+   ========================================================================== */
+
+.lp-feed-sidebar,
+.lp-feed-rightbar,
+.lp-feed-composebar {
+    display: none;
+}
+
+@media (min-width: 1024px) {
+    /* The site-wide .container caps at 1000px; widen it while the Feed
+       tab is active so the middle (post) column isn't squeezed between
+       two fixed-width sidebars, leaving large unused margins. */
+    body.lp-feed-tab-active .container {
+        max-width: 1320px;
+    }
+
+    .lp-feed-layout {
+        display: grid;
+        grid-template-columns: 200px minmax(0, 1fr) 280px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .lp-feed-sidebar,
+    .lp-feed-rightbar {
+        display: block;
+        position: sticky;
+        top: 20px;
+    }
+
+    .lp-feed-citybar {
+        display: none;
+    }
+
+    .lp-feed-composebar {
+        display: flex;
+    }
+
+    .lp-feed-sharebtn {
+        display: none;
+    }
+}
+
+.lp-feed-sidebar-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #6B6B6B;
+    letter-spacing: 0.06em;
+    padding: 0 12px;
+    margin-bottom: 8px;
+}
+
+.lp-feed-sidebar-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.lp-feed-sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+}
+
+.lp-feed-sidebar-item:hover {
+    background: #F5F5F5;
+}
+
+.lp-feed-sidebar-item--active {
+    background: #FDE9C8;
+}
+
+.lp-feed-sidebar-dot {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.lp-feed-sidebar-pin {
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+/* ---- Compose bar (desktop) ---- */
+
+.lp-feed-composebar {
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border-radius: 999px;
+    padding: 8px;
+    margin-bottom: 16px;
+    text-decoration: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+}
+
+.lp-feed-compose-avatar {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #FDE9C8;
+    color: #B45309;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.lp-feed-compose-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.lp-feed-compose-input {
+    flex: 1;
+    color: #6B6B6B;
+    font-size: 14px;
+    background: #F5F5F5;
+    border-radius: 999px;
+    padding: 10px 16px;
+}
+
+.lp-feed-compose-photobtn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #B8732A;
+    background: #FBF7EF;
+    border: 1px solid #E4DCCA;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* ---- "Coming up" events widget (desktop) ---- */
+
+.lp-feed-comingup-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 16px;
+}
+
+.lp-feed-comingup-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+}
+
+.lp-feed-comingup-head a {
+    font-size: 13px;
+    font-weight: 600;
+    color: #B45309;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.lp-feed-comingup-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #F0EBE0;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.lp-feed-comingup-item:last-child {
+    border-bottom: none;
+}
+
+.lp-feed-comingup-thumb {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: #EEE;
+}
+
+.lp-feed-comingup-text {
+    min-width: 0;
+}
+
+.lp-feed-comingup-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.lp-feed-comingup-meta {
+    font-size: 12px;
+    color: #6B6B6B;
+    margin-top: 2px;
+}
+
+.lp-feed-comingup-empty {
+    font-size: 13px;
+    color: #6B6B6B;
+    padding: 8px 0;
+}
+
+.lp-feed-browse-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 14px;
+    background: #F4B462;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px;
+    border-radius: 999px;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 /* ==========================================================================
@@ -536,6 +819,249 @@
     font-size: 14px;
 }
 
+/* ---- Attach a past session (compose screen) ---- */
+
+.share-session-trigger[hidden],
+.share-session-chip[hidden] {
+    display: none;
+}
+
+.share-session-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 2px dashed #E4DCCA;
+    background: #FBF7EF;
+    border-radius: 14px;
+    padding: 0 14px;
+    color: #B8732A;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    min-height: 56px;
+    font-family: inherit;
+    text-align: left;
+}
+
+.share-session-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 2px solid #F4B462;
+    background: #FDF1E0;
+    border-radius: 14px;
+    padding: 8px 10px;
+    min-height: 56px;
+    cursor: pointer;
+}
+
+.share-session-chip-thumb {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #F4B462;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.share-session-chip-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.share-session-chip-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #9A3412;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.share-session-chip-date {
+    font-size: 13px;
+    color: #B8732A;
+    margin-top: 2px;
+}
+
+.share-session-chip-remove {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #9A3412;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---- Session picker: bottom sheet (mobile) / modal (desktop) ---- */
+
+.session-sheet-overlay[hidden] {
+    display: none;
+}
+
+.session-sheet-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.session-sheet {
+    width: 100%;
+    max-height: 80vh;
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.session-sheet-handle {
+    width: 36px;
+    height: 4px;
+    border-radius: 999px;
+    background: #E4DCCA;
+    margin: 10px auto 0;
+    flex-shrink: 0;
+}
+
+.session-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    flex-shrink: 0;
+}
+
+.session-sheet-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+}
+
+.session-sheet-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #F5F5F5;
+    color: #6B6B6B;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.session-sheet-list {
+    overflow-y: auto;
+    padding: 0 8px 8px;
+}
+
+@media (min-width: 768px) {
+    .session-sheet-overlay {
+        align-items: center;
+    }
+
+    .session-sheet {
+        width: 480px;
+        max-height: 640px;
+        border-radius: 20px;
+    }
+
+    .session-sheet-handle {
+        display: none;
+    }
+}
+
+.session-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 76px;
+    padding: 10px 8px;
+    border-radius: 14px;
+    cursor: pointer;
+}
+
+.session-row:hover {
+    background: #FBF7EF;
+}
+
+.session-row--selected {
+    background: #FDF1E0;
+    border: 1px solid #F4B462;
+}
+
+.session-row-thumb {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: #FFEDD5;
+    color: #B45309;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.session-row-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.session-row-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.session-row-subtitle {
+    font-size: 13px;
+    color: #6B6B6B;
+    margin-top: 2px;
+}
+
+.session-row-radio {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #E4DCCA;
+}
+
+.session-row-radio--checked {
+    border-color: #F4B462;
+    background: #F4B462;
+    box-shadow: inset 0 0 0 3px #fff;
+}
+
+.share-session-status {
+    padding: 32px 14px;
+    text-align: center;
+    font-size: 14px;
+    color: #6B6B6B;
+}
+
 /* ==========================================================================
    Feed post detail
    ========================================================================== */
@@ -655,9 +1181,21 @@
     transition: transform 0.25s ease;
 }
 
-.feed-viewer-track img {
+.feed-viewer-slide {
     width: 100vw;
     height: 100%;
-    object-fit: contain;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feed-viewer-slide img {
+    /* Facebook-style: show at natural size, only scale down to fit —
+       never scale a small photo up to fill the viewport. */
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    display: block;
 }
