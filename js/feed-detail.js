@@ -56,11 +56,42 @@
         return { letter, bg: AVATAR_TINTS[letter.charCodeAt(0) % AVATAR_TINTS.length] };
     }
 
+    function placeFromLevel(level) {
+        if (!level) return "";
+        const parts = level.split(":");
+        return parts.length > 1 ? parts[1].trim() : "";
+    }
+
+    const LOCATION_PILL_COLORS = [
+        { bg: "#DCE9FF", text: "#1E4E8C" }, // blue (Phuket)
+        { bg: "#CFF4F7", text: "#0E7490" }, // teal-blue (Online — distinct shade from Phuket's blue)
+        { bg: "#DCF5E3", text: "#1F7A3F" }, // green (Chiang Mai)
+        { bg: "#FFE4C4", text: "#C2540A" }, // orange (Bangkok)
+        { bg: "#E9D8FD", text: "#6B21A8" }, // purple (Hong Kong)
+        { bg: "#FDE2F3", text: "#BE185D" }  // pink (Chengdu — the "relax" color)
+    ];
+
+    const KNOWN_PLACE_COLORS = {
+        "Chiang Mai": LOCATION_PILL_COLORS[2],
+        "Bangkok": LOCATION_PILL_COLORS[3],
+        "Phuket": LOCATION_PILL_COLORS[0],
+        "Hong Kong": LOCATION_PILL_COLORS[4],
+        "Chengdu": LOCATION_PILL_COLORS[5],
+        "Online": LOCATION_PILL_COLORS[1]
+    };
+
+    function pillColorFor(place) {
+        if (KNOWN_PLACE_COLORS[place]) return KNOWN_PLACE_COLORS[place];
+        let hash = 0;
+        for (let i = 0; i < place.length; i++) hash = (hash * 31 + place.charCodeAt(i)) | 0;
+        return LOCATION_PILL_COLORS[Math.abs(hash) % LOCATION_PILL_COLORS.length];
+    }
+
     const author = post.author || {};
     const avatar = initialAvatar(author.displayName);
-    const city = post.session?.location || "";
+    const place = placeFromLevel(post.session?.level);
+    const pillColor = place ? pillColorFor(place) : null;
     const rel = relativeTime(post.createdAt);
-    const metaLine = city ? `${escapeHtml(city)} · ${rel}` : rel;
     const photoUrls = post.photoUrls || [];
 
     const photosHtml = photoUrls.length
@@ -90,8 +121,9 @@
                 }
                 <div class="feed-card-headertext">
                     <div class="feed-author">${escapeHtml(author.displayName || "Lingping member")}</div>
-                    <div class="feed-meta">${metaLine}</div>
+                    <div class="feed-meta">${rel}</div>
                 </div>
+                ${place ? `<div class="feed-location-pill" style="background:${pillColor.bg};color:${pillColor.text}"><span class="feed-location-pin">📍</span>${escapeHtml(place)}</div>` : ""}
             </div>
             <div class="feed-body feed-detail-text">${linkify(escapeHtml(post.thoughts || ""))}</div>
         </div>
@@ -107,7 +139,11 @@
 
     function renderViewer() {
         const track = document.getElementById("feedViewerTrack");
-        track.innerHTML = photoUrls.map(url => `<img src="${escapeHtml(url)}">`).join("");
+        track.innerHTML = photoUrls.map(url => `
+            <div class="feed-viewer-slide">
+                <img src="${escapeHtml(url)}">
+            </div>
+        `).join("");
         track.style.transform = `translateX(-${currentPhotoIndex * 100}%)`;
     }
 

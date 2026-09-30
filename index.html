@@ -245,22 +245,55 @@
 
         <!-- ===== Feed tab content ===== -->
         <div id="feedTabContent" hidden>
+            <div class="lp-feed-layout">
 
-            <div class="lp-feed-citybar">
-                <div class="lp-feed-citywrap" id="lpFeedCityWrap">
-                    <button class="lp-feed-citybtn" id="lpFeedCityBtn" onclick="toggleFeedCityDrop()">
-                        📍 <span id="lpFeedCityLabel" data-i18n="allCities">All cities</span>
-                        <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6" /></svg>
-                    </button>
-                    <div class="lp-feed-citylist" id="lpFeedCityListPanel"></div>
+                <!-- Desktop-only: cities sidebar -->
+                <aside class="lp-feed-sidebar">
+                    <div class="lp-feed-sidebar-title" data-i18n="cities">CITIES</div>
+                    <div class="lp-feed-sidebar-list" id="lpFeedSidebarList"></div>
+                </aside>
+
+                <div class="lp-feed-main">
+                    <!-- Mobile-only: cities dropdown -->
+                    <div class="lp-feed-citybar">
+                        <div class="lp-feed-citywrap" id="lpFeedCityWrap">
+                            <button class="lp-feed-citybtn" id="lpFeedCityBtn" onclick="toggleFeedCityDrop()">
+                                📍 <span id="lpFeedCityLabel" data-i18n="allCities">All cities</span>
+                                <svg class="lp-chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6" /></svg>
+                            </button>
+                            <div class="lp-feed-citylist" id="lpFeedCityListPanel"></div>
+                        </div>
+                    </div>
+
+                    <!-- Desktop-only: inline compose bar -->
+                    <div class="lp-feed-composebar" onclick="window.location.href='share-to-feed.html'">
+                        <a class="lp-feed-compose-avatar" id="lpFeedComposeAvatar" href="community-profile.html" onclick="event.stopPropagation()"></a>
+                        <span class="lp-feed-compose-input" data-i18n="shareWithLingping">Share something with Lingping...</span>
+                        <span class="lp-feed-compose-photobtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                            <span data-i18n="photo">Photo</span>
+                        </span>
+                    </div>
+
+                    <div id="feedList"></div>
+                    <div id="feedLoadMoreWrap" class="lp-feed-loadmore-wrap" hidden>
+                        <button class="lp-feed-loadmore" id="feedLoadMoreBtn" onclick="loadMoreFeed()" data-i18n="loadMore">Load more</button>
+                    </div>
                 </div>
-            </div>
 
-            <div id="feedList"></div>
-            <div id="feedLoadMoreWrap" class="lp-feed-loadmore-wrap" hidden>
-                <button class="lp-feed-loadmore" id="feedLoadMoreBtn" onclick="loadMoreFeed()" data-i18n="loadMore">Load more</button>
-            </div>
+                <!-- Desktop-only: coming up events sidebar -->
+                <aside class="lp-feed-rightbar">
+                    <div class="lp-feed-comingup-card">
+                        <div class="lp-feed-comingup-head">
+                            <span data-i18n="comingUp">Coming up</span>
+                            <a href="javascript:void(0)" onclick="setBrowseTab('events')" data-i18n="seeAll">See all</a>
+                        </div>
+                        <div id="lpFeedComingUpList"></div>
+                        <a class="lp-feed-browse-btn" href="javascript:void(0)" onclick="setBrowseTab('events')" data-i18n="browseEvents">Browse events</a>
+                    </div>
+                </aside>
 
+            </div>
         </div>
         <!-- ===== end Feed tab content ===== -->
 
@@ -268,6 +301,13 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             <span data-i18n="share">Share</span>
         </a>
+
+        <div class="feed-viewer" id="feedPhotoViewer" hidden>
+            <button class="feed-viewer-close" onclick="closeFeedPhotoViewer()" aria-label="Close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <div class="feed-viewer-track" id="feedPhotoViewerTrack"></div>
+        </div>
 
     </div>
 
@@ -692,6 +732,7 @@
 
                     return {
                         id: s._id,
+                        startTimeISO: s.startTime,
                         date: fmtISO(start),
                         time: `${Utils.formatTime(start)}–${Utils.formatTime(end)}`,
                         shortTime: `${Utils.formatTime(start)}`,
@@ -781,6 +822,7 @@
             document.getElementById("eventsTabContent").hidden = isFeed;
             document.getElementById("feedTabContent").hidden = !isFeed;
             document.getElementById("lpFeedShareBtn").hidden = !isFeed;
+            document.body.classList.toggle("lp-feed-tab-active", isFeed);
 
             if (!skipHistory) {
                 const url = new URL(window.location.href);
