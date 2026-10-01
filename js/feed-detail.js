@@ -115,10 +115,12 @@
     body.innerHTML = `
         <div class="feed-card feed-detail-card">
             <div class="feed-card-header">
-                ${author.profilePic
-                    ? `<img class="feed-avatar" src="${escapeHtml(author.profilePic)}" alt="${escapeHtml(author.displayName || "")}">`
-                    : `<div class="feed-avatar feed-avatar-initial" style="background:${avatar.bg}">${avatar.letter}</div>`
-                }
+                <a class="feed-avatar-link" href="view-profile.html?userId=${encodeURIComponent(author._id || "")}">
+                    ${author.profilePic
+                        ? `<img class="feed-avatar" src="${escapeHtml(author.profilePic)}" alt="${escapeHtml(author.displayName || "")}">`
+                        : `<div class="feed-avatar feed-avatar-initial" style="background:${avatar.bg}">${avatar.letter}</div>`
+                    }
+                </a>
                 <div class="feed-card-headertext">
                     <div class="feed-author">${escapeHtml(author.displayName || "Lingping member")}</div>
                     <div class="feed-meta">${rel}</div>

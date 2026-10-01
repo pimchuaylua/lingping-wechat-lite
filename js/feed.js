@@ -120,7 +120,7 @@
         return `
             <div class="feed-card" data-post-id="${escapeHtml(post._id)}">
                 <div class="feed-card-header">
-                    <a class="feed-avatar-link" href="community-profile.html" onclick="event.stopPropagation()">
+                    <a class="feed-avatar-link" href="view-profile.html?userId=${encodeURIComponent(author._id || "")}" onclick="event.stopPropagation()">
                         ${author.profilePic
                             ? `<img class="feed-avatar" src="${escapeHtml(author.profilePic)}" alt="${escapeHtml(author.displayName || "")}">`
                             : `<div class="feed-avatar feed-avatar-initial" style="background:${avatar.bg}">${avatar.letter}</div>`
