@@ -375,7 +375,7 @@
                 { country: 'China', levelNames: ['Community: Chengdu'] },
                 { country: 'Hong Kong', levelNames: ['Community: Hong Kong'] },
             ];
-            const ONLINE_COMMUNITY_LEVEL_NAME = 'Online: Community';
+            const ONLINE_COMMUNITY_LEVEL_NAME = 'Community: Online';
 
             const levelOptionsHtml = COUNTRY_GROUPS.map(group => {
                 const optionsHtml = group.levelNames
@@ -387,7 +387,7 @@
                     }).join('');
                 return optionsHtml ? `<optgroup label="${group.country}">${optionsHtml}</optgroup>` : '';
             }).join('');
-            onlineCommunityLevelId = (levels.find(l => l.name === ONLINE_COMMUNITY_LEVEL_NAME) || {})._id || '';
+            onlineCommunityLevelId = (levels.find(l => l.name === ONLINE_COMMUNITY_LEVEL_NAME) || {})._id || onlineCommunityLevelId;
             const typeOptionsHtml = (eventOptions.types || [])
                 .filter(t => t.value !== 'hybrid')
                 .map(t => `<option value="${t.value}">${t.label}</option>`).join('');
