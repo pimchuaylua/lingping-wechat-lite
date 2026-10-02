@@ -88,6 +88,23 @@
     <div id="preBookingModalContainer"></div>
     <div id="bookingSuccessModalContainer"></div>
 
+    <div id="cancelConfirmDialog" class="cancel-dialog-overlay" hidden onclick="if(event.target===this) closeCancelDialog()">
+        <div class="cancel-dialog" role="alertdialog" aria-modal="true" aria-labelledby="cancelDialogTitleEl">
+            <div class="cancel-dialog-title" id="cancelDialogTitleEl" data-i18n="areYouSureCancel">Are you sure you want to cancel?</div>
+            <div class="cancel-dialog-body" id="cancelDialogBody"></div>
+            <div class="penalty-policy-box" id="cancelDialogPenaltyBox" hidden>
+                <span class="penalty-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </span>
+                <span id="cancelDialogPenaltyText"></span>
+            </div>
+            <div class="cancel-dialog-actions">
+                <button type="button" class="cancel-dialog-btn cancel-dialog-btn-secondary" id="cancelDialogConfirmBtn"></button>
+                <button type="button" class="cancel-dialog-btn cancel-dialog-btn-primary" id="cancelDialogKeepBtn" onclick="closeCancelDialog()" data-i18n="keepMySpot">Keep my spot</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Popup -->
     <div id="hostHelpPopup" class="host-popup">
         <div class="host-popup-content">
