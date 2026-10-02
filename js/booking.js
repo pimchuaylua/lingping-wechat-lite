@@ -109,10 +109,84 @@ async function getEventsToHost() {
     return json.data;
 }
 
-async function cancelBooking(sessionId) {
-    if (!confirm("Are you sure you want to cancel this booking?")) {
+/* ---- Cancel-booking confirmation dialog ----
+ * hoursUntilStart is computed fresh each time the dialog opens (not cached
+ * anywhere), so a session that crosses the 3-hour line while the page is
+ * sitting open still gets the right message next time cancel is tapped.
+ * This only picks which message to show — the backend is the sole source
+ * of truth on whether a penalty is actually applied. */
+
+let cancelDialogTriggerEl = null;
+
+function cancelBooking(sessionId) {
+    const startTimeISO = typeof s !== "undefined" && s ? s.startTimeISO : null;
+    const hoursUntilStart = startTimeISO
+        ? (new Date(startTimeISO).getTime() - Date.now()) / (1000 * 60 * 60)
+        : Infinity;
+
+    openCancelDialog(sessionId, hoursUntilStart < 3);
+}
+
+function openCancelDialog(sessionId, isLate) {
+    cancelDialogTriggerEl = document.activeElement;
+
+    const body = document.getElementById("cancelDialogBody");
+    const box = document.getElementById("cancelDialogPenaltyBox");
+    const boxText = document.getElementById("cancelDialogPenaltyText");
+    const confirmBtn = document.getElementById("cancelDialogConfirmBtn");
+
+    if (isLate) {
+        body.innerHTML = window.t ? t("cancelDialogBodyLate") : "This session starts in less than 3 hours, so cancelling now counts as a <strong>late cancellation</strong> and adds <strong>1 penalty point</strong>.";
+        boxText.innerHTML = window.t ? t("cancelDialogPenaltyBox") : 'At <strong>3 points</strong>, booking is paused for <strong>3 days</strong>. <a href="community_guidelines.html#late-cancellation-no-show" target="_blank">View policy</a>';
+        box.hidden = false;
+        confirmBtn.textContent = window.t ? t("cancelAnyway") : "Cancel anyway";
+    } else {
+        body.innerHTML = window.t ? t("cancelDialogBody3h") : "We'd love to have you in the conversation! If you cancel now, your spot will open up for someone else.";
+        box.hidden = true;
+        confirmBtn.textContent = window.t ? t("yesCancel") : "Yes, cancel";
+    }
+
+    confirmBtn.onclick = () => performCancel(sessionId);
+
+    document.getElementById("cancelConfirmDialog").hidden = false;
+    document.addEventListener("keydown", handleCancelDialogKeydown);
+    document.getElementById("cancelDialogKeepBtn").focus();
+}
+
+function closeCancelDialog() {
+    document.getElementById("cancelConfirmDialog").hidden = true;
+    document.removeEventListener("keydown", handleCancelDialogKeydown);
+    if (cancelDialogTriggerEl && typeof cancelDialogTriggerEl.focus === "function") {
+        cancelDialogTriggerEl.focus();
+    }
+    cancelDialogTriggerEl = null;
+}
+window.closeCancelDialog = closeCancelDialog;
+
+function handleCancelDialogKeydown(e) {
+    if (e.key === "Escape") {
+        e.preventDefault();
+        closeCancelDialog();
         return;
     }
+    if (e.key === "Tab") {
+        const dialog = document.querySelector("#cancelConfirmDialog .cancel-dialog");
+        const focusable = dialog.querySelectorAll("button, a[href]");
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    }
+}
+
+async function performCancel(sessionId) {
+    closeCancelDialog();
 
     try {
         const res = await fetch(`${BASE_URL}/bookings/cancel_by_session`, {

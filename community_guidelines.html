@@ -1,14 +1,174 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <title>Community Rules | Lingping Club</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="assets/style.css?v=20260530">
-    <link rel="stylesheet" href="assets/about_style.css">
     <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
     <script src="js/dropdown.js?v=20260516"></script>
+    <style>
+        .rules-hero {
+            max-width: 700px;
+            margin: 40px 0 44px;
+        }
+
+        .rules-eyebrow {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--theme);
+            margin-bottom: 12px;
+        }
+
+        .rules-hero h1 {
+            font-size: 40px;
+            line-height: 1.1;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #17140f;
+            margin: 0 0 14px;
+        }
+
+        .rules-subtitle {
+            font-size: 17px;
+            line-height: 1.55;
+            color: #666;
+            margin: 0;
+            max-width: 56ch;
+        }
+
+        .rules-layout {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 680px) 240px;
+            gap: 56px;
+        }
+
+        .rules-article h2 {
+            font-size: 21px;
+            font-weight: 700;
+            color: #17140f;
+            margin: 44px 0 10px;
+            scroll-margin-top: 24px;
+        }
+
+        .rules-article h2:first-child {
+            margin-top: 0;
+        }
+
+        .rules-article h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #17140f;
+            margin: 24px 0 8px;
+        }
+
+        .rules-article p,
+        .rules-article ul {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #444;
+        }
+
+        .rules-article ul {
+            padding-left: 20px;
+        }
+
+        .rules-article li {
+            margin-bottom: 6px;
+        }
+
+        .rules-article a {
+            color: var(--theme);
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 176, 80, 0.4);
+        }
+
+        .rules-article a:hover {
+            border-bottom-color: var(--theme);
+        }
+
+        .rules-toc {
+            display: block;
+        }
+
+        .rules-toc-title {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 12px;
+        }
+
+        .rules-toc ol {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            border-left: 2px solid #eee;
+        }
+
+        .rules-toc li {
+            margin: 0;
+        }
+
+        .rules-toc a {
+            display: block;
+            padding: 7px 0 7px 16px;
+            margin-left: -2px;
+            border-left: 2px solid transparent;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #777;
+            text-decoration: none;
+            transition: color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .rules-toc a:hover {
+            color: #333;
+        }
+
+        .rules-toc a.active {
+            color: var(--theme);
+            border-left-color: var(--theme);
+            font-weight: 600;
+        }
+
+        @media (max-width: 900px) {
+            .rules-layout {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .rules-toc {
+                position: static;
+                order: -1;
+                border: 1px solid #eee;
+                border-radius: 14px;
+                padding: 16px 18px;
+                background: #fff;
+                margin-bottom: 32px;
+            }
+
+            .rules-toc ol {
+                border-left: none;
+            }
+
+            .rules-toc a {
+                border-left: none;
+                padding: 6px 0;
+                margin-left: 0;
+            }
+
+            .rules-hero h1 {
+                font-size: 30px;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -16,62 +176,243 @@
 
         <div id="header"></div>
 
-        <h1 class="page-title">Community Rules</h1>
-
-        <div class="content">
-
-            <p><strong>🏡 Community Behavior Guidelines</strong></p>
-
-            <ul>
-                <li><strong>Be on time.</strong> Arriving late can disrupt the discussion and group flow.</li>
-
-                <li><strong>Respect others and be polite.</strong> Be considerate and respectful of everyone.</li>
-
-                <li><strong>Respect the free space for ideas.</strong> Disagree respectfully.</li>
-
-                <li><strong>Be a good listener.</strong> Let others finish speaking and give everyone a chance to
-                    participate.</li>
-
-                <li><strong>Give constructive feedback.</strong> Share thoughts in a helpful and encouraging way.</li>
-
-                <li><strong>Encourage inclusivity and positivity.</strong> Create a space where everyone feels valued.
-                </li>
-            </ul>
-
-            <p><strong>📅 Booking & Cancellation Guidelines</strong></p>
-
-            <ul>
-                <li><strong>Book sessions in advance.</strong> Bookings are required to maintain small, high-quality
-                    discussions and help hosts manage their time better.</li>
-                <li><strong>Support our café venues.</strong> Please order at least one drink during the session.</li>
-
-                <li><strong>No walk-ins or unbooked guests.</strong> Only booked participants may join sessions.
-                    Booking is still required even if you only want to sit in without participating.</li>
-
-                <li><strong>Cancel early if you can’t join.</strong> Please cancel at least 3 hours before the session
-                    so others can take your spot and hosts can plan better.</li>
-            </ul>
-
-            <p><strong>🚫 Unacceptable Behavior</strong></p>
-
-            <ul>
-                <li>Using impolite language, aggressive behavior, or intimidation.</li>
-
-                <li>Attacking, discriminating against, or bullying others based on nationality, background, age, gender,
-                    or personal identity.</li>
-
-                <li>Disrespecting others’ ideas or repeatedly interrupting or dominating conversations.</li>
-
-                <li>Harassing others through unwanted messages or repeated contact.</li>
-
-                <li>Spreading rumors, gossip, or false information about others in the community.</li>
-
-                <li>Making inappropriate comments or jokes, including sexual comments that make others uncomfortable.
-                </li>
-            </ul>
-
-            <p><strong>The club reserves the right to remove anyone who violates these guidelines.</strong></p>
-
+        <div class="rules-hero">
+            <div class="rules-eyebrow">Community Rules</div>
+            <h1>How we keep Lingping sessions great</h1>
+            <p class="rules-subtitle">
+                A few simple guidelines on behavior, booking, and cancellations so every session stays small,
+                respectful, and reliable for everyone.
+            </p>
         </div>
 
-    </div
+        <div class="rules-layout">
+
+            <article class="rules-article">
+
+                <h2 id="community-behavior">🏡 Community Behavior Guidelines</h2>
+                <ul>
+                    <li><strong>Be on time.</strong> Arriving late can disrupt the discussion and group flow.</li>
+                    <li><strong>Respect others and be polite.</strong> Be considerate and respectful of everyone.</li>
+                    <li><strong>Respect the free space for ideas.</strong> Disagree respectfully.</li>
+                    <li><strong>Be a good listener.</strong> Let others finish speaking and give everyone a chance
+                        to participate.</li>
+                    <li><strong>Give constructive feedback.</strong> Share thoughts in a helpful and encouraging
+                        way.</li>
+                    <li><strong>Encourage inclusivity and positivity.</strong> Create a space where everyone feels
+                        valued.</li>
+                </ul>
+
+                <h2 id="booking-cancellation">📅 Booking & Cancellation Guidelines</h2>
+                <ul>
+                    <li><strong>Book sessions in advance.</strong> Bookings are required to maintain small,
+                        high-quality discussions and help hosts manage their time better.</li>
+                    <li><strong>Support our café venues.</strong> Please order at least one drink during the
+                        session.</li>
+                    <li><strong>No walk-ins or unbooked guests.</strong> Only booked participants may join sessions.
+                        Booking is still required even if you only want to sit in without participating.</li>
+                    <li><strong>Cancel early if you can’t join.</strong> Please cancel at least 3 hours before the
+                        session so others can take your spot and hosts can plan better.</li>
+                </ul>
+
+                <h2 id="late-cancellation-no-show">⏰ Late Cancellation & No Show Policy</h2>
+                <p><em>Effective Monday, October 12, 2026</em></p>
+                <p>
+                    We understand that plans can change. Our sessions have limited spots, so cancelling early helps
+                    us offer your spot to someone else and helps our hosts plan ahead.
+                </p>
+
+                <h3>How do penalty points work?</h3>
+                <ul>
+                    <li><strong>Late cancellation — 1 point:</strong> Cancelling less than 3 hours before the
+                        session counts as a late cancellation.</li>
+                    <li><strong>No-show — 2 points:</strong> Booking a session but not attending without cancelling
+                        beforehand counts as a no-show.</li>
+                </ul>
+
+                <h3>What happens when you receive penalty points?</h3>
+                <ul>
+                    <li><strong>1–2 points:</strong> We’ll send you a friendly reminder about the cancellation
+                        policy.</li>
+                    <li><strong>3 points:</strong> Your account may be temporarily restricted from booking sessions
+                        for 3 days.</li>
+                    <li><strong>Further late cancellations or no-shows:</strong> May result in a longer temporary
+                        booking restriction.</li>
+                </ul>
+
+                <h3>A little flexibility</h3>
+                <p>
+                    Penalty points are simply there to help keep bookings fair and sessions reliable for everyone.
+                    We understand that genuine emergencies can happen, so if something unexpected comes up, please
+                    let us know.
+                </p>
+
+                <h2 id="unacceptable-behavior">🚫 Unacceptable Behavior</h2>
+                <ul>
+                    <li>Using impolite language, aggressive behavior, or intimidation.</li>
+                    <li>Attacking, discriminating against, or bullying others based on nationality, background,
+                        age, gender, or personal identity.</li>
+                    <li>Disrespecting others’ ideas or repeatedly interrupting or dominating conversations.</li>
+                    <li>Harassing others through unwanted messages or repeated contact.</li>
+                    <li>Spreading rumors, gossip, or false information about others in the community.</li>
+                    <li>Making inappropriate comments or jokes, including sexual comments that make others
+                        uncomfortable.</li>
+                </ul>
+
+                <p><strong>The club reserves the right to remove anyone who violates these guidelines.</strong></p>
+
+            </article>
+
+            <nav class="rules-toc" aria-label="Table of contents">
+                <div class="rules-toc-title">On this page</div>
+                <ol>
+                    <li><a href="#community-behavior">🏡 Community Behavior</a></li>
+                    <li><a href="#booking-cancellation">📅 Booking & Cancellation</a></li>
+                    <li><a href="#late-cancellation-no-show">⏰ Late Cancellation & No Show</a></li>
+                    <li><a href="#unacceptable-behavior">🚫 Unacceptable Behavior</a></li>
+                </ol>
+            </nav>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tocLinks = Array.from(document.querySelectorAll('.rules-toc a'));
+            const sections = tocLinks
+                .map(link => document.getElementById(link.getAttribute('href').slice(1)))
+                .filter(Boolean);
+
+            if (!sections.length || !('IntersectionObserver' in window)) return;
+
+            const setActive = (id) => {
+                tocLinks.forEach(link => {
+                    link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+                });
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                const visible = entries
+                    .filter(e => e.isIntersecting)
+                    .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+
+                if (visible.length) {
+                    setActive(visible[0].target.id);
+                }
+            }, {
+                rootMargin: '-15% 0px -70% 0px',
+                threshold: 0
+            });
+
+            sections.forEach(section => observer.observe(section));
+        });
+
+        // Manually pin the TOC to the viewport while scrolling through the
+        // article, and dock it at the bottom of the layout once the article
+        // runs out. Done in JS (instead of relying purely on CSS
+        // `position: sticky`) so it doesn't depend on how the browser
+        // computes grid track/containing-block sizing for a sticky item.
+        (function () {
+            const toc = document.querySelector('.rules-toc');
+            const layout = document.querySelector('.rules-layout');
+            if (!toc || !layout) return;
+
+            const TOP_OFFSET = 24;
+            let naturalLeft = 0;
+            let naturalWidth = 0;
+            let mode = 'static'; // 'static' | 'fixed' | 'docked'
+            let ticking = false;
+
+            function isDesktop() {
+                return window.matchMedia('(min-width: 901px)').matches;
+            }
+
+            function clearOverrides() {
+                toc.style.position = '';
+                toc.style.top = '';
+                toc.style.bottom = '';
+                toc.style.left = '';
+                toc.style.width = '';
+            }
+
+            function measureNatural() {
+                const hadMode = mode;
+                clearOverrides();
+                mode = 'static';
+
+                const rect = toc.getBoundingClientRect();
+                naturalWidth = rect.width;
+                naturalLeft = rect.left;
+
+                if (hadMode !== 'static') update();
+            }
+
+            function update() {
+                if (!isDesktop()) {
+                    if (mode !== 'static') {
+                        clearOverrides();
+                        mode = 'static';
+                    }
+                    return;
+                }
+
+                const layoutRect = layout.getBoundingClientRect();
+                const tocHeight = toc.offsetHeight || naturalWidth; // fallback, avoids 0-height edge case
+
+                const pastTopOffset = layoutRect.top <= TOP_OFFSET;
+                const outOfRoom = layoutRect.bottom <= TOP_OFFSET + tocHeight;
+
+                if (!pastTopOffset) {
+                    if (mode !== 'static') {
+                        clearOverrides();
+                        mode = 'static';
+                    }
+                    return;
+                }
+
+                if (outOfRoom) {
+                    if (mode !== 'docked') {
+                        toc.style.position = 'absolute';
+                        toc.style.top = '';
+                        toc.style.bottom = '0';
+                        toc.style.left = '';
+                        toc.style.width = '';
+                        mode = 'docked';
+                    }
+                    return;
+                }
+
+                if (mode !== 'fixed') {
+                    toc.style.position = 'fixed';
+                    toc.style.top = `${TOP_OFFSET}px`;
+                    toc.style.bottom = '';
+                    toc.style.left = `${naturalLeft}px`;
+                    toc.style.width = `${naturalWidth}px`;
+                    mode = 'fixed';
+                }
+            }
+
+            function onScroll() {
+                if (ticking) return;
+                ticking = true;
+                requestAnimationFrame(() => {
+                    update();
+                    ticking = false;
+                });
+            }
+
+            function onResize() {
+                measureNatural();
+                update();
+            }
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('resize', onResize);
+            window.addEventListener('load', onResize);
+
+            measureNatural();
+            update();
+        })();
+    </script>
+</body>
+
+</html>
