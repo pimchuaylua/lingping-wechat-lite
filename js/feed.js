@@ -355,6 +355,61 @@
         loadFeedList();
     };
 
+    /* ---------------- Unread indicator (localStorage "seen" tracking) ---------------- */
+
+    // Scoped per-userId so switching accounts on a shared browser doesn't
+    // inherit another account's seen state.
+    function getFeedSeenKey() {
+        const userId = localStorage.getItem("userId") || "guest";
+        return `feedLastSeenAt_${userId}`;
+    }
+
+    // Cached from the most recent checkFeedUnread() fetch; used by
+    // markFeedSeen() as the "seen up to" cursor.
+    let feedNewestCreatedAt = null;
+
+    function showFeedUnreadDot() {
+        const dot = document.getElementById("lpFeedUnreadDot");
+        if (dot) dot.hidden = false;
+    }
+
+    function hideFeedUnreadDot() {
+        const dot = document.getElementById("lpFeedUnreadDot");
+        if (dot) dot.hidden = true;
+    }
+
+    // Runs once per page load, independent of initFeedTab()/loadFeedList(),
+    // so the dot can appear while the user is still on the Events tab.
+    async function checkFeedUnread() {
+        try {
+            const posts = await fetchFeed(1);
+            if (!posts.length) return;
+
+            const newest = posts[0];
+            feedNewestCreatedAt = newest.createdAt;
+
+            const userId = localStorage.getItem("userId");
+            if (newest.author && newest.author._id === userId) return; // own post — never "unread" for self
+
+            const lastSeenAt = localStorage.getItem(getFeedSeenKey());
+            if (!lastSeenAt || new Date(newest.createdAt) > new Date(lastSeenAt)) {
+                showFeedUnreadDot();
+            }
+        } catch (err) {
+            // Fail silently — a network hiccup should never block page load
+            // or show a false dot.
+            console.error("Failed to check feed unread state:", err);
+        }
+    }
+
+    // Exposed for index.html's setBrowseTab() to call every time the user
+    // switches to the Feed tab (not just the first time).
+    window.markFeedSeen = function () {
+        hideFeedUnreadDot();
+        const seenAt = feedNewestCreatedAt || new Date().toISOString();
+        localStorage.setItem(getFeedSeenKey(), seenAt);
+    };
+
     /* ---------------- Desktop: compose bar avatar ---------------- */
 
     async function renderComposeAvatar() {
@@ -507,4 +562,6 @@
             touchStartX = null;
         });
     })();
+
+    checkFeedUnread(); // runs once, unconditionally, on every index.html load
 })();
