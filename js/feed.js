@@ -368,9 +368,13 @@
     // markFeedSeen() as the "seen up to" cursor.
     let feedNewestCreatedAt = null;
 
-    function showFeedUnreadDot() {
+    const UNREAD_BADGE_CAP = 9; // shown as "9+" once the count reaches this
+
+    function showFeedUnreadDot(count) {
         const dot = document.getElementById("lpFeedUnreadDot");
-        if (dot) dot.hidden = false;
+        if (!dot) return;
+        dot.textContent = count > UNREAD_BADGE_CAP ? `${UNREAD_BADGE_CAP}+` : String(count);
+        dot.hidden = false;
     }
 
     function hideFeedUnreadDot() {
@@ -380,20 +384,26 @@
 
     // Runs once per page load, independent of initFeedTab()/loadFeedList(),
     // so the dot can appear while the user is still on the Events tab.
+    // Fetches a small page of recent posts (rather than just the newest one)
+    // so it can count how many are actually unseen, not just detect "any".
+    // UNREAD_BADGE_CAP + 1 is enough to tell "exactly N" apart from "9+".
     async function checkFeedUnread() {
         try {
-            const posts = await fetchFeed(1);
+            const posts = await fetchFeed(UNREAD_BADGE_CAP + 1);
             if (!posts.length) return;
 
-            const newest = posts[0];
-            feedNewestCreatedAt = newest.createdAt;
+            feedNewestCreatedAt = posts[0].createdAt;
 
             const userId = localStorage.getItem("userId");
-            if (newest.author && newest.author._id === userId) return; // own post — never "unread" for self
-
             const lastSeenAt = localStorage.getItem(getFeedSeenKey());
-            if (!lastSeenAt || new Date(newest.createdAt) > new Date(lastSeenAt)) {
-                showFeedUnreadDot();
+
+            const unseenCount = posts.filter(p =>
+                p.author?._id !== userId && // own posts never count as unread
+                (!lastSeenAt || new Date(p.createdAt) > new Date(lastSeenAt))
+            ).length;
+
+            if (unseenCount > 0) {
+                showFeedUnreadDot(unseenCount);
             }
         } catch (err) {
             // Fail silently — a network hiccup should never block page load
