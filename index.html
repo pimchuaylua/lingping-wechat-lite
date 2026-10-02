@@ -47,6 +47,7 @@
             <button class="lp-browsetab" id="lpBrowseTabFeed" onclick="setBrowseTab('feed')">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="3" y1="12" x2="21" y2="12"></line><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18z"></path></svg>
                 <span data-i18n="tabFeed">Feed</span>
+                <span class="lp-feed-unread-dot" id="lpFeedUnreadDot" hidden></span>
             </button>
         </div>
 
@@ -823,6 +824,10 @@
             document.getElementById("feedTabContent").hidden = !isFeed;
             document.getElementById("lpFeedShareBtn").hidden = !isFeed;
             document.body.classList.toggle("lp-feed-tab-active", isFeed);
+
+            if (isFeed && window.markFeedSeen) {
+                window.markFeedSeen();
+            }
 
             if (!skipHistory) {
                 const url = new URL(window.location.href);

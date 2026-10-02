@@ -23,6 +23,7 @@
 }
 
 .lp-browsetab {
+    position: relative;
     flex: 1;
     display: flex;
     align-items: center;
@@ -38,6 +39,20 @@
     cursor: pointer;
     min-height: 44px;
     font-family: inherit;
+}
+
+.lp-feed-unread-dot {
+    position: absolute;
+    top: 6px;
+    right: 16px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #FF3B30;
+}
+
+.lp-feed-unread-dot[hidden] {
+    display: none;
 }
 
 .lp-browsetab--active {
