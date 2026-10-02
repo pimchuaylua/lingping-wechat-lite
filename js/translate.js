@@ -11,11 +11,20 @@
 (function () {
     const LANG_KEY = 'lp_lang';
 
+    /** Raw browser/phone locale → 'zh', 'th', or 'en', ignoring any stored
+     * override. Used both for the initial default and to figure out which
+     * "other" language this visitor's toggle should offer. */
+    function rawDetect() {
+        const nav = (navigator.language || navigator.userLanguage || '').toLowerCase();
+        if (nav.startsWith('zh')) return 'zh';
+        if (nav.startsWith('th')) return 'th';
+        return 'en';
+    }
+
     function detectLang() {
         const stored = localStorage.getItem(LANG_KEY);
-        if (stored === 'en' || stored === 'zh') return stored;
-        const nav = (navigator.language || navigator.userLanguage || '').toLowerCase();
-        const detected = nav.startsWith('zh') ? 'zh' : 'en';
+        if (stored === 'en' || stored === 'zh' || stored === 'th') return stored;
+        const detected = rawDetect();
         localStorage.setItem(LANG_KEY, detected);
         return detected;
     }
@@ -25,9 +34,8 @@
      * call before this module's init() has run. */
     window.getSiteLanguage = function () {
         const stored = localStorage.getItem(LANG_KEY);
-        if (stored === 'en' || stored === 'zh') return stored;
-        const nav = (navigator.language || navigator.userLanguage || '').toLowerCase();
-        return nav.startsWith('zh') ? 'zh' : 'en';
+        if (stored === 'en' || stored === 'zh' || stored === 'th') return stored;
+        return rawDetect();
     };
 
     window.setSiteLanguage = function (lang) {
@@ -61,30 +69,41 @@
     }
     window.applyTranslations = applyTranslations;
 
-    /* ---------------- Custom EN / 中文 toggle ---------------- */
+    /* ---------------- Language picker (English / 中文 / ภาษาไทย) ---------------- */
 
-    // Flags match the ones already used for the English/Chinese language
-    // chips elsewhere in the app (LANG_META in render-langague-level.js).
-    function toggleLabel(currentLang) {
-        return currentLang === 'zh' ? '🇬🇧 English' : '🇨🇳 中文';
-    }
+    // Flags match the ones already used for language chips elsewhere in the
+    // app (LANG_META in render-langague-level.js).
+    const LANG_OPTIONS = [
+        { code: 'en', label: '🇬🇧 English' },
+        { code: 'zh', label: '🇨🇳 中文' },
+        { code: 'th', label: '🇹🇭 ภาษาไทย' }
+    ];
 
     function mountInMenu(menu, currentLang) {
         const divider = document.createElement('div');
         divider.className = 'menu-divider';
-        const item = document.createElement('div');
-        item.className = 'more-item';
-        item.style.cursor = 'pointer';
-        item.textContent = toggleLabel(currentLang);
-        item.onclick = () => window.setSiteLanguage(currentLang === 'zh' ? 'en' : 'zh');
         menu.appendChild(divider);
-        menu.appendChild(item);
+
+        LANG_OPTIONS.forEach(({ code, label }) => {
+            const item = document.createElement('div');
+            item.className = 'more-item';
+            item.style.cursor = 'pointer';
+            item.textContent = code === currentLang ? `✓ ${label}` : label;
+            if (code === currentLang) item.style.fontWeight = '700';
+            item.onclick = () => {
+                if (code !== currentLang) window.setSiteLanguage(code);
+            };
+            menu.appendChild(item);
+        });
     }
 
     function mountFloating(currentLang) {
+        // No header/menu on this page — a single pill that cycles through
+        // all three languages on each tap.
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.textContent = toggleLabel(currentLang);
+        const current = LANG_OPTIONS.find(o => o.code === currentLang) || LANG_OPTIONS[0];
+        btn.textContent = current.label;
         // Sits bottom-right; pages with a fixed bottom action bar (e.g.
         // event-detail.html's Attend/Cancel bar) get extra clearance above
         // it instead of overlapping.
@@ -96,7 +115,11 @@
             border-radius:999px; padding:8px 14px; font-size:12px; font-weight:600;
             box-shadow:0 4px 14px rgba(0,0,0,0.18); cursor:pointer; font-family:inherit;
         `;
-        btn.onclick = () => window.setSiteLanguage(currentLang === 'zh' ? 'en' : 'zh');
+        btn.onclick = () => {
+            const idx = LANG_OPTIONS.findIndex(o => o.code === currentLang);
+            const next = LANG_OPTIONS[(idx + 1) % LANG_OPTIONS.length];
+            window.setSiteLanguage(next.code);
+        };
         document.body.appendChild(btn);
     }
 
@@ -104,7 +127,7 @@
      * be translated until it actually lands in the DOM. Waits for
      * #moreMenu to appear (with a timeout fallback for pages whose header
      * never loads, e.g. a dangling empty #header div), translates the
-     * whole #header subtree, and mounts the toggle into the menu — or as
+     * whole #header subtree, and mounts the picker into the menu — or as
      * a floating pill if no header shows up at all. */
     function mountToggle(currentLang) {
         const existing = document.getElementById('moreMenu');
