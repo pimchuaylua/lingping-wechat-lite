@@ -54,6 +54,13 @@ window.bookSession = async function ({ sessionId }) {
             window.renderUserWelcome();
         }
 
+        // event-detail.html: re-fetch this session and re-render the page
+        // immediately rather than waiting for a reload — status, seat count,
+        // the book/waitlist button, and the attendee list all come from this.
+        if (typeof refreshSessionInfo === "function") {
+            refreshSessionInfo();
+        }
+
         showBookingSuccessModal(bookData);
 
     } catch (err) {

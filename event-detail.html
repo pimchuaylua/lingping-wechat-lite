@@ -175,6 +175,24 @@
             return formatReadingSessionToDisplay(sessionRes.data, eventOptions);
         }
 
+        // Re-fetches this reading-session from the backend and re-renders the
+        // whole page from it — status/seat count, the book/waitlist button
+        // text, and the attendee list all derive from `s`, so a full refresh
+        // (rather than guessing at individual fields client-side) keeps
+        // everything consistent. js/booking.js's bookSession() calls this
+        // right after a successful booking, instead of waiting for a reload.
+        async function refreshSessionInfo() {
+            try {
+                const fresh = await loadSessionById(s.id);
+                if (!fresh) return;
+                s = fresh;
+                localStorage.setItem("selectedSession", JSON.stringify(s));
+                renderSession();
+            } catch (err) {
+                console.error("Failed to refresh session info:", err);
+            }
+        }
+
         function updateBookBar() {
             if (s?.startTimeISO && new Date(s.startTimeISO) < new Date()) {
                 document.querySelector(".book-bar").style.display = "none";
@@ -462,34 +480,41 @@
                 }
             }
 
-            async function loadAttendees() {
-                try {
-                    const res = await fetch(`${BASE_URL}/reading-sessions/${s.id}/attendees`, {
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-API-KEY": API_KEY
-                        }
-                    });
+            loadAttendees();
+        }
 
-                    const json = await res.json();
+        // Hoisted out of renderSession() (instead of nested inside it) so it's
+        // a page-level global — js/booking.js's bookSession() calls this
+        // directly after a successful booking to refresh the attendee list
+        // and seat count immediately, without a full page reload.
+        async function loadAttendees() {
+            try {
+                const res = await fetch(`${BASE_URL}/reading-sessions/${s.id}/attendees`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-API-KEY": API_KEY
+                    }
+                });
 
-                    const section = document.getElementById("attendeesSection");
+                const json = await res.json();
 
-                    if (json.status && json.data.length > 0) {
+                const section = document.getElementById("attendeesSection");
 
-                        const joined = s.maxParticipants - s.seatsLeft;
-                        const left = s.seatsLeft;
+                if (json.status && json.data.length > 0) {
 
-                        let seatText = "";
+                    const joined = s.maxParticipants - s.seatsLeft;
+                    const left = s.seatsLeft;
 
-                        if (left === 0) {
-                            seatText = `${joined} ${t("joinedFull")}`;
-                        } else if (left === 1) {
-                            seatText = `${joined} ${t("joinedSeatLeft")}`;
-                        } else {
-                            seatText = `${joined} ${t("joinedSeatsLeft").replace("{n}", left)}`;
-                        }
-                        section.innerHTML = `
+                    let seatText = "";
+
+                    if (left === 0) {
+                        seatText = `${joined} ${t("joinedFull")}`;
+                    } else if (left === 1) {
+                        seatText = `${joined} ${t("joinedSeatLeft")}`;
+                    } else {
+                        seatText = `${joined} ${t("joinedSeatsLeft").replace("{n}", left)}`;
+                    }
+                    section.innerHTML = `
                 <div class="label">
                     ${t("peopleYoullMeet")} (${seatText})
                 </div>
@@ -518,18 +543,15 @@
                     `).join("")}
                 </div>
             `;
-                    } else {
-                        section.innerHTML = `
+                } else {
+                    section.innerHTML = `
                 <div class="label">${t("peopleYoullMeet")}</div>
                 <div class="sub">${t("beFirstToJoin")}</div>
             `;
-                    }
-                } catch (err) {
-                    console.error(err);
                 }
+            } catch (err) {
+                console.error(err);
             }
-
-            loadAttendees();
         }
 
         function viewProfile(userId) {
