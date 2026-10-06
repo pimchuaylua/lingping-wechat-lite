@@ -143,6 +143,8 @@ const TRANSLATIONS = {
     yesCancel: { en: "Yes, cancel", zh: "是的，取消", th: "ใช่ ยกเลิก" },
     cancelAnyway: { en: "Cancel anyway", zh: "仍要取消", th: "ยกเลิกต่อไป" },
     keepMySpot: { en: "Keep my spot", zh: "保留我的名额", th: "เก็บที่นั่งของฉัน" },
+    cantMakeIt: { en: "Can't make it?", zh: "无法参加？", th: "มาไม่ได้ใช่ไหม?" },
+    cancelBookingLink: { en: "Cancel booking", zh: "取消预订", th: "ยกเลิกการจอง" },
     penaltyPolicyNote: { en: 'Late cancellations and no-shows add <strong>penalty points</strong> and can <strong>restrict booking</strong>. <a href="community_guidelines.html#late-cancellation-no-show" target="_blank">View policy</a>', zh: '迟到取消和缺席将增加<strong>处罚积分</strong>，并可能<strong>限制预订</strong>。<a href="community_guidelines.html#late-cancellation-no-show" target="_blank">查看政策</a>', th: 'การยกเลิกล่าช้าและการไม่มาร่วมกิจกรรมจะเพิ่ม<strong>คะแนนโทษ</strong>และอาจ<strong>จำกัดการจอง</strong> <a href="community_guidelines.html#late-cancellation-no-show" target="_blank">ดูนโยบาย</a>' },
     hostHelpTitle: { en: "We’re happy to help you!", zh: "我们很乐意为您提供帮助！", th: "เรายินดีช่วยเหลือคุณ!" },
     hostHelpCall: { en: "📞 Call", zh: "📞 致电", th: "📞 โทร" },
