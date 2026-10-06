@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="assets/style.css?v=20260530">
     <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
     <script src="js/dropdown.js?v=20260516"></script>
+    <script src="js/translate.js?v=20260911"></script>
+    <script src="js/translations.js?v=20260911"></script>
     <style>
         .rules-hero {
             max-width: 700px;
@@ -177,103 +179,171 @@
         <div id="header"></div>
 
         <div class="rules-hero">
-            <div class="rules-eyebrow">Community Rules</div>
-            <h1>How we keep Lingping sessions great</h1>
-            <p class="rules-subtitle">
-                A few simple guidelines on behavior, booking, and cancellations so every session stays small,
-                respectful, and reliable for everyone.
-            </p>
+            <div class="rules-eyebrow" id="rulesEyebrow"></div>
+            <h1 id="rulesTitle"></h1>
+            <p class="rules-subtitle" id="rulesSubtitle"></p>
         </div>
 
         <div class="rules-layout">
 
-            <article class="rules-article">
-
-                <h2 id="community-behavior">🏡 Community Behavior Guidelines</h2>
-                <ul>
-                    <li><strong>Be on time.</strong> Arriving late can disrupt the discussion and group flow.</li>
-                    <li><strong>Respect others and be polite.</strong> Be considerate and respectful of everyone.</li>
-                    <li><strong>Respect the free space for ideas.</strong> Disagree respectfully.</li>
-                    <li><strong>Be a good listener.</strong> Let others finish speaking and give everyone a chance
-                        to participate.</li>
-                    <li><strong>Give constructive feedback.</strong> Share thoughts in a helpful and encouraging
-                        way.</li>
-                    <li><strong>Encourage inclusivity and positivity.</strong> Create a space where everyone feels
-                        valued.</li>
-                </ul>
-
-                <h2 id="booking-cancellation">📅 Booking & Cancellation Guidelines</h2>
-                <ul>
-                    <li><strong>Book sessions in advance.</strong> Bookings are required to maintain small,
-                        high-quality discussions and help hosts manage their time better.</li>
-                    <li><strong>Support our café venues.</strong> Please order at least one drink during the
-                        session.</li>
-                    <li><strong>No walk-ins or unbooked guests.</strong> Only booked participants may join sessions.
-                        Booking is still required even if you only want to sit in without participating.</li>
-                    <li><strong>Cancel early if you can’t join.</strong> Please cancel at least 3 hours before the
-                        session so others can take your spot and hosts can plan better.</li>
-                </ul>
-
-                <h2 id="late-cancellation-no-show">⏰ Late Cancellation & No Show Policy</h2>
-                <p><em>Effective Monday, October 12, 2026</em></p>
-                <p>
-                    We understand that plans can change. Our sessions have limited spots, so cancelling early helps
-                    us offer your spot to someone else and helps our hosts plan ahead.
-                </p>
-
-                <h3>How do penalty points work?</h3>
-                <ul>
-                    <li><strong>Late cancellation — 1 point:</strong> Cancelling less than 3 hours before the
-                        session counts as a late cancellation.</li>
-                    <li><strong>No-show — 2 points:</strong> Booking a session but not attending without cancelling
-                        beforehand counts as a no-show.</li>
-                </ul>
-
-                <h3>What happens when you receive penalty points?</h3>
-                <ul>
-                    <li><strong>1–2 points:</strong> We’ll send you a friendly reminder about the cancellation
-                        policy.</li>
-                    <li><strong>3 points:</strong> Your account may be temporarily restricted from booking sessions
-                        for 3 days.</li>
-                    <li><strong>Further late cancellations or no-shows:</strong> May result in a longer temporary
-                        booking restriction.</li>
-                </ul>
-
-                <h3>A little flexibility</h3>
-                <p>
-                    Penalty points are simply there to help keep bookings fair and sessions reliable for everyone.
-                    We understand that genuine emergencies can happen, so if something unexpected comes up, please
-                    let us know.
-                </p>
-
-                <h2 id="unacceptable-behavior">🚫 Unacceptable Behavior</h2>
-                <ul>
-                    <li>Using impolite language, aggressive behavior, or intimidation.</li>
-                    <li>Attacking, discriminating against, or bullying others based on nationality, background,
-                        age, gender, or personal identity.</li>
-                    <li>Disrespecting others’ ideas or repeatedly interrupting or dominating conversations.</li>
-                    <li>Harassing others through unwanted messages or repeated contact.</li>
-                    <li>Spreading rumors, gossip, or false information about others in the community.</li>
-                    <li>Making inappropriate comments or jokes, including sexual comments that make others
-                        uncomfortable.</li>
-                </ul>
-
-                <p><strong>The club reserves the right to remove anyone who violates these guidelines.</strong></p>
-
-            </article>
+            <article class="rules-article" id="rulesArticle"></article>
 
             <nav class="rules-toc" aria-label="Table of contents">
                 <div class="rules-toc-title">On this page</div>
-                <ol>
-                    <li><a href="#community-behavior">🏡 Community Behavior</a></li>
-                    <li><a href="#booking-cancellation">📅 Booking & Cancellation</a></li>
-                    <li><a href="#late-cancellation-no-show">⏰ Late Cancellation & No Show</a></li>
-                    <li><a href="#unacceptable-behavior">🚫 Unacceptable Behavior</a></li>
-                </ol>
+                <ol id="rulesTocList"></ol>
             </nav>
 
         </div>
     </div>
+
+    <script>
+        // Page content, not short UI chrome, so it lives here rather than in
+        // the shared js/translations.js dictionary (meant for nav/button-
+        // sized strings). The site-wide language toggle forces a reload on
+        // switch (see js/translate.js's setSiteLanguage), so a one-time
+        // render keyed off the current language is enough — no live
+        // re-render needed. Thai isn't provided for this page's prose yet;
+        // falls back to English like t() does for any missing translation.
+        const GUIDELINES_CONTENT = {
+            en: {
+                eyebrow: "Community Rules",
+                title: "How we keep Lingping sessions great",
+                subtitle: "A few simple guidelines on behavior, booking, and cancellations so every session stays small, respectful, and reliable for everyone.",
+                toc: [
+                    ["community-behavior", "🏡 Community Behavior"],
+                    ["booking-cancellation", "📅 Booking & Cancellation"],
+                    ["late-cancellation-no-show", "⏰ Late Cancellation & No Show"],
+                    ["unacceptable-behavior", "🚫 Unacceptable Behavior"]
+                ],
+                articleHtml: `
+                    <h2 id="community-behavior">🏡 Community Behavior Guidelines</h2>
+                    <ul>
+                        <li><strong>Be on time.</strong> Arriving late can disrupt the discussion and group flow.</li>
+                        <li><strong>Respect others and be polite.</strong> Be considerate and respectful of everyone.</li>
+                        <li><strong>Respect the free space for ideas.</strong> Disagree respectfully.</li>
+                        <li><strong>Be a good listener.</strong> Let others finish speaking and give everyone a chance to participate.</li>
+                        <li><strong>Give constructive feedback.</strong> Share thoughts in a helpful and encouraging way.</li>
+                        <li><strong>Encourage inclusivity and positivity.</strong> Create a space where everyone feels valued.</li>
+                    </ul>
+
+                    <h2 id="booking-cancellation">📅 Booking & Cancellation Guidelines</h2>
+                    <ul>
+                        <li><strong>Book sessions in advance.</strong> Bookings are required to maintain small, high-quality discussions and help hosts manage their time better.</li>
+                        <li><strong>Support our café venues.</strong> Please order at least one drink during the session.</li>
+                        <li><strong>No walk-ins or unbooked guests.</strong> Only booked participants may join sessions. Booking is still required even if you only want to sit in without participating.</li>
+                        <li><strong>Cancel early if you can’t join.</strong> Please cancel at least 3 hours before the session so others can take your spot and hosts can plan better.</li>
+                    </ul>
+
+                    <h2 id="late-cancellation-no-show">⏰ Late Cancellation & No Show Policy</h2>
+                    <p><em>Effective Monday, October 12, 2026</em></p>
+                    <p>We understand that plans can change. Our sessions have limited spots, so cancelling early helps us offer your spot to someone else and helps our hosts plan ahead.</p>
+
+                    <h3>How do penalty points work?</h3>
+                    <ul>
+                        <li><strong>Late cancellation — 1 point:</strong> Cancelling less than 3 hours before the session counts as a late cancellation.</li>
+                        <li><strong>No-show — 2 points:</strong> Booking a session but not attending without cancelling beforehand counts as a no-show.</li>
+                    </ul>
+
+                    <h3>What happens when you receive penalty points?</h3>
+                    <ul>
+                        <li><strong>1–2 points:</strong> We’ll send you a friendly reminder about the cancellation policy.</li>
+                        <li><strong>3 points:</strong> Your account may be temporarily restricted from booking sessions for 3 days.</li>
+                        <li><strong>Further late cancellations or no-shows:</strong> May result in a longer temporary booking restriction.</li>
+                    </ul>
+
+                    <h3>A little flexibility</h3>
+                    <p>Penalty points are simply there to help keep bookings fair and sessions reliable for everyone. We understand that genuine emergencies can happen, so if something unexpected comes up, please let us know.</p>
+
+                    <h2 id="unacceptable-behavior">🚫 Unacceptable Behavior</h2>
+                    <ul>
+                        <li>Using impolite language, aggressive behavior, or intimidation.</li>
+                        <li>Attacking, discriminating against, or bullying others based on nationality, background, age, gender, or personal identity.</li>
+                        <li>Disrespecting others’ ideas or repeatedly interrupting or dominating conversations.</li>
+                        <li>Harassing others through unwanted messages or repeated contact.</li>
+                        <li>Spreading rumors, gossip, or false information about others in the community.</li>
+                        <li>Making inappropriate comments or jokes, including sexual comments that make others uncomfortable.</li>
+                    </ul>
+
+                    <p><strong>The club reserves the right to remove anyone who violates these guidelines.</strong></p>
+                `
+            },
+            zh: {
+                eyebrow: "社群规则",
+                title: "如何让每次 Lingping 活动都保持良好体验",
+                subtitle: "一些关于行为、报名和取消的小规则，帮助我们保持小而精、互相尊重、可靠的交流环境，让每个人都能享受每次活动。",
+                toc: [
+                    ["community-behavior", "🏡 社群行为规范"],
+                    ["booking-cancellation", "📅 报名与取消规则"],
+                    ["late-cancellation-no-show", "⏰ 迟到取消 & 缺席规则"],
+                    ["unacceptable-behavior", "🚫 不可接受的行为"]
+                ],
+                articleHtml: `
+                    <h2 id="community-behavior">🏡 社群行为规范</h2>
+                    <ul>
+                        <li><strong>准时参加。</strong> 迟到可能会打断讨论，影响整个小组的交流节奏。</li>
+                        <li><strong>尊重他人，保持礼貌。</strong> 请体谅并尊重每一位参与者。</li>
+                        <li><strong>尊重自由表达。</strong> 可以有不同意见，但请以尊重的方式表达和讨论。</li>
+                        <li><strong>认真倾听。</strong> 让别人说完，也给每个人参与讨论的机会。</li>
+                        <li><strong>提供建设性的反馈。</strong> 分享意见时，请尽量以有帮助、鼓励性的方式表达。</li>
+                        <li><strong>营造包容、积极的氛围。</strong> 让每个人都感到被尊重和重视。</li>
+                    </ul>
+
+                    <h2 id="booking-cancellation">📅 报名与取消规则</h2>
+                    <ul>
+                        <li><strong>请提前报名。</strong> 为了保持小规模、高质量的讨论，也方便主持人安排时间，参加活动需要提前报名。</li>
+                        <li><strong>支持我们的咖啡厅场地。</strong> 活动期间请至少点一杯饮料。</li>
+                        <li><strong>不接受临时到场或未报名参加。</strong> 只有已报名的参与者可以参加活动。即使只是想旁听、不参与讨论，也需要提前报名。</li>
+                        <li><strong>无法参加时请尽早取消。</strong> 如果无法参加，请至少提前 3 小时取消，让其他人有机会补位，也方便主持人提前安排。</li>
+                    </ul>
+
+                    <h2 id="late-cancellation-no-show">⏰ 迟到取消 & 缺席规则</h2>
+                    <p><em>自 2026 年 10 月 12 日（星期一）起生效</em></p>
+                    <p>我们理解计划有时会发生变化。由于每场活动名额有限，提前取消可以让其他人有机会参加，也能帮助主持人更好地安排活动。</p>
+
+                    <h3>罚分如何计算？</h3>
+                    <ul>
+                        <li><strong>迟到取消 — 1 分：</strong> 活动开始前不足 3 小时取消，记 1 分。</li>
+                        <li><strong>无故缺席 — 2 分：</strong> 已报名但没有提前取消，也没有参加活动，记 2 分。</li>
+                    </ul>
+
+                    <h3>获得罚分后会怎样？</h3>
+                    <ul>
+                        <li><strong>1–2 分：</strong> 我们会友善地提醒你注意取消规则。</li>
+                        <li><strong>累计 3 分：</strong> 账号可能会被暂时限制报名活动 3 天。</li>
+                        <li><strong>之后再次迟到取消或缺席：</strong> 可能会受到更长时间的临时报名限制。</li>
+                    </ul>
+
+                    <h3>💛 我们也会保留一定的灵活性</h3>
+                    <p>罚分制度只是为了让报名更加公平，也帮助大家保持稳定、可靠的活动安排。我们理解真正的紧急情况可能发生。如果临时遇到无法预料的事情，请告诉我们，我们会视具体情况处理。</p>
+
+                    <h2 id="unacceptable-behavior">🚫 不可接受的行为</h2>
+                    <ul>
+                        <li>使用不礼貌的语言、攻击性行为或恐吓他人。</li>
+                        <li>因他人的国籍、背景、年龄、性别或个人身份而攻击、歧视或欺凌他人。</li>
+                        <li>不尊重他人的观点，或反复打断、压制他人发言，长期主导对话。</li>
+                        <li>通过不受欢迎的信息或反复联系骚扰他人。</li>
+                        <li>在社群中传播关于他人的谣言、八卦或虚假信息。</li>
+                        <li>发表不恰当的评论或玩笑，包括让他人感到不舒服的性相关言论。</li>
+                    </ul>
+
+                    <p><strong>Lingping 保留移除违反以上规则的参与者的权利。</strong></p>
+                `
+            }
+        };
+
+        (function renderGuidelines() {
+            const lang = (window.getSiteLanguage && window.getSiteLanguage()) || 'en';
+            const content = GUIDELINES_CONTENT[lang] || GUIDELINES_CONTENT.en;
+
+            document.getElementById('rulesEyebrow').textContent = content.eyebrow;
+            document.getElementById('rulesTitle').textContent = content.title;
+            document.getElementById('rulesSubtitle').textContent = content.subtitle;
+            document.getElementById('rulesTocList').innerHTML = content.toc
+                .map(([id, label]) => `<li><a href="#${id}">${label}</a></li>`)
+                .join('');
+            document.getElementById('rulesArticle').innerHTML = content.articleHtml;
+        })();
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

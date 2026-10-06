@@ -42,6 +42,10 @@ window.bookSession = async function ({ sessionId }) {
         const bookData = await bookRes.json();
 
         if (!bookRes.ok) {
+            if (bookData?.result?.error === "BOOKING_BLOCKED") {
+                showBookingBlockedModal(bookData.result);
+                return;
+            }
             throw new Error(
                 bookData?.result?.originalError ||
                 bookData?.message ||
@@ -367,6 +371,73 @@ function mapBookingsToSessions(bookings, eventOptions) {
 
 function closeMembershipPopup() {
     document.getElementById("membershipModal").style.display = "none";
+}
+
+function escapeHtmlForModal(str) {
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
+// Shown when a booking attempt is rejected with the backend's
+// BOOKING_BLOCKED error (too many penalty points). `blockedResult` is the
+// error response's `result` object, which already carries `blockedUntil` —
+// the points total and reason history come from a second call to
+// /users/{userId}/penalty-status, since the booking error itself doesn't
+// include those.
+async function showBookingBlockedModal(blockedResult) {
+    const modal = document.getElementById("bookingBlockedModal");
+    if (!modal) return; // page has no booking-blocked modal (not event-detail.html)
+
+    const untilText = document.getElementById("bookingBlockedUntilText");
+    const blockedUntil = blockedResult?.blockedUntil;
+    untilText.innerHTML = blockedUntil
+        ? (window.t ? t("bookingBlockedUntil") : "You won't be able to book new sessions until {date}.").replace(
+            "{date}",
+            `<strong>${Utils.formatDate(new Date(blockedUntil))} ${Utils.formatTime(new Date(blockedUntil))}</strong>`
+        )
+        : "";
+
+    const pointsText = document.getElementById("bookingBlockedPointsText");
+    const reasonsWrap = document.getElementById("bookingBlockedReasonsWrap");
+    const reasonsList = document.getElementById("bookingBlockedReasonsList");
+    pointsText.textContent = window.t ? t("loading") : "Loading...";
+    reasonsWrap.hidden = true;
+    reasonsList.innerHTML = "";
+
+    modal.style.display = "flex";
+
+    try {
+        const { BASE_URL, API_KEY } = window.CONFIG;
+        const userId = localStorage.getItem("userId");
+        const res = await fetch(`${BASE_URL}/users/${userId}/penalty-status`, {
+            headers: { "X-API-KEY": API_KEY }
+        });
+        const json = await res.json();
+        if (!json.status || !json.data) throw new Error("Failed to load penalty status");
+
+        const { penaltyPoints, history } = json.data;
+        pointsText.innerHTML = (window.t ? t("bookingBlockedPenaltyBox") : 'You have <strong>{n} penalty points</strong>. <a href="community_guidelines.html#late-cancellation-no-show" target="_blank">View policy</a>').replace("{n}", penaltyPoints);
+
+        const reasons = (history || []).filter(h => !h.reversed).slice(0, 3);
+        if (reasons.length) {
+            const reasonLabel = (h) => h.type === "noShow"
+                ? (window.t ? t("reasonNoShow") : "No-show")
+                : (window.t ? t("reasonLateCancel") : "Late cancellation");
+            reasonsList.innerHTML = reasons.map(h => `
+                <li>${reasonLabel(h)} — ${escapeHtmlForModal(h.sessionName || "")} (${Utils.formatDate(new Date(h.sessionDate))}) · +${h.points}</li>
+            `).join("");
+            reasonsWrap.hidden = false;
+        }
+    } catch (err) {
+        console.error("Failed to load penalty status:", err);
+        pointsText.textContent = "";
+    }
+}
+
+function closeBookingBlockedModal() {
+    document.getElementById("bookingBlockedModal").style.display = "none";
 }
 
 function goToMembership() {
