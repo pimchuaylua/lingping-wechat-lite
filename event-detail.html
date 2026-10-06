@@ -85,6 +85,31 @@
         </div>
     </div>
 
+    <div id="bookingBlockedModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-text" style="text-align:left;">
+                <strong data-i18n="bookingBlockedTitle">Booking Paused</strong><br>
+                <span id="bookingBlockedUntilText"></span>
+                <div class="penalty-policy-box" style="margin-top:14px;">
+                    <span class="penalty-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </span>
+                    <span id="bookingBlockedPointsText" data-i18n="loading">Loading...</span>
+                </div>
+                <div id="bookingBlockedReasonsWrap" hidden>
+                    <div style="margin-top:14px; font-weight:700; font-size:13px; color:#6B7280;" data-i18n="bookingBlockedReasonsLabel">Recent reasons</div>
+                    <ul id="bookingBlockedReasonsList" style="margin:6px 0 0; padding-left:18px; font-size:14px; color:#374151; line-height:1.5;"></ul>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="modal-confirm" onclick="closeBookingBlockedModal()" data-i18n="ok">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="preBookingModalContainer"></div>
     <div id="bookingSuccessModalContainer"></div>
 
