@@ -22,6 +22,7 @@
     <script src="js/translations.js?v=20260911"></script>
     <script src="js/render-langague-level.js"></script>
     <link rel="stylesheet" href="assets/chip_style.css">
+    <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
 </head>
 
 <body>
@@ -31,8 +32,26 @@
         <div id="eventList"></div>
     </div>
 
+    <div id="cancelConfirmDialog" class="cancel-dialog-overlay" hidden onclick="if(event.target===this) closeCancelDialog()">
+        <div class="cancel-dialog" role="alertdialog" aria-modal="true" aria-labelledby="cancelDialogTitleEl">
+            <div class="cancel-dialog-title" id="cancelDialogTitleEl" data-i18n="areYouSureCancel">Are you sure you want to cancel?</div>
+            <div class="cancel-dialog-body" id="cancelDialogBody"></div>
+            <div class="penalty-policy-box" id="cancelDialogPenaltyBox" hidden>
+                <span class="penalty-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </span>
+                <span id="cancelDialogPenaltyText"></span>
+            </div>
+            <div class="cancel-dialog-actions">
+                <button type="button" class="cancel-dialog-btn cancel-dialog-btn-secondary" id="cancelDialogConfirmBtn"></button>
+                <button type="button" class="cancel-dialog-btn cancel-dialog-btn-primary" id="cancelDialogKeepBtn" onclick="closeCancelDialog()" data-i18n="keepMySpot">Keep my spot</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const { BASE_URL, API_KEY } = window.CONFIG;
+        const userId = localStorage.getItem("userId");
         const eventList = document.getElementById("eventList");
 
         /* ---------------- USER WELCOME ---------------- */
@@ -74,8 +93,6 @@
         /* ---------------- LOAD BOOKINGS ---------------- */
 
         async function loadMyEvents(type = "attending") {
-            const userId = localStorage.getItem("userId");
-
             if (!userId) {
                 eventList.innerHTML = `<div class="empty">${t("pleaseLogInBookings")}</div>`;
                 return;
@@ -117,6 +134,7 @@
             sessions.forEach(s => {
                 const card = document.createElement("div");
                 card.className = "card";
+                card.id = `bookingCard_${s.id}`;
 
                 const hostObjects = s.hosts || [];
                 const hosts = hostObjects.length
@@ -232,6 +250,12 @@
                 </a>
             </div>`
                         : ""}
+            ${s.booked && !isHosting
+                        ? `<div class="event-row cancel-row">
+                <span class="cancel-prompt-text">${t("cantMakeIt")}</span>
+                <button type="button" class="cancel-link-btn" onclick="event.stopPropagation(); handleCancelFromList('${s.id}', '${s.startTimeISO}')">${t("cancelBookingLink")}</button>
+            </div>`
+                        : ""}
             </div>
         </div>
         </div class="event-card">
@@ -243,6 +267,19 @@
                 };
 
                 eventList.appendChild(card);
+            });
+        }
+
+        /* ---------------- CANCEL FROM LIST ---------------- */
+
+        function handleCancelFromList(sessionId, startTimeISO) {
+            cancelBooking(sessionId, startTimeISO, () => {
+                const card = document.getElementById(`bookingCard_${sessionId}`);
+                if (card) card.remove();
+
+                if (!eventList.children.length) {
+                    eventList.innerHTML = `<div class="empty">${t("noUpcomingBookings")}</div>`;
+                }
             });
         }
 

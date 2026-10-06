@@ -118,16 +118,22 @@ async function getEventsToHost() {
 
 let cancelDialogTriggerEl = null;
 
-function cancelBooking(sessionId) {
-    const startTimeISO = typeof s !== "undefined" && s ? s.startTimeISO : null;
+function cancelBooking(sessionId, startTimeISO, onSuccess) {
+    // startTimeISO defaults to the page-global "selected session" (used by
+    // event-detail.html, which only ever shows one session at a time). List
+    // pages with multiple bookings on screen (e.g. my-bookings.html) pass
+    // their own per-card startTimeISO explicitly instead.
+    if (startTimeISO === undefined) {
+        startTimeISO = typeof s !== "undefined" && s ? s.startTimeISO : null;
+    }
     const hoursUntilStart = startTimeISO
         ? (new Date(startTimeISO).getTime() - Date.now()) / (1000 * 60 * 60)
         : Infinity;
 
-    openCancelDialog(sessionId, hoursUntilStart < 3);
+    openCancelDialog(sessionId, hoursUntilStart < 3, onSuccess);
 }
 
-function openCancelDialog(sessionId, isLate) {
+function openCancelDialog(sessionId, isLate, onSuccess) {
     cancelDialogTriggerEl = document.activeElement;
 
     const body = document.getElementById("cancelDialogBody");
@@ -146,7 +152,7 @@ function openCancelDialog(sessionId, isLate) {
         confirmBtn.textContent = window.t ? t("yesCancel") : "Yes, cancel";
     }
 
-    confirmBtn.onclick = () => performCancel(sessionId);
+    confirmBtn.onclick = () => performCancel(sessionId, onSuccess);
 
     document.getElementById("cancelConfirmDialog").hidden = false;
     document.addEventListener("keydown", handleCancelDialogKeydown);
@@ -185,7 +191,7 @@ function handleCancelDialogKeydown(e) {
     }
 }
 
-async function performCancel(sessionId) {
+async function performCancel(sessionId, onSuccess) {
     closeCancelDialog();
 
     try {
@@ -205,7 +211,11 @@ async function performCancel(sessionId) {
 
         if (json.status) {
             alert("Booking cancelled ✅");
-            location.reload(); // refresh page
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                location.reload(); // refresh page — default when no caller-supplied update
+            }
         } else {
             alert(json.message || "Cancel failed");
         }
