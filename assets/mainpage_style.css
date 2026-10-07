@@ -1013,26 +1013,81 @@ body {
     top: calc(100% + 6px);
 
     background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
+    border: 1px solid #E8E6E1;
+    border-radius: 14px;
 
-    min-width: 160px;
+    width: 264px;
 
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.10);
     z-index: 1000;
+
+    padding: 6px 0;
 }
 
 .more-item {
-    display: block;
-    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 40px;
+    padding: 0 16px;
+    box-sizing: border-box;
 
     text-decoration: none;
     color: #111827;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .more-item:hover {
-    background: #f3f4f6;
+    background: #f7f6f3;
+}
+
+.more-item-icon {
+    flex-shrink: 0;
+    color: #5A5A5A;
+}
+
+.more-item-accent,
+.more-item-accent .more-item-icon {
+    color: #9A5D0C;
+}
+
+.menu-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 40px;
+    padding: 0 16px;
+    box-sizing: border-box;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #9A5D0C;
+}
+
+.menu-section-header:focus-visible,
+.more-item:focus-visible {
+    outline: 2px solid #9A5D0C;
+    outline-offset: -2px;
+}
+
+.menu-chevron {
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+}
+
+.menu-section-header[aria-expanded="true"] .menu-chevron {
+    transform: rotate(180deg);
+}
+
+.menu-section-body[hidden] {
+    display: none;
 }
 
 .hidden {
@@ -1098,19 +1153,37 @@ body {
     z-index: 10;
 }
 
-.menu-section-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--theme);
-    padding: 14px 14px 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-}
-
 .menu-divider {
     height: 1px;
-    background: #eee;
-    margin: 6px 0;
+    background: #EEECE7;
+    margin: 4px 0;
+}
+
+.lang-switcher {
+    display: flex;
+    background: #F1EFEA;
+    border-radius: 999px;
+    padding: 3px;
+    margin: 8px 16px 6px;
+}
+
+.lang-switch-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 7px 0;
+    border-radius: 999px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #6b7280;
+    cursor: pointer;
+}
+
+.lang-switch-btn.active {
+    background: #fff;
+    color: #111827;
+    font-weight: 700;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .event-time>div,
