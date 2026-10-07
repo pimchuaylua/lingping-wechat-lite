@@ -79,22 +79,32 @@
         { code: 'th', label: '🇹🇭 ภาษาไทย' }
     ];
 
+    // Short, flag-free labels for the segmented control in the menu — the
+    // flagged LANG_OPTIONS above stays as-is for mountFloating()'s pill.
+    const LANG_SEGMENT_LABELS = { en: 'EN', zh: '中文', th: 'ไทย' };
+
     function mountInMenu(menu, currentLang) {
         const divider = document.createElement('div');
         divider.className = 'menu-divider';
         menu.appendChild(divider);
 
-        LANG_OPTIONS.forEach(({ code, label }) => {
-            const item = document.createElement('div');
-            item.className = 'more-item';
-            item.style.cursor = 'pointer';
-            item.textContent = code === currentLang ? `✓ ${label}` : label;
-            if (code === currentLang) item.style.fontWeight = '700';
-            item.onclick = () => {
+        const switcher = document.createElement('div');
+        switcher.className = 'lang-switcher';
+        switcher.setAttribute('role', 'group');
+
+        LANG_OPTIONS.forEach(({ code }) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'lang-switch-btn' + (code === currentLang ? ' active' : '');
+            btn.textContent = LANG_SEGMENT_LABELS[code];
+            btn.setAttribute('aria-pressed', String(code === currentLang));
+            btn.onclick = () => {
                 if (code !== currentLang) window.setSiteLanguage(code);
             };
-            menu.appendChild(item);
+            switcher.appendChild(btn);
         });
+
+        menu.appendChild(switcher);
     }
 
     function mountFloating(currentLang) {
