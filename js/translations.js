@@ -105,6 +105,12 @@ const TRANSLATIONS = {
     // ---- event cards (event-card.js) ----
     attend: { en: "Attend", zh: "参加", th: "เข้าร่วม" },
     joinWaitlist: { en: "Join Waitlist", zh: "加入候补名单", th: "เข้าคิวรอ" },
+    waitlistDialogTitle: { en: "This session is full", zh: "此活动已满员", th: "กิจกรรมนี้เต็มแล้ว" },
+    waitlistDialogBody: { en: "Join the waitlist and we’ll email you if a spot opens up.", zh: "加入候补名单，如有名额空出，我们会通过邮件通知您。", th: "เข้าคิวรอ แล้วเราจะส่งอีเมลแจ้งคุณหากมีที่นั่งว่าง" },
+    waitlistSuccessTitle: { en: "You’re on the waitlist! 🎉", zh: "您已加入候补名单！🎉", th: "คุณอยู่ในคิวรอแล้ว! 🎉" },
+    waitlistSuccessBody: { en: "We’ll email you if a spot opens or a new session is added. Signup is first come, first served.", zh: "如有名额空出或新增场次，我们会通过邮件通知您。报名遵循先到先得原则。", th: "เราจะส่งอีเมลแจ้งคุณหากมีที่นั่งว่างหรือมีการเพิ่มรอบใหม่ การสมัครเป็นแบบใครมาก่อนได้ก่อน" },
+    notNow: { en: "Not now", zh: "暂不", th: "ไว้ทีหลัง" },
+    gotIt: { en: "Got it", zh: "知道了", th: "เข้าใจแล้ว" },
     hostedBy: { en: "With", zh: "和", th: "มาคุยกับ" },
     hostedByEnd: { en: "", zh: "一起", th: "" },
     statusAvailable: { en: "Available", zh: "可预订", th: "ว่าง" },

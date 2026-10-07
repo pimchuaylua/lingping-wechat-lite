@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Past Session | Lingping Club</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="icon" type="image/png" href="assets/logos/favicon.png">
+
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
+    <link rel="stylesheet" href="assets/feed_style.css?v=20260929">
+
+    <script src="config.js"></script>
+    <script src="js/translate.js?v=20260911"></script>
+    <script src="js/translations.js?v=20261007"></script>
+    <script src="js/utils.js?v=20250210"></script>
+
+    <style>
+        body {
+            background: #F5F5F5;
+        }
+
+        .ps-header {
+            position: sticky;
+            top: env(safe-area-inset-top, 0px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #F5F5F5;
+            padding: 14px 16px;
+            z-index: 10;
+        }
+
+        .ps-back {
+            color: #B45309;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+        }
+
+        .ps-body {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 16px 32px;
+        }
+
+        .ps-cover {
+            width: 100%;
+            height: 180px;
+            border-radius: 16px;
+            object-fit: cover;
+            background: #DED6C6;
+            display: block;
+        }
+
+        .ps-chips {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0 10px;
+        }
+
+        .ps-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 999px;
+        }
+
+        .ps-chip-joined {
+            background: #D8F5E3;
+            color: #1F7A3F;
+        }
+
+        .ps-chip-hosted {
+            background: #E9D8FD;
+            color: #6B21A8;
+        }
+
+        .ps-chip-location {
+            background: #DCE9FF;
+            color: #1E4E8C;
+        }
+
+        .ps-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #222;
+            margin: 4px 0 6px;
+        }
+
+        .ps-meta {
+            font-size: 14px;
+            color: #6B6B6B;
+            margin-bottom: 14px;
+        }
+
+        .ps-attendees {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .ps-attendee-stack {
+            display: flex;
+        }
+
+        .ps-attendee-stack img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #F5F5F5;
+            margin-left: -10px;
+            background: #DDD;
+        }
+
+        .ps-attendee-stack img:first-child {
+            margin-left: 0;
+        }
+
+        .ps-attendees-text {
+            font-size: 14px;
+            color: #444;
+        }
+
+        .ps-details-link {
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #B45309;
+            text-decoration: underline;
+            margin-bottom: 20px;
+        }
+
+        .ps-posts-heading {
+            font-size: 18px;
+            font-weight: 800;
+            color: #222;
+            margin: 8px 0 12px;
+        }
+
+        .ps-composer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fff;
+            border-radius: 999px;
+            padding: 8px;
+            margin-bottom: 16px;
+            text-decoration: none;
+        }
+
+        .ps-composer-avatar {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #FDE9C8;
+            color: #B45309;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            object-fit: cover;
+        }
+
+        .ps-composer-prompt {
+            flex: 1;
+            color: #6B6B6B;
+            font-size: 14px;
+            background: #F5F5F5;
+            border-radius: 999px;
+            padding: 10px 16px;
+        }
+
+        .ps-composer-postbtn {
+            flex-shrink: 0;
+            background: #F4B462;
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 10px 18px;
+            border-radius: 999px;
+        }
+
+        .ps-post-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .ps-post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .ps-post-author-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ps-host-tag {
+            background: #FDE9C8;
+            color: #B45309;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
+        .ps-post-meta {
+            font-size: 13px;
+            color: #6B6B6B;
+        }
+
+        .ps-post-body {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #333;
+            white-space: pre-line;
+        }
+
+        .ps-see-more {
+            color: #B45309;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .ps-empty {
+            background: #fff;
+            border-radius: 20px;
+            padding: 28px 20px;
+            text-align: center;
+            color: #6B6B6B;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ps-header">
+        <a href="past-sessions.html" class="ps-back" data-i18n="backToPastSessions">← Past sessions</a>
+    </div>
+
+    <div class="ps-body" id="psBody">
+        <div class="ps-empty" data-i18n="loading">Loading...</div>
+    </div>
+
+    <script>
+        const { BASE_URL, API_KEY } = window.CONFIG;
+        const userId = localStorage.getItem("userId");
+        const sessionId = new URLSearchParams(window.location.search).get("sessionId");
+        const body = document.getElementById("psBody");
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function linkify(escapedText) {
+            return escapedText.replace(
+                /(https?:\/\/[^\s<]+[^\s<.,;:!?)])/g,
+                (url) => `<a href="${url}" target="_blank" rel="noopener">${url}</a>`
+            );
+        }
+
+        function relativeTime(iso) {
+            const diffSec = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
+            if (diffSec < 60) return "now";
+            const diffMin = Math.floor(diffSec / 60);
+            if (diffMin < 60) return `${diffMin}m`;
+            const diffHr = Math.floor(diffMin / 60);
+            if (diffHr < 24) return `${diffHr}h`;
+            const diffDay = Math.floor(diffHr / 24);
+            if (diffDay < 7) return `${diffDay}d`;
+            return `${Math.floor(diffDay / 7)}w`;
+        }
+
+        function initialAvatar(name) {
+            const letter = (name || "?").trim().charAt(0).toUpperCase() || "?";
+            return letter;
+        }
+
+        function buildPostCard(post, hostUserId) {
+            const author = post.author || {};
+            const isHost = hostUserId && author._id === hostUserId;
+            const text = escapeHtml(post.thoughts || "");
+            const truncated = text.length > 220;
+            const shownText = truncated ? text.slice(0, 220) + "…" : text;
+
+            return `
+                <div class="ps-post-card">
+                    <div class="ps-post-header">
+                        ${author.profilePic
+                    ? `<img class="ps-composer-avatar" src="${escapeHtml(author.profilePic)}" alt="">`
+                    : `<div class="ps-composer-avatar">${initialAvatar(author.displayName)}</div>`
+                }
+                        <div>
+                            <div class="ps-post-author-row">
+                                <strong>${escapeHtml(author.displayName || "Lingping member")}</strong>
+                                ${isHost ? `<span class="ps-host-tag" data-i18n="hostTag">HOST</span>` : ""}
+                            </div>
+                            <div class="ps-post-meta">${relativeTime(post.createdAt)}</div>
+                        </div>
+                    </div>
+                    <div class="ps-post-body">${linkify(shownText)}${truncated ? ` <span class="ps-see-more" data-i18n="seeMore">See more</span>` : ""}</div>
+                </div>
+            `;
+        }
+
+        async function loadPastSession() {
+            if (!sessionId) {
+                body.innerHTML = `<div class="ps-empty">${window.t ? t("feedPostNotFound") : "Session not found."}</div>`;
+                return;
+            }
+
+            try {
+                const [sessionRes, attendeesRes, postsRes] = await Promise.all([
+                    fetch(`${BASE_URL}/reading-sessions/${sessionId}?locale=en_US`, { headers: { "X-API-KEY": API_KEY } }),
+                    fetch(`${BASE_URL}/reading-sessions/${sessionId}/attendees`, { headers: { "X-API-KEY": API_KEY } }),
+                    fetch(`${BASE_URL}/sessions/${sessionId}/posts`, { headers: { "X-API-KEY": API_KEY } }).catch(() => null)
+                ]);
+
+                const sessionJson = await sessionRes.json();
+                const s = sessionJson?.data;
+                if (!s) throw new Error("Session not found");
+
+                const attendeesJson = await attendeesRes.json();
+                const attendees = Array.isArray(attendeesJson?.data) ? attendeesJson.data : [];
+
+                let posts = [];
+                if (postsRes && postsRes.ok) {
+                    const postsJson = await postsRes.json();
+                    posts = Array.isArray(postsJson?.data) ? postsJson.data : [];
+                }
+
+                const hostIds = (s.hosts || []).map(h => h._id || h);
+                const hostNames = (s.hosts || []).map(h => h.displayName).filter(Boolean).join(", ") || (window.t ? t("hostTBA") : "TBA");
+                const isHosting = hostIds.includes(userId);
+                const isOnline = (s.level || "").toLowerCase().includes("online");
+                const start = new Date(s.startTime);
+                const end = new Date(start.getTime() + (s.durationMins || 60) * 60000);
+                const otherAttendees = attendees.filter(a => a.userId !== userId);
+
+                body.innerHTML = `
+                    <img class="ps-cover" src="${escapeHtml(s.photoUrl || "assets/logos/lingping_logo.png")}" alt="">
+
+                    <div class="ps-chips">
+                        <span class="ps-chip ${isHosting ? "ps-chip-hosted" : "ps-chip-joined"}">✓ ${isHosting ? (window.t ? t("youHosted") : "You hosted") : (window.t ? t("youJoined") : "You joined")}</span>
+                        <span class="ps-chip ps-chip-location">${isOnline ? "🌐" : "📍"} ${isOnline ? (window.t ? t("tabOnline") : "Online") : escapeHtml(s.location || "")}</span>
+                    </div>
+
+                    <div class="ps-title">${escapeHtml(s.title || "")}</div>
+                    <div class="ps-meta">${Utils.formatDate(start)} · ${Utils.formatTime(start)}–${Utils.formatTime(end)} (${Utils.getTimeZoneName()}) · ${window.t ? t("hostedBy") : "with"} ${escapeHtml(hostNames)}</div>
+
+                    ${attendees.length ? `
+                        <div class="ps-attendees">
+                            <div class="ps-attendee-stack">
+                                ${attendees.slice(0, 5).map(a => `<img src="${escapeHtml(a.profile?.profilePic || "assets/logos/lingping_logo.png")}" alt="">`).join("")}
+                            </div>
+                            <span class="ps-attendees-text">${window.t ? t("youPlusOthersJoined").replace("{n}", Math.max(0, otherAttendees.length)) : `You + ${Math.max(0, otherAttendees.length)} others joined`}</span>
+                        </div>
+                    ` : ""}
+
+                    <a class="ps-details-link" href="event-detail.html?sessionId=${encodeURIComponent(sessionId)}">${window.t ? t("viewFullEventDetails") : "View full event details"}</a>
+
+                    <div class="ps-posts-heading">${window.t ? t("postsFromThisSession").replace("{n}", posts.length) : `Posts from this session (${posts.length})`}</div>
+
+                    <a class="ps-composer" href="share-to-feed.html?sessionId=${encodeURIComponent(sessionId)}">
+                        <span class="ps-composer-avatar" id="psComposerAvatar"></span>
+                        <span class="ps-composer-prompt">${window.t ? t("whatDidYouLearn") : "What did you learn tonight?"}</span>
+                        <span class="ps-composer-postbtn">${window.t ? t("post") : "Post"}</span>
+                    </a>
+
+                    <div id="psPostsList">
+                        ${posts.length
+                        ? posts.map(p => buildPostCard(p, hostIds[0])).join("")
+                        : `<div class="ps-empty">${window.t ? t("noPostsYet") : "No posts yet"}</div>`
+                    }
+                    </div>
+                `;
+
+                if (typeof applyTranslations === "function") applyTranslations(body);
+                renderComposerAvatar();
+
+                document.querySelectorAll(".ps-see-more").forEach(el => {
+                    el.addEventListener("click", (e) => {
+                        const card = e.target.closest(".ps-post-card");
+                        const post = posts[[...document.querySelectorAll(".ps-post-card")].indexOf(card)];
+                        if (!post) return;
+                        const textEl = card.querySelector(".ps-post-body");
+                        textEl.innerHTML = linkify(escapeHtml(post.thoughts || ""));
+                    });
+                });
+            } catch (err) {
+                console.error("Failed to load past session:", err);
+                body.innerHTML = `<div class="ps-empty">${window.t ? t("feedError") : "Couldn't load this session."}</div>`;
+            }
+        }
+
+        async function renderComposerAvatar() {
+            const el = document.getElementById("psComposerAvatar");
+            if (!el) return;
+
+            const name = localStorage.getItem("username");
+            el.textContent = initialAvatar(name);
+            el.style.background = "#FDE9C8";
+
+            if (!userId) return;
+            try {
+                const res = await fetch(`${BASE_URL}/users/${userId}/profile`, {
+                    headers: { "X-API-KEY": API_KEY }
+                });
+                if (!res.ok) return;
+                const json = await res.json();
+                const profilePic = json?.data?.profilePic;
+                if (profilePic) {
+                    el.innerHTML = `<img src="${escapeHtml(profilePic)}" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                    el.style.background = "";
+                }
+            } catch (err) {
+                console.error("Failed to load profile photo for composer avatar:", err);
+            }
+        }
+
+        loadPastSession();
+    </script>
+</body>
+
+</html>

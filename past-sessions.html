@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Past Sessions | Lingping Club</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="icon" type="image/png" href="assets/logos/favicon.png">
+
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
+    <link rel="stylesheet" href="assets/feed_style.css?v=20260929">
+
+    <script src="config.js"></script>
+    <script src="js/dropdown.js?v=20260516"></script>
+    <script src="js/translate.js?v=20260911"></script>
+    <script src="js/translations.js?v=20261007"></script>
+    <script src="js/utils.js?v=20250210"></script>
+
+    <style>
+        .past-summary {
+            color: #6B6B6B;
+            font-size: 14px;
+            margin: -8px 0 16px;
+        }
+
+        .past-month-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            color: #9A5D0C;
+            margin: 20px 0 8px;
+        }
+
+        .past-month-label:first-of-type {
+            margin-top: 0;
+        }
+
+        .past-card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .past-card-main {
+            display: flex;
+            gap: 12px;
+            padding: 14px;
+        }
+
+        .past-card-thumb {
+            flex-shrink: 0;
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            object-fit: cover;
+            background: #EEE;
+        }
+
+        .past-card-info {
+            min-width: 0;
+        }
+
+        .past-card-meta {
+            font-size: 13px;
+            color: #6B6B6B;
+        }
+
+        .past-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #222;
+            margin: 2px 0;
+        }
+
+        .past-card-host {
+            font-size: 13px;
+            color: #6B6B6B;
+        }
+
+        .past-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 14px;
+            border-top: 1px solid #F0EBE0;
+        }
+
+        .past-card-avatars {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .past-card-avatar-stack {
+            display: flex;
+        }
+
+        .past-card-avatar-stack img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
+            margin-left: -8px;
+            background: #DDD;
+        }
+
+        .past-card-avatar-stack img:first-child {
+            margin-left: 0;
+        }
+
+        .past-card-posts-count {
+            font-size: 13px;
+            color: #6B6B6B;
+        }
+
+        .past-card-new-badge {
+            background: #F4B462;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+
+        .past-card-no-posts {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .past-card-write-link {
+            font-size: 13px;
+            font-weight: 700;
+            color: #B45309;
+            text-decoration: none;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+
+        .past-empty {
+            background: #fff;
+            border-radius: 20px;
+            padding: 32px 20px;
+            text-align: center;
+        }
+
+        .past-empty-text {
+            color: #6B6B6B;
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .past-empty-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #F4B462;
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 10px 22px;
+            border-radius: 999px;
+            text-decoration: none;
+            min-height: 44px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="header"></div>
+        <h1 class="page-title" data-i18n="pastSessionsTitle">Past Sessions</h1>
+        <div class="past-summary" id="pastSummary"></div>
+        <div id="pastSessionsList"></div>
+    </div>
+
+    <script>
+        const { BASE_URL, API_KEY } = window.CONFIG;
+        const userId = localStorage.getItem("userId");
+        const listEl = document.getElementById("pastSessionsList");
+        const summaryEl = document.getElementById("pastSummary");
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+
+        function monthLabel(date) {
+            return date.toLocaleDateString(
+                (window.getSiteLanguage && window.getSiteLanguage() === "zh") ? "zh-CN" : "en-US",
+                { month: "long", year: "numeric" }
+            ).toUpperCase();
+        }
+
+        function buildCard(session) {
+            const start = new Date(session.startTime);
+            const metaLine = `${Utils.formatDate(start)} · ${Utils.formatTime(start)} · ${escapeHtml(session.location || "")}`;
+            const hostLine = window.t
+                ? t("pastCardHostJoined").replace("{host}", escapeHtml(session.host?.displayName || "")).replace("{n}", session.joinedCount ?? 0)
+                : `with ${escapeHtml(session.host?.displayName || "")} · ${session.joinedCount ?? 0} joined`;
+
+            const footerHtml = session.postCount > 0
+                ? `
+                    <div class="past-card-avatars">
+                        <div class="past-card-avatar-stack">
+                            ${(session.posterAvatars || []).slice(0, 3).map(url => `<img src="${escapeHtml(url)}" alt="">`).join("")}
+                        </div>
+                        <span class="past-card-posts-count">${session.postCount} ${window.t ? t("posts") : "posts"}</span>
+                        ${session.hasNewPosts ? `<span class="past-card-new-badge">${window.t ? t("newBadge") : "New"}</span>` : ""}
+                    </div>
+                `
+                : `
+                    <span class="past-card-no-posts">${window.t ? t("noPostsYet") : "No posts yet"}</span>
+                    <a class="past-card-write-link" href="share-to-feed.html?sessionId=${encodeURIComponent(session.id)}" onclick="event.stopPropagation()">${window.t ? t("writeFirstPost") : "Write the first post"}</a>
+                `;
+
+            return `
+                <div class="past-card" data-session-id="${escapeHtml(session.id)}">
+                    <div class="past-card-main">
+                        <img class="past-card-thumb" src="${escapeHtml(session.coverPhoto || "assets/logos/lingping_logo.png")}" alt="">
+                        <div class="past-card-info">
+                            <div class="past-card-meta">${metaLine}</div>
+                            <div class="past-card-title">${escapeHtml(session.title || "")}</div>
+                            <div class="past-card-host">${hostLine}</div>
+                        </div>
+                    </div>
+                    <div class="past-card-footer">${footerHtml}</div>
+                </div>
+            `;
+        }
+
+        function renderList(sessions) {
+            if (!sessions.length) {
+                listEl.innerHTML = `
+                    <div class="past-empty">
+                        <div class="past-empty-text">${window.t ? t("noPastSessionsYet") : "You haven't attended any sessions yet."}</div>
+                        <a class="past-empty-link" href="index.html">${window.t ? t("browseEvents") : "Browse events"}</a>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = "";
+            let currentMonth = null;
+            sessions.forEach(session => {
+                const start = new Date(session.startTime);
+                const label = monthLabel(start);
+                if (label !== currentMonth) {
+                    currentMonth = label;
+                    html += `<div class="past-month-label">${escapeHtml(label)}</div>`;
+                }
+                html += buildCard(session);
+            });
+            listEl.innerHTML = html;
+
+            listEl.querySelectorAll(".past-card").forEach(card => {
+                card.addEventListener("click", () => {
+                    window.location.href = `past-session.html?sessionId=${encodeURIComponent(card.getAttribute("data-session-id"))}`;
+                });
+            });
+        }
+
+        async function loadPastSessions() {
+            if (!userId) {
+                listEl.innerHTML = `<div class="past-empty"><div class="past-empty-text">${window.t ? t("pleaseLogInBookings") : "Please log in to see your past sessions."}</div></div>`;
+                return;
+            }
+
+            try {
+                const res = await fetch(`${BASE_URL}/me/past-sessions?limit=50&offset=0`, {
+                    headers: { "X-API-KEY": API_KEY }
+                });
+                if (!res.ok) throw new Error("Failed to load past sessions");
+                const json = await res.json();
+                const sessions = Array.isArray(json?.data?.sessions) ? json.data.sessions
+                    : Array.isArray(json?.data) ? json.data : [];
+                const totalSessions = json?.data?.total ?? sessions.length;
+                const totalPosts = sessions.reduce((sum, s) => sum + (s.postCount || 0), 0);
+
+                summaryEl.textContent = window.t
+                    ? t("pastSummaryLine").replace("{n}", totalSessions).replace("{m}", totalPosts)
+                    : `You've joined ${totalSessions} sessions · ${totalPosts} posts written`;
+
+                renderList(sessions);
+            } catch (err) {
+                console.error("Failed to load past sessions:", err);
+                listEl.innerHTML = `<div class="past-empty"><div class="past-empty-text">${window.t ? t("feedError") : "Couldn't load your past sessions."}</div></div>`;
+            }
+        }
+
+        loadPastSessions();
+    </script>
+</body>
+
+</html>
