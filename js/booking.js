@@ -248,9 +248,121 @@ async function joinWaitlist(sessionId) {
         return;
     }
 
-    if (!confirm("This session is full. Join the waitlist?")) {
+    openWaitlistDialog(sessionId);
+}
+
+// Waitlist dialogs reuse the cancel dialog's styles (assets/policy-modal.css).
+// Built in JS because joinWaitlist is called from several pages.
+let waitlistDialogTriggerEl = null;
+
+function getWaitlistDialog() {
+    let overlay = document.getElementById("waitlistDialog");
+    if (overlay) return overlay;
+
+    overlay = document.createElement("div");
+    overlay.id = "waitlistDialog";
+    overlay.className = "cancel-dialog-overlay";
+    overlay.hidden = true;
+    overlay.innerHTML = `
+        <div class="cancel-dialog" role="alertdialog" aria-modal="true" aria-labelledby="waitlistDialogTitle">
+            <div class="cancel-dialog-title" id="waitlistDialogTitle"></div>
+            <div class="cancel-dialog-body" id="waitlistDialogBody"></div>
+            <div class="cancel-dialog-actions" id="waitlistDialogActions"></div>
+        </div>`;
+    overlay.addEventListener("click", e => {
+        if (e.target === overlay) closeWaitlistDialog();
+    });
+    document.body.appendChild(overlay);
+    return overlay;
+}
+
+function renderWaitlistDialog(title, body, buttons) {
+    const overlay = getWaitlistDialog();
+    overlay.querySelector("#waitlistDialogTitle").textContent = title;
+    overlay.querySelector("#waitlistDialogBody").textContent = body;
+
+    const actions = overlay.querySelector("#waitlistDialogActions");
+    actions.innerHTML = "";
+    buttons.forEach(({ label, variant, onClick }) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `cancel-dialog-btn cancel-dialog-btn-${variant}`;
+        btn.textContent = label;
+        btn.onclick = onClick;
+        actions.appendChild(btn);
+    });
+
+    if (overlay.hidden) {
+        waitlistDialogTriggerEl = document.activeElement;
+        overlay.hidden = false;
+        document.addEventListener("keydown", handleWaitlistDialogKeydown);
+    }
+    actions.lastElementChild.focus();
+}
+
+// t() returns the key itself when a translation is missing (e.g. a stale
+// cached translations.js), so fall back to the English text in that case.
+function waitlistText(key, fallback) {
+    const text = window.t ? t(key) : key;
+    return text && text !== key ? text : fallback;
+}
+
+function openWaitlistDialog(sessionId) {
+    renderWaitlistDialog(
+        waitlistText("waitlistDialogTitle", "This session is full"),
+        waitlistText("waitlistDialogBody", "Join the waitlist and we’ll email you if a spot opens up."),
+        [
+            { label: waitlistText("notNow", "Not now"), variant: "secondary", onClick: closeWaitlistDialog },
+            { label: waitlistText("joinWaitlist", "Join Waitlist"), variant: "primary", onClick: () => submitWaitlist(sessionId) }
+        ]
+    );
+}
+
+function showWaitlistSuccessDialog() {
+    renderWaitlistDialog(
+        waitlistText("waitlistSuccessTitle", "You’re on the waitlist! 🎉"),
+        waitlistText("waitlistSuccessBody", "We’ll email you if a spot opens or a new session is added. Signup is first come, first served."),
+        [{ label: waitlistText("gotIt", "Got it"), variant: "primary", onClick: closeWaitlistDialog }]
+    );
+}
+
+function closeWaitlistDialog() {
+    const overlay = document.getElementById("waitlistDialog");
+    if (overlay) overlay.hidden = true;
+    document.removeEventListener("keydown", handleWaitlistDialogKeydown);
+    if (waitlistDialogTriggerEl && typeof waitlistDialogTriggerEl.focus === "function") {
+        waitlistDialogTriggerEl.focus();
+    }
+    waitlistDialogTriggerEl = null;
+}
+window.closeWaitlistDialog = closeWaitlistDialog;
+
+function handleWaitlistDialogKeydown(e) {
+    if (e.key === "Escape") {
+        e.preventDefault();
+        closeWaitlistDialog();
         return;
     }
+    if (e.key === "Tab") {
+        const focusable = document.querySelectorAll("#waitlistDialog button");
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    }
+}
+
+async function submitWaitlist(sessionId) {
+    const { BASE_URL, API_KEY } = window.CONFIG;
+    const userId = localStorage.getItem("userId");
+    const joinBtn = document.querySelector("#waitlistDialogActions .cancel-dialog-btn-primary");
+    if (joinBtn) joinBtn.disabled = true;
 
     try {
         const res = await fetch(`${BASE_URL}/waitlist`, {
@@ -269,14 +381,16 @@ async function joinWaitlist(sessionId) {
         const json = await res.json();
 
         if (res.ok && json.status) {
-            alert("You're on the waitlist ✅");
+            showWaitlistSuccessDialog();
         } else {
+            closeWaitlistDialog();
             const detail = json.result?.message || json.message;
             const text = Array.isArray(detail) ? detail.join("\n") : detail;
             alert(text || "Failed to join waitlist.");
         }
     } catch (err) {
         console.error(err);
+        closeWaitlistDialog();
         alert("Failed to join waitlist. Please try again.");
     }
 }
