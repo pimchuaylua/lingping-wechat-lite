@@ -8,19 +8,33 @@
     <link rel="icon" type="image/png" href="assets/logos/favicon.png">
 
     <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
-    <link rel="stylesheet" href="assets/feed_style.css?v=202610126">
+    <link rel="stylesheet" href="assets/feed_style.css?v=20261013">
 
     <script src="config.js"></script>
-    <script src="js/dropdown.js?v=20260516"></script>
+    <script src="js/dropdown.js?v=20261013"></script>
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=202610126"></script>
+    <script src="js/translations.js?v=20261013"></script>
     <script src="js/utils.js?v=20250210"></script>
 
     <style>
+        .past-page {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .past-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #222;
+            margin: 12px 0 4px;
+        }
+
         .past-summary {
             color: #6B6B6B;
             font-size: 14px;
-            margin: -8px 0 16px;
+            margin-bottom: 16px;
+            min-height: 20px;
         }
 
         .past-month-label {
@@ -28,11 +42,11 @@
             font-weight: 700;
             letter-spacing: 0.6px;
             text-transform: uppercase;
-            color: #9A5D0C;
+            color: #6B6B6B;
             margin: 20px 0 8px;
         }
 
-        .past-month-label:first-of-type {
+        .past-month:first-child .past-month-label {
             margin-top: 0;
         }
 
@@ -52,8 +66,8 @@
 
         .past-card-thumb {
             flex-shrink: 0;
-            width: 64px;
-            height: 64px;
+            width: 72px;
+            height: 72px;
             border-radius: 12px;
             object-fit: cover;
             background: #EEE;
@@ -71,6 +85,7 @@
         .past-card-title {
             font-size: 16px;
             font-weight: 700;
+            line-height: 1.3;
             color: #222;
             margin: 2px 0;
         }
@@ -85,61 +100,63 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
-            padding: 10px 14px;
+            min-height: 48px;
+            padding: 0 14px;
             border-top: 1px solid #F0EBE0;
+            background: #FCFBF8;
         }
 
         .past-card-avatars {
             display: flex;
             align-items: center;
             gap: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
         }
 
         .past-card-avatar-stack {
             display: flex;
         }
 
-        .past-card-avatar-stack img {
-            width: 24px;
-            height: 24px;
+        .past-card-avatar {
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #fff;
             margin-left: -8px;
             background: #DDD;
-        }
-
-        .past-card-avatar-stack img:first-child {
-            margin-left: 0;
-        }
-
-        .past-card-posts-count {
-            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
             color: #6B6B6B;
         }
 
-        .past-card-new-badge {
-            background: #F4B462;
-            color: #fff;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 999px;
+        .past-card-avatar:first-child {
+            margin-left: 0;
         }
 
-        .past-card-no-posts {
-            font-size: 13px;
+        .past-card-chev {
             color: #999;
         }
 
+        .past-card-no-posts {
+            font-size: 14px;
+            color: #6B6B6B;
+        }
+
         .past-card-write-link {
-            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 44px;
+            font-size: 14px;
             font-weight: 700;
             color: #B45309;
             text-decoration: none;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
         }
 
         .past-empty {
@@ -155,7 +172,12 @@
             margin-bottom: 16px;
         }
 
-        .past-empty-link {
+        .past-empty-text:last-child {
+            margin-bottom: 0;
+        }
+
+        .past-empty-link,
+        .past-load-more {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -163,10 +185,107 @@
             color: #fff;
             font-weight: 700;
             font-size: 14px;
+            font-family: inherit;
             padding: 10px 22px;
+            border: none;
             border-radius: 999px;
             text-decoration: none;
             min-height: 44px;
+            cursor: pointer;
+        }
+
+        .past-load-more-wrap {
+            display: flex;
+            justify-content: center;
+            margin: 8px 0 24px;
+        }
+
+        .past-load-more:disabled {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        /* ---- Desktop: grid of cards, cover photo on top ---- */
+        @media (min-width: 900px) {
+            .past-page {
+                max-width: 1000px;
+                padding: 0 8px;
+            }
+
+            .past-title {
+                font-size: 28px;
+                margin-top: 20px;
+            }
+
+            .past-summary {
+                font-size: 15px;
+                margin-bottom: 24px;
+            }
+
+            .past-month-label {
+                margin: 32px 0 12px;
+            }
+
+            .past-month-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px;
+            }
+
+            .past-card {
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 0;
+                transition: transform 0.15s ease, box-shadow 0.15s ease;
+            }
+
+            .past-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+            }
+
+            .past-card-main {
+                flex: 1;
+                flex-direction: column;
+                gap: 12px;
+                padding: 0 0 14px;
+            }
+
+            .past-card-thumb {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 16 / 9;
+                border-radius: 0;
+            }
+
+            .past-card-info {
+                padding: 0 16px;
+            }
+
+            .past-card-title {
+                font-size: 17px;
+                margin: 4px 0;
+            }
+
+            .past-card-footer {
+                padding: 0 16px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            /* The site-wide .container caps at 1000px; widen it on this page
+               (like the Feed tab) so 3 columns aren't squeezed. */
+            .container {
+                max-width: 1240px;
+            }
+
+            .past-page {
+                max-width: 1200px;
+            }
+
+            .past-month-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
         }
     </style>
 </head>
@@ -174,16 +293,36 @@
 <body>
     <div class="container">
         <div id="header"></div>
-        <h1 class="page-title" data-i18n="pastSessionsTitle">Past Sessions</h1>
-        <div class="past-summary" id="pastSummary"></div>
-        <div id="pastSessionsList"></div>
+        <div class="past-page">
+            <h1 class="past-title" data-i18n="pastSessionsTitle">Past Sessions</h1>
+            <div class="past-summary" id="pastSummary"></div>
+            <div id="pastSessionsList">
+                <div class="past-empty"><div class="past-empty-text" data-i18n="loading">Loading...</div></div>
+            </div>
+            <div class="past-load-more-wrap" id="pastLoadMoreWrap" hidden>
+                <button type="button" class="past-load-more" id="pastLoadMoreBtn" onclick="loadPastSessions()" data-i18n="loadMore">Load more</button>
+            </div>
+        </div>
     </div>
 
     <script>
         const { BASE_URL, API_KEY } = window.CONFIG;
+        const PAGE_SIZE = 20;
         const userId = localStorage.getItem("userId");
         const listEl = document.getElementById("pastSessionsList");
         const summaryEl = document.getElementById("pastSummary");
+        const loadMoreWrap = document.getElementById("pastLoadMoreWrap");
+        const loadMoreBtn = document.getElementById("pastLoadMoreBtn");
+
+        let loadedSessions = [];
+        let totalSessions = 0;
+        let isLoading = false;
+
+        // t() returns the key itself when a translation is missing — fall back to English.
+        function tr(key, fallback) {
+            const text = window.t ? t(key) : key;
+            return text && text !== key ? text : fallback;
+        }
 
         function escapeHtml(str) {
             return String(str)
@@ -195,38 +334,52 @@
         }
 
         function monthLabel(date) {
-            return date.toLocaleDateString(
-                (window.getSiteLanguage && window.getSiteLanguage() === "zh") ? "zh-CN" : "en-US",
-                { month: "long", year: "numeric" }
-            ).toUpperCase();
+            const locale = (window.getSiteLanguage && getSiteLanguage() === "zh") ? "zh-CN" : "en-US";
+            return date.toLocaleDateString(locale, { month: "long", year: "numeric" }).toUpperCase();
+        }
+
+        function placeLabel(session) {
+            if (session.type === "online") return tr("tabOnline", "Online");
+            return session.city || "";
+        }
+
+        function avatarHtml(person) {
+            if (person.profilePic) {
+                return `<img class="past-card-avatar" src="${escapeHtml(person.profilePic)}" alt="">`;
+            }
+            const letter = (person.displayName || "?").trim().charAt(0).toUpperCase() || "?";
+            return `<span class="past-card-avatar">${escapeHtml(letter)}</span>`;
         }
 
         function buildCard(session) {
             const start = new Date(session.startTime);
-            const metaLine = `${Utils.formatDate(start)} · ${Utils.formatTime(start)} · ${escapeHtml(session.location || "")}`;
-            const hostLine = window.t
-                ? t("pastCardHostJoined").replace("{host}", escapeHtml(session.host?.displayName || "")).replace("{n}", session.joinedCount ?? 0)
-                : `with ${escapeHtml(session.host?.displayName || "")} · ${session.joinedCount ?? 0} joined`;
+            const metaLine = [Utils.formatDate(start), Utils.formatTime(start), placeLabel(session)]
+                .filter(Boolean).map(escapeHtml).join(" · ");
+            const hosts = (session.hostNames || []).join(", ") || tr("hostTBA", "TBA");
+            const hostLine = tr("pastCardHostJoined", "with {host} · {n} joined")
+                .replace("{host}", escapeHtml(hosts))
+                .replace("{n}", session.joinedCount ?? 0);
 
             const footerHtml = session.postCount > 0
                 ? `
                     <div class="past-card-avatars">
-                        <div class="past-card-avatar-stack">
-                            ${(session.posterAvatars || []).slice(0, 3).map(url => `<img src="${escapeHtml(url)}" alt="">`).join("")}
-                        </div>
-                        <span class="past-card-posts-count">${session.postCount} ${window.t ? t("posts") : "posts"}</span>
-                        ${session.hasNewPosts ? `<span class="past-card-new-badge">${window.t ? t("newBadge") : "New"}</span>` : ""}
+                        <div class="past-card-avatar-stack">${(session.posterAvatars || []).slice(0, 3).map(avatarHtml).join("")}</div>
+                        <span>${tr(session.postCount === 1 ? "onePost" : "nPosts", session.postCount === 1 ? "1 post" : "{n} posts").replace("{n}", session.postCount)}</span>
                     </div>
+                    <svg class="past-card-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
                 `
                 : `
-                    <span class="past-card-no-posts">${window.t ? t("noPostsYet") : "No posts yet"}</span>
-                    <a class="past-card-write-link" href="share-to-feed.html?sessionId=${encodeURIComponent(session.id)}" onclick="event.stopPropagation()">${window.t ? t("writeFirstPost") : "Write the first post"}</a>
+                    <span class="past-card-no-posts">${tr("noPostsYet", "No posts yet")}</span>
+                    <a class="past-card-write-link" href="share-to-feed.html?sessionId=${encodeURIComponent(session._id)}" onclick="event.stopPropagation()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                        ${tr("writeFirstPost", "Write the first post")}
+                    </a>
                 `;
 
             return `
-                <div class="past-card" data-session-id="${escapeHtml(session.id)}">
+                <div class="past-card" data-session-id="${escapeHtml(session._id)}">
                     <div class="past-card-main">
-                        <img class="past-card-thumb" src="${escapeHtml(session.coverPhoto || "assets/logos/lingping_logo.png")}" alt="">
+                        <img class="past-card-thumb" src="${escapeHtml(session.photoUrl || "assets/logos/lingping_logo.png")}" alt="" loading="lazy">
                         <div class="past-card-info">
                             <div class="past-card-meta">${metaLine}</div>
                             <div class="past-card-title">${escapeHtml(session.title || "")}</div>
@@ -238,29 +391,33 @@
             `;
         }
 
-        function renderList(sessions) {
-            if (!sessions.length) {
+        function renderList() {
+            if (!loadedSessions.length) {
                 listEl.innerHTML = `
                     <div class="past-empty">
-                        <div class="past-empty-text">${window.t ? t("noPastSessionsYet") : "You haven't attended any sessions yet."}</div>
-                        <a class="past-empty-link" href="index.html">${window.t ? t("browseEvents") : "Browse events"}</a>
+                        <div class="past-empty-text">${tr("noPastSessionsYet", "You haven't joined any sessions yet.")}</div>
+                        <a class="past-empty-link" href="index.html">${tr("browseEvents", "Browse events")}</a>
                     </div>
                 `;
                 return;
             }
 
-            let html = "";
-            let currentMonth = null;
-            sessions.forEach(session => {
-                const start = new Date(session.startTime);
-                const label = monthLabel(start);
-                if (label !== currentMonth) {
-                    currentMonth = label;
-                    html += `<div class="past-month-label">${escapeHtml(label)}</div>`;
+            // Group into months; each month's cards sit in a grid (1 column on
+            // mobile, 2–3 on desktop).
+            const months = [];
+            loadedSessions.forEach(session => {
+                const label = monthLabel(new Date(session.startTime));
+                if (!months.length || months[months.length - 1].label !== label) {
+                    months.push({ label, sessions: [] });
                 }
-                html += buildCard(session);
+                months[months.length - 1].sessions.push(session);
             });
-            listEl.innerHTML = html;
+            listEl.innerHTML = months.map(month => `
+                <section class="past-month">
+                    <div class="past-month-label">${escapeHtml(month.label)}</div>
+                    <div class="past-month-grid">${month.sessions.map(buildCard).join("")}</div>
+                </section>
+            `).join("");
 
             listEl.querySelectorAll(".past-card").forEach(card => {
                 card.addEventListener("click", () => {
@@ -269,31 +426,42 @@
             });
         }
 
+        function showMessage(text) {
+            listEl.innerHTML = `<div class="past-empty"><div class="past-empty-text">${escapeHtml(text)}</div></div>`;
+        }
+
         async function loadPastSessions() {
+            if (isLoading) return;
             if (!userId) {
-                listEl.innerHTML = `<div class="past-empty"><div class="past-empty-text">${window.t ? t("pleaseLogInBookings") : "Please log in to see your past sessions."}</div></div>`;
+                showMessage(tr("pleaseLogInPastSessions", "Please log in to see your past sessions."));
                 return;
             }
 
+            isLoading = true;
+            loadMoreBtn.disabled = true;
+
             try {
-                const res = await fetch(`${BASE_URL}/me/past-sessions?limit=50&offset=0`, {
+                const res = await fetch(`${BASE_URL}/users/${encodeURIComponent(userId)}/past-sessions?limit=${PAGE_SIZE}&offset=${loadedSessions.length}`, {
                     headers: { "X-API-KEY": API_KEY }
                 });
-                if (!res.ok) throw new Error("Failed to load past sessions");
-                const json = await res.json();
-                const sessions = Array.isArray(json?.data?.sessions) ? json.data.sessions
-                    : Array.isArray(json?.data) ? json.data : [];
-                const totalSessions = json?.data?.total ?? sessions.length;
-                const totalPosts = sessions.reduce((sum, s) => sum + (s.postCount || 0), 0);
+                if (!res.ok) throw new Error(`Failed to load past sessions: ${res.status}`);
+                const data = (await res.json())?.data || {};
 
-                summaryEl.textContent = window.t
-                    ? t("pastSummaryLine").replace("{n}", totalSessions).replace("{m}", totalPosts)
-                    : `You've joined ${totalSessions} sessions · ${totalPosts} posts written`;
+                loadedSessions = loadedSessions.concat(Array.isArray(data.sessions) ? data.sessions : []);
+                totalSessions = data.total ?? loadedSessions.length;
 
-                renderList(sessions);
+                summaryEl.textContent = tr("pastSummaryLine", "You've joined {n} sessions · {m} posts written")
+                    .replace("{n}", totalSessions)
+                    .replace("{m}", data.totalPostsByUser ?? 0);
+
+                renderList();
+                loadMoreWrap.hidden = loadedSessions.length >= totalSessions;
             } catch (err) {
-                console.error("Failed to load past sessions:", err);
-                listEl.innerHTML = `<div class="past-empty"><div class="past-empty-text">${window.t ? t("feedError") : "Couldn't load your past sessions."}</div></div>`;
+                console.error(err);
+                if (!loadedSessions.length) showMessage(tr("pastSessionsError", "Couldn't load your past sessions."));
+            } finally {
+                isLoading = false;
+                loadMoreBtn.disabled = false;
             }
         }
 

@@ -107,6 +107,29 @@
         return `<div class="feed-author">${name}</div>`;
     }
 
+    /** Compact "From session" card under the post text → the past-session page. */
+    function sessionCardHtml(session, extraClass) {
+        if (!session) return "";
+        const tr = (key, fallback) => (window.t && t(key) !== key) ? t(key) : fallback;
+        const lang = window.getSiteLanguage ? getSiteLanguage() : "en";
+        const start = session.startTime ? new Date(session.startTime) : null;
+        const dateLabel = start && !isNaN(start)
+            ? start.toLocaleDateString(lang === "zh" ? "zh-CN" : lang === "th" ? "th-TH" : "en-US", { weekday: "short", month: "short", day: "numeric" })
+            : "";
+        const fromLine = [tr("fromSession", "From session"), dateLabel].filter(Boolean).join(" · ");
+        const thumb = session.photoUrl
+            ? `<img class="feed-session-thumb" src="${escapeHtml(session.photoUrl)}" alt="" loading="lazy">`
+            : `<span class="feed-session-thumb feed-session-thumb-empty"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></span>`;
+        return `<a class="feed-session-row ${extraClass || ""}" href="past-session.html?sessionId=${encodeURIComponent(session._id)}" onclick="event.stopPropagation()">
+            ${thumb}
+            <span class="feed-session-text">
+                <span class="feed-session-from">${escapeHtml(fromLine)}</span>
+                <span class="feed-session-title">${escapeHtml(session.title || "")}</span>
+            </span>
+            <svg class="feed-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg>
+        </a>`;
+    }
+
     function placeFromLevel(level) {
         if (!level) return "";
         const parts = level.split(":");
@@ -155,13 +178,7 @@
         </div>`
         : "";
 
-    const sessionRow = post.session
-        ? `<a class="feed-session-row feed-detail-session-row" href="event-detail.html?sessionId=${encodeURIComponent(post.session._id)}">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            <span class="feed-session-title">${escapeHtml(post.session.title || "")}</span>
-            <svg class="feed-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 6l6 6-6 6"/></svg>
-        </a>`
-        : "";
+    const sessionRow = sessionCardHtml(post.session, "feed-detail-session-row");
 
     body.innerHTML = `
         <div class="feed-card feed-detail-card">

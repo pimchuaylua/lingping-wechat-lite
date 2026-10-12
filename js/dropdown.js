@@ -77,6 +77,8 @@ const MENU_SECTION_STORAGE_KEY = "lp_menuSections";
 const MENU_SECTION_FOR_PAGE = {
     "my-bookings.html": "events",
     "add-event.html": "events",
+    "past-sessions.html": "events",
+    "past-session.html": "events",
     "leaderboard.html": "community",
     "community_guidelines.html": "community",
     "english-sessions.html": "help",
