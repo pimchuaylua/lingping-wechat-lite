@@ -1,15 +1,16 @@
 /**
  * feed-detail.js
- * Post detail view. Reads the full post object from localStorage
- * ("selectedFeedPost"), set by feed.js on card tap — same convention
- * as "selectedSession" used elsewhere in this codebase, avoiding a
- * second network round-trip since GET /feed already returns full posts.
+ * Post detail view, addressed by feed-detail.html?postId=<id>.
+ * Uses the post cached in localStorage ("selectedFeedPost", set by feed.js
+ * on card tap) when it matches, avoiding a network round-trip. Otherwise
+ * (e.g. a shared link) fetches GET /feed/:id.
  * Replies are not built — no backend support exists for them yet.
  */
 
-(function () {
-    const post = JSON.parse(localStorage.getItem("selectedFeedPost") || "null");
+(async function () {
     const body = document.getElementById("feedDetailBody");
+    const postId = new URLSearchParams(window.location.search).get("postId");
+    const post = await loadPost(postId);
 
     if (!post) {
         body.innerHTML = `
@@ -19,6 +20,36 @@
         `;
         if (typeof applyTranslations === "function") applyTranslations(body);
         return;
+    }
+
+    const shareBtn = document.getElementById("feedDetailShareBtn");
+    shareBtn.hidden = false;
+    shareBtn.addEventListener("click", () => openPostShare(post));
+
+    async function loadPost(id) {
+        let cached = null;
+        try {
+            cached = JSON.parse(localStorage.getItem("selectedFeedPost") || "null");
+        } catch (err) {
+            cached = null;
+        }
+
+        // No postId = legacy link from before posts had their own URL.
+        if (!id) return cached;
+        if (cached && cached._id === id) return cached;
+
+        const { BASE_URL, API_KEY } = window.CONFIG;
+        try {
+            const res = await fetch(`${BASE_URL}/feed/${encodeURIComponent(id)}`, {
+                headers: { "X-API-KEY": API_KEY }
+            });
+            if (!res.ok) return null;
+            const json = await res.json();
+            return json.data || null;
+        } catch (err) {
+            console.error("Failed to load post:", err);
+            return null;
+        }
     }
 
     function escapeHtml(str) {
@@ -54,6 +85,26 @@
     function initialAvatar(name) {
         const letter = (name || "?").trim().charAt(0).toUpperCase() || "?";
         return { letter, bg: AVATAR_TINTS[letter.charCodeAt(0) % AVATAR_TINTS.length] };
+    }
+
+    /** Author line, in priority order:
+     * 1. "Name is at <Venue>" (linked) — session has a location name AND an http(s) map URL
+     * 2. "Name is in <City>" — the city the poster was in (post.city, e.g. "Wuhan, China")
+     * 3. just the name */
+    function authorLineHtml(post) {
+        const tr = (key, fallback) => (window.t && t(key) !== key) ? t(key) : fallback;
+        const name = escapeHtml(post.author?.displayName || "Lingping member");
+        const place = (post.session?.location || "").trim();
+        const url = (post.session?.locationUrl || "").trim();
+        const city = (post.city || "").trim();
+
+        if (place && /^https?:\/\//i.test(url)) {
+            return `<div class="feed-author feed-author-with-place">${name} <span class="feed-author-at">${escapeHtml(tr("isAt", "is at"))}</span> <a class="feed-author-place" href="${escapeHtml(url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escapeHtml(place)}</a></div>`;
+        }
+        if (city) {
+            return `<div class="feed-author feed-author-with-place">${name} <span class="feed-author-at">${escapeHtml(tr("isIn", "is in"))}</span> <span class="feed-author-place">${escapeHtml(city)}</span></div>`;
+        }
+        return `<div class="feed-author">${name}</div>`;
     }
 
     function placeFromLevel(level) {
@@ -122,7 +173,7 @@
                     }
                 </a>
                 <div class="feed-card-headertext">
-                    <div class="feed-author">${escapeHtml(author.displayName || "Lingping member")}</div>
+                    ${authorLineHtml(post)}
                     <div class="feed-meta">${rel}</div>
                 </div>
                 ${place ? `<div class="feed-location-pill" style="background:${pillColor.bg};color:${pillColor.text}"><span class="feed-location-pin">📍</span>${escapeHtml(place)}</div>` : ""}

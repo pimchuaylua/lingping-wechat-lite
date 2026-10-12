@@ -55,10 +55,12 @@
             </div>`;
         }
 
-        const shown = photoUrls.slice(0, 3);
+        // Standard social layout: 2 side by side, 3 = one big + two stacked,
+        // 4+ = 2x2 with a "+N" overlay on the last tile.
+        const shown = photoUrls.slice(0, 4);
         const extra = photoUrls.length - shown.length;
 
-        return `<div class="feed-photo-grid">
+        return `<div class="feed-photo-grid feed-photo-grid-${shown.length}">
             ${shown.map((url, i) => `
                 <div class="feed-photo-tile">
                     <img src="${escapeHtml(url)}" loading="lazy" onclick="openFeedPhotoViewer(event, '${escapeHtml(postId)}', ${i})">
@@ -66,6 +68,26 @@
                 </div>
             `).join("")}
         </div>`;
+    }
+
+    /** Author line, in priority order:
+     * 1. "Name is at <Venue>" (linked) — session has a location name AND an http(s) map URL
+     * 2. "Name is in <City>" — the city the poster was in (post.city, e.g. "Wuhan, China")
+     * 3. just the name */
+    function authorLineHtml(post) {
+        const tr = (key, fallback) => (window.t && t(key) !== key) ? t(key) : fallback;
+        const name = escapeHtml(post.author?.displayName || "Lingping member");
+        const place = (post.session?.location || "").trim();
+        const url = (post.session?.locationUrl || "").trim();
+        const city = (post.city || "").trim();
+
+        if (place && /^https?:\/\//i.test(url)) {
+            return `<div class="feed-author feed-author-with-place">${name} <span class="feed-author-at">${escapeHtml(tr("isAt", "is at"))}</span> <a class="feed-author-place" href="${escapeHtml(url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escapeHtml(place)}</a></div>`;
+        }
+        if (city) {
+            return `<div class="feed-author feed-author-with-place">${name} <span class="feed-author-at">${escapeHtml(tr("isIn", "is in"))}</span> <span class="feed-author-place">${escapeHtml(city)}</span></div>`;
+        }
+        return `<div class="feed-author">${name}</div>`;
     }
 
     function placeFromLevel(level) {
@@ -127,14 +149,20 @@
                         }
                     </a>
                     <div class="feed-card-headertext">
-                        <div class="feed-author">${escapeHtml(author.displayName || "Lingping member")}</div>
+                        ${authorLineHtml(post)}
                         <div class="feed-meta">${rel}</div>
                     </div>
                     ${place ? `<div class="feed-location-pill" style="background:${pillColor.bg};color:${pillColor.text}"><span class="feed-location-pin">📍</span>${escapeHtml(place)}</div>` : ""}
                 </div>
-                <div class="feed-body">${linkify(escapeHtml(post.thoughts || ""))}</div>
+                <div class="feed-body feed-body-clamped">${linkify(escapeHtml(post.thoughts || ""))}</div>
+                <button type="button" class="feed-more-btn" hidden data-i18n="more">More</button>
                 ${buildPhotosHtml(post.photoUrls, post._id)}
                 ${sessionRow}
+                <div class="feed-card-actions">
+                    <button type="button" class="feed-share-btn" aria-label="Share">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                    </button>
+                </div>
             </div>
         `;
     }
@@ -286,11 +314,29 @@
                 if (e.target.closest(".feed-session-row")) return;
                 const id = card.getAttribute("data-post-id");
                 const post = feedPosts.find(p => p._id === id);
-                if (post) {
-                    localStorage.setItem("selectedFeedPost", JSON.stringify(post));
-                    window.location.href = "feed-detail.html";
+                if (!post) return;
+
+                if (e.target.closest(".feed-more-btn")) {
+                    card.querySelector(".feed-body").classList.remove("feed-body-clamped");
+                    e.target.closest(".feed-more-btn").hidden = true;
+                    return;
                 }
+
+                if (e.target.closest(".feed-share-btn")) {
+                    if (typeof openPostShare === "function") openPostShare(post);
+                    return;
+                }
+
+                localStorage.setItem("selectedFeedPost", JSON.stringify(post));
+                window.location.href = `feed-detail.html?postId=${encodeURIComponent(post._id)}`;
             });
+        });
+
+        // Only show "More" on posts whose text actually overflows the clamp.
+        list.querySelectorAll(".feed-body-clamped").forEach(bodyEl => {
+            if (bodyEl.scrollHeight > bodyEl.clientHeight + 1) {
+                bodyEl.nextElementSibling.hidden = false;
+            }
         });
 
         document.getElementById("feedLoadMoreWrap").hidden = feedPosts.length < feedLimit;

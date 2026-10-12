@@ -509,6 +509,41 @@
                 </div>
 
                 <div class="section">
+                    <div class="label">Extra Cost</div>
+                    <select class="sub" id="hasCost" onchange="toggleCostFields()">
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                    <div id="costFields" style="display:none;">
+                        <div class="label" style="margin-top:12px;">Amount Type</div>
+                        <select class="sub" id="costAmountType" onchange="toggleCostFields()">
+                            <option value="fixed">Fixed amount</option>
+                            <option value="range">Price range</option>
+                        </select>
+                        <div id="costFixedWrap">
+                            <div class="label" style="margin-top:12px;">Amount</div>
+                            <input class="sub" type="number" min="0" id="costAmount" placeholder="e.g. 300">
+                        </div>
+                        <div id="costRangeWrap" style="display:none;">
+                            <div class="label" style="margin-top:12px;">Min Amount</div>
+                            <input class="sub" type="number" min="0" id="costAmountMin" placeholder="e.g. 300">
+                            <div class="label" style="margin-top:12px;">Max Amount</div>
+                            <input class="sub" type="number" min="0" id="costAmountMax" placeholder="e.g. 500">
+                        </div>
+                        <div class="label" style="margin-top:12px;">Currency</div>
+                        <select class="sub" id="costCurrency">
+                            <option value="THB">THB</option>
+                            <option value="CNY">CNY</option>
+                            <option value="HKD">HKD</option>
+                        </select>
+                        <div class="label" style="margin-top:12px;">Payment</div>
+                        <select class="sub" id="costPaymentMode">
+                            <option value="payOnSpot">Pay on the spot</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section">
                     <div class="label">Photo</div>
                     <div class="hint">Optional. Leave blank to use the default photo.</div>
                     <input class="sub" type="file" accept="image/*" id="photoInput" onchange="handlePhotoUpload(event)">
@@ -538,6 +573,15 @@
             onlineSection.style.display = (type === 'online' || type === 'hybrid') ? 'block' : 'none';
             locationSection.style.display = (type === 'offline' || type === 'hybrid') ? 'block' : 'none';
             communitySection.style.display = (type === 'online') ? 'none' : 'block';
+        }
+
+        function toggleCostFields() {
+            const hasCost = document.getElementById('hasCost').value === 'yes';
+            const isRange = document.getElementById('costAmountType').value === 'range';
+
+            document.getElementById('costFields').style.display = hasCost ? 'block' : 'none';
+            document.getElementById('costFixedWrap').style.display = isRange ? 'none' : 'block';
+            document.getElementById('costRangeWrap').style.display = isRange ? 'block' : 'none';
         }
 
         function renderLangBlocks() {
@@ -738,6 +782,30 @@
                 ? { platform: val('platform'), meetingNumber: val('meetingNumber') || undefined }
                 : undefined;
 
+            let cost;
+            if (val('hasCost') === 'yes') {
+                const amountType = val('costAmountType');
+                cost = { amountType, currency: val('costCurrency'), paymentMode: val('costPaymentMode') };
+
+                if (amountType === 'fixed') {
+                    const amount = Number(val('costAmount'));
+                    if (!(amount > 0)) {
+                        alert('Please enter the extra cost amount.');
+                        return;
+                    }
+                    cost.amount = amount;
+                } else {
+                    const amountMin = Number(val('costAmountMin'));
+                    const amountMax = Number(val('costAmountMax'));
+                    if (!(amountMin > 0) || !(amountMax > 0) || amountMin > amountMax) {
+                        alert('Please enter a valid price range (min ≤ max).');
+                        return;
+                    }
+                    cost.amountMin = amountMin;
+                    cost.amountMax = amountMax;
+                }
+            }
+
             const levelId = type === 'online' ? onlineCommunityLevelId : val('levelId');
 
             const translationContent = {
@@ -761,6 +829,7 @@
                 readingSourceIds: [],
                 type,
                 online,
+                cost,
                 categories: categories.length ? categories : undefined,
                 languages: languages.length ? languages : undefined,
                 translations: {
