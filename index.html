@@ -15,7 +15,7 @@
     <script src="config.js"></script>
     <script src="js/dropdown.js?v=20260516"></script>
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=20261007"></script>
+    <script src="js/translations.js?v=202610126"></script>
     <script src="js/auth.js?v=20260312"></script>
     <script src="js/booking.js?v=20261007"></script>
     <script src="js/utils.js?v=20250210?v=20260113"></script>
@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
     <link rel="stylesheet" href="assets/chip_style.css">
     <link rel="stylesheet" href="assets/filter-bar.css?v=20260908">
-    <link rel="stylesheet" href="assets/feed_style.css?v=20260929">
+    <link rel="stylesheet" href="assets/feed_style.css?v=202610126">
 
     <meta property="og:title" content="Lingping Club" />
     <meta property="og:description"
@@ -489,8 +489,9 @@
     </div>
 
     <script src="js/event-card.js?v=20260908"></script>
-    <script src="js/filter-bar.js?v=20260908"></script>
-    <script src="js/feed.js?v=20260929"></script>
+    <script src="js/filter-bar.js?v=202610123"></script>
+    <script src="js/feed-share.js?v=20261012"></script>
+    <script src="js/feed.js?v=202610126"></script>
     <script>
 
         const { BASE_URL, API_KEY } = window.CONFIG;
@@ -504,7 +505,69 @@
             { name: "Hong Kong", levelId: "6a841f58cca7afd6cad9dd14", country: "HONG KONG" }
         ];
 
-        let currentLevel = localStorage.getItem(LAST_SELECTED_LOCATION_KEY) ?? ONLINE_LEVEL_ID;
+        /* ---------------- FILTERS IN URL ----------------
+           e.g. ?loc=bangkok&cat=book,food&lang=chinese&level=beginner&from=2026-10-18&to=2026-10-19
+           Kept in sync on every filter change so the address bar can be shared
+           (desktop → phone). A link's filters win over the visitor's saved ones. */
+
+        const citySlug = name => name.toLowerCase().replace(/\s+/g, "-");
+
+        function readFiltersFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const list = key => (params.get(key) || "").split(",").map(v => v.trim()).filter(Boolean);
+            const result = {};
+
+            const loc = params.get("loc");
+            if (loc === "online") {
+                result.levelId = ONLINE_LEVEL_ID;
+            } else if (loc) {
+                const city = LP_CITIES.find(c => citySlug(c.name) === loc.toLowerCase());
+                if (city) result.levelId = city.levelId;
+            }
+
+            if (params.has("cat") || params.has("lang") || params.has("level") || params.has("loc")) {
+                result.filters = { categories: list("cat"), languages: list("lang"), levels: list("level") };
+            }
+
+            // Dates: ignore malformed or past ranges (a link shared last week).
+            const isDate = v => /^\d{4}-\d{2}-\d{2}$/.test(v || "");
+            const from = params.get("from");
+            const to = params.get("to") || from;
+            if (isDate(from) && isDate(to) && to >= from && from >= fmtISO(new Date())) {
+                result.dates = { from, to };
+            }
+
+            return result;
+        }
+
+        function updateFiltersInUrl() {
+            const url = new URL(window.location.href);
+            const city = LP_CITIES.find(c => c.levelId === currentLevel);
+            url.searchParams.set("loc", city ? citySlug(city.name) : "online");
+
+            const state = FilterBar.getState();
+            [["cat", state.categories], ["lang", state.languages], ["level", state.levels]].forEach(([key, set]) => {
+                if (set.size) url.searchParams.set(key, [...set].join(","));
+                else url.searchParams.delete(key);
+            });
+
+            if (appliedDates) {
+                url.searchParams.set("from", appliedDates.from);
+                if (appliedDates.to !== appliedDates.from) url.searchParams.set("to", appliedDates.to);
+                else url.searchParams.delete("to");
+            } else {
+                url.searchParams.delete("from");
+                url.searchParams.delete("to");
+            }
+
+            window.history.replaceState(window.history.state, "", url);
+        }
+
+        const urlFilters = readFiltersFromUrl();
+        if (urlFilters.levelId) localStorage.setItem(LAST_SELECTED_LOCATION_KEY, urlFilters.levelId);
+
+        let currentLevel = urlFilters.levelId ?? localStorage.getItem(LAST_SELECTED_LOCATION_KEY) ?? ONLINE_LEVEL_ID;
+        let appliedDates = urlFilters.dates || null; // { from, to } when the user picked dates, else null
         let membershipStatusLoaded = false;
         let cachedCommunitySub = null;
 
@@ -771,8 +834,8 @@
             renderUserWelcome();
 
             const range = defaultDateRange();
-            currentFromDate = range.fromDate;
-            currentToDate = range.toDate;
+            currentFromDate = appliedDates ? appliedDates.from : range.fromDate;
+            currentToDate = appliedDates ? appliedDates.to : range.toDate;
 
             // Fetch options and sessions in parallel — they don't depend on each other
             const [opts, raw] = await Promise.all([
@@ -787,22 +850,29 @@
                 cities: LP_CITIES,
                 eventOptions,
                 initialLevelId: currentLevel,
+                initialFilters: urlFilters.filters,
+                initialDateRange: appliedDates,
                 getSessions: () => sessions,
                 onLocationChange(levelId) {
                     currentLevel = levelId;
                     localStorage.setItem(LAST_SELECTED_LOCATION_KEY, levelId);
+                    updateFiltersInUrl();
                     loadSessions();
                 },
                 onDateApply(fromDate, toDate) {
                     const def = defaultDateRange();
+                    appliedDates = fromDate ? { from: fromDate, to: toDate || fromDate } : null;
                     currentFromDate = fromDate || def.fromDate;
                     currentToDate = toDate || def.toDate;
+                    updateFiltersInUrl();
                     loadSessions();
                 },
                 onFiltersChange() {
+                    updateFiltersInUrl();
                     renderEvents();
                 }
             });
+            updateFiltersInUrl();
 
             sessions = mapSessions(raw);
             renderEvents();

@@ -25,6 +25,11 @@
     let pastSessions = null; // null = not fetched yet
     let selectedSession = null; // { _id, title, startTime }
 
+    // "Wuhan, China" — prefilled from GET /geo/city (IP lookup), editable.
+    // Sent as `city`; the feed shows it when there's no venue to show.
+    let postCity = "";
+    let locationTouched = false; // user edited/removed → don't overwrite with detection
+
     function resizeImage(file, maxDimension = 1600, quality = 0.8) {
         return new Promise((resolve, reject) => {
             const img = new Image();
@@ -251,6 +256,65 @@
         document.getElementById("sessionTrigger").hidden = false;
     };
 
+    /* ---------------- Location (city) ---------------- */
+
+    function renderLocation() {
+        const input = document.getElementById("locationInput");
+        const editing = !input.hidden;
+        document.getElementById("locationTrigger").hidden = editing || !!postCity;
+        document.getElementById("locationChip").hidden = editing || !postCity;
+        document.getElementById("locationChipText").textContent = postCity;
+    }
+
+    window.editLocation = function () {
+        const input = document.getElementById("locationInput");
+        input.value = postCity;
+        input.hidden = false;
+        renderLocation();
+        input.focus();
+    };
+
+    window.commitLocation = function () {
+        const input = document.getElementById("locationInput");
+        if (input.hidden) return;
+        const value = input.value.trim().slice(0, 60);
+        if (value !== postCity) locationTouched = true;
+        postCity = value;
+        input.hidden = true;
+        renderLocation();
+    };
+
+    window.onLocationKeydown = function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            commitLocation();
+        } else if (e.key === "Escape") {
+            const input = document.getElementById("locationInput");
+            input.hidden = true;
+            renderLocation();
+        }
+    };
+
+    window.clearLocation = function () {
+        postCity = "";
+        locationTouched = true;
+        renderLocation();
+    };
+
+    async function detectCity() {
+        try {
+            const res = await fetch(`${BASE_URL}/geo/city`, { headers: { "X-API-KEY": API_KEY } });
+            if (!res.ok) return;
+            const json = await res.json();
+            const geo = json?.data;
+            if (!geo?.city || locationTouched || postCity) return;
+            postCity = [geo.city, geo.country].filter(Boolean).join(", ").slice(0, 60);
+            if (document.getElementById("locationInput").hidden) renderLocation();
+        } catch (err) {
+            // detection is best-effort; the user can still add a location
+        }
+    }
+
     async function uploadPhoto(file) {
         const resized = await resizeImage(file);
         const formData = new FormData();
@@ -297,6 +361,10 @@
             if (selectedSession) {
                 body.sessionId = selectedSession._id;
             }
+            commitLocation();
+            if (postCity) {
+                body.city = postCity;
+            }
 
             const res = await fetch(`${BASE_URL}/users/${userId}/learnings`, {
                 method: "POST",
@@ -340,4 +408,6 @@
     });
 
     updatePostButtonState();
+    renderLocation();
+    detectCity();
 })();

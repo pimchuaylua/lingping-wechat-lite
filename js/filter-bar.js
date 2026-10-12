@@ -10,7 +10,10 @@
  * is hardcoded.
  *
  * Usage: FilterBar.init({ onlineLevelId, cities, eventOptions, getSessions,
- * initialLevelId, onLocationChange, onDateApply, onFiltersChange }).
+ * initialLevelId, initialFilters, initialDateRange, onLocationChange,
+ * onDateApply, onFiltersChange }). initialFilters ({ categories, languages,
+ * levels }) and initialDateRange ({ from, to } as YYYY-MM-DD) come from a
+ * shared URL; when absent, category/language/level fall back to localStorage.
  */
 
 const FilterBar = (function () {
@@ -38,6 +41,10 @@ const FilterBar = (function () {
     }
     function toISO(d) {
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    }
+    function fromISO(iso) {
+        const [y, m, d] = iso.split("-").map(Number);
+        return new Date(y, m - 1, d);
     }
 
     /* ---------------- Location: Online / In Person + city dropdown ---------------- */
@@ -185,6 +192,47 @@ const FilterBar = (function () {
         }
     }
 
+    /* ---------------- Saved filters ----------------
+     * Category, language and level selections persist across visits (like
+     * the location filter's "lastSelectedLocation"). Saved on every change
+     * via renderMoodList / renderLangLevelLists; values no longer offered
+     * are dropped on restore. Dates are intentionally not saved. */
+
+    const FILTERS_STORAGE_KEY = 'lastBrowseFilters';
+
+    /** `initial` (e.g. from a shared URL) wins over what's saved in localStorage. */
+    function restoreFilters(initial) {
+        let saved = initial || null;
+        if (!saved) {
+            try {
+                saved = JSON.parse(localStorage.getItem(FILTERS_STORAGE_KEY) || 'null');
+            } catch (err) {
+                // ignore unreadable/blocked storage
+            }
+        }
+        if (!saved) return;
+
+        const keep = (values, options) => {
+            const valid = new Set((options || []).map(it => it.value));
+            return new Set((values || []).filter(v => valid.has(v)));
+        };
+        state.categories = keep(saved.categories, cfg.eventOptions.categories);
+        state.languages = keep(saved.languages, cfg.eventOptions.languages);
+        state.levels = keep(saved.levels, cfg.eventOptions.proficiencyLevels);
+    }
+
+    function saveFilters() {
+        try {
+            localStorage.setItem(FILTERS_STORAGE_KEY, JSON.stringify({
+                categories: [...state.categories],
+                languages: [...state.languages],
+                levels: [...state.levels]
+            }));
+        } catch (err) {
+            // ignore unwritable/blocked storage
+        }
+    }
+
     /* ---------------- Mood (category) — mobile full-screen page + desktop dropdown ---------------- */
 
     function openMood() {
@@ -201,6 +249,7 @@ const FilterBar = (function () {
     /** Single source of truth for category state — re-renders every surface
      * that shows it (mobile list, desktop dropdown list, both labels, quick chips). */
     function renderMoodList() {
+        saveFilters();
         const opts = {
             iconFor: v => CATEGORY_ICONS[v] || '',
             showDesc: false,
@@ -273,6 +322,7 @@ const FilterBar = (function () {
     }
 
     function renderLangLevelLists() {
+        saveFilters();
         const langOpts = { iconFor: v => LANG_META[v]?.flag || '', showDesc: false, onToggle: renderLangLevelLists, labelFor: (v, fallback) => window.translatedLangLabel ? translatedLangLabel(v, fallback) : fallback };
         const lvlOpts = { iconFor: v => LEVEL_ICONS[v] || '', showDesc: true, onToggle: renderLangLevelLists, labelFor: (v, fallback) => window.translatedLevelLabel ? translatedLevelLabel(v, fallback) : fallback };
 
@@ -578,6 +628,13 @@ const FilterBar = (function () {
         buildCalMonths();
         renderCityList();
         setInitialLocation(config.initialLevelId);
+        if (config.initialDateRange) {
+            rangeStart = fromISO(config.initialDateRange.from);
+            rangeEnd = config.initialDateRange.to && config.initialDateRange.to !== config.initialDateRange.from
+                ? fromISO(config.initialDateRange.to)
+                : null;
+        }
+        restoreFilters(config.initialFilters);
         renderMoodList();
         renderLangLevelLists();
         updateDateLabel();

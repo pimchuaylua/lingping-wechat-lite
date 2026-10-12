@@ -9,13 +9,13 @@
     <link rel="icon" type="image/png" href="assets/logos/favicon.png">
 
     <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
-    <link rel="stylesheet" href="assets/feed_style.css?v=20260929">
+    <link rel="stylesheet" href="assets/feed_style.css?v=202610126">
 
     <script src="config.js"></script>
     <script src="js/auth.js?v=20260312"></script>
     <script src="js/utils.js?v=20250210"></script>
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=20261007"></script>
+    <script src="js/translations.js?v=202610126"></script>
 </head>
 
 <body>
@@ -31,6 +31,32 @@
             <textarea id="thoughtsInput" class="share-textarea" rows="9"
                 placeholder="A cultural wow moment, a reflection, something that inspired you, a word you learned…"
                 data-i18n-placeholder="shareAnythingPlaceholder" oninput="onComposeChange()"></textarea>
+        </div>
+
+        <div class="share-card" id="locationCard">
+            <div class="share-card-title-row">
+                <div class="share-card-title" data-i18n="location">Location</div>
+                <div class="share-card-subtitle" data-i18n="optional">Optional</div>
+            </div>
+
+            <button type="button" class="share-session-trigger" id="locationTrigger" onclick="editLocation()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span data-i18n="addLocation">Add location</span>
+            </button>
+
+            <div class="share-session-chip" id="locationChip" hidden onclick="editLocation()">
+                <div class="share-session-chip-thumb">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                </div>
+                <div class="share-session-chip-text">
+                    <div class="share-session-chip-title" id="locationChipText"></div>
+                </div>
+                <button type="button" class="share-session-chip-remove" onclick="event.stopPropagation(); clearLocation()" aria-label="Remove location">×</button>
+            </div>
+
+            <input type="text" class="share-textarea share-location-input" id="locationInput" hidden maxlength="60"
+                placeholder="City, Country" data-i18n-placeholder="locationPlaceholder"
+                onkeydown="onLocationKeydown(event)" onblur="commitLocation()">
         </div>
 
         <div class="share-card" id="sessionPickerCard">
@@ -84,7 +110,7 @@
         <div id="composeError" class="share-error" hidden></div>
     </div>
 
-    <script src="js/share-to-feed.js?v=20260929"></script>
+    <script src="js/share-to-feed.js?v=202610126"></script>
 </body>
 
 </html>
