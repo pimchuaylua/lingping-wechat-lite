@@ -117,7 +117,33 @@ async function getEventsToHost() {
     );
 
     const json = await res.json();
-    return json.data;
+    const sessions = json.data;
+
+    // Public session data no longer includes the meeting number/link — fetch
+    // them (hosts are allowed) so the hosting cards' calendar links keep them.
+    if (Array.isArray(sessions)) {
+        await Promise.all(sessions.filter(s => s.online).map(async s => {
+            const meeting = await getMeetingDetails(s._id);
+            if (meeting) s.online = { ...s.online, ...meeting };
+        }));
+    }
+    return sessions;
+}
+
+/** Online meeting number/link for a session — only answers (200) for a user
+ * who booked it or hosts it; null otherwise. */
+async function getMeetingDetails(sessionId) {
+    const userId = localStorage.getItem("userId");
+    if (!userId || !sessionId) return null;
+    try {
+        const res = await fetch(`${BASE_URL}/reading-sessions/${encodeURIComponent(sessionId)}/meeting?userId=${encodeURIComponent(userId)}`, {
+            headers: { "X-API-KEY": API_KEY }
+        });
+        if (!res.ok) return null;
+        return (await res.json())?.data || null;
+    } catch (err) {
+        return null;
+    }
 }
 
 /* ---- Cancel-booking confirmation dialog ----
