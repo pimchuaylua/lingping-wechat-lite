@@ -15,9 +15,9 @@
 
     <script src="config.js"></script>
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=202610126"></script>
+    <script src="js/translations.js?v=20261014"></script>
     <script src="js/hosts.js?v=9"></script>
-    <script src="js/booking.js?v=20261007"></script>
+    <script src="js/booking.js?v=202610142"></script>
     <script src="js/utils.js?v=20250210"></script>
     <script src="js/render-langague-level.js"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
@@ -173,15 +173,68 @@
             );
         }
 
-        //write function is onlineEnglishClass c
-        function getMeetingNumber(levelName) {
-            if (!levelName) return "395-0447-1911";
+        function platformLabelFor(platform) {
+            if (!platform) return "Tencent Meeting 腾讯会议";
+            return findMeta(s.options.platforms, platform)?.label || platform;
+        }
 
-            if (levelName.toLowerCase().includes("english")) {
-                return "526-0546-9970";
+        // Online meeting number/link only come from GET /reading-sessions/:id/meeting,
+        // which answers only for people who booked this session or host it (403
+        // otherwise). Public session data carries just `online.platform`.
+        // In-person venue/location info is public and rendered elsewhere.
+        async function loadMeetingDetails() {
+            const el = document.getElementById("meetingDetails");
+            if (!el || !s) return;
+            const sessionIdAtRequest = s.id;
+
+            let meeting = null;
+            try {
+                const res = await fetch(`${BASE_URL}/reading-sessions/${encodeURIComponent(s.id)}/meeting?userId=${encodeURIComponent(userId)}`, {
+                    headers: { "X-API-KEY": API_KEY }
+                });
+                if (res.ok) meeting = (await res.json())?.data || null;
+            } catch (err) {
+                console.error("Failed to load meeting details:", err);
             }
 
-            return "730-0491-0441";
+            // The page may have re-rendered (e.g. after booking) while we waited.
+            const current = document.getElementById("meetingDetails");
+            if (!current || !s || s.id !== sessionIdAtRequest) return;
+
+            if (!meeting || !meeting.meetingNumber && !meeting.meetingUrl) {
+                current.innerHTML = `
+                    ${t("platformLabel")}: ${escapeHtml(platformLabelFor(s.online?.platform))}<br>
+                    🔒 ${t("bookForMeetingDetails")}
+                `;
+                return;
+            }
+
+            const meetingUrl = meeting.meetingUrl
+                ? (/^https?:\/\//i.test(meeting.meetingUrl) ? meeting.meetingUrl : `https://${meeting.meetingUrl}`)
+                : "";
+            const meetingNumber = meeting.meetingNumber || "";
+
+            current.innerHTML = `
+                ${t("platformLabel")}: ${escapeHtml(platformLabelFor(meeting.platform || s.online?.platform))}<br>
+                ${meetingUrl ? `
+                    <a href="${escapeHtml(meetingUrl)}" target="_blank" rel="noopener" class="meeting-link">
+                        ${t("joinViaMeetingLink")}
+                    </a><br>
+                ` : ""}
+                ${meetingNumber ? `
+                    ${t("meetingRoomNumber")}
+                    <span class="meeting-number" data-number="${escapeHtml(meetingNumber)}">
+                        ${escapeHtml(meetingNumber)}
+                        <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2"></rect>
+                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
+                        </svg>
+                    </span>
+                ` : ""}
+            `;
+            current.querySelector(".meeting-number")?.addEventListener("click", (e) => {
+                copyMeetingNumber(e.currentTarget.getAttribute("data-number"));
+            });
         }
 
         async function loadSessionById(sessionId) {
@@ -261,14 +314,6 @@
                 .map(line => `<p>${linkify(line)}</p>`)
                 .join("");
 
-            const platformLabel = s.online
-                ? (findMeta(s.options.platforms, s.online.platform)?.label || s.online.platform)
-                : 'Tencent Meeting 腾讯会议';
-
-            const meetingValue = s.online
-                ? s.online.meetingNumber
-                : getMeetingNumber(s?.levelName);
-
             container.innerHTML = `
                 <div class="detail-topbar">
                     <div class="back-btn" onclick="goBack()">${t("backBtn")}</div>
@@ -307,24 +352,7 @@
                     <div class="label">${t("labelJoinOnline")}</div>
 
                     ${userId
-                        ? `
-                        <div class="sub" style="margin-top:10px;">
-                            ${t("platformLabel")}: ${platformLabel}<br>
-                            ${s.online?.meetingUrl ? `
-                                <a href="${/^https?:\/\//i.test(s.online.meetingUrl) ? s.online.meetingUrl : `https://${s.online.meetingUrl}`}" target="_blank" rel="noopener" class="meeting-link">
-                                    ${t("joinViaMeetingLink")}
-                                </a><br>
-                            ` : ''}
-                            ${t("meetingRoomNumber")}
-                            <span class="meeting-number" onclick="copyMeetingNumber('${meetingValue}')">
-                                ${meetingValue}
-                                <svg class="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="9" y="9" width="13" height="13" rx="2"></rect>
-                                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
-                                </svg>
-                            </span>
-                        </div>
-                            `
+                        ? `<div class="sub" id="meetingDetails" style="margin-top:10px;">${t("loading")}</div>`
                         : `
                         <div class="sub">
                             ${t("loginForMeetingDetails")}
@@ -506,6 +534,7 @@
             }
 
             loadAttendees();
+            if (userId && document.getElementById("meetingDetails")) loadMeetingDetails();
         }
 
         // Hoisted out of renderSession() (instead of nested inside it) so it's
@@ -686,12 +715,12 @@
             if (isOnline) {
                 lines.push(`🌐 Time zone: ${Utils.getUserTimeZone()}`);
 
-                if (userId && s.online) {
-                    const platformLabel = findMeta(s.options.platforms, s.online.platform)?.label || s.online.platform;
-                    lines.push(`💻 Platform: ${platformLabel}`);
-                } else if (!userId) {
-                    lines.push("💻 Log in to see the meeting details ✨");
+                // Never put the meeting number in shared text — only booked
+                // members get it (via the /meeting endpoint on this page).
+                if (s.online?.platform) {
+                    lines.push(`💻 Platform: ${platformLabelFor(s.online.platform)}`);
                 }
+                lines.push("💻 Book to see the meeting details ✨");
             } else {
                 lines.push(`📍 Location: ${s.location || "TBA"}`);
             }

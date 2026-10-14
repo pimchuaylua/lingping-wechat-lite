@@ -154,6 +154,7 @@ const TRANSLATIONS = {
     shareToApps: { en: "Share to…", zh: "分享到…", th: "แชร์ไปยัง…" },
     linkCopied: { en: "Link copied ✅", zh: "链接已复制 ✅", th: "คัดลอกลิงก์แล้ว ✅" },
     copied: { en: "Copied ✅", zh: "已复制 ✅", th: "คัดลอกแล้ว ✅" },
+    bookForMeetingDetails: { en: "Book this session to see the meeting details", zh: "预订本活动后即可查看会议信息", th: "จองกิจกรรมนี้เพื่อดูรายละเอียดการประชุม" },
     meetingNumberCopied: { en: "Meeting number copied ✅", zh: "会议号已复制 ✅", th: "คัดลอกหมายเลขประชุมแล้ว ✅" },
     cancelBooking: { en: "Cancel Booking", zh: "取消预订", th: "ยกเลิกการจอง" },
     areYouSureCancel: { en: "Are you sure you want to cancel?", zh: "您确定要取消吗？", th: "คุณแน่ใจหรือไม่ว่าต้องการยกเลิก?" },
