@@ -25,6 +25,13 @@
     let pastSessions = null; // null = not fetched yet
     let selectedSession = null; // { _id, title, startTime }
 
+    // Opened from a past session (past-session.html / "Write the first post"):
+    // pre-attach that session and return there after posting or cancelling.
+    const presetSessionId = new URLSearchParams(window.location.search).get("sessionId");
+    const returnUrl = presetSessionId
+        ? `past-session.html?sessionId=${encodeURIComponent(presetSessionId)}`
+        : "index.html?tab=feed";
+
     // "Wuhan, China" — prefilled from GET /geo/city (IP lookup), editable.
     // Sent as `city`; the feed shows it when there's no venue to show.
     let postCity = "";
@@ -235,9 +242,9 @@
         document.body.style.overflow = "";
     };
 
-    function selectSession(session) {
+    function selectSession(session, opts) {
         selectedSession = session;
-        hasUnsavedChanges = true;
+        if (!opts?.preset) hasUnsavedChanges = true;
         closeSessionPicker();
 
         document.getElementById("sessionTrigger").hidden = true;
@@ -255,6 +262,21 @@
         document.getElementById("sessionChip").hidden = true;
         document.getElementById("sessionTrigger").hidden = false;
     };
+
+    async function applyPresetSession() {
+        if (!presetSessionId) return;
+        try {
+            const res = await fetch(`${BASE_URL}/reading-sessions/${encodeURIComponent(presetSessionId)}?locale=en_US`, {
+                headers: { "X-API-KEY": API_KEY }
+            });
+            if (!res.ok) return;
+            const s = (await res.json())?.data;
+            if (!s || selectedSession) return; // user already picked something meanwhile
+            selectSession({ _id: s._id, title: s.title || "", startTime: s.startTime, level: s.level || "" }, { preset: true });
+        } catch (err) {
+            console.error("Failed to preset session:", err);
+        }
+    }
 
     /* ---------------- Location (city) ---------------- */
 
@@ -381,7 +403,7 @@
             }
 
             hasUnsavedChanges = false;
-            window.location.href = "index.html?tab=feed";
+            window.location.href = returnUrl;
 
         } catch (err) {
             console.error("Failed to post to feed:", err);
@@ -397,7 +419,7 @@
             const confirmLeave = confirm(window.t ? t("unsavedChangesConfirm") : "Discard this post?");
             if (!confirmLeave) return;
         }
-        window.location.href = "index.html?tab=feed";
+        window.location.href = returnUrl;
     };
 
     window.addEventListener("beforeunload", (e) => {
@@ -410,4 +432,5 @@
     updatePostButtonState();
     renderLocation();
     detectCity();
+    applyPresetSession();
 })();

@@ -526,27 +526,92 @@ function escapeHtmlForModal(str) {
 // the points total and reason history come from a second call to
 // /users/{userId}/penalty-status, since the booking error itself doesn't
 // include those.
+//
+// Built in JS (like the waitlist dialogs) because bookSession runs on several
+// pages — index, event-detail, english-sessions, login — not just one.
+// Styled with the cancel dialog's classes from assets/policy-modal.css.
+function getBookingBlockedModal() {
+    let overlay = document.getElementById("bookingBlockedModal");
+    if (overlay) return overlay;
+
+    // login.html doesn't load the dialog stylesheet — add it on demand.
+    if (!document.querySelector('link[href*="policy-modal.css"]')) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "assets/policy-modal.css?v=20260525";
+        document.head.appendChild(link);
+    }
+
+    overlay = document.createElement("div");
+    overlay.id = "bookingBlockedModal";
+    overlay.className = "cancel-dialog-overlay";
+    overlay.hidden = true;
+    overlay.innerHTML = `
+        <div class="cancel-dialog" role="alertdialog" aria-modal="true" aria-labelledby="bookingBlockedTitle">
+            <div class="cancel-dialog-title" id="bookingBlockedTitle"></div>
+            <div class="cancel-dialog-body" id="bookingBlockedUntilText"></div>
+            <div class="penalty-policy-box">
+                <span class="penalty-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </span>
+                <span id="bookingBlockedPointsText"></span>
+            </div>
+            <div id="bookingBlockedReasonsWrap" hidden>
+                <div style="margin-top:16px; font-weight:700; font-size:13px; color:#6B7280;" id="bookingBlockedReasonsLabel"></div>
+                <ul id="bookingBlockedReasonsList" style="margin:6px 0 0; padding-left:18px; font-size:14px; color:#374151; line-height:1.5;"></ul>
+            </div>
+            <div class="cancel-dialog-actions">
+                <button type="button" class="cancel-dialog-btn cancel-dialog-btn-primary" id="bookingBlockedOkBtn" onclick="closeBookingBlockedModal()"></button>
+            </div>
+        </div>`;
+    overlay.addEventListener("click", e => {
+        if (e.target === overlay) closeBookingBlockedModal();
+    });
+    document.body.appendChild(overlay);
+    return overlay;
+}
+
+// login.html doesn't load utils.js, so don't assume Utils exists.
+function blockedDate(d, withTime) {
+    if (window.Utils) return withTime ? `${Utils.formatDate(d)} ${Utils.formatTime(d)}` : Utils.formatDate(d);
+    return withTime ? d.toLocaleString() : d.toLocaleDateString();
+}
+
+function blockedText(key, fallback) {
+    const text = window.t ? t(key) : key;
+    return text && text !== key ? text : fallback;
+}
+
+function handleBookingBlockedKeydown(e) {
+    if (e.key === "Escape") closeBookingBlockedModal();
+}
+
 async function showBookingBlockedModal(blockedResult) {
-    const modal = document.getElementById("bookingBlockedModal");
-    if (!modal) return; // page has no booking-blocked modal (not event-detail.html)
+    const modal = getBookingBlockedModal();
+
+    document.getElementById("bookingBlockedTitle").textContent = blockedText("bookingBlockedTitle", "Booking Paused");
+    document.getElementById("bookingBlockedReasonsLabel").textContent = blockedText("bookingBlockedReasonsLabel", "Recent reasons");
+    document.getElementById("bookingBlockedOkBtn").textContent = blockedText("ok", "OK");
 
     const untilText = document.getElementById("bookingBlockedUntilText");
     const blockedUntil = blockedResult?.blockedUntil;
     untilText.innerHTML = blockedUntil
-        ? (window.t ? t("bookingBlockedUntil") : "You won't be able to book new sessions until {date}.").replace(
+        ? blockedText("bookingBlockedUntil", "You won't be able to book new sessions until {date}.").replace(
             "{date}",
-            `<strong>${Utils.formatDate(new Date(blockedUntil))} ${Utils.formatTime(new Date(blockedUntil))}</strong>`
+            `<strong>${blockedDate(new Date(blockedUntil), true)}</strong>`
         )
         : "";
 
     const pointsText = document.getElementById("bookingBlockedPointsText");
     const reasonsWrap = document.getElementById("bookingBlockedReasonsWrap");
     const reasonsList = document.getElementById("bookingBlockedReasonsList");
-    pointsText.textContent = window.t ? t("loading") : "Loading...";
+    pointsText.textContent = blockedText("loading", "Loading...");
     reasonsWrap.hidden = true;
     reasonsList.innerHTML = "";
 
-    modal.style.display = "flex";
+    modal.hidden = false;
+    document.addEventListener("keydown", handleBookingBlockedKeydown);
+    document.getElementById("bookingBlockedOkBtn").focus();
 
     try {
         const { BASE_URL, API_KEY } = window.CONFIG;
@@ -558,26 +623,28 @@ async function showBookingBlockedModal(blockedResult) {
         if (!json.status || !json.data) throw new Error("Failed to load penalty status");
 
         const { penaltyPoints, history } = json.data;
-        pointsText.innerHTML = (window.t ? t("bookingBlockedPenaltyBox") : 'You have <strong>{n} penalty points</strong>. <a href="community_guidelines.html#late-cancellation-no-show" target="_blank">View policy</a>').replace("{n}", penaltyPoints);
+        pointsText.innerHTML = blockedText("bookingBlockedPenaltyBox", 'You have <strong>{n} penalty points</strong>. <a href="community_guidelines.html#late-cancellation-no-show" target="_blank">View policy</a>').replace("{n}", penaltyPoints);
 
         const reasons = (history || []).filter(h => !h.reversed).slice(0, 3);
         if (reasons.length) {
             const reasonLabel = (h) => h.type === "noShow"
-                ? (window.t ? t("reasonNoShow") : "No-show")
-                : (window.t ? t("reasonLateCancel") : "Late cancellation");
+                ? blockedText("reasonNoShow", "No-show")
+                : blockedText("reasonLateCancel", "Late cancellation");
             reasonsList.innerHTML = reasons.map(h => `
-                <li>${reasonLabel(h)} — ${escapeHtmlForModal(h.sessionName || "")} (${Utils.formatDate(new Date(h.sessionDate))}) · +${h.points}</li>
+                <li>${reasonLabel(h)} — ${escapeHtmlForModal(h.sessionName || "")} (${blockedDate(new Date(h.sessionDate), false)}) · +${h.points}</li>
             `).join("");
             reasonsWrap.hidden = false;
         }
     } catch (err) {
         console.error("Failed to load penalty status:", err);
-        pointsText.textContent = "";
+        pointsText.innerHTML = blockedText("bookingBlockedPolicyLink", '<a href="community_guidelines.html#late-cancellation-no-show" target="_blank">View policy</a>');
     }
 }
 
 function closeBookingBlockedModal() {
-    document.getElementById("bookingBlockedModal").style.display = "none";
+    const modal = document.getElementById("bookingBlockedModal");
+    if (modal) modal.hidden = true;
+    document.removeEventListener("keydown", handleBookingBlockedKeydown);
 }
 
 function goToMembership() {
