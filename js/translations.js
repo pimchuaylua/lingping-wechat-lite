@@ -24,9 +24,9 @@ const TRANSLATIONS = {
     navMyPlan: { en: "My Plan", zh: "我的套餐", th: "บัญชีของฉัน" },
     sectionEvents: { en: "Events", zh: "活动", th: "กิจกรรม" },
     navAttending: { en: "Joining", zh: "参加中", th: "กำลังเข้าร่วม" },
-    navHosting: { en: "My Ideas", zh: "我的点子", th: "ไอเดียของฉัน" },
+    navHosting: { en: "Hosting", zh: "我主持的", th: "ที่ฉันเป็นโฮสต์" },
     navPast: { en: "Past", zh: "往期活动", th: "กิจกรรมที่ผ่านมา" },
-    navAddEvent: { en: "Bring an Idea", zh: "分享想法", th: "เสนอไอเดีย" },
+    navAddEvent: { en: "Host an event", zh: "主持活动", th: "จัดกิจกรรม" },
     sectionCommunity: { en: "Community", zh: "社区", th: "คอมมูนิตี้" },
     navLeaderboard: { en: "Leaderboard 🏆", zh: "排行榜 🏆", th: "กระดานผู้นำ 🏆" },
     navCommunityRules: { en: "Community Rules", zh: "社区规则", th: "กฎของคอมมูนิตี้" },
@@ -311,6 +311,14 @@ const TRANSLATIONS = {
     level_upper_beginner: { en: "Upper Beginner", zh: "中初级", th: "ระดับเริ่มต้นค่อนข้างสูง" },
     level_intermediate: { en: "Intermediate", zh: "中级", th: "ระดับปานกลาง" },
     level_advanced: { en: "Advanced-Native", zh: "高级-母语", th: "ระดับสูง-เจ้าของภาษา" },
+    // Short level labels for the language chip's range label ("Int – Native")
+    levelShort_beginner: { en: "Beg", zh: "初级", th: "เริ่มต้น" },
+    levelShort_upper_beginner: { en: "Upper Beg", zh: "中初级", th: "เริ่มต้น+" },
+    levelShort_intermediate: { en: "Int", zh: "中级", th: "กลาง" },
+    levelShort_advanced: { en: "Native", zh: "高级", th: "สูง" },
+    allLevels: { en: "All levels", zh: "所有级别", th: "ทุกระดับ" },
+    levelsAria: { en: "Levels", zh: "级别", th: "ระดับ" },
+    levelTo: { en: "to", zh: "至", th: "ถึง" },
 
     // ---- category chips / picker list (mood filter) — icon is always
     // rendered separately (CATEGORY_ICONS), so these stay plain text.

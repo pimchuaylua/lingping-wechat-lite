@@ -121,24 +121,20 @@ function renderLanguageChipsForEventDetails(languages = [], options) {
 
     if (!options) return '';
 
-    return languages.map(({ language, proficiencyLevel }) => {
-        const lang = findMeta(options.languages, language);
-        const level = findMeta(options.proficiencyLevels, proficiencyLevel);
-        const langLabel = translatedLangLabel(language, lang?.label || language);
-        const levelLabel = translatedLevelLabel(proficiencyLevel, level?.label || proficiencyLevel);
-        const levelDesc = level?.description || '';
-        const colors = LEVEL_COLORS[proficiencyLevel] || { bg: '#eef0e4', color: '#4d5c2a' };
+    const groups = groupLanguageLevels(languages);
 
-        return `
-      <div class="lang-level-row">
-        <div class="chip-row">
-          <span class="chip chip-lang">${LANG_META[language]?.flag || ''} ${langLabel}</span>
-          <span class="chip" style="background:${colors.bg};color:${colors.color};">${levelLabel}</span>
-        </div>
-        ${levelDesc ? `<span class="level-desc">${levelDesc}</span>` : ''}
-      </div>
-    `;
+    // One description per distinct level across all languages, in level order.
+    const levelsUsed = LEVEL_ORDER.filter(lvl => groups.some(g => g.levels.includes(lvl)));
+    const descriptions = levelsUsed.map(lvl => {
+        const meta = findMeta(options.proficiencyLevels, lvl);
+        if (!meta?.description) return '';
+        return `<div class="level-desc-row"><strong>${translatedLevelLabel(lvl, meta.label || lvl)}:</strong> ${meta.description}</div>`;
     }).join('');
+
+    return `
+      <div class="lang-chip-row">${groups.map(g => langLevelChipHtml(g, options)).join('')}</div>
+      ${descriptions ? `<div class="level-desc-list">${descriptions}</div>` : ''}
+    `;
 }
 
 function renderFormatChips(categories = [], options) {
@@ -175,21 +171,105 @@ const CATEGORY_ICONS = {
     social: '❤️',
 };
 
-function renderLanguageChips(languages = []) {
-    if (!languages || !languages.length) return '';
+/* ---------------- Language + level chips ----------------
+ * One chip per language containing its own levels:
+ *   [🇬🇧 English ▁▂▃▄ Int – Native]
+ * Sessions store `languages` as flat pairs — [{ language, proficiencyLevel }]
+ * (one entry per language/level combo) — so grouping by language gives the
+ * pairing. groupLanguageLevels() also accepts the grouped shape
+ * [{ code, levels: [...] }] so the renderer keeps working if the API changes.
+ */
+const LEVEL_ORDER = ['beginner', 'upper_beginner', 'intermediate', 'advanced'];
+const LEVEL_BAR_COLORS = {
+    beginner: '#2e9e48',
+    upper_beginner: '#a3b51c',
+    intermediate: '#ec8a1a',
+    advanced: '#d93a2b',
+};
+const LEVEL_SHORT_FALLBACK = {
+    beginner: 'Beg',
+    upper_beginner: 'Upper Beg',
+    intermediate: 'Int',
+    advanced: 'Native',
+};
 
-    const langChips = [...new Set(languages.map(l => l.language))]
-        .map(code => {
-            const meta = LANG_META[code] || { label: code, flag: '' };
-            return `<span class="chip chip-lang">${meta.flag} ${translatedLangLabel(code, meta.label)}</span>`;
-        }).join('');
-
-    const levelChips = [...new Set(languages.map(l => l.proficiencyLevel))]
-        .map(lvl => {
-            const meta = LEVEL_META[lvl] || { label: lvl, bg: '#eef0e4', color: '#4d5c2a' };
-            return `<span class="chip" style="background:${meta.bg};color:${meta.color};">${translatedLevelLabel(lvl, meta.label)}</span>`;
-        }).join('');
-
-    return `<div class="event-row"><div class="chip-row">${langChips}${levelChips}</div></div>`;
+function chipText(key, fallback) {
+    return (window.t && typeof TRANSLATIONS !== 'undefined' && TRANSLATIONS[key]) ? t(key) : fallback;
 }
 
+/** → [{ code, levels: [ordered level codes] }] in first-seen language order. */
+function groupLanguageLevels(languages = []) {
+    const groups = new Map();
+    (languages || []).forEach(entry => {
+        if (!entry) return;
+        const code = entry.code || entry.language;
+        if (!code) return;
+        if (!groups.has(code)) groups.set(code, new Set());
+        const levels = Array.isArray(entry.levels) ? entry.levels : [entry.proficiencyLevel];
+        levels.filter(Boolean).forEach(lvl => groups.get(code).add(lvl));
+    });
+    return [...groups].map(([code, set]) => ({
+        code,
+        levels: LEVEL_ORDER.filter(lvl => set.has(lvl)).concat([...set].filter(lvl => !LEVEL_ORDER.includes(lvl)))
+    }));
+}
+
+function levelShortLabel(lvl) {
+    return chipText(`levelShort_${lvl}`, LEVEL_SHORT_FALLBACK[lvl] || lvl);
+}
+
+/** "All levels" | "Int – Native" (contiguous) | "Intermediate" (single) | "Beg, Native" */
+function levelRangeLabel(levels, options) {
+    const known = levels.filter(lvl => LEVEL_ORDER.includes(lvl));
+    if (!known.length) return '';
+    if (known.length === LEVEL_ORDER.length) return chipText('allLevels', 'All levels');
+    if (known.length === 1) {
+        const meta = findMeta(options?.proficiencyLevels, known[0]);
+        return translatedLevelLabel(known[0], meta?.label || LEVEL_LABELS[known[0]] || known[0]);
+    }
+    const idx = known.map(lvl => LEVEL_ORDER.indexOf(lvl));
+    const contiguous = idx.every((v, i) => i === 0 || v === idx[i - 1] + 1);
+    return contiguous
+        ? `${levelShortLabel(known[0])} – ${levelShortLabel(known[known.length - 1])}`
+        : known.map(levelShortLabel).join(', ');
+}
+
+function levelBarHtml(levels, options) {
+    const covered = new Set(levels);
+    const known = LEVEL_ORDER.filter(lvl => covered.has(lvl));
+    if (!known.length) return '';
+    const fullName = lvl => translatedLevelLabel(lvl, findMeta(options?.proficiencyLevels, lvl)?.label || LEVEL_LABELS[lvl] || lvl);
+    const idx = known.map(lvl => LEVEL_ORDER.indexOf(lvl));
+    const contiguous = idx.every((v, i) => i === 0 || v === idx[i - 1] + 1);
+    const desc = known.length === LEVEL_ORDER.length
+        ? chipText('allLevels', 'All levels')
+        : known.length > 1 && contiguous
+            ? `${fullName(known[0])} ${chipText('levelTo', 'to')} ${fullName(known[known.length - 1])}`
+            : known.map(fullName).join(', ');
+    const aria = `${chipText('levelsAria', 'Levels')}: ${desc}`;
+
+    const segments = LEVEL_ORDER.map((lvl, i) => {
+        const color = covered.has(lvl) ? LEVEL_BAR_COLORS[lvl] : '#dddddd';
+        return `<span class="level-bar-seg" style="height:${6 + i * 3}px;background:${color};"></span>`;
+    }).join('');
+    return `<span class="level-bar" role="img" aria-label="${aria.replace(/"/g, '&quot;')}">${segments}</span>`;
+}
+
+function langLevelChipHtml(group, options) {
+    const meta = LANG_META[group.code] || { label: group.code, flag: '' };
+    const apiLabel = findMeta(options?.languages, group.code)?.label;
+    const langLabel = translatedLangLabel(group.code, apiLabel || meta.label);
+    const rangeLabel = levelRangeLabel(group.levels, options);
+    return `<span class="lang-level-chip">
+        ${meta.flag ? `<span class="lang-level-flag">${meta.flag}</span>` : ''}
+        <span class="lang-level-name">${langLabel}</span>
+        ${levelBarHtml(group.levels, options)}
+        ${rangeLabel ? `<span class="lang-level-label">${rangeLabel}</span>` : ''}
+    </span>`;
+}
+
+function renderLanguageChips(languages = [], options) {
+    if (!languages || !languages.length) return '';
+    const chips = groupLanguageLevels(languages).map(g => langLevelChipHtml(g, options)).join('');
+    return `<div class="event-row"><div class="lang-chip-row">${chips}</div></div>`;
+}
