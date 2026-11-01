@@ -708,31 +708,17 @@ function preBookingModal(sessionId, session) {
     const chipRow = document.getElementById("modalChipRow");
     chipRow.querySelectorAll(".pbm-chip-dynamic").forEach(el => el.remove());
 
+    // One chip per language with its own levels — same renderer as the event
+    // cards (render-langague-level.js).
     const languages = session.languages || [];
-    if (languages.length) {
-        const langNames = [...new Set(languages.map(({ language }) => {
-            const langMeta = findMeta(session.options?.languages, language);
-            const label = translatedLangLabel(language, langMeta?.label || language);
-            const flag = LANG_META[language]?.flag || "";
-            return flag ? `${flag} ${label}` : label;
-        }))].join(", ");
-
-        const langChip = document.createElement("span");
-        langChip.className = "pbm-chip pbm-chip-dynamic";
-        langChip.textContent = langNames;
-        chipRow.appendChild(langChip);
-
-        const levelNames = [...new Set(languages.map(l => l.proficiencyLevel).filter(Boolean).map(levelCode => {
-            const levelMeta = findMeta(session.options?.proficiencyLevels, levelCode);
-            return translatedLevelLabel(levelCode, levelMeta?.label || levelCode);
-        }))];
-
-        if (levelNames.length) {
-            const levelChip = document.createElement("span");
-            levelChip.className = "pbm-chip pbm-chip-dynamic";
-            levelChip.textContent = levelNames.join("–");
-            chipRow.appendChild(levelChip);
-        }
+    if (languages.length && typeof groupLanguageLevels === "function") {
+        groupLanguageLevels(languages).forEach(group => {
+            const tpl = document.createElement("template");
+            tpl.innerHTML = langLevelChipHtml(group, session.options).trim();
+            const chip = tpl.content.firstElementChild;
+            chip.classList.add("pbm-chip-dynamic");
+            chipRow.appendChild(chip);
+        });
     }
 
     renderPreBookingCost(session);

@@ -114,7 +114,7 @@ function buildEventCard(s, { isOnline }) {
                             <div class="event-title">${s.title}</div>
                             <div class="status ${statusClass}"> ${status} </div>
                         </div class="event-row">
-                         ${renderLanguageChips(s.languages)}
+                         ${renderLanguageChips(s.languages, s.options)}
 
                         <div class="event-row">
                             ${readableDateTime}
