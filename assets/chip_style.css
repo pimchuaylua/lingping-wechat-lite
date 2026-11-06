@@ -122,3 +122,132 @@
         font-size: 13px;
     }
 }
+
+/* ---- Card action button: member's own status (js/event-card.js getSessionAction) ---- */
+.session-action {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.book-btn.session-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    white-space: nowrap;
+    box-shadow: none;
+    transform: none;
+    transition: filter 0.15s ease;
+}
+
+.book-btn.session-action-btn:not(:disabled):hover {
+    filter: brightness(0.96);
+}
+
+.book-btn.sa-primary {
+    background: var(--theme);
+    color: #fff;
+}
+
+.book-btn.sa-outline {
+    background: #fff;
+    color: #2F80ED;
+    border: 1.5px solid #2F80ED;
+    padding: 6.5px 14.5px;
+}
+
+.book-btn.sa-chip-booked {
+    background: #e3f4e6;
+    color: #2e7d43;
+}
+
+.book-btn.sa-chip-waitlist {
+    background: #fdf1d6;
+    color: #8a5a00;
+    border: 1px solid #f2d68c;
+    padding: 7px 15px;
+}
+
+.book-btn.sa-chip-host {
+    background: #ece8fb;
+    color: #5b4bb7;
+}
+
+.book-btn.sa-disabled,
+.book-btn.sa-disabled:disabled {
+    background: #ececec;
+    color: #8a8a8a;
+    cursor: default;
+}
+
+.session-action-sub {
+    font-size: 11px;
+    color: #8a8a8a;
+    text-align: right;
+}
+
+.session-action-why {
+    color: #2F80ED;
+    text-decoration: underline;
+}
+
+@media (max-width: 400px) {
+    .book-btn.session-action-btn {
+        font-size: 13px;
+        padding: 7px 12px;
+    }
+
+    .book-btn.sa-outline {
+        padding: 5.5px 10.5px;
+    }
+
+    .book-btn.sa-chip-waitlist {
+        padding: 6px 11px;
+    }
+}
+
+/* ---- event-detail book bar uses the same variants (full-width button) ---- */
+.book-bar .book-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.book-bar .book-btn.sa-outline {
+    padding: 10.5px;
+}
+
+.book-bar .book-btn.sa-chip-waitlist {
+    padding: 11px;
+}
+
+.book-bar .book-btn.sa-static {
+    cursor: default;
+}
+
+.book-bar .book-btn.sa-disabled:disabled {
+    opacity: 1;
+}
+
+.book-bar-note {
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    font-size: 13px;
+    color: #6b6b6b;
+}
+
+.book-bar-note a {
+    color: #2F80ED;
+    text-decoration: underline;
+}

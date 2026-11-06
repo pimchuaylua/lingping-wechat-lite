@@ -72,6 +72,10 @@ window.bookSession = async function ({ sessionId }) {
         if (typeof refreshSessionInfo === "function") {
             refreshSessionInfo();
         }
+        // List pages: re-fetch so the card switches to "Booked".
+        if (typeof window.refreshSessionCards === "function") {
+            window.refreshSessionCards();
+        }
 
         showBookingSuccessModal(bookData);
 
@@ -450,6 +454,9 @@ async function submitWaitlist(sessionId) {
 
         if (res.ok && json.status) {
             showWaitlistSuccessDialog();
+            if (typeof window.refreshSessionCards === "function") {
+                window.refreshSessionCards();
+            }
         } else {
             closeWaitlistDialog();
             const detail = json.result?.message || json.message;

@@ -105,6 +105,17 @@ const TRANSLATIONS = {
 
     // ---- event cards (event-card.js) ----
     attend: { en: "Attend", zh: "参加", th: "เข้าร่วม" },
+    join: { en: "Join", zh: "参加", th: "เข้าร่วม" },
+    booked: { en: "Booked", zh: "已预订", th: "จองแล้ว" },
+    onWaitlist: { en: "On waitlist", zh: "候补中", th: "อยู่ในรายชื่อรอ" },
+    youreHosting: { en: "You're hosting", zh: "你是主持人", th: "คุณเป็นโฮสต์" },
+    bookingPaused: { en: "Booking paused", zh: "暂停预订", th: "ระงับการจองชั่วคราว" },
+    pausedUntil: { en: "until", zh: "直至", th: "จนถึง" },
+    why: { en: "Why?", zh: "为什么？", th: "ทำไม?" },
+    sessionCancelled: { en: "Session cancelled", zh: "活动已取消", th: "กิจกรรมถูกยกเลิก" },
+    noPenaltyForYou: { en: "No penalty for you", zh: "不会扣分", th: "ไม่มีการหักคะแนน" },
+    hostHelpQuestion: { en: "Need help with hosting?", zh: "主持方面需要帮助吗？", th: "ต้องการความช่วยเหลือเรื่องการเป็นโฮสต์ไหม?" },
+    hostHelpLink: { en: "Just let us know!", zh: "随时告诉我们！", th: "บอกเราได้เลย!" },
     joinWaitlist: { en: "Join Waitlist", zh: "加入候补名单", th: "เข้าคิวรอ" },
     waitlistDialogTitle: { en: "This session is full", zh: "此活动已满员", th: "กิจกรรมนี้เต็มแล้ว" },
     waitlistDialogBody: { en: "Join the waitlist and we’ll email you if a spot opens up.", zh: "加入候补名单，如有名额空出，我们会通过邮件通知您。", th: "เข้าคิวรอ แล้วเราจะส่งอีเมลแจ้งคุณหากมีที่นั่งว่าง" },
