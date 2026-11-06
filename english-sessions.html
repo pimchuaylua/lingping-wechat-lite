@@ -15,13 +15,13 @@
     <script src="config.js"></script>
     <script src="js/dropdown.js?v=20261013"></script>
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=202611012"></script>
+    <script src="js/translations.js?v=202611066"></script>
     <script src="js/auth.js?v=20260312"></script>
-    <script src="js/booking.js?v=20261101"></script>
+    <script src="js/booking.js?v=202611062"></script>
     <script src="js/utils.js?v=20250210?v=20260113"></script>
     <script src="js/render-langague-level.js?v=20261101"></script>
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
-    <link rel="stylesheet" href="assets/chip_style.css?v=20261101">
+    <link rel="stylesheet" href="assets/chip_style.css?v=202611061">
 </head>
 
 <body>
@@ -98,7 +98,7 @@
     <div id="preBookingModalContainer"></div>
     <div id="bookingSuccessModalContainer"></div>
 
-    <script src="js/event-card.js?v=20261101"></script>
+    <script src="js/event-card.js?v=20261106"></script>
     <script>
 
         const { BASE_URL, API_KEY } = window.CONFIG;
@@ -107,6 +107,7 @@
         let englishDifficulty = "all";
         let activeDate = null;
         let sessions = [];
+        let sessionViewer = null; // { blockedUntil } when logged in
         let eventOptions = null;
 
         const dateFilter = document.getElementById("dateFilter");
@@ -158,7 +159,7 @@
                 level: ENGLISH_LEVEL_ID
             });
 
-            const res = await fetch(`${BASE_URL}/reading-sessions?${params}`, {
+            const res = await fetch(withViewer(`${BASE_URL}/reading-sessions?${params}`), {
                 headers: {
                     "Content-Type": "application/json",
                     "X-API-KEY": API_KEY
@@ -169,6 +170,7 @@
             if (!res.ok) throw new Error(`Failed to fetch sessions: ${res.status}`);
 
             const json = await res.json();
+            sessionViewer = json.viewer || null;
             return Array.isArray(json.data) ? json.data : [];
         }
 
@@ -194,7 +196,7 @@
                 const card = document.createElement("div");
                 card.className = "card";
                 card.style.cursor = "pointer";
-                card.innerHTML = buildEventCard(s, { isOnline: true });
+                card.innerHTML = buildEventCard(s, { isOnline: true, viewer: sessionViewer });
 
                 card.onclick = (e) => {
                     if (e.target.closest(".book-btn")) return;
@@ -256,6 +258,10 @@
                         location: s.location,
                         maxParticipants: s.maxParticipants,
                         locationUrl: s.locationUrl,
+                        canceledAt: s.canceledAt,
+                        myStatus: s.myStatus,
+                        myWaitlistPosition: s.myWaitlistPosition,
+                        hadBooking: s.hadBooking,
                         levelId: ENGLISH_LEVEL_ID,
                         levelName: s.level,
                         options: eventOptions,
@@ -268,6 +274,7 @@
         }
 
         Auth.renderNav();
+        window.refreshSessionCards = () => init();
         init();
 
         function handleBookClick(sessionId) {

@@ -15,14 +15,14 @@
     <script src="config.js"></script>
     <script src="js/dropdown.js?v=20261013"></script>
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=202611012"></script>
+    <script src="js/translations.js?v=202611066"></script>
     <script src="js/auth.js?v=20260312"></script>
-    <script src="js/booking.js?v=20261101"></script>
+    <script src="js/booking.js?v=202611062"></script>
     <script src="js/utils.js?v=20250210?v=20260113"></script>
     <script src="js/quotes.js"></script>
     <script src="js/render-langague-level.js?v=20261101"></script>
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
-    <link rel="stylesheet" href="assets/chip_style.css?v=20261101">
+    <link rel="stylesheet" href="assets/chip_style.css?v=202611061">
     <link rel="stylesheet" href="assets/filter-bar.css?v=20260908">
     <link rel="stylesheet" href="assets/feed_style.css?v=20261013">
 
@@ -488,7 +488,7 @@
     </div>
     </div>
 
-    <script src="js/event-card.js?v=20261101"></script>
+    <script src="js/event-card.js?v=20261106"></script>
     <script src="js/filter-bar.js?v=202610123"></script>
     <script src="js/feed-share.js?v=20261012"></script>
     <script src="js/feed.js?v=20261013"></script>
@@ -716,6 +716,7 @@
         }
 
         let sessions = [];
+        let sessionViewer = null; // { blockedUntil } when logged in
         let eventOptions = null;
         let currentFromDate, currentToDate;
 
@@ -728,7 +729,7 @@
                 level: currentLevel
             });
 
-            const res = await fetch(`${BASE_URL}/reading-sessions?${params}`, {
+            const res = await fetch(withViewer(`${BASE_URL}/reading-sessions?${params}`), {
                 headers: {
                     "Content-Type": "application/json",
                     "X-API-KEY": API_KEY
@@ -745,6 +746,7 @@
             }
 
             const json = await res.json();
+            sessionViewer = json.viewer || null;
             return Array.isArray(json.data) ? json.data : [];
         }
 
@@ -763,7 +765,7 @@
                 const card = document.createElement("div");
                 card.className = "card";
                 card.style.cursor = "pointer";
-                card.innerHTML = buildEventCard(s, { isOnline });
+                card.innerHTML = buildEventCard(s, { isOnline, viewer: sessionViewer });
 
                 card.onclick = (e) => {
                     if (e.target.closest(".book-btn")) return;
@@ -813,6 +815,9 @@
                         location: s.location,
                         maxParticipants: s.maxParticipants,
                         canceledAt: s.canceledAt,
+                        myStatus: s.myStatus,
+                        myWaitlistPosition: s.myWaitlistPosition,
+                        hadBooking: s.hadBooking,
                         locationUrl: s.locationUrl,
                         hostObjects: hostObjects,
                         levelId: currentLevel,
@@ -823,6 +828,8 @@
                     };
                 });
         }
+
+        window.refreshSessionCards = () => loadSessions();
 
         async function loadSessions() {
             const raw = await getReadingSessions(currentFromDate, currentToDate);

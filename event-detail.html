@@ -15,13 +15,14 @@
 
     <script src="config.js"></script>
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=202611012"></script>
+    <script src="js/translations.js?v=202611066"></script>
     <script src="js/hosts.js?v=9"></script>
-    <script src="js/booking.js?v=20261101"></script>
+    <script src="js/booking.js?v=202611062"></script>
     <script src="js/utils.js?v=20250210"></script>
     <script src="js/render-langague-level.js?v=20261101"></script>
+    <script src="js/event-card.js?v=20261106"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
-    <link rel="stylesheet" href="assets/chip_style.css?v=20261101">
+    <link rel="stylesheet" href="assets/chip_style.css?v=202611061">
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
 </head>
 
@@ -56,8 +57,10 @@
 
     <div class="book-bar">
         <button id="bookBtn" class="book-btn" onclick="event.stopPropagation(); handleBookClick(s.id,s.levelName, s)">
-            Attend
+            Join
         </button>
+
+        <div id="bookBarNote" class="book-bar-note" hidden></div>
 
         <button id="cancelBtn" class="cancel-btn" onclick="event.stopPropagation(); cancelBooking(s.id)"
             style="display:none;" data-i18n="cancelBooking">
@@ -239,6 +242,7 @@
             try {
                 const fresh = await loadSessionById(s.id);
                 if (!fresh) return;
+                await loadViewerStatus(fresh);
                 s = fresh;
                 localStorage.setItem("selectedSession", JSON.stringify(s));
                 renderSession();
@@ -247,30 +251,86 @@
             }
         }
 
+        // { blockedUntil } for the logged-in member, from GET /reading-sessions?userId=
+        let sessionViewer = null;
+
+        // GET /reading-sessions/:id doesn't return the member's own status, so
+        // look this session up in the list endpoint (which does) for its dates.
+        async function loadViewerStatus(session) {
+            if (!userId || !session?.id || !session.startTimeISO) return;
+            try {
+                const start = new Date(session.startTimeISO);
+                const day = 24 * 60 * 60 * 1000;
+                const fmt = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                const params = new URLSearchParams({
+                    fromDate: fmt(new Date(start.getTime() - day)),
+                    toDate: fmt(new Date(start.getTime() + day))
+                });
+
+                const res = await fetch(withViewer(`${BASE_URL}/reading-sessions?${params}`), {
+                    headers: { "Content-Type": "application/json", "X-API-KEY": API_KEY }
+                });
+                if (!res.ok) return;
+
+                const json = await res.json();
+                const match = (json.data || []).find(x => x._id === session.id);
+                sessionViewer = json.viewer || null;
+                if (match) {
+                    session.myStatus = match.myStatus;
+                    session.myWaitlistPosition = match.myWaitlistPosition;
+                    session.hadBooking = match.hadBooking;
+                }
+            } catch (err) {
+                console.error("Failed to load booking status:", err);
+            }
+        }
+
+        function isHostOfSession(session) {
+            return !!userId && (session.hostObjects || session.hosts || [])
+                .some(h => (h?._id || h?.id || h) === userId);
+        }
+
+        // Only "Join" / "Join waitlist" are tappable; status chips just show state.
+        let currentBookAction = null;
+
         function updateBookBar() {
             if (s?.startTimeISO && new Date(s.startTimeISO) < new Date()) {
                 document.querySelector(".book-bar").style.display = "none";
                 return;
             }
 
-            if (userId) {
-                document.getElementById("cancelBtn").style.display = "inline-block";
-            }
-
             if (!s) return;
 
             const bookBtn = document.getElementById("bookBtn");
-            const isCanceled = !!s.canceledAt;
+            const cancelBtn = document.getElementById("cancelBtn");
+            const note = document.getElementById("bookBarNote");
 
-            if (isCanceled) {
-                bookBtn.disabled = true;
-                bookBtn.textContent = t("statusCanceled");
-            } else if (s.isFull) {
-                bookBtn.textContent = t("joinWaitlist");
-                bookBtn.classList.add("waitlist");
-            } else {
-                bookBtn.textContent = t("attend");
+            // myStatus is undefined when the status lookup failed or the user is logged out.
+            const myStatus = s.myStatus ?? (isHostOfSession(s) ? "hosting" : undefined);
+            const action = getSessionAction({ ...s, myStatus }, sessionViewer);
+            currentBookAction = action;
+
+            const isChip = action.variant.startsWith("chip-");
+            bookBtn.className = `book-btn sa-${action.variant}${isChip ? " sa-static" : ""}`;
+            bookBtn.disabled = !!action.disabled;
+            bookBtn.innerHTML = `${action.icon ? ACTION_ICONS[action.icon] : ""}<span>${action.label}</span>`;
+
+            let noteHtml = "";
+            if (myStatus === "hosting" && !s.canceledAt) {
+                noteHtml = `${cardText("hostHelpQuestion", "Need help with hosting?")} <a href="join-us.html">${cardText("hostHelpLink", "Just let us know!")}</a>`;
+            } else if (action.subtext) {
+                noteHtml = action.subtext + (action.whyLink
+                    ? ` · <a href="${action.whyLink}" target="_blank" rel="noopener">${cardText("why", "Why?")}</a>`
+                    : "");
             }
+            note.innerHTML = noteHtml;
+            note.hidden = !noteHtml;
+
+            // Cancel only for a confirmed booking. If the status couldn't be
+            // loaded, keep the old behaviour so members can still cancel.
+            const showCancel = !!userId && !s.canceledAt
+                && (myStatus === "booked" || myStatus === undefined);
+            cancelBtn.style.display = showCancel ? "inline-block" : "none";
         }
 
         function renderSession() {
@@ -774,6 +834,7 @@
             if (sessionId) {
                 try {
                     s = await loadSessionById(sessionId);
+                    if (s) await loadViewerStatus(s);
                 } catch (err) {
                     console.error(err);
                     s = null;
@@ -783,9 +844,20 @@
             }
 
             renderSession();
+
+            // Opened from a list card: `s` is the copy cached by that page, so
+            // its seat count / attendees may be stale. Re-fetch in the background.
+            if (!sessionId && s?.id) {
+                refreshSessionInfo();
+            }
         }
 
         init();
+
+        // Back/forward cache restores the old page as-is; refresh it too.
+        window.addEventListener("pageshow", (e) => {
+            if (e.persisted && s?.id) refreshSessionInfo();
+        });
     </script>
 
     <script>
@@ -826,6 +898,10 @@
             console.log(session);
 
             if (session?.canceledAt) {
+                return;
+            }
+
+            if (currentBookAction && !["primary", "outline"].includes(currentBookAction.variant)) {
                 return;
             }
 

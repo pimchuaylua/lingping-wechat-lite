@@ -46,6 +46,14 @@ window.bookSession = async function ({ sessionId }) {
                 showBookingBlockedModal(bookData.result);
                 return;
             }
+            if (isAlreadyHostError(bookData)) {
+                showAlreadyHostDialog();
+                return;
+            }
+            if (isScheduleConflictError(bookData)) {
+                showScheduleConflictDialog();
+                return;
+            }
             throw new Error(
                 bookData?.result?.originalError ||
                 bookData?.message ||
@@ -63,6 +71,10 @@ window.bookSession = async function ({ sessionId }) {
         // the book/waitlist button, and the attendee list all come from this.
         if (typeof refreshSessionInfo === "function") {
             refreshSessionInfo();
+        }
+        // List pages: re-fetch so the card switches to "Booked".
+        if (typeof window.refreshSessionCards === "function") {
+            window.refreshSessionCards();
         }
 
         showBookingSuccessModal(bookData);
@@ -352,6 +364,40 @@ function showWaitlistSuccessDialog() {
     );
 }
 
+// Backend rejects a booking by one of the session's hosts. Match on the
+// error code or message since the exact shape may vary.
+function isAlreadyHostError(bookData) {
+    return /host/i.test(bookingErrorText(bookData));
+}
+
+function bookingErrorText(bookData) {
+    const r = bookData?.result || {};
+    return [r.error, r.code, r.originalError, bookData?.error, bookData?.code, bookData?.message]
+        .filter(v => typeof v === "string")
+        .join(" ");
+}
+
+// Backend rejects a booking that overlaps another session the user booked.
+function isScheduleConflictError(bookData) {
+    return /conflict|overlap/i.test(bookingErrorText(bookData));
+}
+
+function showScheduleConflictDialog() {
+    renderWaitlistDialog(
+        waitlistText("scheduleConflictTitle", "Schedule conflict"),
+        waitlistText("scheduleConflictBody", "You already have another session scheduled during this time. Please choose a different session."),
+        [{ label: waitlistText("gotIt", "Got it"), variant: "primary", onClick: closeWaitlistDialog }]
+    );
+}
+
+function showAlreadyHostDialog() {
+    renderWaitlistDialog(
+        waitlistText("alreadyHostTitle", "You're the host 🎤"),
+        waitlistText("alreadyHostBody", "You're hosting this session, so there's no need to book a spot. We look forward to seeing you!"),
+        [{ label: waitlistText("gotIt", "Got it"), variant: "primary", onClick: closeWaitlistDialog }]
+    );
+}
+
 function closeWaitlistDialog() {
     const overlay = document.getElementById("waitlistDialog");
     if (overlay) overlay.hidden = true;
@@ -408,6 +454,9 @@ async function submitWaitlist(sessionId) {
 
         if (res.ok && json.status) {
             showWaitlistSuccessDialog();
+            if (typeof window.refreshSessionCards === "function") {
+                window.refreshSessionCards();
+            }
         } else {
             closeWaitlistDialog();
             const detail = json.result?.message || json.message;
