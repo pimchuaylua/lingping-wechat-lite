@@ -6,7 +6,7 @@
     <title>Edit Session</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="config.js"></script>
-    <script src="js/utils.js?v=20250210"></script>
+    <script src="js/utils.js?v=20261106"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="assets/chip_style.css?v=202611061">
     <script src="js/render-langague-level.js?v=20261101"></script>
@@ -326,7 +326,7 @@
 
             try {
                 const formData = new FormData();
-                formData.append('photo', file);
+                formData.append('photo', await Utils.compressImage(file));
 
                 const res = await fetch(`${BASE_URL}/reading-sessions/photo`, {
                     method: 'POST',

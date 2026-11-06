@@ -146,6 +146,44 @@ window.Utils = {
         return tz.split("/").pop().replace("_", " ");
     },
 
+    // Production rejects uploads over ~1 MB (413, which the browser reports as
+    // a CORS error), so resize + re-encode photos as JPEG before uploading.
+    // Steps the quality down until the file fits; returns a File.
+    async compressImage(file, { maxDim = 1600, maxBytes = 900 * 1024 } = {}) {
+        if (!file || !file.type.startsWith("image/") || file.type === "image/gif") return file;
+        if (file.size <= maxBytes && file.type === "image/jpeg") return file;
+
+        let bitmap;
+        try {
+            bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+        } catch (err) {
+            // e.g. HEIC on browsers that can't decode it — upload the original.
+            return file;
+        }
+
+        let dim = maxDim;
+        for (let attempt = 0; attempt < 6; attempt++) {
+            const scale = Math.min(1, dim / Math.max(bitmap.width, bitmap.height));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.round(bitmap.width * scale);
+            canvas.height = Math.round(bitmap.height * scale);
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#fff"; // transparent PNG areas would turn black in JPEG
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+
+            for (const quality of [0.85, 0.75, 0.65]) {
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
+                if (blob && blob.size <= maxBytes) {
+                    const name = file.name.replace(/\.[^.]+$/, "") + ".jpg";
+                    return new File([blob], name, { type: "image/jpeg" });
+                }
+            }
+            dim = Math.round(dim * 0.75);
+        }
+        return file;
+    },
+
     goBackOrHome(fallbackUrl = "../index.html") {
         if (document.referrer && document.referrer !== "") {
             window.history.back();
