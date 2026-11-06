@@ -97,6 +97,35 @@
         .sub::placeholder {
             color: #b3b0a6;
         }
+
+        .section input[type="file"].sub {
+            padding: 10px;
+            border: 1px dashed #e5e7eb;
+            background: #fafafa;
+            color: #6b7280;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .section input[type="file"].sub::file-selector-button,
+        .section input[type="file"].sub::-webkit-file-upload-button {
+            margin-right: 12px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background: var(--theme);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .section input[type="file"].sub::file-selector-button:hover,
+        .section input[type="file"].sub::-webkit-file-upload-button:hover {
+            background: #f0a03d;
+        }
     </style>
 </head>
 
@@ -155,7 +184,7 @@
                 s.options = eventOptions;
 
                 container.innerHTML = `
-                    <div class="back-btn" onclick="history.back()">← Back</div>
+                    <div class="back-btn" onclick="goBackFresh()">← Back</div>
                     <h1>Edit Session</h1>
 
                     <div class="section">
@@ -236,6 +265,16 @@
                         <div class="label">Max Participants</div>
                         <input class="sub" type="number" id="maxParticipants" value="${s.maxParticipants || ''}">
                     </div>
+
+                    <div class="section">
+                        <div class="label">Photo</div>
+                        <div class="hint">Optional. Choose a new photo to replace the current one.</div>
+                        <div id="photoPreviewWrap" style="display:${s.photoUrl ? 'block' : 'none'}; margin-bottom:10px;">
+                            <img id="photoPreview" src="${s.photoUrl || ''}" style="max-width:100%; border-radius:10px; display:block;">
+                        </div>
+                        <input class="sub" type="file" accept="image/*" id="photoInput" onchange="handlePhotoUpload(event)">
+                        <div class="char-count" id="photoStatus"></div>
+                    </div>
                 `;
 
                 document.querySelectorAll('textarea[id^="fullDescription"]').forEach(updateWordCount);
@@ -251,6 +290,72 @@
             } catch (err) {
                 console.error(err);
                 container.innerHTML = '<p>Failed to load session.</p>';
+            }
+        }
+
+        // Reload the previous page instead of history.back(), which can show a cached copy without the edits.
+        function goBackFresh() {
+            let target = 'my-bookings.html';
+            try {
+                if (document.referrer && new URL(document.referrer).origin === location.origin) {
+                    target = document.referrer;
+                }
+            } catch (err) { }
+            location.replace(target);
+        }
+
+        // Only sent on save when the host picked a new photo.
+        let uploadedPhotoUrl = null;
+        let photoUploading = false;
+
+        async function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const previewWrap = document.getElementById('photoPreviewWrap');
+            const preview = document.getElementById('photoPreview');
+            const status = document.getElementById('photoStatus');
+            const previousSrc = preview.getAttribute('src');
+
+            preview.src = URL.createObjectURL(file);
+            previewWrap.style.display = 'block';
+            status.textContent = 'Uploading...';
+            status.classList.remove('char-count-invalid');
+            uploadedPhotoUrl = null;
+            photoUploading = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('photo', file);
+
+                const res = await fetch(`${BASE_URL}/reading-sessions/photo`, {
+                    method: 'POST',
+                    headers: {
+                        'X-API-KEY': API_KEY
+                    },
+                    body: formData
+                });
+
+                const json = await res.json();
+
+                if (!res.ok || !json.status || !json.data?.photoUrl) {
+                    throw new Error(json.message || 'Upload failed');
+                }
+
+                uploadedPhotoUrl = json.data.photoUrl;
+                status.textContent = 'Photo uploaded ✓ Save changes to apply.';
+            } catch (err) {
+                console.error('Photo upload failed:', err);
+                status.textContent = 'Failed to upload photo. The current photo will be kept.';
+                status.classList.add('char-count-invalid');
+                event.target.value = '';
+                if (previousSrc) {
+                    preview.src = previousSrc;
+                } else {
+                    previewWrap.style.display = 'none';
+                }
+            } finally {
+                photoUploading = false;
             }
         }
 
@@ -283,6 +388,11 @@
         }
 
         async function saveSession() {
+            if (photoUploading) {
+                alert('Photo is still uploading. Please wait a moment.');
+                return;
+            }
+
             const descriptionEl = document.getElementById('fullDescription_en');
             const wordCount = countWords(descriptionEl.value);
 
@@ -323,6 +433,7 @@
                 locationUrl: val('locationUrl') || undefined,
                 hostIds: idList('hostIds'),
                 maxParticipants: Number(val('maxParticipants')) || undefined,
+                photoUrl: uploadedPhotoUrl || undefined,
                 translations: {
                     en_US: {
                         title: toTitleCase(val('title_en')),

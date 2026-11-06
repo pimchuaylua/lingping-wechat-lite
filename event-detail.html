@@ -15,9 +15,9 @@
 
     <script src="config.js"></script>
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=202611012"></script>
+    <script src="js/translations.js?v=202611063"></script>
     <script src="js/hosts.js?v=9"></script>
-    <script src="js/booking.js?v=20261101"></script>
+    <script src="js/booking.js?v=202611061"></script>
     <script src="js/utils.js?v=20250210"></script>
     <script src="js/render-langague-level.js?v=20261101"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
@@ -783,9 +783,20 @@
             }
 
             renderSession();
+
+            // Opened from a list card: `s` is the copy cached by that page, so
+            // its seat count / attendees may be stale. Re-fetch in the background.
+            if (!sessionId && s?.id) {
+                refreshSessionInfo();
+            }
         }
 
         init();
+
+        // Back/forward cache restores the old page as-is; refresh it too.
+        window.addEventListener("pageshow", (e) => {
+            if (e.persisted && s?.id) refreshSessionInfo();
+        });
     </script>
 
     <script>

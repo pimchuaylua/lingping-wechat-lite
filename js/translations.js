@@ -112,6 +112,10 @@ const TRANSLATIONS = {
     waitlistSuccessBody: { en: "We’ll email you if a spot opens or a new session is added. Signup is first come, first served.", zh: "如有名额空出或新增场次，我们会通过邮件通知您。报名遵循先到先得原则。", th: "เราจะส่งอีเมลแจ้งคุณหากมีที่นั่งว่างหรือมีการเพิ่มรอบใหม่ การสมัครเป็นแบบใครมาก่อนได้ก่อน" },
     notNow: { en: "Not now", zh: "暂不", th: "ไว้ทีหลัง" },
     gotIt: { en: "Got it", zh: "知道了", th: "เข้าใจแล้ว" },
+    alreadyHostTitle: { en: "You're the host 🎤", zh: "你是本场主持人 🎤", th: "คุณเป็นโฮสต์ 🎤" },
+    alreadyHostBody: { en: "You're hosting this session, so there's no need to book a spot. We look forward to seeing you!", zh: "你是本场活动的主持人，无需预订名额。期待与你相见！", th: "คุณเป็นโฮสต์ของกิจกรรมนี้ จึงไม่ต้องจองที่นั่ง แล้วพบกันนะ!" },
+    scheduleConflictTitle: { en: "Schedule conflict", zh: "时间冲突", th: "เวลาทับซ้อน" },
+    scheduleConflictBody: { en: "You already have another session scheduled during this time. Please choose a different session.", zh: "你在这个时间段已经有其他活动安排，请选择其他时间段的活动。", th: "คุณได้จองกิจกรรมอื่นที่มีช่วงเวลาทับซ้อนกับกิจกรรมนี้ไว้แล้ว กรุณาเลือกกิจกรรมในช่วงเวลาอื่น" },
     hostedBy: { en: "With", zh: "和", th: "มาคุยกับ" },
     hostedByEnd: { en: "", zh: "一起", th: "" },
     statusAvailable: { en: "Available", zh: "可预订", th: "ว่าง" },
@@ -336,7 +340,7 @@ const TRANSLATIONS = {
 
     // ---- my-bookings.html ----
     upcomingSessions: { en: "Upcoming Sessions", zh: "近期活动", th: "กิจกรรมที่กำลังจะมาถึง" },
-    eventsHosting: { en: "My Ideas", zh: "我的点子", th: "ไอเดียของฉัน" },
+    eventsHosting: { en: "Sessions I'm Hosting", zh: "我主持的活动", th: "กิจกรรมที่ฉันเป็นโฮสต์" },
     eventsAttending: { en: "Events I'm Joining", zh: "我参加的活动", th: "กิจกรรมที่ฉันเข้าร่วม" },
     helloUser: { en: "Hello", zh: "你好", th: "สวัสดี" },
     logout: { en: "Logout", zh: "退出登录", th: "ออกจากระบบ" },
@@ -344,7 +348,7 @@ const TRANSLATIONS = {
     pleaseLogInBookings: { en: "Please log in to see your bookings.", zh: "请登录以查看您的预订。", th: "กรุณาเข้าสู่ระบบเพื่อดูการจองของคุณ" },
     noUpcomingBookings: { en: "You have no upcoming bookings.", zh: "您暂无即将进行的预订。", th: "คุณไม่มีการจองที่กำลังจะมาถึง" },
     noUpcomingHosted: { en: "You have no upcoming hosted events.", zh: "您暂无即将主持的活动。", th: "คุณไม่มีกิจกรรมที่กำลังจะเป็นผู้นำ" },
-    hosting: { en: "My Idea", zh: "我的点子", th: "ไอเดียของฉัน" },
+    hosting: { en: "Hosting", zh: "我主持的", th: "ที่ฉันเป็นโฮสต์" },
     joining: { en: "Joining", zh: "已参加", th: "เข้าร่วมแล้ว" },
     edit: { en: "Edit", zh: "编辑", th: "แก้ไข" },
     addToGoogleCalendar: { en: "Add to Google Calendar", zh: "添加到 Google 日历", th: "เพิ่มลง Google ปฏิทิน" },
