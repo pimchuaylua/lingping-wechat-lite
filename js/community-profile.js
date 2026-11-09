@@ -191,6 +191,12 @@ async function loadProfile() {
         const data = await fetchProfile();
         if (!data) return;
 
+        // Languages save on their own (pop-up), not with the form's Save.
+        const languagesEl = document.getElementById("languagesSummary");
+        if (languagesEl && window.LanguagesSummary) {
+            LanguagesSummary.mount(languagesEl, { userId: USER_ID, languages: data.languages || [] });
+        }
+
         document.getElementById("displayName").value = data.displayName ?? "";
         document.getElementById("bio").value = data.bio ?? "";
         document.getElementById("description").value = data.description ?? "";

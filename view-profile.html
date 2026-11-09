@@ -9,6 +9,10 @@
     <script src="config.js"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="assets/view-profile_style.css">
+    <link rel="stylesheet" href="assets/language-picker.css?v=202611093">
+    <script src="js/translate.js?v=20260911"></script>
+    <script src="js/translations.js?v=202611095"></script>
+    <script src="js/language-picker.js?v=202611093"></script>
     <style>
 
     </style>
@@ -16,8 +20,8 @@
 
 <body>
     <div class="container">
-        <div class="back-btn" onclick="history.back()">← Back</div>
-        <div id="profileContent">Loading profile...</div>
+        <div class="back-btn" onclick="history.back()" data-i18n="backBtn">← Back</div>
+        <div id="profileContent" data-i18n="vpLoading">Loading profile...</div>
     </div>
 
     <script>
@@ -28,7 +32,7 @@
         const viewUserId = new URLSearchParams(window.location.search).get("userId");
 
         if (!viewUserId) {
-            container.innerHTML = "<p>User not found.</p>";
+            container.innerHTML = `<p>${t("vpUserNotFound")}</p>`;
         } else {
             loadProfile();
         }
@@ -46,9 +50,9 @@
                 if (res.status === 404) {
                     container.innerHTML = `
             <div class="profile-card">
-                <h2>Profile not available</h2>
-                <p class="sub">This member hasn’t created a public profile yet.</p>
-                <p class="sub">You can still see them in sessions and activities 😊</p>
+                <h2>${t("vpNotAvailableTitle")}</h2>
+                <p class="sub">${t("vpNotAvailableSub1")}</p>
+                <p class="sub">${t("vpNotAvailableSub2")}</p>
             </div>`;
                     return;
                 }
@@ -72,7 +76,7 @@
                 <!-- Top-Right Edit Button (Renders only on your own profile) -->
                 ${isOwnProfile ? `
                     <a href="community-profile.html" class="edit-btn">
-                        ✏️ Edit
+                        ✏️ ${t("edit")}
                     </a>
                 ` : ''}
 
@@ -83,7 +87,7 @@
                             src="${avatarSrc}"
                             onclick="openImageModal('${avatarSrc}')"
                         >
-                        <h2>${p.displayName || p.user?.displayName || 'Member'}</h2>
+                        <h2>${p.displayName || p.user?.displayName || t('vpMember')}</h2>
                         
                         ${(pi.badges && pi.badges.length) ? `
                             <div class="badges-container">
@@ -116,29 +120,31 @@
                         ` : ''}
                     </div>
 
+                    <div id="languagesBlock" hidden></div>
+
                     ${hasProgress ? `
                     <div class="stats-container">
                         <!-- Host Progress -->
                         <div class="stat-group">
-                            <div class="stat-title">🎙️ Host Progress <span>(${pi.host.currentPoints} points)</span></div>
+                            <div class="stat-title">🎙️ ${t("vpHostProgress")} <span>${t("vpPoints").replace("{n}", pi.host.currentPoints)}</span></div>
                             <div class="progress-bar-bg">
                                 <div class="progress-bar-fill" style="width: ${pi.host.progressPercentage}%"></div>
                             </div>
                             <div class="stat-detail">
-                                <span>Lvl ${pi.host.level} • ${pi.host.badgeName || pi.host.badge || 'No Hosting Activity'}</span>
-                                <strong>${pi.host.currentPoints} / ${pi.host.maxPoints} pts</strong>
+                                <span>${t('vpLvl')} ${pi.host.level} • ${pi.host.badgeName || pi.host.badge || t('vpNoHosting')}</span>
+                                <strong>${pi.host.currentPoints} / ${pi.host.maxPoints} ${t("vpPts")}</strong>
                             </div>
                         </div>
 
                         <!-- Learn Progress -->
                         <div class="stat-group">
-                            <div class="stat-title">📚 Learn Progress <span>(${pi.learn.currentPoints} points)</span></div>
+                            <div class="stat-title">📚 ${t("vpLearnProgress")} <span>${t("vpPoints").replace("{n}", pi.learn.currentPoints)}</span></div>
                             <div class="progress-bar-bg">
                                 <div class="progress-bar-fill" style="width: ${pi.learn.progressPercentage}%"></div>
                             </div>
                             <div class="stat-detail">
-                                <span>Lvl ${pi.learn.level} • ${pi.learn.badgeName || pi.learn.badge}</span>
-                                <strong>${pi.learn.currentPoints} / ${pi.learn.maxPoints} pts</strong>
+                                <span>${t("vpLvl")} ${pi.learn.level} • ${pi.learn.badgeName || pi.learn.badge}</span>
+                                <strong>${pi.learn.currentPoints} / ${pi.learn.maxPoints} ${t("vpPts")}</strong>
                             </div>
                         </div>
 
@@ -152,14 +158,14 @@
                 <div class="right-col">
                     ${p.description?.trim().length > 1 ? `
                         <div class="profile-section">
-                            <div class="section-title">About ${p.displayName}</div>
+                            <div class="section-title">${t("vpAbout").replace("{name}", p.displayName)}</div>
                             ${renderDescription(p.description)}
                         </div>
                         ` : ""}
 
                     ${p.topicsOfInterests && p.topicsOfInterests.length ? `
                     <div class="profile-section">
-                        <div class="section-title">Topics of Interest</div>
+                        <div class="section-title">${t("vpTopics")}</div>
                         <div>
                             ${p.topicsOfInterests.map(t => `<span class="topic">${t.name}</span>`).join("")}
                         </div>
@@ -168,7 +174,7 @@
 
                     ${(p.funPrompts || []).filter(fp => fp.answer && fp.answer.trim()).length ? `
                     <div class="profile-section">
-                        <div class="section-title">Fun Facts</div>
+                        <div class="section-title">${t("vpFunFacts")}</div>
                         ${(p.funPrompts || []).filter(fp => fp.answer && fp.answer.trim()).map(fp => `
                             <div class="fun-prompt">
                                 <strong>${fp.question}</strong>
@@ -187,9 +193,15 @@
                 <img id="modalImage" class="modal-image">
             </div>
         `;
+
+                LanguagesBlock.mount(document.getElementById("languagesBlock"), {
+                    userId: viewUserId,
+                    languages: p.languages || [],
+                    isOwn: isOwnProfile
+                });
             } catch (err) {
                 console.error(err);
-                container.innerHTML = "<p>Failed to load profile.</p>";
+                container.innerHTML = `<p>${t("vpFailed")}</p>`;
             }
         }
 
@@ -230,7 +242,7 @@
             const safeShort = encodeURIComponent(shortText);
 
             return `
-        <p class="profile-description"><span class="desc-content">${shortText}...</span><button type="button" class="desc-toggle-btn" onclick="toggleDescription(this, '${safeFull}', '${safeShort}')">Show more <span class="arrow">▼</span></button></p>
+        <p class="profile-description"><span class="desc-content">${shortText}...</span><button type="button" class="desc-toggle-btn" onclick="toggleDescription(this, '${safeFull}', '${safeShort}')">${t("vpShowMore")} <span class="arrow">▼</span></button></p>
     `;
         }
 
@@ -240,11 +252,11 @@
 
             if (isExpanded) {
                 textSpan.innerText = decodeURIComponent(safeShort) + "...";
-                btn.innerHTML = 'Show more <span class="arrow">▼</span>';
+                btn.innerHTML = `${t("vpShowMore")} <span class="arrow">▼</span>`;
                 btn.classList.remove("expanded");
             } else {
                 textSpan.innerText = decodeURIComponent(safeFull) + " ";
-                btn.innerHTML = 'Show less <span class="arrow">▲</span>';
+                btn.innerHTML = `${t("vpShowLess")} <span class="arrow">▲</span>`;
                 btn.classList.add("expanded");
             }
         };

@@ -12,7 +12,9 @@
     background: #E9E6E0;
     border-radius: 14px;
     padding: 4px;
-    margin: 10px 0 14px;
+    margin: 10px auto 14px;
+    width: 100%;
+    box-sizing: border-box;
     max-width: 480px;
 }
 
