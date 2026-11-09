@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="assets/chip_style.css?v=202611061">
     <script src="js/render-langague-level.js?v=20261101"></script>
+    <link rel="stylesheet" href="assets/cohost_style.css?v=202611093">
+    <script src="js/cohost-picker.js?v=202611093"></script>
     <style>
         .blurb {
             color: #6b7280;
@@ -302,6 +304,8 @@
         let eventOptions = null;
         let levels = [];
         let hostDisplayName = username || 'You';
+        let hostProfilePic = '';
+        const MAX_COHOSTS = 3;
         let onlineCommunityLevelId = '695c763e2d652e065db71030';
         let uploadedPhotoUrl = null;
         const DEFAULT_PHOTO_URL = 'https://lingping-club.s3.ap-southeast-1.amazonaws.com/cm+pim.jpg';
@@ -338,6 +342,7 @@
                     }
                 });
                 const json = await res.json();
+                hostProfilePic = json?.data?.profilePic || '';
                 return json?.data?.displayName || json?.displayName || username || 'You';
             } catch (err) {
                 console.error(err);
@@ -432,10 +437,7 @@
                     <div class="char-count" id="fullDescription_en_count"></div>
                 </div>
 
-                <div class="section">
-                    <div class="label">Host</div>
-                    <input class="sub" readonly value="${hostDisplayName}">
-                </div>
+                <div id="cohostMount"></div>
 
                 <div class="section">
                     <div class="label">Event Type</div>
@@ -562,6 +564,13 @@
             toggleTypeFields();
 
             renderLangBlocks();
+
+            CohostPicker.mount(document.getElementById('cohostMount'), {
+                hostId: userId,
+                hostName: hostDisplayName,
+                hostPic: hostProfilePic,
+                max: MAX_COHOSTS
+            });
         }
 
         function toggleTypeFields() {
@@ -821,7 +830,7 @@
                 durationMins: Number(val('durationMins')) || undefined,
                 locationUrl: val('locationUrl') || '',
                 photoUrl: uploadedPhotoUrl || DEFAULT_PHOTO_URL,
-                hostIds: [userId],
+                hostIds: [userId, ...CohostPicker.getIds()],
                 maxParticipants: Number(val('maxParticipants')) || undefined,
                 levelId,
                 isFull: false,
@@ -859,6 +868,8 @@
                 if (res.ok && json.status) {
                     alert('Event created ✅');
                     window.location.href = 'my-bookings.html?type=hosting';
+                } else if (CohostPicker.handleSaveError(json)) {
+                    console.error('Create event error response:', json);
                 } else {
                     console.error('Create event error response:', json);
                     const detail = Array.isArray(json.message)

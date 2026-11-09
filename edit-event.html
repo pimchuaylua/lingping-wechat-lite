@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="assets/chip_style.css?v=202611061">
     <script src="js/render-langague-level.js?v=20261101"></script>
+    <link rel="stylesheet" href="assets/cohost_style.css?v=202611093">
+    <script src="js/cohost-picker.js?v=202611093"></script>
     <style>
         .input-invalid {
             border-color: #b3441f !important;
@@ -215,11 +217,7 @@
                         ${renderLanguageChipsForEventDetails(s.languages, s.options)}
                     </div>
 
-                    <div class="section">
-                        <div class="label">Hosts</div>
-                        <input class="sub" readonly value="${(s.hosts || []).map(h => h.profile?.displayName || h.displayName).join(', ')}">
-                        <input type="hidden" id="hostIds" value="${(s.hosts || []).map(h => h._id || h).join(',')}">
-                    </div>
+                    <div id="cohostMount"></div>
 
                     <div class="section">
                         <div class="label">Date</div>
@@ -278,6 +276,7 @@
                 `;
 
                 document.querySelectorAll('textarea[id^="fullDescription"]').forEach(updateWordCount);
+                mountCohostPicker(s);
                 const timezoneEl = document.getElementById('timezone');
                 const timeEl = document.getElementById('time');
 
@@ -359,6 +358,27 @@
             }
         }
 
+        const MAX_COHOSTS = 3;
+        let mainHostId = null;
+
+        // The logged-in user is the main host if they host this session; otherwise
+        // (an admin editing) the first host is. Everyone else is a co-host.
+        function mountCohostPicker(s) {
+            const viewerId = localStorage.getItem('userId');
+            const hosts = (s.hosts || []).map(CohostPicker.fromUser).filter(h => h && h.id);
+            const main = hosts.find(h => h.id === viewerId) || hosts[0] || { id: viewerId, name: 'You', pic: '' };
+            mainHostId = main.id;
+
+            CohostPicker.mount(document.getElementById('cohostMount'), {
+                hostId: main.id,
+                hostName: main.name,
+                hostPic: main.pic,
+                hostIsYou: main.id === viewerId,
+                initial: hosts.filter(h => h.id !== main.id),
+                max: MAX_COHOSTS
+            });
+        }
+
         const MIN_WORDS = 20; // adjust to whatever threshold you want
 
         function val(id) {
@@ -431,7 +451,7 @@
                 timezone,
                 durationMins: Number(val('durationMins')) || undefined,
                 locationUrl: val('locationUrl') || undefined,
-                hostIds: idList('hostIds'),
+                hostIds: [mainHostId, ...CohostPicker.getIds()].filter(Boolean),
                 maxParticipants: Number(val('maxParticipants')) || undefined,
                 photoUrl: uploadedPhotoUrl || undefined,
                 translations: {
@@ -461,6 +481,8 @@
 
                 if (res.ok && json.status) {
                     alert('Session updated ✅');
+                } else if (CohostPicker.handleSaveError(json)) {
+                    console.error('Update session error response:', json);
                 } else {
                     alert(json.message || 'Failed to update session.');
                 }
