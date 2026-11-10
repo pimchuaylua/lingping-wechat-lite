@@ -12,6 +12,8 @@
     <script src="js/render-langague-level.js?v=20261101"></script>
     <link rel="stylesheet" href="assets/cohost_style.css?v=202611093">
     <script src="js/cohost-picker.js?v=202611093"></script>
+    <link rel="stylesheet" href="assets/materials.css?v=202611101">
+    <script src="js/materials.js?v=202611101"></script>
     <style>
         .blurb {
             color: #6b7280;
@@ -293,6 +295,7 @@
         <button class="book-btn" id="saveBtn" onclick="createSession()">
             Create Event
         </button>
+        <div class="mat-wait-note" id="matWaitNote" hidden>Waiting for upload to finish…</div>
     </div>
 
     <script>
@@ -554,6 +557,8 @@
                     </div>
                     <div class="char-count" id="photoStatus"></div>
                 </div>
+
+                <div class="section" id="materialsMount"></div>
             `;
 
             document.querySelectorAll('textarea[id^="fullDescription"]').forEach(updateWordCount);
@@ -571,6 +576,25 @@
                 hostPic: hostProfilePic,
                 max: MAX_COHOSTS
             });
+            mountMaterials();
+        }
+
+        // "Before you come" materials editor (js/materials.js). Save stays
+        // disabled while a PDF is uploading.
+        let materialsEditor = null;
+
+        function mountMaterials(initial) {
+            materialsEditor = Materials.createEditor(document.getElementById('materialsMount'), {
+                initial: initial || [],
+                userId: localStorage.getItem('userId'),
+                onBusyChange: syncSaveBtn
+            });
+        }
+
+        function syncSaveBtn() {
+            const busy = !!materialsEditor?.isBusy();
+            document.getElementById('saveBtn').disabled = busy;
+            document.getElementById('matWaitNote').hidden = !busy;
         }
 
         function toggleTypeFields() {
@@ -739,6 +763,7 @@
         }
 
         async function createSession() {
+            if (materialsEditor?.isBusy()) return;
             const descriptionEl = document.getElementById('fullDescription_en');
             const wordCount = countWords(descriptionEl.value);
 
@@ -824,6 +849,8 @@
                 shortDescription: "NA",
             };
 
+            if (materialsEditor && !materialsEditor.validate()) return;
+
             const body = {
                 startTime,
                 timezone,
@@ -836,6 +863,7 @@
                 isFull: false,
                 topicIds: [],
                 readingSourceIds: [],
+                materials: materialsEditor ? materialsEditor.getPayload() : undefined,
                 type,
                 online,
                 cost,
@@ -868,7 +896,7 @@
                 if (res.ok && json.status) {
                     alert('Event created ✅');
                     window.location.href = 'my-bookings.html?type=hosting';
-                } else if (CohostPicker.handleSaveError(json)) {
+                } else if (CohostPicker.handleSaveError(json) || materialsEditor?.handleSaveError(json)) {
                     console.error('Create event error response:', json);
                 } else {
                     console.error('Create event error response:', json);
@@ -881,8 +909,8 @@
                 console.error(err);
                 alert('Failed to create event.');
             } finally {
-                saveBtn.disabled = false;
                 saveBtn.textContent = 'Create Event';
+                syncSaveBtn();
             }
         }
 

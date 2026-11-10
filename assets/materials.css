@@ -1,0 +1,245 @@
+/* "Before you come" materials — see js/materials.js */
+
+/* ---------- 1. Events list card strip ---------- */
+.mat-strip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin: 4px 0 10px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 10px;
+    background: #E9F4F2;
+    color: #0F5A53;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+.mat-strip:focus-visible { outline: 2px solid #0F5A53; outline-offset: 2px; }
+.mat-strip-icon { display: flex; flex-shrink: 0; }
+.mat-strip-text { flex: 1; min-width: 0; font-size: 13px; font-weight: 700; line-height: 1.35; }
+.mat-strip-see { flex-shrink: 0; font-size: 13px; font-weight: 700; text-decoration: underline; white-space: nowrap; }
+
+/* ---------- 2. Session detail section ---------- */
+.mat-detail {
+    margin: 16px 0;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid #ECE6DC;
+    border-radius: 16px;
+    scroll-margin-top: 16px;
+}
+.mat-detail:focus { outline: none; }
+.mat-detail-title { margin: 0 0 4px; font-size: 17px; font-weight: 800; color: #0F5A53; }
+.mat-detail-sub { margin: 0 0 12px; font-size: 14px; color: #4A453F; line-height: 1.45; }
+.mat-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 64px;
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid #ECE6DC;
+    border-radius: 12px;
+    background: #fff;
+    color: #2B2622;
+    text-decoration: none;
+}
+a.mat-item:hover { background: #FCFBF8; }
+a.mat-item:focus-visible { outline: 2px solid #0F5A53; outline-offset: 2px; }
+.mat-item-icon {
+    width: 44px; height: 44px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 12px;
+}
+.mat-item-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.mat-item-type { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em; }
+.mat-item-title { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mat-item-ext { display: flex; flex-shrink: 0; color: #6A645C; }
+
+/* ---------- 3. Confirm Booking notice ---------- */
+.mat-notice {
+    display: flex;
+    gap: 12px;
+    margin: 4px 0 14px;
+    padding: 14px;
+    border-radius: 14px;
+    background: #E9F4F2;
+    color: #0F4F49;
+    text-align: left;
+}
+.mat-notice-icon { display: flex; flex-shrink: 0; margin-top: 1px; }
+.mat-notice-title { font-size: 15px; font-weight: 700; }
+.mat-notice-line { margin-top: 2px; font-size: 13px; line-height: 1.45; }
+
+/* ---------- 4. Host form editor ---------- */
+.mat-editor-title { margin: 0; font-size: 17px; font-weight: 800; color: #2B2622; }
+.mat-optional { font-size: 14px; font-weight: 600; color: #6A645C; }
+.mat-editor-help { margin: 4px 0 12px; font-size: 14px; color: #4A453F; line-height: 1.45; }
+.mat-rows { display: flex; flex-direction: column; gap: 12px; }
+.mat-rows:empty { display: none; }
+
+.mat-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+    background: #FCFBF8;
+    border: 1px solid #ECE6DC;
+    border-radius: 12px;
+}
+.mat-row.has-error { border-color: #E5A39B; }
+.mat-row-top { display: flex; align-items: center; gap: 4px; }
+
+.mat-types { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; min-width: 0; }
+.mat-type {
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid #DDD6CB;
+    border-radius: 999px;
+    background: #fff;
+    color: #2B2622;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.mat-type.is-on { background: #0F6B63; border-color: #0F6B63; color: #fff; }
+.mat-remove {
+    width: 44px; height: 44px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    border: none; border-radius: 10px;
+    background: transparent; color: #4A453F;
+    cursor: pointer;
+}
+.mat-remove:hover { background: #F1ECE4; }
+
+.mat-source {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 12px;
+    background: #EFEAE1;
+}
+.mat-src {
+    height: 36px;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: #2B2622;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.mat-src.is-on { background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+
+.mat-type:focus-visible, .mat-src:focus-visible, .mat-remove:focus-visible,
+.mat-upload:focus-visible, .mat-file-btn:focus-visible, .mat-add:focus-visible {
+    outline: 2px solid #0F6B63;
+    outline-offset: 2px;
+}
+
+.mat-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #2B2622; }
+.mat-input {
+    width: 100%;
+    min-height: 44px;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid #DDD6CB;
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 16px; /* stops iOS zooming in on focus */
+    color: #2B2622;
+}
+.mat-input:focus { outline: 2px solid #0F6B63; outline-offset: 0; border-color: #0F6B63; }
+.mat-input.is-invalid { border-color: #B42318; }
+
+.mat-upload {
+    width: 100%;
+    min-height: 76px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border: 1.5px dashed #A9C0E0;
+    border-radius: 12px;
+    background: #F3F7FC;
+    color: #2C5C9E;
+    font: inherit;
+    cursor: pointer;
+}
+.mat-upload-main { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; }
+.mat-upload-hint { font-size: 12px; color: #3F5F8A; }
+
+.mat-file {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #ECE6DC;
+    border-radius: 12px;
+    background: #fff;
+}
+.mat-file-icon {
+    width: 36px; height: 36px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    background: #E7EEF8; color: #2C5C9E;
+}
+.mat-file-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.mat-file-name { font-size: 14px; font-weight: 700; color: #2B2622; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mat-file-sub { font-size: 12px; color: #4A453F; }
+.mat-file-ok { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #1E6B30; }
+.mat-file-btn {
+    flex-shrink: 0;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid #DDD6CB;
+    border-radius: 999px;
+    background: #fff;
+    color: #2B2622;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.mat-bar {
+    position: absolute;
+    left: 12px; right: 12px; bottom: 6px;
+    height: 4px;
+    border-radius: 999px;
+    background: #E7EEF8;
+    overflow: hidden;
+}
+.mat-bar > span { display: block; height: 100%; background: #2C5C9E; transition: width 0.15s ease; }
+
+.mat-error { font-size: 13px; font-weight: 600; color: #B42318; }
+.mat-editor > .mat-error { margin-top: 8px; }
+
+.mat-add {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1.5px dashed #9CC7C1;
+    border-radius: 12px;
+    background: #F3FAF9;
+    color: #0F5A53;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.mat-max { margin: 12px 0 0; font-size: 13px; color: #4A453F; text-align: center; }
+
+.mat-wait-note { margin-top: 6px; font-size: 12px; color: #4A453F; text-align: center; }

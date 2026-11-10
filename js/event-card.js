@@ -126,6 +126,8 @@ function buildEventCard(s, { isOnline, viewer }) {
 
                         ${costHtml ? `<div class="event-row">${costHtml}</div>` : ""}
 
+                        ${window.Materials ? Materials.stripHtml(s.materials) : ""}
+
                         <div class="event-row event-footer">
                             ${hostHtml}
 

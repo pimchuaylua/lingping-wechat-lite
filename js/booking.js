@@ -545,6 +545,7 @@ function formatReadingSessionToDisplay(s, eventOptions) {
         options: eventOptions,
         online: s.online,
         cost: s.cost,
+        materials: s.materials || [],
         googleCalendarLink: buildGoogleCalendarLink(s, start, end, eventOptions)
     };
 
@@ -772,6 +773,13 @@ function preBookingModal(sessionId, session) {
 
     renderPreBookingCost(session);
 
+    const materialsEl = document.getElementById("pbmMaterials");
+    if (materialsEl) {
+        const html = window.Materials ? Materials.confirmNoticeHtml(session.materials) : "";
+        materialsEl.innerHTML = html;
+        materialsEl.hidden = !html;
+    }
+
     clearBookingAgreeError();
     const agreeCheckbox = document.getElementById("bookingAgreeCheckbox");
     if (agreeCheckbox) agreeCheckbox.checked = false;
@@ -854,7 +862,7 @@ function closePreBookingModal() {
     document.getElementById("preBookingModal").style.display = "none";
 }
 
-fetch("components/pre-booking-modal.html")
+fetch("components/pre-booking-modal.html?v=202611101")
     .then(res => res.text())
     .then(html => {
         const container = document.getElementById("preBookingModalContainer");
