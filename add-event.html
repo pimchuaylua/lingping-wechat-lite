@@ -16,6 +16,7 @@
     <script src="js/materials.js?v=202611101"></script>
     <link rel="stylesheet" href="assets/open-to-all.css?v=202611102">
     <script src="js/open-to-all.js?v=202611102"></script>
+    <script src="js/cities.js?v=202611111"></script>
     <style>
         .blurb {
             color: #6b7280;
@@ -331,15 +332,12 @@
             init();
         }
 
+        // In-person cities from GET /levels?mode=in_person (js/cities.js), plus the
+        // "Online" level used for online sessions.
         async function loadLevels() {
-            const res = await fetch(`${BASE_URL}/levels/`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-API-KEY': API_KEY
-                }
-            });
-            const json = await res.json();
-            return json.data || [];
+            const [cities, onlineId] = await Promise.all([Cities.load(), Cities.loadOnlineLevelId()]);
+            onlineCommunityLevelId = onlineId;
+            return cities;
         }
 
         async function loadHostDisplayName() {
@@ -377,33 +375,22 @@
         function renderForm() {
             const placeholderDesc = "Where did you grow up? Share your hometown, favorite places, local food, childhood memories, and what makes your hometown special to you. Discover where everyone comes from and the stories behind each place.";
 
-            const CITY_LEVEL_META = {
-                'Community: Chiang Mai': { label: 'Chiang Mai', emoji: '🏔️' },
-                'Community: Bangkok': { label: 'Bangkok', emoji: '🌆' },
-                'Community: Chengdu': { label: 'Chengdu', emoji: '🐼' },
-                'Community: Guangzhou': { label: 'Guangzhou', emoji: '🌺' },
-                'Community: Hong Kong': { label: 'Hong Kong', emoji: '🏙️' },
-                'Community: Phuket': { label: 'Phuket', emoji: '🏝️' },
+            // Cities come from GET /levels already sorted (Thailand, Hong Kong, China);
+            // emojis stay here. A new city shows up with a 📍 until it gets one.
+            const CITY_EMOJI = {
+                'Bangkok': '🌆', 'Chiang Mai': '🏔️', 'Phuket': '🏝️',
+                'Hong Kong': '🏙️', 'Chengdu': '🐼', 'Guangzhou': '🌺'
             };
-            // Country grouping + order mirrors the location selector on index.html
-            const COUNTRY_GROUPS = [
-                { country: 'Thailand', levelNames: ['Community: Bangkok', 'Community: Chiang Mai', 'Community: Phuket'] },
-                { country: 'China', levelNames: ['Community: Chengdu', 'Community: Guangzhou'] },
-                { country: 'Hong Kong', levelNames: ['Community: Hong Kong'] },
-            ];
-            const ONLINE_COMMUNITY_LEVEL_NAME = 'Community: Online';
+            const COUNTRY_LABELS = { TH: '🇹🇭 Thailand', HK: '🇭🇰 Hong Kong', CN: '🇨🇳 China' };
+            const escHtml = v => String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
-            const levelOptionsHtml = COUNTRY_GROUPS.map(group => {
-                const optionsHtml = group.levelNames
-                    .map(name => levels.find(l => l.name === name))
-                    .filter(Boolean)
-                    .map(l => {
-                        const meta = CITY_LEVEL_META[l.name];
-                        return `<option value="${l._id}">${meta.emoji} ${meta.label}</option>`;
-                    }).join('');
-                return optionsHtml ? `<optgroup label="${group.country}">${optionsHtml}</optgroup>` : '';
+            const levelOptionsHtml = [...new Set(levels.map(l => l.country))].map(country => {
+                const optionsHtml = levels
+                    .filter(l => l.country === country)
+                    .map(l => `<option value="${escHtml(l.levelId)}">${CITY_EMOJI[l.name] || '📍'} ${escHtml(l.name)}</option>`)
+                    .join('');
+                return `<optgroup label="${escHtml(COUNTRY_LABELS[country] || country || 'Other')}">${optionsHtml}</optgroup>`;
             }).join('');
-            onlineCommunityLevelId = (levels.find(l => l.name === ONLINE_COMMUNITY_LEVEL_NAME) || {})._id || onlineCommunityLevelId;
             const typeOptionsHtml = (eventOptions.types || [])
                 .filter(t => t.value !== 'hybrid')
                 .map(t => `<option value="${t.value}">${t.label}</option>`).join('');
