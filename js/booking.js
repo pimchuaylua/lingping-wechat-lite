@@ -42,6 +42,10 @@ window.bookSession = async function ({ sessionId }) {
         const bookData = await bookRes.json();
 
         if (!bookRes.ok) {
+            if (isMembersOnlyError(bookData)) {
+                showMembersOnlyPopup(sessionId, bookData);
+                return;
+            }
             if (bookData?.result?.error === "BOOKING_BLOCKED") {
                 showBookingBlockedModal(bookData.result);
                 return;
@@ -364,6 +368,34 @@ function showWaitlistSuccessDialog() {
     );
 }
 
+// 403 MEMBERS_ONLY: a non-member tried to book a members-only session.
+function isMembersOnlyError(bookData) {
+    return /MEMBERS_ONLY/.test(bookingErrorText(bookData));
+}
+
+// "This one needs a membership" sheet (js/open-to-all.js). "See membership"
+// remembers the session so payment.js books it once they've paid.
+function showMembersOnlyPopup(sessionId, bookData) {
+    // currentSessionId is an implicit global that not every page sets.
+    const knownId = typeof currentSessionId !== "undefined" ? currentSessionId : null;
+    const session = currentSession && (currentSession.id === sessionId || knownId === sessionId) ? currentSession : null;
+    const rememberSession = () => localStorage.setItem(
+        "pendingSessionIdToBookBeforeCompletePayment",
+        JSON.stringify({ sessionId, expiresAt: Date.now() + 5 * 60 * 1000 })
+    );
+
+    if (window.OpenToAll) {
+        OpenToAll.showMembersOnlySheet(session, sessionId, { onSeeMembership: rememberSession });
+        return;
+    }
+    // Page without open-to-all.js: show the server's message in the shared dialog.
+    renderWaitlistDialog(
+        waitlistText("membersOnlyTitle", "This one needs a membership"),
+        bookData?.message || bookData?.result?.message || "This session is for members.",
+        [{ label: waitlistText("gotIt", "Got it"), variant: "primary", onClick: closeWaitlistDialog }]
+    );
+}
+
 // Backend rejects a booking by one of the session's hosts. Match on the
 // error code or message since the exact shape may vary.
 function isAlreadyHostError(bookData) {
@@ -546,6 +578,7 @@ function formatReadingSessionToDisplay(s, eventOptions) {
         online: s.online,
         cost: s.cost,
         materials: s.materials || [],
+        isOpenToAll: s.isOpenToAll === true,
         googleCalendarLink: buildGoogleCalendarLink(s, start, end, eventOptions)
     };
 

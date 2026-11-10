@@ -79,7 +79,7 @@ const FilterBar = (function () {
     /** City names/country headers are hand-translated (they're a fixed,
      * short list we define, not database content) while the underlying
      * English `name` stays the canonical value used for matching/state. */
-    const CITY_KEYS = { 'Bangkok': 'cityBangkok', 'Chiang Mai': 'cityChiangMai', 'Phuket': 'cityPhuket', 'Chengdu': 'cityChengdu', 'Hong Kong': 'cityHongKong' };
+    const CITY_KEYS = { 'Bangkok': 'cityBangkok', 'Chiang Mai': 'cityChiangMai', 'Phuket': 'cityPhuket', 'Chengdu': 'cityChengdu', 'Guangzhou': 'cityGuangzhou', 'Hong Kong': 'cityHongKong' };
     const COUNTRY_KEYS = { 'THAILAND': 'countryThailand', 'CHINA': 'countryChina', 'HONG KONG': 'countryHongKong' };
     function cityLabel(name) { return (window.t && CITY_KEYS[name]) ? t(CITY_KEYS[name]) : name; }
     function countryLabel(country) { return (window.t && COUNTRY_KEYS[country]) ? t(COUNTRY_KEYS[country]) : country; }

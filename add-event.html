@@ -14,6 +14,8 @@
     <script src="js/cohost-picker.js?v=202611093"></script>
     <link rel="stylesheet" href="assets/materials.css?v=202611101">
     <script src="js/materials.js?v=202611101"></script>
+    <link rel="stylesheet" href="assets/open-to-all.css?v=202611102">
+    <script src="js/open-to-all.js?v=202611102"></script>
     <style>
         .blurb {
             color: #6b7280;
@@ -311,6 +313,10 @@
         const MAX_COHOSTS = 3;
         let onlineCommunityLevelId = '695c763e2d652e065db71030';
         let uploadedPhotoUrl = null;
+        // Admins get the "Who can join" field (js/open-to-all.js); everyone else
+        // never sends isOpenToAll (the server ignores it from non-admins anyway).
+        let isAdmin = false;
+        let whoCanJoinField = null;
         const DEFAULT_PHOTO_URL = 'https://lingping-club.s3.ap-southeast-1.amazonaws.com/cm+pim.jpg';
         let langBlockCounter = 0;
         let langBlocks = []; // { id, language, levels: [] }
@@ -346,6 +352,7 @@
                 });
                 const json = await res.json();
                 hostProfilePic = json?.data?.profilePic || '';
+                isAdmin = (json?.data?.user?.role || json?.data?.role) === 'admin';
                 return json?.data?.displayName || json?.displayName || username || 'You';
             } catch (err) {
                 console.error(err);
@@ -374,13 +381,14 @@
                 'Community: Chiang Mai': { label: 'Chiang Mai', emoji: '🏔️' },
                 'Community: Bangkok': { label: 'Bangkok', emoji: '🌆' },
                 'Community: Chengdu': { label: 'Chengdu', emoji: '🐼' },
+                'Community: Guangzhou': { label: 'Guangzhou', emoji: '🌺' },
                 'Community: Hong Kong': { label: 'Hong Kong', emoji: '🏙️' },
                 'Community: Phuket': { label: 'Phuket', emoji: '🏝️' },
             };
             // Country grouping + order mirrors the location selector on index.html
             const COUNTRY_GROUPS = [
                 { country: 'Thailand', levelNames: ['Community: Bangkok', 'Community: Chiang Mai', 'Community: Phuket'] },
-                { country: 'China', levelNames: ['Community: Chengdu'] },
+                { country: 'China', levelNames: ['Community: Chengdu', 'Community: Guangzhou'] },
                 { country: 'Hong Kong', levelNames: ['Community: Hong Kong'] },
             ];
             const ONLINE_COMMUNITY_LEVEL_NAME = 'Community: Online';
@@ -513,6 +521,8 @@
                     <input class="sub" type="number" id="maxParticipants" value="6">
                 </div>
 
+                ${isAdmin ? '<div class="section" id="whoCanJoinMount"></div>' : ''}
+
                 <div class="section">
                     <div class="label">Extra Cost</div>
                     <select class="sub" id="hasCost" onchange="toggleCostFields()">
@@ -577,6 +587,9 @@
                 max: MAX_COHOSTS
             });
             mountMaterials();
+            if (isAdmin) {
+                whoCanJoinField = OpenToAll.mountField(document.getElementById('whoCanJoinMount'), { initial: false });
+            }
         }
 
         // "Before you come" materials editor (js/materials.js). Save stays
@@ -864,6 +877,7 @@
                 topicIds: [],
                 readingSourceIds: [],
                 materials: materialsEditor ? materialsEditor.getPayload() : undefined,
+                ...(whoCanJoinField ? { isOpenToAll: whoCanJoinField.getValue() } : {}),
                 type,
                 online,
                 cost,
@@ -882,7 +896,8 @@
             console.log('Create event request body:', body);
 
             try {
-                const res = await fetch(`${BASE_URL}/reading-sessions`, {
+                // ?userId= tells the server who's creating it (admin-only fields like isOpenToAll need it).
+                const res = await fetch(`${BASE_URL}/reading-sessions?userId=${encodeURIComponent(userId)}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -896,7 +911,7 @@
                 if (res.ok && json.status) {
                     alert('Event created ✅');
                     window.location.href = 'my-bookings.html?type=hosting';
-                } else if (CohostPicker.handleSaveError(json) || materialsEditor?.handleSaveError(json)) {
+                } else if (CohostPicker.handleSaveError(json) || materialsEditor?.handleSaveError(json) || whoCanJoinField?.handleSaveError(json)) {
                     console.error('Create event error response:', json);
                 } else {
                     console.error('Create event error response:', json);

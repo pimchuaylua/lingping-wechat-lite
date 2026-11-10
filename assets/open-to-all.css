@@ -1,0 +1,172 @@
+/* "Open to all" sessions — see js/open-to-all.js */
+
+/* ---------- Card tag ---------- */
+.ota-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    align-self: flex-start;
+    width: fit-content;
+    margin: 2px 0 6px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #DDF3EA;
+    color: #0B5B45;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+/* ---------- Members-only pop-up (bottom sheet on phones, centred dialog on desktop) ---------- */
+.mo-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(30, 26, 22, 0.45);
+}
+.mo-overlay[hidden] { display: none; }
+.mo-sheet {
+    width: 100%;
+    max-width: 480px;
+    max-height: 92vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
+    border-radius: 20px 20px 0 0;
+    background: #fff;
+    color: #2B2622;
+    text-align: left;
+    animation: mo-up 0.2s ease-out;
+}
+@keyframes mo-up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .mo-sheet { animation: none; } }
+@media (min-width: 768px) {
+    .mo-overlay { align-items: center; }
+    .mo-sheet { border-radius: 20px; padding-top: 20px; padding-bottom: 24px; }
+    .mo-grabber { display: none; }
+}
+.mo-grabber { width: 40px; height: 4px; margin: 0 auto 12px; border-radius: 999px; background: #E2DCD2; }
+.mo-head { display: flex; align-items: center; justify-content: space-between; }
+.mo-lock {
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: #FDEBD3; color: #8A520A;
+}
+.mo-close {
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    border: none; border-radius: 50%;
+    background: #F1ECE4; color: #2B2622;
+    cursor: pointer;
+}
+.mo-title { margin: 14px 0 6px; font-size: 22px; font-weight: 800; line-height: 1.25; }
+.mo-body { margin: 0 0 14px; font-size: 15px; line-height: 1.5; color: #4A453F; }
+
+.mo-session {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 12px;
+    background: #F4F1EC;
+}
+.mo-thumb { width: 52px; height: 52px; flex-shrink: 0; border-radius: 10px; object-fit: cover; }
+.mo-thumb-initials {
+    display: flex; align-items: center; justify-content: center;
+    background: #E3EAF8; color: #1F3B73;
+    font-weight: 800; font-size: 17px;
+}
+.mo-session-text { min-width: 0; }
+.mo-session-title { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mo-session-meta { margin-top: 2px; font-size: 13px; color: #4A453F; }
+
+.mo-primary {
+    width: 100%;
+    min-height: 48px;
+    margin-top: 16px;
+    border: none;
+    border-radius: 999px;
+    background: #F5A33A;
+    color: #2B2622; /* dark text on orange for contrast */
+    font: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.mo-primary:hover { background: #F09A2C; }
+.mo-close:focus-visible, .mo-primary:focus-visible, .mo-open:focus-visible {
+    outline: 2px solid #2B2622;
+    outline-offset: 2px;
+}
+
+.mo-open-wrap { margin-top: 16px; padding-top: 14px; border-top: 1px solid #ECE6DC; }
+.mo-open-label { margin-bottom: 8px; font-size: 13px; color: #4A453F; }
+.mo-open {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 10px 14px;
+    border: 1px solid #C9E8DC;
+    border-radius: 12px;
+    background: #EEF8F4;
+    color: #0B5B45;
+    text-decoration: none;
+}
+.mo-open-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.mo-open-title { font-size: 15px; font-weight: 700; color: #2B2622; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mo-open-meta { font-size: 13px; }
+.mo-open-join { flex-shrink: 0; font-size: 14px; font-weight: 800; }
+
+/* ---------- Admin-only "Who can join" field ---------- */
+.ota-field { margin: 0; padding: 0; border: none; min-width: 0; }
+.ota-legend { padding: 0; display: flex; align-items: center; gap: 8px; }
+.ota-admin-pill {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #EDE7FB;
+    color: #4B3A99;
+    font-size: 11px;
+    font-weight: 600;
+}
+.ota-hint { margin-bottom: 10px; }
+.ota-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .ota-options { grid-template-columns: 1fr; } }
+.ota-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: 44px;
+    padding: 14px 16px;
+    box-sizing: border-box;
+    border: 1px solid #DCDCDC;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+}
+.ota-option:has(input:checked) { background: #FFF6EA; border: 1.5px solid #F5A33A; padding: 13.5px 15.5px; }
+.ota-option:has(input:focus-visible) { outline: 2px solid #8A520A; outline-offset: 2px; }
+.ota-option input { width: 18px; height: 18px; margin: 1px 0 0; flex-shrink: 0; accent-color: #E8891C; }
+.ota-option-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.ota-option-title { display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; color: #2B2622; }
+.ota-option-desc { font-size: 13px; color: #5F5A53; line-height: 1.4; }
+
+.ota-note {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border: 1px solid #F7D9B5;
+    border-radius: 8px;
+    background: #FFF6EA;
+    color: #7A4A0B;
+    font-size: 13px;
+    line-height: 1.45;
+}
+.ota-note[hidden] { display: none; }
+.ota-note svg { flex-shrink: 0; margin-top: 1px; }
+.ota-error { margin-top: 8px; font-size: 13px; font-weight: 600; color: #B42318; }
