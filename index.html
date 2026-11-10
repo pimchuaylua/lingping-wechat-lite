@@ -15,7 +15,7 @@
     <script src="config.js"></script>
     <script src="js/dropdown.js?v=20261013"></script>
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=202611103"></script>
+    <script src="js/translations.js?v=202611111"></script>
     <script src="js/auth.js?v=20260312"></script>
     <script src="js/booking.js?v=202611102"></script>
     <script src="js/utils.js?v=20250210?v=20260113"></script>
@@ -27,7 +27,7 @@
     <script src="js/materials.js?v=202611101"></script>
     <link rel="stylesheet" href="assets/open-to-all.css?v=202611102">
     <script src="js/open-to-all.js?v=202611102"></script>
-    <link rel="stylesheet" href="assets/filter-bar.css?v=20260908">
+    <link rel="stylesheet" href="assets/filter-bar.css?v=202611115">
     <link rel="stylesheet" href="assets/feed_style.css?v=202611092">
 
     <meta property="og:title" content="Lingping Club" />
@@ -493,7 +493,8 @@
     </div>
 
     <script src="js/event-card.js?v=202611102"></script>
-    <script src="js/filter-bar.js?v=202611103"></script>
+    <script src="js/cities.js?v=202611111"></script>
+    <script src="js/filter-bar.js?v=202611114"></script>
     <script src="js/feed-share.js?v=20261012"></script>
     <script src="js/feed.js?v=20261013"></script>
     <script>
@@ -501,14 +502,8 @@
         const { BASE_URL, API_KEY } = window.CONFIG;
         const LAST_SELECTED_LOCATION_KEY = "lastSelectedLocation";
         const ONLINE_LEVEL_ID = "695c763e2d652e065db71030";
-        const LP_CITIES = [
-            { name: "Bangkok", levelId: "69870890d9adda8b3d791661", country: "THAILAND" },
-            { name: "Chiang Mai", levelId: "67eab5b337cd4b56a080743f", country: "THAILAND" },
-            { name: "Phuket", levelId: "6a02e9e90c8f769c0cd9d2c8", country: "THAILAND" },
-            { name: "Chengdu", levelId: "6a7164950117c11720df32be", country: "CHINA" },
-            { name: "Guangzhou", levelId: "6af347a1e4f3236fa0127cc5", country: "CHINA" },
-            { name: "Hong Kong", levelId: "6a841f58cca7afd6cad9dd14", country: "HONG KONG" }
-        ];
+        // In-person cities from GET /levels?mode=in_person (js/cities.js), loaded in init().
+        let LP_CITIES = [];
 
         /* ---------------- FILTERS IN URL ----------------
            e.g. ?loc=bangkok&cat=book,food&lang=chinese&level=beginner&from=2026-10-18&to=2026-10-19
@@ -526,8 +521,8 @@
             if (loc === "online") {
                 result.levelId = ONLINE_LEVEL_ID;
             } else if (loc) {
-                const city = LP_CITIES.find(c => citySlug(c.name) === loc.toLowerCase());
-                if (city) result.levelId = city.levelId;
+                // Cities aren't loaded yet; init() turns the slug into a level id.
+                result.locSlug = loc.toLowerCase();
             }
 
             if (params.has("cat") || params.has("lang") || params.has("level") || params.has("loc")) {
@@ -852,11 +847,25 @@
             currentFromDate = appliedDates ? appliedDates.from : range.fromDate;
             currentToDate = appliedDates ? appliedDates.to : range.toDate;
 
-            // Fetch options and sessions in parallel — they don't depend on each other
-            const [opts, raw] = await Promise.all([
+            const citiesPromise = Cities.load();
+
+            // A shared link like ?loc=bangkok needs the city list before loading its sessions.
+            if (urlFilters.locSlug) {
+                const city = (await citiesPromise).find(c => citySlug(c.name) === urlFilters.locSlug);
+                if (city) {
+                    currentLevel = city.levelId;
+                    localStorage.setItem(LAST_SELECTED_LOCATION_KEY, city.levelId);
+                }
+            }
+
+            // Fetch cities, options and sessions in parallel — they don't depend on each other
+            const [cities, opts, raw] = await Promise.all([
+                citiesPromise,
                 loadSessionOptions(),
                 getReadingSessions(currentFromDate, currentToDate)
             ]);
+
+            LP_CITIES = cities;
 
             eventOptions = opts;
 

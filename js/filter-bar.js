@@ -80,9 +80,21 @@ const FilterBar = (function () {
      * short list we define, not database content) while the underlying
      * English `name` stays the canonical value used for matching/state. */
     const CITY_KEYS = { 'Bangkok': 'cityBangkok', 'Chiang Mai': 'cityChiangMai', 'Phuket': 'cityPhuket', 'Chengdu': 'cityChengdu', 'Guangzhou': 'cityGuangzhou', 'Hong Kong': 'cityHongKong' };
-    const COUNTRY_KEYS = { 'THAILAND': 'countryThailand', 'CHINA': 'countryChina', 'HONG KONG': 'countryHongKong' };
+    // GET /levels sends country codes (TH / HK / CN).
+    const COUNTRY_KEYS = { 'TH': 'countryThailand', 'CN': 'countryChina', 'HK': 'countryHongKong' };
     function cityLabel(name) { return (window.t && CITY_KEYS[name]) ? t(CITY_KEYS[name]) : name; }
     function countryLabel(country) { return (window.t && COUNTRY_KEYS[country]) ? t(COUNTRY_KEYS[country]) : country; }
+    const COUNTRY_FLAGS = { 'TH': '🇹🇭', 'HK': '🇭🇰', 'CN': '🇨🇳' };
+
+    // "1 event" / "N events" / "No events yet"; nothing when the count is unknown.
+    function cityCountHtml(count) {
+        if (typeof count !== 'number') return '';
+        const tx = (key, fallback) => { const v = window.t ? t(key) : key; return v && v !== key ? v : fallback; };
+        if (count === 0) return `<span class="lp-citydrop-count lp-citydrop-count--none">${tx('cityEventsNone', 'No events yet')}</span>`;
+        const text = count === 1 ? tx('cityEventsOne', '1 event') : tx('cityEventsMany', '{n} events').replace('{n}', count);
+        return `<span class="lp-citydrop-count">${text}</span>`;
+    }
+    const escAttr = v => String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;');
 
     function selectCity(name) {
         const city = cfg.cities.find(c => c.name === name);
@@ -116,10 +128,14 @@ const FilterBar = (function () {
         let lastCountry = null;
         cfg.cities.forEach(city => {
             if (city.country && city.country !== lastCountry) {
-                html += `<div class="lp-citydrop-category">${countryLabel(city.country)}</div>`;
+                const flag = COUNTRY_FLAGS[city.country];
+                html += `<div class="lp-citydrop-category">${flag ? `<span class="lp-citydrop-flag" aria-hidden="true">${flag}</span>` : ''}${countryLabel(city.country)}</div>`;
                 lastCountry = city.country;
             }
-            html += `<div class="lp-citydrop-item" data-name="${city.name}" onclick="FilterBar.selectCity('${city.name}')">${cityLabel(city.name)}</div>`;
+            // data-search: city (English + translated) and country, so "china" finds its cities.
+            const search = [city.name, cityLabel(city.name), countryLabel(city.country)].join(' ').toLowerCase();
+            html += `<div class="lp-citydrop-item" data-name="${escAttr(city.name)}" data-search="${escAttr(search)}" onclick="FilterBar.selectCity(this.dataset.name)">`
+                + `<span class="lp-citydrop-name">${escAttr(cityLabel(city.name))}</span>${cityCountHtml(city.count)}</div>`;
         });
         const items = document.getElementById('lpCityItems');
         if (items) items.innerHTML = html;
@@ -147,7 +163,7 @@ const FilterBar = (function () {
                     currentHeader = el;
                     headerHasVisible = false;
                 } else {
-                    const match = !q || el.textContent.toLowerCase().includes(q);
+                    const match = !q || (el.dataset.search || el.textContent.toLowerCase()).includes(q);
                     el.hidden = !match;
                     if (match) { headerHasVisible = true; anyVisible = true; }
                 }
