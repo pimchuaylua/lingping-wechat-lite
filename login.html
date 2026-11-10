@@ -65,11 +65,13 @@
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="assets/subscription_main_style.css?v=20260513">
     <link rel="stylesheet" href="assets/login_style.css?v=20260312">
+    <link rel="stylesheet" href="assets/language-picker.css?v=202611093">
     <script src="js/booking.js?v=202611062"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="config.js"></script>
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=202611066"></script>
+    <script src="js/translations.js?v=202611095"></script>
+    <script src="js/language-picker.js?v=202611093"></script>
     <style>
         .email-hint {
             font-size: 13px;
@@ -399,15 +401,7 @@
             }
 
             saveSession(loginResult.data, email);
-            showSuccessPopup();
-
-
-            // allow browser to paint popup first
-            requestAnimationFrame(() => {
-                setTimeout(() => {
-                    redirectBack();
-                }, 2000);
-            });
+            await finishLogin();
 
         } catch (error) {
             console.error("Login flow error:", error);
@@ -582,13 +576,7 @@
             }
 
             saveSession(loginResult.data, email);
-            showSuccessPopup();
-
-            requestAnimationFrame(() => {
-                setTimeout(() => {
-                    redirectBack();
-                }, 2000);
-            });
+            await finishLogin();
 
         } catch (err) {
             console.error("Email login flow error:", err);
@@ -617,15 +605,7 @@
             }
 
             saveSession(loginResult.data, username);
-            showSuccessPopup();
-
-
-            // allow browser to paint popup first
-            requestAnimationFrame(() => {
-                setTimeout(() => {
-                    redirectBack();
-                }, 2000);
-            });
+            await finishLogin();
 
         } catch (err) {
             alert(err.message);
@@ -859,15 +839,7 @@
             if (res.ok && json?.status && json?.data?.userId) {
 
                 saveSession(json.data, fullPhone);
-                showSuccessPopup();
-
-
-                // allow browser to paint popup first
-                requestAnimationFrame(() => {
-                    setTimeout(() => {
-                        redirectBack();
-                    }, 2000);
-                });
+            await finishLogin();
 
             } else {
 
@@ -882,6 +854,27 @@
 
         }
 
+    }
+
+    // Every login path ends here: languages step (first time only), then the
+    // "You're logged in!" popup, then back to where the member came from.
+    async function finishLogin() {
+        try {
+            if (window.LanguageOnboarding) {
+                await LanguageOnboarding.maybeShow({ userId: localStorage.getItem("userId") });
+            }
+        } catch (err) {
+            console.error("Language onboarding failed:", err);
+        }
+
+        showSuccessPopup();
+
+        // allow browser to paint popup first
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                redirectBack();
+            }, 2000);
+        });
     }
 
     function showSuccessPopup() {

@@ -326,6 +326,28 @@ const TRANSLATIONS = {
     level_upper_beginner: { en: "Upper Beginner", zh: "中初级", th: "ระดับเริ่มต้นค่อนข้างสูง" },
     level_intermediate: { en: "Intermediate", zh: "中级", th: "ระดับปานกลาง" },
     level_advanced: { en: "Advanced-Native", zh: "高级-母语", th: "ระดับสูง-เจ้าของภาษา" },
+    // Level explanations. English normally comes from the options endpoint;
+    // these are only used for zh/th (the en copy mirrors the backend text).
+    levelDesc_beginner: {
+        en: "Those who are just getting started with the language. You’re still learning basic words and phrases and starting to put them together.",
+        zh: "刚开始学习这门语言。你还在学习基本的单词和短语，并开始尝试把它们组合起来。",
+        th: "เพิ่งเริ่มเรียนภาษานี้ ยังเรียนคำศัพท์และวลีพื้นฐานอยู่ และเริ่มนำมาเรียงเป็นประโยค"
+    },
+    levelDesc_upper_beginner: {
+        en: "Those who can make simple sentences and talk about everyday things. You can have relaxed conversations with some support when you need it.",
+        zh: "能说简单的句子，聊日常话题。需要时有人帮一把，就能轻松地聊天。",
+        th: "พูดประโยคง่าย ๆ และคุยเรื่องในชีวิตประจำวันได้ คุยกันสบาย ๆ ได้ โดยมีคนช่วยบ้างเมื่อจำเป็น"
+    },
+    levelDesc_intermediate: {
+        en: "Those who can share stories, opinions, and ideas in conversation. You may occasionally need help with a word, but you can keep a conversation going.",
+        zh: "能在对话中分享经历、观点和想法。偶尔可能需要别人帮你想个词，但你能让对话继续下去。",
+        th: "เล่าเรื่อง แสดงความคิดเห็นและไอเดียในบทสนทนาได้ อาจต้องให้คนช่วยนึกคำบ้างเป็นครั้งคราว แต่ก็คุยต่อไปได้"
+    },
+    levelDesc_advanced: {
+        en: "Those who are comfortable expressing complex ideas and chatting about almost anything. You can have natural, free-flowing conversations with ease.",
+        zh: "能自如地表达复杂的想法，几乎什么话题都能聊。你能轻松、自然、流畅地交谈。",
+        th: "สื่อสารความคิดที่ซับซ้อนได้อย่างมั่นใจ และคุยได้แทบทุกเรื่อง สนทนาได้อย่างเป็นธรรมชาติและลื่นไหล"
+    },
     // Short level labels for the language chip's range label ("Int – Native")
     levelShort_beginner: { en: "Beg", zh: "初级", th: "เริ่มต้น" },
     levelShort_upper_beginner: { en: "Upper Beg", zh: "中初级", th: "เริ่มต้น+" },
@@ -362,6 +384,26 @@ const TRANSLATIONS = {
     hosting: { en: "Hosting", zh: "我主持的", th: "ที่ฉันเป็นโฮสต์" },
     joining: { en: "Joining", zh: "已参加", th: "เข้าร่วมแล้ว" },
     edit: { en: "Edit", zh: "编辑", th: "แก้ไข" },
+
+    // ---- view-profile.html ----
+    vpLoading: { en: "Loading profile...", zh: "正在加载个人资料...", th: "กำลังโหลดโปรไฟล์..." },
+    vpUserNotFound: { en: "User not found.", zh: "找不到该用户。", th: "ไม่พบผู้ใช้" },
+    vpFailed: { en: "Failed to load profile.", zh: "个人资料加载失败。", th: "โหลดโปรไฟล์ไม่สำเร็จ" },
+    vpNotAvailableTitle: { en: "Profile not available", zh: "暂无个人资料", th: "ยังไม่มีโปรไฟล์" },
+    vpNotAvailableSub1: { en: "This member hasn’t created a public profile yet.", zh: "这位成员还没有创建公开的个人资料。", th: "สมาชิกคนนี้ยังไม่ได้สร้างโปรไฟล์สาธารณะ" },
+    vpNotAvailableSub2: { en: "You can still see them in sessions and activities 😊", zh: "你仍然可以在活动中见到 TA 😊", th: "คุณยังเจอเขาได้ในกิจกรรมต่าง ๆ 😊" },
+    vpMember: { en: "Member", zh: "成员", th: "สมาชิก" },
+    vpHostProgress: { en: "Host Progress", zh: "主持进度", th: "ความคืบหน้าการเป็นโฮสต์" },
+    vpLearnProgress: { en: "Learn Progress", zh: "学习进度", th: "ความคืบหน้าการเรียน" },
+    vpPoints: { en: "({n} points)", zh: "（{n} 分）", th: "({n} คะแนน)" },
+    vpPts: { en: "pts", zh: "分", th: "คะแนน" },
+    vpLvl: { en: "Lvl", zh: "等级", th: "เลเวล" },
+    vpNoHosting: { en: "No Hosting Activity", zh: "暂无主持记录", th: "ยังไม่เคยเป็นโฮสต์" },
+    vpAbout: { en: "About {name}", zh: "关于 {name}", th: "เกี่ยวกับ {name}" },
+    vpTopics: { en: "Topics of Interest", zh: "感兴趣的话题", th: "หัวข้อที่สนใจ" },
+    vpFunFacts: { en: "Fun Facts", zh: "趣味小事", th: "เรื่องสนุก ๆ" },
+    vpShowMore: { en: "Show more", zh: "展开", th: "ดูเพิ่มเติม" },
+    vpShowLess: { en: "Show less", zh: "收起", th: "ย่อลง" },
     addToGoogleCalendar: { en: "Add to Google Calendar", zh: "添加到 Google 日历", th: "เพิ่มลง Google ปฏิทิน" },
 
     // ---- subscriptions.html (My Plan) ----
