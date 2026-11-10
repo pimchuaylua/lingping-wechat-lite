@@ -52,6 +52,7 @@ const TRANSLATIONS = {
     cityChiangMai: { en: "Chiang Mai", zh: "清迈", th: "เชียงใหม่" },
     cityPhuket: { en: "Phuket", zh: "普吉岛", th: "ภูเก็ต" },
     cityChengdu: { en: "Chengdu", zh: "成都", th: "เฉิงตู" },
+    cityGuangzhou: { en: "Guangzhou", zh: "广州", th: "กวางโจว" },
     cityHongKong: { en: "Hong Kong", zh: "香港", th: "ฮ่องกง" },
     countryThailand: { en: "THAILAND", zh: "泰国", th: "ประเทศไทย" },
     countryChina: { en: "CHINA", zh: "中国", th: "ประเทศจีน" },
