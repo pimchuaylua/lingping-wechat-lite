@@ -212,6 +212,13 @@ const TRANSLATIONS = {
     hostHelpCall: { en: "📞 Call", zh: "📞 致电", th: "📞 โทร" },
     hostHelpLine: { en: "💬 Message our LINE Official", zh: "💬 通过 LINE 官方账号联系我们", th: "💬 ส่งข้อความทาง LINE Official" },
     close: { en: "Close", zh: "关闭", th: "ปิด" },
+    // ---- Open to all / members-only (js/open-to-all.js) ----
+    openToAll: { en: "Open to all", zh: "所有人可参加", th: "เปิดให้ทุกคน" },
+    membersOnlyTitle: { en: "This one needs a membership", zh: "这场活动需要会员", th: "กิจกรรมนี้สำหรับสมาชิก" },
+    membersOnlyBody: { en: "Start or renew your membership to join {title}, and we'll finish booking it for you.", zh: "开通或续费会员即可参加「{title}」，我们会帮你完成预订。", th: "สมัครหรือต่ออายุสมาชิกเพื่อเข้าร่วม {title} แล้วเราจะจองให้คุณต่อเลย" },
+    membersOnlyBodyGeneric: { en: "Start or renew your membership to join this session, and we'll finish booking it for you.", zh: "开通或续费会员即可参加这场活动，我们会帮你完成预订。", th: "สมัครหรือต่ออายุสมาชิกเพื่อเข้าร่วมกิจกรรมนี้ แล้วเราจะจองให้คุณต่อเลย" },
+    seeMembership: { en: "See membership", zh: "查看会员", th: "ดูแพ็กเกจสมาชิก" },
+    orTryOpenSession: { en: "Or try an open session, free to join", zh: "或者试试所有人都能免费参加的活动", th: "หรือลองกิจกรรมที่เปิดให้ทุกคนเข้าร่วมฟรี" },
 
     // ---- login.html ----
     browserPopupTitle: { en: "Open in Browser for the Best Experience", zh: "在浏览器中打开以获得最佳体验", th: "เปิดในเบราว์เซอร์เพื่อประสบการณ์ที่ดีที่สุด" },

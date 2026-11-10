@@ -14,6 +14,8 @@
     <script src="js/cohost-picker.js?v=202611093"></script>
     <link rel="stylesheet" href="assets/materials.css?v=202611101">
     <script src="js/materials.js?v=202611101"></script>
+    <link rel="stylesheet" href="assets/open-to-all.css?v=202611102">
+    <script src="js/open-to-all.js?v=202611102"></script>
     <style>
         .input-invalid {
             border-color: #b3441f !important;
@@ -158,12 +160,14 @@
 
         async function loadSession() {
             try {
+                const adminCheck = OpenToAll.fetchIsAdmin(localStorage.getItem('userId'));
                 const res = await fetch(`${BASE_URL}/reading-sessions/${sessionId}?locale=en_US`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'X-API-KEY': API_KEY
                     }
                 });
+                const isAdmin = await adminCheck;
 
                 const json = await res.json();
                 const s = json.data;
@@ -267,6 +271,8 @@
                         <input class="sub" type="number" id="maxParticipants" value="${s.maxParticipants || ''}">
                     </div>
 
+                    ${isAdmin ? '<div class="section" id="whoCanJoinMount"></div>' : ''}
+
                     <div class="section">
                         <div class="label">Photo</div>
                         <div class="hint">Optional. Choose a new photo to replace the current one.</div>
@@ -283,6 +289,12 @@
                 document.querySelectorAll('textarea[id^="fullDescription"]').forEach(updateWordCount);
                 mountCohostPicker(s);
                 mountMaterials(s.materials);
+                if (isAdmin) {
+                    whoCanJoinField = OpenToAll.mountField(document.getElementById('whoCanJoinMount'), {
+                        initial: s.isOpenToAll === true,
+                        isEdit: true
+                    });
+                }
                 const timezoneEl = document.getElementById('timezone');
                 const timeEl = document.getElementById('time');
 
@@ -372,6 +384,9 @@
         // "Before you come" materials editor (js/materials.js). Save stays
         // disabled while a PDF is uploading.
         let materialsEditor = null;
+        // Admins get the "Who can join" field (js/open-to-all.js); everyone else
+        // never sends isOpenToAll (the server ignores it from non-admins anyway).
+        let whoCanJoinField = null;
 
         function mountMaterials(initial) {
             materialsEditor = Materials.createEditor(document.getElementById('materialsMount'), {
@@ -482,6 +497,7 @@
                 maxParticipants: Number(val('maxParticipants')) || undefined,
                 photoUrl: uploadedPhotoUrl || undefined,
                 materials: materialsEditor ? materialsEditor.getPayload() : undefined,
+                ...(whoCanJoinField ? { isOpenToAll: whoCanJoinField.getValue() } : {}),
                 translations: {
                     en_US: {
                         title: toTitleCase(val('title_en')),
@@ -496,7 +512,8 @@
             saveBtn.textContent = 'Saving...';
 
             try {
-                const res = await fetch(`${BASE_URL}/reading-sessions/${sessionId}`, {
+                // ?userId= tells the server who's editing (admin-only fields like isOpenToAll need it).
+                const res = await fetch(`${BASE_URL}/reading-sessions/${sessionId}?userId=${encodeURIComponent(localStorage.getItem('userId') || '')}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -509,7 +526,7 @@
 
                 if (res.ok && json.status) {
                     alert('Session updated ✅');
-                } else if (CohostPicker.handleSaveError(json) || materialsEditor?.handleSaveError(json)) {
+                } else if (CohostPicker.handleSaveError(json) || materialsEditor?.handleSaveError(json) || whoCanJoinField?.handleSaveError(json)) {
                     console.error('Update session error response:', json);
                 } else {
                     alert(json.message || 'Failed to update session.');

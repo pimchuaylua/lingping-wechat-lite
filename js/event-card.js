@@ -114,6 +114,7 @@ function buildEventCard(s, { isOnline, viewer }) {
                             <div class="event-title">${s.title}</div>
                             <div class="status ${statusClass}"> ${status} </div>
                         </div class="event-row">
+                        ${window.OpenToAll ? OpenToAll.tagHtml(s) : ""}
                          ${renderLanguageChips(s.languages, s.options)}
 
                         <div class="event-row">
