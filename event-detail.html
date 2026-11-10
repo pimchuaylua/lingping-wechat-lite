@@ -17,10 +17,12 @@
     <script src="js/translate.js?v=20260911"></script>
     <script src="js/translations.js?v=202611095"></script>
     <script src="js/hosts.js?v=9"></script>
-    <script src="js/booking.js?v=202611062"></script>
+    <script src="js/booking.js?v=202611101"></script>
+    <script src="js/materials.js?v=202611101"></script>
+    <link rel="stylesheet" href="assets/materials.css?v=202611101">
     <script src="js/utils.js?v=20250210"></script>
     <script src="js/render-langague-level.js?v=20261101"></script>
-    <script src="js/event-card.js?v=20261106"></script>
+    <script src="js/event-card.js?v=202611101"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
     <link rel="stylesheet" href="assets/chip_style.css?v=202611061">
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
@@ -333,6 +335,22 @@
             cancelBtn.style.display = showCancel ? "inline-block" : "none";
         }
 
+        function firstHostName(session) {
+            const h = (session.hostObjects || session.hosts || [])[0];
+            return h?.profile?.displayName || h?.displayName || h?.name || "";
+        }
+
+        // Opened from a card's "Before you come" strip → scroll there once.
+        let materialsScrollPending = location.hash === "#materials";
+        function scrollToMaterialsOnce() {
+            if (!materialsScrollPending) return;
+            const section = document.getElementById("materials");
+            if (!section) return;
+            materialsScrollPending = false;
+            section.scrollIntoView({ block: "start" });
+            section.focus({ preventScroll: true });
+        }
+
         function renderSession() {
             updateBookBar();
 
@@ -449,6 +467,8 @@
                     <div class="chip-row">${renderFormatChips(s.categories, s.options)}</div>
                 </div>
 
+                ${window.Materials ? Materials.detailSectionHtml(s.materials, firstHostName(s)) : ""}
+
                 <!-- Description -->
                 <div class="section">
                     <div class="label">${t("labelOurTheme")}</div>
@@ -461,6 +481,8 @@
                     <div class="sub">${t("loading")}</div>
                 </div>
             `;
+
+            scrollToMaterialsOnce();
 
             const hostsContainer = document.getElementById("hostsContainer");
             const hostsLabel = document.getElementById("hostsLabel");

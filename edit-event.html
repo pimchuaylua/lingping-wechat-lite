@@ -12,6 +12,8 @@
     <script src="js/render-langague-level.js?v=20261101"></script>
     <link rel="stylesheet" href="assets/cohost_style.css?v=202611093">
     <script src="js/cohost-picker.js?v=202611093"></script>
+    <link rel="stylesheet" href="assets/materials.css?v=202611101">
+    <script src="js/materials.js?v=202611101"></script>
     <style>
         .input-invalid {
             border-color: #b3441f !important;
@@ -139,6 +141,7 @@
         <button class="book-btn" id="saveBtn" onclick="saveSession()">
             Save Changes
         </button>
+        <div class="mat-wait-note" id="matWaitNote" hidden>Waiting for upload to finish…</div>
     </div>
 
     <script>
@@ -273,10 +276,13 @@
                         <input class="sub" type="file" accept="image/*" id="photoInput" onchange="handlePhotoUpload(event)">
                         <div class="char-count" id="photoStatus"></div>
                     </div>
+
+                    <div class="section" id="materialsMount"></div>
                 `;
 
                 document.querySelectorAll('textarea[id^="fullDescription"]').forEach(updateWordCount);
                 mountCohostPicker(s);
+                mountMaterials(s.materials);
                 const timezoneEl = document.getElementById('timezone');
                 const timeEl = document.getElementById('time');
 
@@ -363,6 +369,24 @@
 
         // The logged-in user is the main host if they host this session; otherwise
         // (an admin editing) the first host is. Everyone else is a co-host.
+        // "Before you come" materials editor (js/materials.js). Save stays
+        // disabled while a PDF is uploading.
+        let materialsEditor = null;
+
+        function mountMaterials(initial) {
+            materialsEditor = Materials.createEditor(document.getElementById('materialsMount'), {
+                initial: initial || [],
+                userId: localStorage.getItem('userId'),
+                onBusyChange: syncSaveBtn
+            });
+        }
+
+        function syncSaveBtn() {
+            const busy = !!materialsEditor?.isBusy();
+            document.getElementById('saveBtn').disabled = busy;
+            document.getElementById('matWaitNote').hidden = !busy;
+        }
+
         function mountCohostPicker(s) {
             const viewerId = localStorage.getItem('userId');
             const hosts = (s.hosts || []).map(CohostPicker.fromUser).filter(h => h && h.id);
@@ -408,6 +432,7 @@
         }
 
         async function saveSession() {
+            if (materialsEditor?.isBusy()) return;
             if (photoUploading) {
                 alert('Photo is still uploading. Please wait a moment.');
                 return;
@@ -446,6 +471,8 @@
                 ? timezoneToUTC(date, time, timezone)
                 : undefined;
 
+            if (materialsEditor && !materialsEditor.validate()) return;
+
             const body = {
                 startTime,
                 timezone,
@@ -454,6 +481,7 @@
                 hostIds: [mainHostId, ...CohostPicker.getIds()].filter(Boolean),
                 maxParticipants: Number(val('maxParticipants')) || undefined,
                 photoUrl: uploadedPhotoUrl || undefined,
+                materials: materialsEditor ? materialsEditor.getPayload() : undefined,
                 translations: {
                     en_US: {
                         title: toTitleCase(val('title_en')),
@@ -481,7 +509,7 @@
 
                 if (res.ok && json.status) {
                     alert('Session updated ✅');
-                } else if (CohostPicker.handleSaveError(json)) {
+                } else if (CohostPicker.handleSaveError(json) || materialsEditor?.handleSaveError(json)) {
                     console.error('Update session error response:', json);
                 } else {
                     alert(json.message || 'Failed to update session.');
@@ -490,8 +518,8 @@
                 console.error(err);
                 alert('Failed to update session.');
             } finally {
-                saveBtn.disabled = false;
                 saveBtn.textContent = 'Save Changes';
+                syncSaveBtn();
             }
         }
 
