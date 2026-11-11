@@ -8,20 +8,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link rel="icon" type="image/png" href="assets/logos/favicon.png">
 
-    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
-    <link rel="stylesheet" href="assets/feed_style.css?v=202611092">
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=202611111">
+
+    <link rel="stylesheet" href="assets/back-bar.css?v=202611111">
+    <link rel="stylesheet" href="assets/feed_style.css?v=202611112">
 
     <script src="config.js"></script>
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=202611111"></script>
+    <script src="js/translations.js?v=202611113"></script>
 </head>
 
 <body>
     <div class="feed-detail-header">
-        <button class="feed-detail-back" onclick="goBack()" aria-label="Back">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
-        </button>
-        <div class="feed-detail-title" data-i18n="tabFeed">Feed</div>
+        <div class="lp-backbar">
+            <button type="button" class="lp-back" aria-label="Back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+            <h1 class="lp-backbar-title" data-i18n="tabFeed">Feed</h1>
+        </div>
         <button class="feed-share-btn" id="feedDetailShareBtn" aria-label="Share" hidden>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
         </button>

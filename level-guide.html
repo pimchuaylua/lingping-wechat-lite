@@ -6,10 +6,11 @@
     <title>Level Guide | Lingping Club</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="assets/style.css?v=20260530">
-    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
+    <link rel="stylesheet" href="assets/back-bar.css?v=202611111">
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=202611111">
     <script src="config.js"></script>
-    <script src="js/dropdown.js?v=20261013"></script>
-    <script src="js/render-langague-level.js?v=20261101"></script>
+    <script src="js/dropdown.js?v=202611111"></script>
+    <script src="js/render-langague-level.js?v=202611111"></script>
     <style>
         .level-hero {
             max-width: 700px;
@@ -99,19 +100,6 @@
             margin: 0;
         }
 
-        .back-link {
-            margin: 36px 0 12px;
-        }
-
-        .back-link a {
-            color: var(--theme);
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .back-link a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 
@@ -119,6 +107,11 @@
     <div class="container">
 
         <div id="header"></div>
+
+        <div class="lp-backbar">
+            <a class="lp-back" href="faq.html" aria-label="Back to FAQ"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></a>
+            <h1 class="lp-backbar-title">Level guide</h1>
+        </div>
 
         <div class="level-hero">
             <div class="level-eyebrow">Level Guide</div>
@@ -135,9 +128,6 @@
         <div class="level-section-title">Proficiency levels</div>
         <div class="level-cards" id="levelCards">Loading…</div>
 
-        <div class="back-link">
-            <a href="faq.html">← Back to FAQ</a>
-        </div>
 
     </div>
 

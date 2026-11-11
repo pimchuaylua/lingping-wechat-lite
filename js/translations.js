@@ -27,6 +27,8 @@ const TRANSLATIONS = {
     navHosting: { en: "Hosting", zh: "我主持的", th: "ที่ฉันเป็นโฮสต์" },
     navPast: { en: "Past", zh: "往期活动", th: "กิจกรรมที่ผ่านมา" },
     navAddEvent: { en: "Host an event", zh: "主持活动", th: "จัดกิจกรรม" },
+    navHostCardTitle: { en: "Host anything, anytime", zh: "随时随地，想办就办", th: "จัดอะไรก็ได้ เมื่อไหร่ก็ได้" },
+    navHostCardSub: { en: "Park walks, game nights, food crawls and conversations — not just about languages.", zh: "公园散步、游戏之夜、美食探店、聊天——不只是语言交流。", th: "เดินเล่นในสวน คืนเล่นเกม ตะลุยกิน หรือนั่งคุย ไม่ใช่แค่เรื่องภาษา" },
     sectionCommunity: { en: "Community", zh: "社区", th: "คอมมูนิตี้" },
     navLeaderboard: { en: "Leaderboard 🏆", zh: "排行榜 🏆", th: "กระดานผู้นำ 🏆" },
     navCommunityRules: { en: "Community Rules", zh: "社区规则", th: "กฎของคอมมูนิตี้" },
@@ -139,7 +141,10 @@ const TRANSLATIONS = {
     noSessions: { en: "No sessions", zh: "暂无活动", th: "ไม่มีกิจกรรม" },
 
     // ---- event-detail.html ----
-    backBtn: { en: "← Back", zh: "← 返回", th: "← กลับ" },
+    // Titles in the shared back bar (assets/back-bar.css)
+    barEvent: { en: "Event", zh: "活动", th: "กิจกรรม" },
+    barMembership: { en: "Membership", zh: "会员", th: "สมาชิก" },
+    barPastSession: { en: "Past session", zh: "往期活动", th: "กิจกรรมที่ผ่านมา" },
     share: { en: "Share", zh: "分享", th: "แชร์" },
     labelTime: { en: "Time", zh: "时间", th: "เวลา" },
     labelJoinOnline: { en: "Join Online", zh: "线上加入方式", th: "วิธีเข้าร่วมออนไลน์" },
@@ -381,6 +386,8 @@ const TRANSLATIONS = {
     cat_music: { en: "Music", zh: "音乐", th: "ดนตรี" },
     cat_arts: { en: "Arts", zh: "艺术", th: "ศิลปะ" },
     cat_social: { en: "Social", zh: "社交", th: "สังสรรค์" },
+    cat_tech: { en: "Tech", zh: "科技", th: "เทคโนโลยี" },
+    cat_business: { en: "Business", zh: "商业", th: "ธุรกิจ" },
 
     // ---- my-bookings.html ----
     upcomingSessions: { en: "Upcoming Sessions", zh: "近期活动", th: "กิจกรรมที่กำลังจะมาถึง" },

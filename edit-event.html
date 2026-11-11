@@ -7,9 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="config.js"></script>
     <script src="js/utils.js?v=20261106"></script>
-    <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
+    <link rel="stylesheet" href="assets/event-detail_style.css?v=202611111">
+    <link rel="stylesheet" href="assets/back-bar.css?v=202611111">
     <link rel="stylesheet" href="assets/chip_style.css?v=202611061">
-    <script src="js/render-langague-level.js?v=20261101"></script>
+    <script src="js/render-langague-level.js?v=202611111"></script>
     <link rel="stylesheet" href="assets/cohost_style.css?v=202611093">
     <script src="js/cohost-picker.js?v=202611093"></script>
     <link rel="stylesheet" href="assets/materials.css?v=202611101">
@@ -193,7 +194,10 @@
                 s.options = eventOptions;
 
                 container.innerHTML = `
-                    <div class="back-btn" onclick="goBackFresh()">← Back</div>
+                    <div class="lp-backbar">
+                        <button type="button" class="lp-back" aria-label="Back" onclick="goBackFresh()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+                        <h1 class="lp-backbar-title">Edit session</h1>
+                    </div>
                     <h1>Edit Session</h1>
 
                     <div class="section">

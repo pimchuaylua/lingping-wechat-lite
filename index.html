@@ -9,18 +9,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <link rel="icon" type="image/png" href="assets/logos/favicon.png">
     <!-- Styles -->
-    <link rel="stylesheet" href="assets/mainpage_style.css?v=20260516">
+    <link rel="stylesheet" href="assets/mainpage_style.css?v=202611111">
 
     <!-- Config & Booking -->
     <script src="config.js"></script>
-    <script src="js/dropdown.js?v=20261013"></script>
+    <script src="js/dropdown.js?v=202611111"></script>
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=202611111"></script>
+    <script src="js/translations.js?v=202611113"></script>
     <script src="js/auth.js?v=20260312"></script>
     <script src="js/booking.js?v=202611102"></script>
     <script src="js/utils.js?v=20250210?v=20260113"></script>
     <script src="js/quotes.js"></script>
-    <script src="js/render-langague-level.js?v=20261101"></script>
+    <script src="js/render-langague-level.js?v=202611111"></script>
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
     <link rel="stylesheet" href="assets/chip_style.css?v=202611061">
     <link rel="stylesheet" href="assets/materials.css?v=202611101">
@@ -28,7 +28,8 @@
     <link rel="stylesheet" href="assets/open-to-all.css?v=202611102">
     <script src="js/open-to-all.js?v=202611102"></script>
     <link rel="stylesheet" href="assets/filter-bar.css?v=202611115">
-    <link rel="stylesheet" href="assets/feed_style.css?v=202611092">
+    <link rel="stylesheet" href="assets/feed_style.css?v=202611112">
+    <link rel="stylesheet" href="assets/host.css?v=202611127">
 
     <meta property="og:title" content="Lingping Club" />
     <meta property="og:description"
@@ -495,6 +496,8 @@
     <script src="js/event-card.js?v=202611102"></script>
     <script src="js/cities.js?v=202611111"></script>
     <script src="js/filter-bar.js?v=202611114"></script>
+    <script src="js/host-content.js?v=202611119"></script>
+    <script src="js/host-nudges.js?v=202611123"></script>
     <script src="js/feed-share.js?v=20261012"></script>
     <script src="js/feed.js?v=20261013"></script>
     <script>
@@ -756,27 +759,46 @@
 
             eventList.innerHTML = "";
 
+            // "Host anything" nudge (js/host-nudges.js), once per list: first tile for
+            // logged-in members, second for guests. With no events it takes the empty
+            // state's place.
+            const isMember = !!localStorage.getItem("userId");
+
             if (!filtered.length) {
-                eventList.innerHTML = `<div class="empty">${t("noSessions")}</div>`;
+                eventList.innerHTML = HostNudges.nudgeCardHtml({ noMatch: true });
                 return;
             }
 
-            filtered.forEach(s => {
-                const card = document.createElement("div");
-                card.className = "card";
-                card.style.cursor = "pointer";
-                card.innerHTML = buildEventCard(s, { isOnline, viewer: sessionViewer });
+            if (isMember) eventList.insertAdjacentHTML("beforeend", HostNudges.nudgeCardHtml());
+            let cardCount = 0;
 
-                card.onclick = (e) => {
-                    if (e.target.closest(".book-btn")) return;
-
-                    localStorage.setItem("selectedSession", JSON.stringify(s));
-                    // The "Before you come" strip opens the detail scrolled to it.
-                    window.location.href = e.target.closest(".mat-strip") ? "event-detail.html#materials" : "event-detail.html";
-                };
-
-                eventList.appendChild(card);
+            HostNudges.groupByDay(filtered).forEach(day => {
+                eventList.insertAdjacentHTML("beforeend", HostNudges.dayHeaderHtml(day.date));
+                day.sessions.forEach(s => {
+                    appendEventCard(s, isOnline);
+                    cardCount++;
+                    if (!isMember && cardCount === 1) {
+                        eventList.insertAdjacentHTML("beforeend", HostNudges.nudgeCardHtml());
+                    }
+                });
             });
+        }
+
+        function appendEventCard(s, isOnline) {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.style.cursor = "pointer";
+            card.innerHTML = buildEventCard(s, { isOnline, viewer: sessionViewer });
+
+            card.onclick = (e) => {
+                if (e.target.closest(".book-btn")) return;
+
+                localStorage.setItem("selectedSession", JSON.stringify(s));
+                // The "Before you come" strip opens the detail scrolled to it.
+                window.location.href = e.target.closest(".mat-strip") ? "event-detail.html#materials" : "event-detail.html";
+            };
+
+            eventList.appendChild(card);
         }
 
         function mapSessions(raw) {

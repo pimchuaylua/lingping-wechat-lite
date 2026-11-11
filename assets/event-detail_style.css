@@ -87,22 +87,13 @@ h1 {
     }
 }
 
-.back-btn {
-    display: inline-block;
-    margin-bottom: 12px;
-    font-size: 14px;
-    cursor: pointer;
-    color: #007bff;
-    text-decoration: underline;
-}
-
 .detail-topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.detail-topbar .back-btn {
+.detail-topbar .lp-backbar {
     margin-bottom: 0;
 }
 

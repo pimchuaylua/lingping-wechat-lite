@@ -168,7 +168,7 @@ const CATEGORY_ICONS = {
     discussion: '💬', language: '🗣️', sports: '⚽',
     explore_the_city: '🏙️', culture: '🎎', food: '🍜',
     movie: '🎬', book: '📚', music: '🎵', arts: '🎨',
-    social: '❤️',
+    social: '❤️', tech: '💻', business: '💼',
 };
 
 /* ---------------- Language + level chips ----------------
