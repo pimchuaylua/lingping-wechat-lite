@@ -6,6 +6,8 @@
     <title>Host a Session</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="config.js"></script>
+    <script src="js/translate.js?v=20260911"></script>
+    <script src="js/translations.js?v=202611114"></script>
     <script src="js/utils.js?v=20261106"></script>
     <link rel="stylesheet" href="assets/event-detail_style.css?v=202611111">
     <link rel="stylesheet" href="assets/back-bar.css?v=202611111">
@@ -18,7 +20,7 @@
     <link rel="stylesheet" href="assets/open-to-all.css?v=202611102">
     <script src="js/open-to-all.js?v=202611102"></script>
     <script src="js/cities.js?v=202611111"></script>
-    <script src="js/host-content.js?v=202611119"></script>
+    <script src="js/host-content.js?v=202611121"></script>
     <style>
         .blurb {
             color: #6b7280;
@@ -327,6 +329,8 @@
     <script>
         const { BASE_URL, API_KEY } = window.CONFIG;
         const container = document.getElementById('formContainer');
+        // translations.js text in the site language, English if missing.
+        const tr = (key, en) => (typeof TRANSLATIONS !== 'undefined' && TRANSLATIONS[key]) ? t(key) : en;
         const userId = localStorage.getItem('userId');
         const username = localStorage.getItem('username');
 
@@ -349,9 +353,9 @@
             container.innerHTML = `
                 <div class="lp-backbar">
                     <button type="button" class="lp-back" aria-label="Back" onclick="history.back()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
-                    <h1 class="lp-backbar-title">Host an event</h1>
+                    <h1 class="lp-backbar-title">${tr("navAddEvent", "Host an event")}</h1>
                 </div>
-                <h1>Host a Session</h1>
+                <h1>${tr("hostSessionTitle", "Host a Session")}</h1>
                 <p>Please log in to create an event.</p>
             `;
         } else {
@@ -437,7 +441,7 @@
                 <label class="cat-chip" style="background:${st.tint}">
                     <input type="checkbox" value="${c.value}" class="cat-check">
                     <span class="cat-icon" style="color:${st.ink}">${HostContent.icon(st.icon, 20)}</span>
-                    <span class="cat-label">${c.label}</span>
+                    <span class="cat-label">${translatedCategoryLabel(c.value, c.label)}</span>
                     <span class="cat-tick">${HostContent.icon('check', 12, 3)}</span>
                 </label>`;
             }).join('');
@@ -449,10 +453,10 @@
             container.innerHTML = `
                 <div class="lp-backbar">
                     <button type="button" class="lp-back" aria-label="Back" onclick="history.back()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
-                    <h1 class="lp-backbar-title">Host an event</h1>
+                    <h1 class="lp-backbar-title">${tr("navAddEvent", "Host an event")}</h1>
                 </div>
-                <h1>Host a Session</h1>
-                <p class="blurb">Have something you want to do, talk about, or explore? Bring it to Lingping and invite others to join!</p>
+                <h1>${tr("hostSessionTitle", "Host a Session")}</h1>
+                <p class="blurb">${tr("hostSessionBlurb", "Have something you want to do, talk about, or explore? Bring it to Lingping and invite others to join!")}</p>
 
                 <div class="section">
                     <div class="label">Title</div>
@@ -465,7 +469,7 @@
 
                 <div class="section">
                     <div class="label">Description</div>
-                    <div class="hint">Give a brief overview of your session, activity, or topic so others know what to expect!</div>
+                    <div class="hint">${tr("hostSessionDescHint", "Give a brief overview of your session, activity, or topic so others know what to expect!")}</div>
                     <textarea
                         style="min-height: 150px;"
                         class="sub"

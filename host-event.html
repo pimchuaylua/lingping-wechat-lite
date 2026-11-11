@@ -7,13 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="assets/logos/favicon.png">
     <script src="config.js"></script>
-    <script src="js/host-content.js?v=202611119"></script>
-    <link rel="stylesheet" href="assets/host.css?v=202611127">
+    <script src="js/translate.js?v=20260911"></script>
+    <script src="js/translations.js?v=202611114"></script>
+    <script src="js/host-content.js?v=202611121"></script>
+    <link rel="stylesheet" href="assets/host.css?v=202611130">
     <link rel="stylesheet" href="assets/back-bar.css?v=202611111">
 </head>
 
 <body class="host-page">
-    <main class="hp-wrap">
+    <main class="hp-wrap hp-start">
         <div class="lp-backbar">
             <button type="button" class="lp-back" id="backBtn"></button>
             <h1 class="lp-backbar-title" id="barTitle"></h1>
@@ -22,7 +24,12 @@
         <h2 class="hp-h1" id="h1"></h2>
         <p class="hp-intro" id="intro"></p>
 
-        <div class="hp-grid" id="tileGrid" aria-busy="true"></div>
+        <div class="hp-grid-box">
+            <div class="hp-grid-scroll" id="tileScroll">
+                <div class="hp-grid" id="tileGrid" aria-busy="true"></div>
+            </div>
+            <button type="button" class="hp-more" id="tileMore" hidden></button>
+        </div>
 
         <nav class="hp-links" id="guideLinks"></nav>
     </main>
@@ -43,6 +50,8 @@
                 else location.href = "/";
             };
 
+            document.title = C.START.pageTitle;
+            document.documentElement.lang = C.lang;
             document.getElementById("barTitle").textContent = C.START.pageTitle;
             document.getElementById("h1").textContent = C.START.h1;
             document.getElementById("intro").textContent = C.START.intro;
@@ -61,6 +70,12 @@
                     <span>${esc(C.START.somethingElse)}</span>
                 </a>`;
 
+            // cat_* names from translations.js; the API label for anything not translated yet.
+            function categoryLabel(cat) {
+                const key = `cat_${cat.value}`;
+                return typeof TRANSLATIONS !== "undefined" && TRANSLATIONS[key] ? t(key) : cat.label;
+            }
+
             function tileHtml(cat) {
                 const st = C.categoryStyle(cat.value);
                 const isSel = cat.value === selected;
@@ -68,7 +83,7 @@
                     <a class="hp-tile${isSel ? " is-selected" : ""}" style="background:${st.tint}"
                         href="${C.LINKS.createForm}?category=${encodeURIComponent(cat.value)}"${isSel ? ' aria-current="true"' : ""}>
                         <span class="hp-tile-icon" style="color:${st.ink}">${C.icon(st.icon, 20)}</span>
-                        <span>${esc(cat.label)}</span>
+                        <span>${esc(categoryLabel(cat))}</span>
                     </a>`;
             }
 
@@ -87,7 +102,39 @@
                         <p class="hp-load-error">${esc(C.START.loadError)}
                             <a href="${C.LINKS.createForm}">${esc(C.START.loadErrorLink)}</a></p>`;
                 })
-                .finally(() => grid.removeAttribute("aria-busy"));
+                .finally(() => {
+                    grid.removeAttribute("aria-busy");
+                    // Phones: the grid scrolls in its own box, so bring a preselected tile into view.
+                    const sel = grid.querySelector(".is-selected");
+                    if (sel) sel.scrollIntoView({ block: "nearest" });
+                    updateScrollFade();
+                    if (!sel) hintScroll();
+                });
+
+            // Phones, when the tiles don't all fit: fade the bottom edge and show a
+            // "More categories" pill until the end of the list is reached.
+            const scroller = document.getElementById("tileScroll");
+            const moreBtn = document.getElementById("tileMore");
+            moreBtn.innerHTML = `<span>${esc(C.START.moreCategories)}</span>${C.icon("chevronDown", 16, 2.2)}`;
+            moreBtn.onclick = () => scroller.scrollBy({ top: scroller.clientHeight * 0.7, behavior: "smooth" });
+
+            function updateScrollFade() {
+                const more = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight > 4;
+                scroller.classList.toggle("has-more", more);
+                moreBtn.hidden = !more;
+            }
+            scroller.addEventListener("scroll", updateScrollFade, { passive: true });
+            window.addEventListener("resize", updateScrollFade);
+
+            // One small scroll down and back on load, so the list visibly moves.
+            function hintScroll() {
+                const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                if (reduceMotion || !scroller.classList.contains("has-more")) return;
+                setTimeout(() => {
+                    scroller.scrollTo({ top: 48, behavior: "smooth" });
+                    setTimeout(() => scroller.scrollTo({ top: 0, behavior: "smooth" }), 500);
+                }, 600);
+            }
         })();
     </script>
 </body>
