@@ -15,17 +15,18 @@
 
     <script src="config.js"></script>
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=202611111"></script>
+    <script src="js/translations.js?v=202611113"></script>
     <script src="js/hosts.js?v=9"></script>
     <script src="js/booking.js?v=202611102"></script>
     <script src="js/materials.js?v=202611101"></script>
     <link rel="stylesheet" href="assets/open-to-all.css?v=202611102">
+    <link rel="stylesheet" href="assets/back-bar.css?v=202611111">
     <script src="js/open-to-all.js?v=202611102"></script>
     <link rel="stylesheet" href="assets/materials.css?v=202611101">
     <script src="js/utils.js?v=20250210"></script>
-    <script src="js/render-langague-level.js?v=20261101"></script>
+    <script src="js/render-langague-level.js?v=202611111"></script>
     <script src="js/event-card.js?v=202611102"></script>
-    <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
+    <link rel="stylesheet" href="assets/event-detail_style.css?v=202611111">
     <link rel="stylesheet" href="assets/chip_style.css?v=202611061">
     <link rel="stylesheet" href="assets/policy-modal.css?v=20260525">
 </head>
@@ -372,7 +373,10 @@
 
             container.innerHTML = `
                 <div class="detail-topbar">
-                    <div class="back-btn" onclick="goBack()">${t("backBtn")}</div>
+                    <div class="lp-backbar">
+                        <button type="button" class="lp-back" aria-label="Back" onclick="goBack()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+                        <h1 class="lp-backbar-title">${t("barEvent")}</h1>
+                    </div>
                     <div class="topbar-actions">
                         <button class="icon-btn" onclick="copyLink()" aria-label="Copy link" title="Copy link">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

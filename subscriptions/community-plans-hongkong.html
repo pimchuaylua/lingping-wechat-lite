@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <title>Hong Kong Community Plans | Lingping</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/event-detail_style.css?v=20260529">
+    <link rel="stylesheet" href="../assets/event-detail_style.css?v=202611111">
+    <link rel="stylesheet" href="../assets/back-bar.css?v=202611111">
     <link rel="stylesheet" href="../assets/subscription_main_style.css?v=20260513">
     <link rel="stylesheet" href="../assets/membership.css">
     <link rel="stylesheet" href="../assets/plans_style.css?v=2">
@@ -14,14 +15,17 @@
     <script src="../js/payment.js"></script>
     <script src="../js/utils.js"></script>
     <script src="../js/translate.js?v=20260911"></script>
-    <script src="../js/translations.js?v=202611111"></script>
+    <script src="../js/translations.js?v=202611113"></script>
 </head>
 
 <body>
 
     <div class="container">
 
-        <div class="back-btn" onclick="Utils.goBackOrHome()" data-i18n="backBtn">← Back</div>
+        <div class="lp-backbar">
+            <button type="button" class="lp-back" aria-label="Back" onclick="Utils.goBackOrHome()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+            <h1 class="lp-backbar-title" data-i18n="barMembership">Membership</h1>
+        </div>
 
         <div class="plans-hero">
             <div class="plans-eyebrow" data-i18n="stepChoosePlan">Step 3 · Choose Your Plan</div>

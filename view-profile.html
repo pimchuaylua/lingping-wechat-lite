@@ -7,11 +7,12 @@
     <title>View Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="config.js"></script>
-    <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
-    <link rel="stylesheet" href="assets/view-profile_style.css">
+    <link rel="stylesheet" href="assets/event-detail_style.css?v=202611111">
+    <link rel="stylesheet" href="assets/back-bar.css?v=202611111">
+    <link rel="stylesheet" href="assets/view-profile_style.css?v=202611111">
     <link rel="stylesheet" href="assets/language-picker.css?v=202611093">
     <script src="js/translate.js?v=20260911"></script>
-    <script src="js/translations.js?v=202611111"></script>
+    <script src="js/translations.js?v=202611113"></script>
     <script src="js/language-picker.js?v=202611093"></script>
     <style>
 
@@ -20,7 +21,10 @@
 
 <body>
     <div class="container">
-        <div class="back-btn" onclick="history.back()" data-i18n="backBtn">← Back</div>
+        <div class="lp-backbar">
+            <button type="button" class="lp-back" aria-label="Back" onclick="history.back()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+            <h1 class="lp-backbar-title" data-i18n="navProfile">Profile</h1>
+        </div>
         <div id="profileContent" data-i18n="vpLoading">Loading profile...</div>
     </div>
 

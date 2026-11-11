@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hosting guide</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/logos/favicon.png">
+    <script src="js/host-content.js?v=202611119"></script>
+    <link rel="stylesheet" href="assets/host.css?v=202611127">
+    <link rel="stylesheet" href="assets/back-bar.css?v=202611111">
+</head>
+
+<body class="host-page">
+    <main class="hp-wrap">
+        <div class="lp-backbar">
+            <button type="button" class="lp-back" id="backBtn"></button>
+            <h1 class="lp-backbar-title" id="barTitle"></h1>
+        </div>
+
+        <div class="hp-seg" role="tablist" id="tabs"></div>
+
+        <section role="tabpanel" id="panel-rules" aria-labelledby="tab-rules"></section>
+        <section role="tabpanel" id="panel-tips" aria-labelledby="tab-tips" hidden></section>
+    </main>
+
+    <script>
+        (function () {
+            const C = HostContent;
+            const G = C.GUIDE;
+            const esc = v => String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+            const backBtn = document.getElementById("backBtn");
+            backBtn.innerHTML = C.icon("back", 22, 2);
+            backBtn.setAttribute("aria-label", G.backLabel);
+            backBtn.onclick = () => {
+                if (document.referrer && new URL(document.referrer).origin === location.origin) history.back();
+                else location.href = C.LINKS.startPage;
+            };
+            document.getElementById("barTitle").textContent = G.pageTitle;
+
+            /* ---------- Tabs (?tab=rules | ?tab=tips) ---------- */
+
+            const TAB_IDS = ["rules", "tips"];
+            const tabsEl = document.getElementById("tabs");
+            tabsEl.innerHTML = TAB_IDS.map(id => `
+                <button type="button" class="hp-seg-btn" role="tab" id="tab-${id}" aria-controls="panel-${id}"
+                    data-tab="${id}">${esc(G.tabs[id])}</button>`).join("");
+
+            function showTab(id, { updateUrl = true } = {}) {
+                TAB_IDS.forEach(t => {
+                    const on = t === id;
+                    const btn = document.getElementById(`tab-${t}`);
+                    btn.setAttribute("aria-selected", String(on));
+                    btn.tabIndex = on ? 0 : -1;
+                    document.getElementById(`panel-${t}`).hidden = !on;
+                });
+                if (id === "tips") fitGeneralTips();
+                if (updateUrl) {
+                    const url = new URL(location.href);
+                    url.searchParams.set("tab", id);
+                    history.replaceState(null, "", url);
+                }
+            }
+
+            tabsEl.addEventListener("click", e => {
+                const btn = e.target.closest("[data-tab]");
+                if (btn) showTab(btn.dataset.tab);
+            });
+            tabsEl.addEventListener("keydown", e => {
+                if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+                const current = tabsEl.querySelector('[aria-selected="true"]').dataset.tab;
+                const next = TAB_IDS[(TAB_IDS.indexOf(current) + (e.key === "ArrowRight" ? 1 : TAB_IDS.length - 1)) % TAB_IDS.length];
+                showTab(next);
+                document.getElementById(`tab-${next}`).focus();
+            });
+
+            /* ---------- Tab 1: What can I host? ---------- */
+
+            const R = G.rules;
+            document.getElementById("panel-rules").innerHTML = `
+                <h2 class="hg-h2">${esc(R.h2)}</h2>
+                <p class="hg-intro">${esc(R.intro)}</p>
+
+                <h3 class="hg-section-title hg-section-title--ok">
+                    <span class="hg-badge">${C.icon("check", 14, 2.6)}</span>${esc(R.allowedTitle)}
+                </h3>
+                <ul class="hg-chips">${R.allowed.map(a => `<li class="hg-chip">${esc(a)}</li>`).join("")}</ul>
+
+                <div class="hg-callout">
+                    <span class="hg-callout-icon">${C.icon("chat", 20)}</span>
+                    <div>
+                        <p class="hg-callout-title">${esc(R.callout.title)}</p>
+                        <p class="hg-callout-text">${esc(R.callout.text)}</p>
+                    </div>
+                </div>
+
+                <h3 class="hg-section-title hg-section-title--no">
+                    <span class="hg-badge">${C.icon("close", 14, 2.6)}</span>${esc(R.notAllowedTitle)}
+                </h3>
+                <ul class="hg-nolist">${R.notAllowed.map(n => `
+                    <li>
+                        <div class="hg-no-title">${esc(n.title)}</div>
+                        <div class="hg-no-text">${esc(n.text)}</div>
+                    </li>`).join("")}
+                </ul>
+
+                <p class="hg-smallprint">${esc(R.smallPrint)}</p>
+                <a class="hg-ask" href="${C.LINKS.askTeam}">
+                    ${C.icon("chat", 18)}
+                    <span>${esc(R.askPrefix)} <strong>${esc(R.askLink)}</strong></span>
+                </a>`;
+
+            /* ---------- Tab 2: Tips ---------- */
+
+            const T = G.tips;
+            const D = T.discussion;
+
+            function accordionHtml({ id, variant, iconName, title, sub, bodyHtml, open }) {
+                return `
+                    <div class="hp-acc hp-acc--${variant}">
+                        <button type="button" class="hp-acc-head" aria-expanded="${open}" aria-controls="${id}">
+                            <span class="hp-acc-icon">${C.icon(iconName, 18)}</span>
+                            <span class="hp-acc-text">
+                                <span class="hp-acc-title">${esc(title)}</span>
+                                <span class="hp-acc-sub">${esc(sub)}</span>
+                            </span>
+                            <span class="hp-acc-toggle">${C.icon(open ? "minus" : "plus", 18, 2)}</span>
+                        </button>
+                        <div class="hp-acc-body" id="${id}"${open ? "" : " hidden"}>${bodyHtml}</div>
+                    </div>`;
+            }
+
+            const generalBody = `
+                <ol class="ht-list ht-list--scroll" id="generalTipsList" tabindex="0" aria-label="${esc(T.general.title)}">${T.general.items.map((item, i) => `
+                    <li class="ht-item">
+                        <span class="ht-num" aria-hidden="true">${i + 1}</span>
+                        <div>
+                            <div class="ht-title">${esc(item.title)}</div>
+                            <div class="ht-text">${esc(item.text)}</div>
+                        </div>
+                    </li>`).join("")}
+                </ol>`;
+
+            const discussionBody = `
+                <p class="ht-intro">${esc(D.intro)}</p>
+                <div class="ht-feels">
+                    <p class="ht-feels-title">${esc(D.feelsLike.title)}</p>
+                    <p class="ht-feels-text">${esc(D.feelsLike.text)}</p>
+                    <ul class="ht-feels-chips">${D.feelsLike.chips.map(c => `<li>${esc(c)}</li>`).join("")}</ul>
+                </div>
+                <ul class="ht-list">${D.checklist.map(item => `
+                    <li class="ht-item">
+                        <span class="ht-check">${C.icon("check", 14, 2.6)}</span>
+                        <div>
+                            <div class="ht-title">${esc(item.title)}</div>
+                            <div class="ht-text">${esc(item.text)}</div>
+                        </div>
+                    </li>`).join("")}
+                </ul>
+                <div class="ht-lesson">
+                    <p class="ht-lesson-title">${C.icon("ban", 20, 2)}${esc(D.notALesson.title)}</p>
+                    ${D.notALesson.paragraphs.map(p => `<p>${esc(p)}</p>`).join("")}
+                    <p class="ht-lesson-foot">${esc(D.notALesson.footnote)}</p>
+                </div>`;
+
+            const tipsPanel = document.getElementById("panel-tips");
+            tipsPanel.innerHTML =
+                accordionHtml({ id: "tipsGeneral", variant: "general", iconName: "star", title: T.general.title, sub: T.general.sub, bodyHtml: generalBody, open: true }) +
+                accordionHtml({ id: "tipsDiscussion", variant: "discussion", iconName: "chat", title: D.title, sub: D.sub, bodyHtml: discussionBody, open: false }) +
+                `<a class="hp-primary" href="${C.LINKS.startPage}">${esc(T.cta)}</a>`;
+
+            tipsPanel.addEventListener("click", e => {
+                const head = e.target.closest(".hp-acc-head");
+                if (!head) return;
+                const open = head.getAttribute("aria-expanded") !== "true";
+                head.setAttribute("aria-expanded", String(open));
+                head.querySelector(".hp-acc-toggle").innerHTML = C.icon(open ? "minus" : "plus", 18, 2);
+                document.getElementById(head.getAttribute("aria-controls")).hidden = !open;
+                fitGeneralTips();
+            });
+
+            // Show the first few tips; the rest scroll inside the list. Measured
+            // because tip heights vary with wrapping (and are 0 while hidden).
+            function fitGeneralTips() {
+                const list = document.getElementById("generalTipsList");
+                const last = list.children[T.general.visibleCount - 1];
+                if (!last || !list.offsetHeight) return;
+                list.style.maxHeight = "none";
+                const height = last.offsetTop + last.offsetHeight - list.offsetTop;
+                if (list.scrollHeight > height + 1) list.style.maxHeight = `${height + 8}px`;
+            }
+            window.addEventListener("resize", fitGeneralTips);
+
+            const requested = new URLSearchParams(location.search).get("tab");
+            showTab(TAB_IDS.includes(requested) ? requested : "rules", { updateUrl: false });
+        })();
+    </script>
+</body>
+
+</html>

@@ -3,13 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Bring an Idea</title>
+    <title>Host a Session</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="config.js"></script>
     <script src="js/utils.js?v=20261106"></script>
-    <link rel="stylesheet" href="assets/event-detail_style.css?v=20260529">
+    <link rel="stylesheet" href="assets/event-detail_style.css?v=202611111">
+    <link rel="stylesheet" href="assets/back-bar.css?v=202611111">
     <link rel="stylesheet" href="assets/chip_style.css?v=202611061">
-    <script src="js/render-langague-level.js?v=20261101"></script>
+    <script src="js/render-langague-level.js?v=202611111"></script>
     <link rel="stylesheet" href="assets/cohost_style.css?v=202611093">
     <script src="js/cohost-picker.js?v=202611093"></script>
     <link rel="stylesheet" href="assets/materials.css?v=202611101">
@@ -17,6 +18,7 @@
     <link rel="stylesheet" href="assets/open-to-all.css?v=202611102">
     <script src="js/open-to-all.js?v=202611102"></script>
     <script src="js/cities.js?v=202611111"></script>
+    <script src="js/host-content.js?v=202611119"></script>
     <style>
         .blurb {
             color: #6b7280;
@@ -168,9 +170,10 @@
             cursor: pointer;
         }
 
+        /* Tinted tiles with icons, same look as host-event.html (js/host-content.js). */
         .cat-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-top: 10px;
         }
@@ -179,17 +182,19 @@
             position: relative;
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 12px;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            background: #fff;
+            gap: 10px;
+            min-height: 52px;
+            padding: 12px 14px;
+            box-sizing: border-box;
+            border: 1.5px solid transparent;
+            border-radius: 14px;
+            background: #F4F2EE;
             cursor: pointer;
-            transition: background 0.15s ease, border-color 0.15s ease;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
         .cat-chip:hover {
-            border-color: #d1d5db;
+            filter: brightness(0.98);
         }
 
         .cat-chip input {
@@ -199,25 +204,43 @@
         }
 
         .cat-icon {
-            font-size: 18px;
-            line-height: 1;
+            display: flex;
             flex-shrink: 0;
         }
 
         .cat-label {
-            font-size: 14px;
-            font-weight: 500;
-            color: #374151;
+            flex: 1;
+            min-width: 0;
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.25;
+            color: #3A3A3A;
+        }
+
+        .cat-tick {
+            display: none;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #F5B35F;
+            color: #3D2300;
         }
 
         .cat-chip:has(input:checked) {
-            background: rgba(255, 176, 80, 0.14);
-            border-color: var(--theme);
+            border-color: #F5B35F;
+            box-shadow: 0 0 0 3px rgba(245, 179, 95, 0.25);
         }
 
-        .cat-chip:has(input:checked) .cat-label {
-            color: #8a520a;
-            font-weight: 600;
+        .cat-chip:has(input:checked) .cat-tick {
+            display: flex;
+        }
+
+        .cat-chip:has(input:focus-visible) {
+            outline: 2px solid #9A5D0C;
+            outline-offset: 2px;
         }
 
         .lang-block {
@@ -324,8 +347,11 @@
 
         if (!userId) {
             container.innerHTML = `
-                <div class="back-btn" onclick="history.back()">← Back</div>
-                <h1>Bring an Idea 💭</h1>
+                <div class="lp-backbar">
+                    <button type="button" class="lp-back" aria-label="Back" onclick="history.back()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+                    <h1 class="lp-backbar-title">Host an event</h1>
+                </div>
+                <h1>Host a Session</h1>
                 <p>Please log in to create an event.</p>
             `;
         } else {
@@ -366,10 +392,19 @@
                     loadHostDisplayName()
                 ]);
                 renderForm();
+                preselectCategoryFromUrl();
             } catch (err) {
                 console.error(err);
                 container.innerHTML = '<p>Failed to load form options.</p>';
             }
+        }
+
+        // ?category=food (from the host-event.html tiles) ticks that category.
+        function preselectCategoryFromUrl() {
+            const category = new URLSearchParams(location.search).get('category');
+            if (!category) return;
+            const box = [...container.querySelectorAll('.cat-check')].find(el => el.value === category);
+            if (box) box.checked = true;
         }
 
         function renderForm() {
@@ -396,22 +431,28 @@
                 .map(t => `<option value="${t.value}">${t.label}</option>`).join('');
             const platformOptionsHtml = (eventOptions.platforms || []).map(p => `<option value="${p.value}">${p.label}</option>`).join('');
 
-            const categoriesHtml = (eventOptions.categories || []).map(c => `
-                <label class="cat-chip">
+            const categoriesHtml = (eventOptions.categories || []).map(c => {
+                const st = HostContent.categoryStyle(c.value);
+                return `
+                <label class="cat-chip" style="background:${st.tint}">
                     <input type="checkbox" value="${c.value}" class="cat-check">
-                    <span class="cat-icon">${CATEGORY_ICONS[c.value] || '🏷️'}</span>
+                    <span class="cat-icon" style="color:${st.ink}">${HostContent.icon(st.icon, 20)}</span>
                     <span class="cat-label">${c.label}</span>
-                </label>
-            `).join('');
+                    <span class="cat-tick">${HostContent.icon('check', 12, 3)}</span>
+                </label>`;
+            }).join('');
 
             if (!langBlocks.length) {
                 langBlocks.push({ id: langBlockCounter++, language: '', levels: [] });
             }
 
             container.innerHTML = `
-                <div class="back-btn" onclick="history.back()">← Back</div>
-                <h1>Bring an Idea 💭</h1>
-                <p class="blurb">Whatever you're curious about or want to explore, bring it to Lingping and discover new perspectives with us!</p>
+                <div class="lp-backbar">
+                    <button type="button" class="lp-back" aria-label="Back" onclick="history.back()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+                    <h1 class="lp-backbar-title">Host an event</h1>
+                </div>
+                <h1>Host a Session</h1>
+                <p class="blurb">Have something you want to do, talk about, or explore? Bring it to Lingping and invite others to join!</p>
 
                 <div class="section">
                     <div class="label">Title</div>
@@ -424,7 +465,7 @@
 
                 <div class="section">
                     <div class="label">Description</div>
-                    <div class="hint">Give a brief idea of what we'll talk about—not a list of questions.</div>
+                    <div class="hint">Give a brief overview of your session, activity, or topic so others know what to expect!</div>
                     <textarea
                         style="min-height: 150px;"
                         class="sub"

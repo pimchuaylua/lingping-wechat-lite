@@ -9,18 +9,6 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-.back-btn {
-    margin-bottom: 14px;
-    font-size: 14px;
-    color: var(--theme);
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.back-btn:hover {
-    text-decoration: underline;
-}
-
 .profile-card {
     background: #fff;
     border-radius: 20px;

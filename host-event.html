@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Host an event</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="assets/logos/favicon.png">
+    <script src="config.js"></script>
+    <script src="js/host-content.js?v=202611119"></script>
+    <link rel="stylesheet" href="assets/host.css?v=202611127">
+    <link rel="stylesheet" href="assets/back-bar.css?v=202611111">
+</head>
+
+<body class="host-page">
+    <main class="hp-wrap">
+        <div class="lp-backbar">
+            <button type="button" class="lp-back" id="backBtn"></button>
+            <h1 class="lp-backbar-title" id="barTitle"></h1>
+        </div>
+
+        <h2 class="hp-h1" id="h1"></h2>
+        <p class="hp-intro" id="intro"></p>
+
+        <div class="hp-grid" id="tileGrid" aria-busy="true"></div>
+
+        <nav class="hp-links" id="guideLinks"></nav>
+    </main>
+
+    <script>
+        (function () {
+            const C = HostContent;
+            const { BASE_URL, API_KEY } = window.CONFIG;
+            const esc = v => String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+            // From the events-list nudge chips (js/host-nudges.js): highlights that tile.
+            const selected = new URLSearchParams(location.search).get("category");
+
+            const backBtn = document.getElementById("backBtn");
+            backBtn.innerHTML = C.icon("back", 22, 2);
+            backBtn.setAttribute("aria-label", C.START.backLabel);
+            backBtn.onclick = () => {
+                if (document.referrer && new URL(document.referrer).origin === location.origin) history.back();
+                else location.href = "/";
+            };
+
+            document.getElementById("barTitle").textContent = C.START.pageTitle;
+            document.getElementById("h1").textContent = C.START.h1;
+            document.getElementById("intro").textContent = C.START.intro;
+
+            document.getElementById("guideLinks").innerHTML = C.START.links.map(l => `
+                <a class="hp-link-row" href="${C.LINKS.guide}?tab=${l.tab}">
+                    <span style="display:flex;color:${l.ink}">${C.icon(l.icon, 20)}</span>
+                    <span>${esc(l.label)}</span>
+                    <span class="hp-chev">${C.icon("chevronRight", 18, 2)}</span>
+                </a>`).join("");
+
+            const grid = document.getElementById("tileGrid");
+            const elseTile = `
+                <a class="hp-tile hp-tile--else" href="${C.LINKS.createForm}">
+                    <span class="hp-tile-icon">${C.icon("plus", 20, 2)}</span>
+                    <span>${esc(C.START.somethingElse)}</span>
+                </a>`;
+
+            function tileHtml(cat) {
+                const st = C.categoryStyle(cat.value);
+                const isSel = cat.value === selected;
+                return `
+                    <a class="hp-tile${isSel ? " is-selected" : ""}" style="background:${st.tint}"
+                        href="${C.LINKS.createForm}?category=${encodeURIComponent(cat.value)}"${isSel ? ' aria-current="true"' : ""}>
+                        <span class="hp-tile-icon" style="color:${st.ink}">${C.icon(st.icon, 20)}</span>
+                        <span>${esc(cat.label)}</span>
+                    </a>`;
+            }
+
+            fetch(`${BASE_URL}/reading-sessions/options`, { headers: { "X-API-KEY": API_KEY } })
+                .then(res => {
+                    if (!res.ok) throw new Error(`GET /reading-sessions/options failed: ${res.status}`);
+                    return res.json();
+                })
+                .then(json => {
+                    const cats = (json.data && json.data.categories) || [];
+                    grid.innerHTML = cats.map(tileHtml).join("") + elseTile;
+                })
+                .catch(err => {
+                    console.error(err);
+                    grid.innerHTML = `
+                        <p class="hp-load-error">${esc(C.START.loadError)}
+                            <a href="${C.LINKS.createForm}">${esc(C.START.loadErrorLink)}</a></p>`;
+                })
+                .finally(() => grid.removeAttribute("aria-busy"));
+        })();
+    </script>
+</body>
+
+</html>

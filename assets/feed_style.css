@@ -1205,27 +1205,10 @@ a.feed-author-place:hover {
     z-index: 10;
 }
 
-.feed-detail-back {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    color: #333;
-    cursor: pointer;
-    border-radius: 50%;
-}
-
-.feed-detail-back:hover {
-    background: #F5F5F5;
-}
-
-.feed-detail-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #333;
+/* Back + title use the shared .lp-backbar (assets/back-bar.css); fit it to this header. */
+.feed-detail-header .lp-backbar {
+    min-height: 0;
+    margin: 0 0 0 -10px;
 }
 
 .feed-detail-spacer {
