@@ -145,6 +145,13 @@ const TRANSLATIONS = {
     barEvent: { en: "Event", zh: "活动", th: "กิจกรรม" },
     barMembership: { en: "Membership", zh: "会员", th: "สมาชิก" },
     barPastSession: { en: "Past session", zh: "往期活动", th: "กิจกรรมที่ผ่านมา" },
+    barEditSession: { en: "Edit session", zh: "编辑活动", th: "แก้ไขเซสชัน" },
+    barLevelGuide: { en: "Level guide", zh: "等级指南", th: "คู่มือระดับภาษา" },
+
+    // ---- add-event.html (new wording) ----
+    hostSessionTitle: { en: "Host a Session", zh: "发起活动", th: "จัดเซสชัน" },
+    hostSessionBlurb: { en: "Have something you want to do, talk about, or explore? Bring it to Lingping and invite others to join!", zh: "有想做的事、想聊的话题或想探索的地方吗？带到 Lingping，邀请大家一起来！", th: "มีอะไรอยากทำ อยากคุย หรืออยากสำรวจไหม? นำมาที่ Lingping แล้วชวนคนอื่นมาร่วมกัน!" },
+    hostSessionDescHint: { en: "Give a brief overview of your session, activity, or topic so others know what to expect!", zh: "简单介绍你的活动或话题，让大家知道会做些什么！", th: "เล่าภาพรวมของเซสชัน กิจกรรม หรือหัวข้อสั้นๆ ให้คนอื่นรู้ว่าจะได้เจออะไร!" },
     share: { en: "Share", zh: "分享", th: "แชร์" },
     labelTime: { en: "Time", zh: "时间", th: "เวลา" },
     labelJoinOnline: { en: "Join Online", zh: "线上加入方式", th: "วิธีเข้าร่วมออนไลน์" },

@@ -6,8 +6,11 @@
     <title>Hosting guide</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="assets/logos/favicon.png">
-    <script src="js/host-content.js?v=202611119"></script>
-    <link rel="stylesheet" href="assets/host.css?v=202611127">
+    <script src="config.js"></script>
+    <script src="js/translate.js?v=20260911"></script>
+    <script src="js/translations.js?v=202611114"></script>
+    <script src="js/host-content.js?v=202611121"></script>
+    <link rel="stylesheet" href="assets/host.css?v=202611130">
     <link rel="stylesheet" href="assets/back-bar.css?v=202611111">
 </head>
 
@@ -37,6 +40,8 @@
                 if (document.referrer && new URL(document.referrer).origin === location.origin) history.back();
                 else location.href = C.LINKS.startPage;
             };
+            document.title = G.pageTitle;
+            document.documentElement.lang = C.lang;
             document.getElementById("barTitle").textContent = G.pageTitle;
 
             /* ---------- Tabs (?tab=rules | ?tab=tips) ---------- */
