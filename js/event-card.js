@@ -203,6 +203,12 @@ function getSessionAction(session, viewer) {
         return { label: cardText("booked", "Booked"), variant: "chip-booked", icon: "check", onTap: () => openSessionDetail(session) };
     }
 
+    // Still on the waitlist but a spot has opened: let them book it (first come,
+    // first served). The waitlist entry stays until they actually book.
+    if (myStatus === "waitlisted" && session.isFull === false) {
+        return { label: cardText("join", "Join"), variant: "primary", subtext: cardText("spotOpened", "A spot opened up!"), onTap: () => handleBookClick(session.id) };
+    }
+
     if (myStatus === "waitlisted") {
         const pos = session.myWaitlistPosition;
         const base = cardText("onWaitlist", "On waitlist");

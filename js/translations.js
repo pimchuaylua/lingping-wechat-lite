@@ -114,6 +114,7 @@ const TRANSLATIONS = {
     join: { en: "Join", zh: "参加", th: "เข้าร่วม" },
     booked: { en: "Booked", zh: "已预订", th: "จองแล้ว" },
     onWaitlist: { en: "On waitlist", zh: "候补中", th: "อยู่ในรายชื่อรอ" },
+    spotOpened: { en: "A spot opened up!", zh: "有名额空出来了！", th: "มีที่ว่างแล้ว!" },
     youreHosting: { en: "You're hosting", zh: "你是主持人", th: "คุณเป็นโฮสต์" },
     bookingPaused: { en: "Booking paused", zh: "暂停预订", th: "ระงับการจองชั่วคราว" },
     pausedUntil: { en: "until", zh: "直至", th: "จนถึง" },
