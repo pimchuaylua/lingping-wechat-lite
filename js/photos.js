@@ -68,6 +68,14 @@ createSlider("bangkokPhotos", "bangkok", [
     { file: "nichada.jpg", caption: "We also meet every Sun in Nonthaburi!" },
 ]);
 
+createSlider("hongkongPhotos", "hongkong", [
+    { file: "ea1b1bf6-7337-4dff-a51e-04c1cdf50d09.jpg", caption: "Evening meetups with locals & expats in Hong Kong" },
+    { file: "IMG_3966.jpg", caption: "Café chats in English, Mandarin & Cantonese" },
+    { file: "6137cb81-9cbf-4955-b47d-8f462f731158.jpg", caption: "Lunch and conversations after our sessions" },
+    { file: "IMG_3896.jpg", caption: "Breakfast at a local cha chaan teng" },
+    { file: "0994299a-ef37-40fa-a6f0-d63813d16da3.jpg", caption: "Small-group chats over drinks" },
+]);
+
 createSlider("phuketPhotos", "phuket", [
     { file: "beans.jpg", caption: "Connecting Southern Thai locals & Expats" },
     { file: "bartels.jpg", caption: "Good conversations in Thai & English over coffee" },
