@@ -433,16 +433,16 @@
 
     const UNREAD_BADGE_CAP = 9; // shown as "9+" once the count reaches this
 
+    // One dot on the desktop Feed tab, one on the phone bottom bar.
     function showFeedUnreadDot(count) {
-        const dot = document.getElementById("lpFeedUnreadDot");
-        if (!dot) return;
-        dot.textContent = count > UNREAD_BADGE_CAP ? `${UNREAD_BADGE_CAP}+` : String(count);
-        dot.hidden = false;
+        document.querySelectorAll(".lp-feed-unread-dot").forEach(dot => {
+            dot.textContent = count > UNREAD_BADGE_CAP ? `${UNREAD_BADGE_CAP}+` : String(count);
+            dot.hidden = false;
+        });
     }
 
     function hideFeedUnreadDot() {
-        const dot = document.getElementById("lpFeedUnreadDot");
-        if (dot) dot.hidden = true;
+        document.querySelectorAll(".lp-feed-unread-dot").forEach(dot => { dot.hidden = true; });
     }
 
     // Runs once per page load, independent of initFeedTab()/loadFeedList(),

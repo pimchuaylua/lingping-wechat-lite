@@ -103,6 +103,7 @@ function buildEventCard(s, { isOnline, viewer }) {
                 <div class="event-card">
                     <div class="event-photo">
                         <img class="event-img" src="${s.photoUrl}" alt="${s.title}">
+                        ${s.isSpecial && window.Specials ? Specials.photoTagHtml(s) : ""}
 
                         ${flagImg ? `
                             <img class="lang-flag" src="${flagImg}" />

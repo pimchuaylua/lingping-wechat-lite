@@ -69,6 +69,47 @@
 .lp-city-search:focus{ outline:none; border-color:var(--lp-accent); }
 .lp-city-noresults{ padding:14px; font-size:0.82rem; color:var(--lp-ink-soft); text-align:center; }
 
+/* ---------- phones: one filter card (Online / In Person switch, then City | Start exploring) ---------- */
+.lp-container{ padding:6px 4px 0; }
+.lp-filterbar{
+  display:flex; flex-direction:column; gap:6px; padding:6px; margin-bottom:12px;
+  background:var(--lp-surface); border:1px solid #EADFCB; border-radius:16px;
+}
+.lp-filterbar .lp-loc-tabs{ display:grid; grid-template-columns:1fr 1fr; gap:0; padding:3px; background:#F3F1EE; border-radius:12px; }
+.lp-filterbar .lp-loc-tab{
+  min-height:40px; padding:0 6px; border:none; border-radius:10px; background:transparent;
+  font-family:inherit; font-size:14px; font-weight:600; color:#5F5F5F;
+}
+.lp-filterbar .lp-loc-tab svg{ width:16px; height:16px; }
+.lp-filterbar .lp-loc-tab:focus-visible{ outline:2px solid #9A5D0C; outline-offset:1px; }
+#lpTabOnline:not(.lp-loc-tab--active) svg,
+#lpTabPerson:not(.lp-loc-tab--active) svg{ color:currentColor; }
+
+.lp-splitrow{ display:flex; align-items:stretch; min-height:44px; }
+.lp-filterbar .lp-citywrap{
+  display:none; flex:0 0 42%; min-width:0; padding:0; max-height:none; opacity:1;
+  border-right:1px solid #ECE6DC;
+}
+.lp-filterbar .lp-citywrap.lp-show{ display:block; }
+.lp-filterbar .lp-citydrop-btn{
+  height:100%; min-height:44px; padding:0 10px; gap:6px; border:none; border-radius:10px; background:transparent;
+  font-family:inherit; font-size:14px; font-weight:600;
+}
+.lp-filterbar .lp-citydrop-btn .lp-pin{ flex:none; color:#D2433A; }
+.lp-filterbar .lp-city-name{ min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.lp-filterbar .lp-citydrop-list{ left:0; width:min(300px, calc(100vw - 40px)); top:calc(100% + 6px); }
+.lp-filterbar .lp-searchbar{
+  flex:1; min-width:0; width:auto; min-height:44px; margin:0; padding:0 10px; border:none; border-radius:10px;
+  background:transparent; font-size:14px; font-weight:600;
+}
+.lp-filterbar .lp-searchbar-label{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.lp-filterbar .lp-searchbar .lp-badge{ min-width:22px; height:22px; font-size:12px; background:var(--sp-primary, var(--lp-accent)); }
+.lp-filterbar .lp-searchbar .lp-chev{ display:none; }
+.lp-filterbar .lp-citydrop-btn:focus-visible,
+.lp-filterbar .lp-searchbar:focus-visible{ outline:2px solid #9A5D0C; outline-offset:-2px; }
+.lp-filterbar .lp-searchexpand{ margin:0; }
+.lp-filterbar .lp-searchexpand.lp-open{ margin:0; border:1px solid var(--lp-line); }
+
 /* ---------- "What do you feel like doing?" / "Language & Level" accordion buttons ---------- */
 .lp-acc{ margin:0 16px 10px; border-radius:14px; border:1.5px solid var(--lp-line-strong); background:var(--lp-surface); overflow:hidden; }
 .lp-acc-head{ display:flex; align-items:center; gap:8px; width:100%; padding:11px 14px; border:none; background:none; font-size:0.85rem; font-weight:700; color:var(--lp-ink); cursor:pointer; text-align:left; font-family:inherit; }

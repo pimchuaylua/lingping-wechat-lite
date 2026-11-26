@@ -1,0 +1,253 @@
+/* Specials (js/specials.js): tags, the home row, special cards in the list,
+   the "You're booked!" sheet, and the shared primary button. */
+
+:root {
+    --sp-primary: #F7A84A;
+    --sp-tag-bg: #FDEBC8;
+    --sp-tag-ink: #7A4A0B;
+    --sp-border: #F2D9A8;
+}
+
+/* One orange for every primary action: Get a Membership, Join, the selected
+   Online / In Person toggle and the sheet's buttons. */
+.btn-primary,
+.membership-cta,
+.book-btn.sa-primary,
+.lp-loc-tab.lp-loc-tab--active {
+    background: var(--sp-primary);
+    border-color: var(--sp-primary);
+    color: #fff;
+    font-weight: 600;
+}
+.btn-primary {
+    border: none;
+    border-radius: 999px;
+    font-family: inherit;
+    cursor: pointer;
+}
+.btn-primary:hover { filter: brightness(0.96); }
+.btn-primary:focus-visible { outline: 2px solid #9A5D0C; outline-offset: 2px; }
+
+/* ---------- Tags ---------- */
+
+.sp-star { flex-shrink: 0; }
+.sp-tag {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 100%;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--sp-tag-bg);
+    color: var(--sp-tag-ink);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+.sp-tag > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sp-photo-tag {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    max-width: calc(100% - 80px);
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--sp-tag-ink);
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.sp-photo-tag .sp-star { width: 12px; height: 12px; color: var(--sp-primary); }
+.sp-photo-tag > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Special session cards in the list: same card, gold border. */
+.card.card--special { border: 1.5px solid var(--sp-border); }
+
+/* ---------- Home: Specials row ---------- */
+
+.sp-row-wrap { margin: 2px -12px 12px; } /* bleeds to the page edge so cards scroll off-screen */
+.sp-row-wrap[hidden] { display: none; }
+.sp-heading {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px;
+    padding: 0 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #2E2A22;
+}
+.sp-heading .sp-star { width: 15px; height: 15px; color: var(--sp-primary); }
+.sp-scroller {
+    display: flex;
+    gap: 10px;
+    padding: 2px 16px 4px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 16px;
+    scrollbar-width: none;
+}
+.sp-scroller::-webkit-scrollbar { display: none; }
+.sp-card {
+    /* Fixed width so the next special peeks in; min-width: 0 stops a long
+       title from stretching the card (it's cut with "…" instead). */
+    flex: 0 0 180px;
+    width: 180px;
+    min-width: 0;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start; /* tag at the same offset on every card, whatever the title length */
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1.5px solid var(--sp-border);
+    border-radius: 14px;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+    scroll-snap-align: start;
+}
+/* A single special (e.g. only one in Chiang Mai) fills the row. */
+.sp-card:only-child { flex: 1 1 auto; width: auto; }
+.sp-card:focus-visible { outline: 2px solid #9A5D0C; outline-offset: 2px; }
+.sp-thumb {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #F6E3C8;
+}
+.sp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sp-card-text, .sp-row-text { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.sp-card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2E2A22;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+    /* Wrap onto at most 2 lines, then cut with "…" */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+}
+.sp-card-when { font-size: 12px; color: #5F5F5F; }
+
+@media (min-width: 1024px) {
+    .sp-row-wrap { margin: 0 0 14px; }
+    .sp-heading, .sp-scroller { padding-left: 0; padding-right: 0; }
+}
+
+/* ---------- "You're booked!" sheet ---------- */
+
+.sp-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 990; /* under .modal (999), so Confirm Booking opens on top */
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(40, 36, 30, 0.55);
+}
+.sp-overlay[hidden] { display: none; }
+body.sp-sheet-open { overflow: hidden; }
+.sp-sheet {
+    width: 100%;
+    max-width: 480px;
+    max-height: 92vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
+    border-radius: 20px 20px 0 0;
+    background: #fff;
+    color: #2E2A22;
+    animation: sp-up 0.22s ease-out;
+}
+.sp-sheet:focus { outline: none; }
+@keyframes sp-up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sp-sheet { animation: none; } }
+.sp-grab { width: 40px; height: 4px; margin: 0 auto 16px; border-radius: 999px; background: #D9D6D0; }
+
+.sp-booked { display: flex; align-items: center; gap: 12px; }
+.sp-booked-check {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #E4F4E6;
+    color: #1E6B2E;
+}
+.sp-booked-text { min-width: 0; }
+.sp-booked-title { margin: 0; font-size: 18px; font-weight: 700; line-height: 1.25; }
+.sp-booked-sub { margin: 2px 0 0; font-size: 13px; color: #666; line-height: 1.35; }
+.sp-booked-sub:empty { display: none; }
+
+.sp-calendar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 44px;
+    margin-top: 16px;
+    border: 1px solid #D9D6D0;
+    border-radius: 999px;
+    background: #fff;
+    color: #2E2A22;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.sp-calendar[hidden] { display: none; }
+.sp-calendar:hover { background: #FAF9F7; }
+.sp-calendar:focus-visible { outline: 2px solid #9A5D0C; outline-offset: 2px; }
+
+.sp-suggest[hidden] { display: none; }
+.sp-divider { margin: 16px 0; border: none; border-top: 1px solid #ECE8E1; }
+.sp-heading--sheet { padding: 0; margin-bottom: 4px; }
+.sp-suggest-sub { margin: 0 0 12px; font-size: 13px; color: #666; line-height: 1.4; }
+.sp-rows { display: flex; flex-direction: column; gap: 10px; }
+.sp-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1.5px solid var(--sp-border);
+    border-radius: 14px;
+    background: #FFFCF6;
+}
+.sp-thumb--lg { width: 64px; height: 64px; }
+.sp-row-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2E2A22;
+    text-decoration: none;
+    line-height: 1.3;
+}
+.sp-row-title:hover { text-decoration: underline; }
+.sp-row-meta { font-size: 12px; color: #5F5F5F; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sp-row-action { flex-shrink: 0; }
+.sp-join { min-height: 36px; padding: 0 16px; font-size: 14px; }
+/* 44px tap target around the 36px button */
+.sp-join { position: relative; }
+.sp-join::before { content: ""; position: absolute; inset: -4px; }
+.sp-booked-chip { display: inline-flex; align-items: center; gap: 5px; padding: 8px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+
+.sp-done { display: block; width: 100%; min-height: 48px; margin-top: 18px; font-size: 15px; }
+
+@media (min-width: 768px) {
+    .sp-overlay { align-items: center; }
+    .sp-sheet { border-radius: 20px; max-width: 440px; }
+    .sp-grab { display: none; }
+}

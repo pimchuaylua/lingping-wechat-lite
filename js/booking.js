@@ -81,7 +81,7 @@ window.bookSession = async function ({ sessionId }) {
             window.refreshSessionCards();
         }
 
-        showBookingSuccessModal(bookData);
+        showBookingSuccessModal(bookData, sessionId);
 
     } catch (err) {
         if (err.message.includes("No valid subscription found") || err.message.includes("Error occured")) {
@@ -579,6 +579,8 @@ function formatReadingSessionToDisplay(s, eventOptions) {
         cost: s.cost,
         materials: s.materials || [],
         isOpenToAll: s.isOpenToAll === true,
+        isSpecial: s.isSpecial === true,
+        specialLabel: s.specialLabel || null,
         googleCalendarLink: buildGoogleCalendarLink(s, start, end, eventOptions)
     };
 
@@ -895,23 +897,34 @@ function closePreBookingModal() {
     document.getElementById("preBookingModal").style.display = "none";
 }
 
-fetch("components/pre-booking-modal.html?v=202611101")
-    .then(res => res.text())
-    .then(html => {
-        const container = document.getElementById("preBookingModalContainer");
-        container.innerHTML = html;
-        if (typeof applyTranslations === "function") applyTranslations(container);
-    });
+// booking.js loads in <head>, so a fast response can arrive before the
+// containers in <body> exist: wait for the page before inserting.
+const domReady = new Promise(resolve => {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", resolve, { once: true });
+    else resolve();
+});
 
-fetch("components/booking-success-modal.html")
-    .then(res => res.text())
-    .then(html => {
-        const container = document.getElementById("bookingSuccessModalContainer");
-        container.innerHTML = html;
-        if (typeof applyTranslations === "function") applyTranslations(container);
-    });
+function loadComponent(url, containerId) {
+    Promise.all([fetch(url).then(res => res.text()), domReady])
+        .then(([html]) => {
+            const container = document.getElementById(containerId);
+            if (!container) return; // page without this popup
+            container.innerHTML = html;
+            if (typeof applyTranslations === "function") applyTranslations(container);
+        })
+        .catch(err => console.error(`Failed to load ${url}:`, err));
+}
 
-function showBookingSuccessModal(bookData) {
+loadComponent("components/pre-booking-modal.html?v=202611101", "preBookingModalContainer");
+loadComponent("components/booking-success-modal.html", "bookingSuccessModalContainer");
+
+function showBookingSuccessModal(bookData, sessionId) {
+    // "You're booked!" sheet with specials to join (js/specials.js), where loaded.
+    if (window.Specials && sessionId) {
+        Specials.openBookedSheet({ sessionId, bookData });
+        return;
+    }
+
     document.getElementById("bookingSuccessModal").style.display = "flex";
 
     const calendarBtn = document.getElementById("addToCalendarBtn");
