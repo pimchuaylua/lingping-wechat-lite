@@ -97,13 +97,13 @@
 .sp-card {
     /* Fixed width so the next special peeks in; min-width: 0 stops a long
        title from stretching the card (it's cut with "…" instead). */
-    flex: 0 0 180px;
-    width: 180px;
+    flex: 0 0 250px;
+    width: 250px;
     min-width: 0;
     display: flex;
-    gap: 10px;
-    align-items: flex-start; /* tag at the same offset on every card, whatever the title length */
-    padding: 8px;
+    gap: 12px;
+    align-items: center;
+    padding: 10px;
     box-sizing: border-box;
     border: 1.5px solid var(--sp-border);
     border-radius: 14px;
@@ -115,30 +115,58 @@
 /* A single special (e.g. only one in Chiang Mai) fills the row. */
 .sp-card:only-child { flex: 1 1 auto; width: auto; }
 .sp-card:focus-visible { outline: 2px solid #9A5D0C; outline-offset: 2px; }
-.sp-thumb {
-    width: 56px;
-    height: 56px;
-    flex-shrink: 0;
+/* Host avatar: first host's photo in an orange ring, session photo as a badge. */
+.sp-avatar { position: relative; flex-shrink: 0; width: 56px; height: 56px; }
+.sp-avatar--lg { width: 60px; height: 60px; }
+.sp-avatar-ring {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border: 2.5px solid var(--sp-primary);
+    border-radius: 50%;
     overflow: hidden;
-    border-radius: 10px;
+    background: #F6E3D3;
+}
+.sp-avatar-initial { font-size: 22px; font-weight: 700; color: var(--sp-tag-ink); line-height: 1; }
+.sp-avatar-ring img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.sp-avatar-badge {
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    width: 22px;
+    height: 22px;
+    box-sizing: border-box;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    overflow: hidden;
     background: #F6E3C8;
 }
-.sp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sp-avatar-badge img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
 .sp-card-text, .sp-row-text { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 3px; }
 .sp-card-title {
     font-size: 13px;
     font-weight: 600;
     color: #2E2A22;
     line-height: 1.3;
-    overflow-wrap: anywhere;
-    /* Wrap onto at most 2 lines, then cut with "…" */
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
-.sp-card-when { font-size: 12px; color: #5F5F5F; }
+.sp-host {
+    font-size: 13px;
+    color: #444444;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.sp-host b { font-weight: 700; color: #2B2B2B; }
+.sp-card-when { font-size: 12px; color: #5F5F5F; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 @media (min-width: 1024px) {
     .sp-row-wrap { margin: 0 0 14px; }
@@ -227,7 +255,10 @@ body.sp-sheet-open { overflow: hidden; }
     border-radius: 14px;
     background: #FFFCF6;
 }
-.sp-thumb--lg { width: 64px; height: 64px; }
+.sp-row { align-items: flex-start; }
+.sp-row .sp-avatar { margin-top: 2px; }
+.sp-row-foot { display: flex; align-items: center; gap: 8px; margin-top: 3px; min-width: 0; }
+.sp-row-foot .sp-row-meta { flex: 1; min-width: 0; }
 .sp-row-title {
     font-size: 14px;
     font-weight: 600;

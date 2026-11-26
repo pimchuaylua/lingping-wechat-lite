@@ -51,6 +51,39 @@
         return level.toLowerCase().includes("online") ? tx("tabOnline", "Online") : (s.location || "");
     }
 
+    /* ---------------- Host: avatar + "with Name" ---------------- */
+
+    const hostName = h => h?.profile?.displayName || h?.displayName || "";
+
+    // 1 host → "Pleng", 2 → "Pleng & Sia", 3+ → "Pleng +2"
+    function hostNames(hosts) {
+        const names = (hosts || []).map(hostName).filter(Boolean);
+        if (names.length <= 1) return names[0] || "";
+        if (names.length === 2) return `${names[0]} & ${names[1]}`;
+        return `${names[0]} +${names.length - 1}`;
+    }
+
+    const hostLineHtml = s => {
+        const names = hostNames(s.hosts);
+        return names ? `<span class="sp-host">${esc(tx("withHost", "with"))} <b>${esc(names)}</b></span>` : "";
+    };
+
+    // First host's photo in an orange ring (their initial if there's no photo),
+    // with the session photo as a small badge. Sessions without a host fall
+    // back to the session photo in the ring and no badge.
+    function avatarHtml(s, large) {
+        const host = (s.hosts || [])[0];
+        const name = hostName(host);
+        const pic = host ? host.profile?.profilePic : s.photoUrl;
+        const initial = esc((Array.from(name.trim())[0] || "").toUpperCase());
+        // The initial sits under the photo, so a photo that fails to load shows it.
+        const img = pic ? `<img src="${esc(pic)}" alt="" loading="lazy" onerror="this.remove()">` : "";
+        const badge = host && s.photoUrl
+            ? `<span class="sp-avatar-badge"><img src="${esc(s.photoUrl)}" alt="" loading="lazy" onerror="this.parentNode.remove()"></span>`
+            : "";
+        return `<span class="sp-avatar${large ? " sp-avatar--lg" : ""}"><span class="sp-avatar-ring"><span class="sp-avatar-initial" aria-hidden="true">${initial}</span>${img}</span>${badge}</span>`;
+    }
+
     async function getJson(url) {
         const res = await fetch(url, { headers: { "X-API-KEY": cfg().API_KEY } });
         if (!res.ok) throw new Error(`${url} failed: ${res.status}`);
@@ -88,10 +121,11 @@
             <h2 class="sp-heading">${STAR}<span>${esc(tx("specialsHeading", "Specials"))}</span></h2>
             <div class="sp-scroller">${list.map(s => `
                 <a class="sp-card" href="event-detail.html?sessionId=${encodeURIComponent(s._id)}">
-                    <span class="sp-thumb">${s.photoUrl ? `<img src="${esc(s.photoUrl)}" alt="" loading="lazy">` : ""}</span>
+                    ${avatarHtml(s, false)}
                     <span class="sp-card-text">
                         ${tagHtml(s)}
                         <span class="sp-card-title">${esc(s.title)}</span>
+                        ${hostLineHtml(s)}
                         <span class="sp-card-when">${esc(whenText(s.startTime))}</span>
                     </span>
                 </a>`).join("")}
@@ -186,14 +220,17 @@
         const meta = [whenText(sp.startTime), placeText(sp)].filter(Boolean).join(" · ");
         return `
             <div class="sp-row" data-row="${esc(sp._id)}">
-                <span class="sp-thumb sp-thumb--lg">${sp.photoUrl ? `<img src="${esc(sp.photoUrl)}" alt="" loading="lazy">` : ""}</span>
+                ${avatarHtml(sp, true)}
                 <span class="sp-row-text">
                     ${tagHtml(sp)}
                     <a class="sp-row-title" href="event-detail.html?sessionId=${encodeURIComponent(sp._id)}">${esc(sp.title)}</a>
-                    <span class="sp-row-meta">${esc(meta)}</span>
-                </span>
-                <span class="sp-row-action">
-                    <button type="button" class="btn-primary sp-join" data-join="${esc(sp._id)}">${esc(tx("join", "Join"))}</button>
+                    ${hostLineHtml(sp)}
+                    <span class="sp-row-foot">
+                        <span class="sp-row-meta">${esc(meta)}</span>
+                        <span class="sp-row-action">
+                            <button type="button" class="btn-primary sp-join" data-join="${esc(sp._id)}">${esc(tx("join", "Join"))}</button>
+                        </span>
+                    </span>
                 </span>
             </div>`;
     }
