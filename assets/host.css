@@ -30,93 +30,94 @@
 
 .hn-card {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     margin-bottom: 12px;
-    padding: 14px 14px 0;
-    border: 1px solid var(--host-cream-line);
-    border-radius: 12px;
+    padding: 10px 12px;
+    border: 1px solid #F2D9A8;
+    border-radius: 16px;
     background: #fff;
     color: var(--host-orange-ink);
-    overflow: hidden;
 }
-.hn-nomatch { margin: 0 0 10px; font-size: 13px; color: var(--host-muted); }
-.hn-head { display: flex; align-items: flex-start; gap: 12px; }
-.hn-head-text { flex: 1; min-width: 0; }
+.hn-nomatch { margin: 0 0 2px; font-size: 13px; color: var(--host-muted); }
+.hn-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    color: inherit;
+    text-decoration: none;
+    align-self: flex-start;
+    border-radius: 10px;
+}
+.hn-head:focus-visible { outline: 2px solid #9A5D0C; outline-offset: 2px; }
 .hn-plus {
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: var(--host-orange);
-    color: var(--host-orange-ink);
+    background: #F7A84A;
+    color: #fff;
 }
-.hn-plus svg { width: 18px; height: 18px; }
-.hn-plus { position: relative; text-decoration: none; }
-.hn-plus::before { content: ""; position: absolute; inset: -4px; } /* 44px tap area */
-.hn-plus:hover { background: #F0A847; }
-.hn-plus:focus-visible { outline: 2px solid #9A5D0C; outline-offset: 2px; }
-/* One step under the event cards' type scale (.event-title / .event-body in mainpage_style.css). */
-.hn-title { margin: 0 0 4px; font-size: 15px; font-weight: 600; line-height: 1.3; color: var(--host-orange-ink); }
-.hn-text { margin: 0; font-size: 13px; line-height: 1.45; color: var(--host-muted); }
-/* Footer toggle: a full-width row under the content, so it doesn't squeeze the text. */
-.hn-toggle {
+.hn-plus svg { width: 16px; height: 16px; }
+.hn-head:hover .hn-plus { filter: brightness(0.96); }
+.hn-title { margin: 0; font-size: 15px; font-weight: 700; line-height: 1.3; color: #3A2205; }
+
+/* Idea chips: one sideways-scrolling row; "+ More" shows the rest. */
+.hn-chips {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    width: calc(100% + 28px);
-    min-height: 44px;
-    margin: 14px -14px 0;
-    border: none;
-    border-top: 1px solid #F6EBD6;
-    background: transparent;
-    color: #8A520A;
-    font: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
+    gap: 8px;
+    margin: 0 -12px;
+    padding: 0 12px 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
 }
-.hn-toggle svg { width: 16px; height: 16px; }
-.hn-toggle:hover { background: #FFFBF4; }
-.hn-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.hn-chips::-webkit-scrollbar { display: none; }
 .hn-chip[hidden] { display: none; }
-/* Fewer ideas: one row; scrolls sideways on very narrow phones instead of wrapping. */
-.hn-chips.is-fewer { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-.hn-chips.is-fewer::-webkit-scrollbar { display: none; }
-.hn-chips.is-fewer .hn-chip { flex-shrink: 0; white-space: nowrap; }
 .hn-chip {
+    flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    min-height: 38px;
-    padding: 0 13px;
+    min-height: 34px;
+    padding: 0 12px;
     box-sizing: border-box;
     border: 1px solid transparent;
     border-radius: 999px;
     font-size: 13px;
     font-weight: 600;
+    white-space: nowrap;
     text-decoration: none;
 }
 .hn-chip svg { flex-shrink: 0; width: 15px; height: 15px; }
+/* Phones: text-only idea chips (as in the design) so three plus "+ More" fit one row. */
+@media (max-width: 767px) {
+    .hn-chip:not(.hn-toggle) svg { display: none; }
+}
 .hn-chip:hover { filter: brightness(0.97); }
 .hn-chip--else { border: 1px dashed #D6D3CC; background: #fff; }
+.hn-toggle {
+    border: 1px dashed #D9C9AE;
+    background: #fff;
+    color: #8A520A;
+    font-family: inherit;
+    cursor: pointer;
+}
 @media (min-width: 768px) {
-    .hn-title { font-size: 17px; }
-    .hn-text { font-size: 15px; }
-    /* Desktop has room for every idea: show them all and drop "More ideas". */
-    .hn-chips.is-fewer { flex-wrap: wrap; overflow-x: visible; }
+    /* Desktop has room for every idea: show them all and drop "+ More". */
+    .hn-chips { flex-wrap: wrap; overflow-x: visible; margin: 0; padding: 0; }
     .hn-chip[hidden] { display: inline-flex; }
     .hn-toggle { display: none; }
-    .hn-card { padding-bottom: 14px; }
 }
 
 .hn-chip:focus-visible {
     outline: 2px solid #9A5D0C;
     outline-offset: 2px;
 }
-.hn-toggle:focus-visible { outline: 2px solid #9A5D0C; outline-offset: -2px; }
 
 /* ================= Start page + guide (shared) ================= */
 

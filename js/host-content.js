@@ -95,11 +95,10 @@
     // ---- Events list (index.html) ----
     const NUDGE = {
         noMatch: "No events match your filters.",
-        title: "Something you want to do or talk about?",
-        text: "Invite others to join! It's not just about language — host anything, anytime!",
-        moreLabel: "More ideas",
-        fewerLabel: "Fewer ideas",
-        // How many chips show before "More ideas" (the first ones in the list below).
+        title: "Host Anything, Anytime!",
+        moreLabel: "More",
+        fewerLabel: "Less",
+        // How many chips show before "More" (the first ones in the list below).
         visibleChips: 3,
         // category: a value from /reading-sessions/options, or null for none.
         // tint/ink/icon: the chip's look (null tint = white dashed chip).
@@ -228,9 +227,8 @@
         zh: {
             NUDGE: {
                 noMatch: "没有符合筛选条件的活动。",
-                title: "有想做的事或想聊的话题吗？",
-                text: "邀请大家一起来！不只是语言交流——任何活动，随时都能办！",
-                moreLabel: "更多点子",
+                title: "任何活动，随时都能办！",
+                moreLabel: "更多",
                 fewerLabel: "收起",
                 chips: [{ label: "讨论" }, { label: "跑步" }, { label: "游戏之夜" }, { label: "公园散步" },
                     { label: "周五晚上聚会" }, { label: "读书会" }, { label: "其他" }]
@@ -327,9 +325,8 @@
         th: {
             NUDGE: {
                 noMatch: "ไม่มีกิจกรรมที่ตรงกับตัวกรอง",
-                title: "มีอะไรอยากทำหรืออยากคุยไหม?",
-                text: "ชวนคนอื่นมาร่วมกัน! ไม่ใช่แค่เรื่องภาษา จัดอะไรก็ได้ เมื่อไหร่ก็ได้!",
-                moreLabel: "ไอเดียเพิ่มเติม",
+                title: "จัดอะไรก็ได้ เมื่อไหร่ก็ได้!",
+                moreLabel: "เพิ่มเติม",
                 fewerLabel: "ย่อลง",
                 chips: [{ label: "สนทนา" }, { label: "วิ่ง" }, { label: "คืนเล่นเกม" }, { label: "เดินเล่นในสวน" },
                     { label: "ปาร์ตี้คืนวันศุกร์" }, { label: "ชมรมหนังสือ" }, { label: "อย่างอื่น" }]

@@ -49,6 +49,14 @@ const FilterBar = (function () {
 
     /* ---------------- Location: Online / In Person + city dropdown ---------------- */
 
+    // aria-pressed follows the highlighted Online / In Person tab.
+    function syncLocPressed() {
+        ['lpTabOnline', 'lpTabPerson', 'lpDtTabOnline', 'lpDtTabPerson'].forEach(id => {
+            const tab = document.getElementById(id);
+            if (tab) tab.setAttribute('aria-pressed', String(tab.classList.contains('lp-loc-tab--active')));
+        });
+    }
+
     function setLocation(which) {
         document.getElementById('lpTabOnline').classList.toggle('lp-loc-tab--active', which === 'online');
         document.getElementById('lpTabPerson').classList.toggle('lp-loc-tab--active', which === 'person');
@@ -57,6 +65,7 @@ const FilterBar = (function () {
         document.getElementById('lpCityWrap').classList.toggle('lp-show', which === 'person');
         document.getElementById('lpDtCityWrap')?.classList.toggle('lp-show', which === 'person');
         if (which !== 'person') closeCityDrop();
+        syncLocPressed();
 
         if (which === 'online') {
             cfg.onLocationChange(cfg.onlineLevelId);
@@ -206,6 +215,7 @@ const FilterBar = (function () {
             document.getElementById('lpDtTabPerson')?.classList.remove('lp-loc-tab--active');
             updateWhereLabel('online');
         }
+        syncLocPressed();
     }
 
     /* ---------------- Saved filters ----------------

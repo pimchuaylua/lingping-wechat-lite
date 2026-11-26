@@ -5,13 +5,13 @@
  *
  *   HostNudges.groupByDay(sessions)  → [{ date, sessions }], one per day with sessions
  *   HostNudges.dayHeaderHtml(date)
- *   HostNudges.nudgeCardHtml({ noMatch })  shows the first few idea chips; the rest
- *       open with "More ideas".
- *   HostNudges.toggle(btn)  "More ideas" / "Fewer ideas", remembered per member.
+ *   HostNudges.nudgeCardHtml({ noMatch })  compact "Host Anything, Anytime!" card:
+ *       the first few idea chips in a sideways scroller; "+ More" shows the rest.
+ *   HostNudges.toggle(btn)  "+ More" / "− Less", remembered per member.
  */
 (function () {
     const C = window.HostContent;
-    // Per user, so one account's More/Fewer choice doesn't carry over to the next.
+    // Per user, so one account's More/Less choice doesn't carry over to the next.
     // New key: the old "Hide" values meant all chips hidden, not three shown.
     const collapsedKey = () => `lp_hostNudgeFewer:${localStorage.getItem("userId") || "guest"}`;
 
@@ -42,7 +42,7 @@
         return `<h2 class="hn-day">${esc(label)}</h2>`;
     }
 
-    // The member's own Hide / Show ideas choice wins; otherwise use the default.
+    // The member's own More / Less choice wins; otherwise use the default.
     function isCollapsed(defaultCollapsed) {
         try {
             const saved = localStorage.getItem(collapsedKey());
@@ -54,7 +54,7 @@
 
     function toggleInnerHtml(collapsed) {
         const n = C.NUDGE;
-        return `<span>${esc(collapsed ? n.moreLabel : n.fewerLabel)}</span>${C.icon(collapsed ? "chevronDown" : "chevronUp", 16, 2.2)}`;
+        return `${C.icon(collapsed ? "plus" : "minus", 15, 2.2)}<span>${esc(collapsed ? n.moreLabel : n.fewerLabel)}</span>`;
     }
 
     function nudgeCardHtml({ noMatch = false } = {}) {
@@ -69,23 +69,21 @@
             return `<a class="hn-chip${chip.tint ? "" : " hn-chip--else"}${extra ? " hn-chip--more" : ""}" href="${href}" style="${style}"${extra && collapsed ? " hidden" : ""}>${C.icon(chip.icon, 15, 2)}<span>${esc(chip.label)}</span></a>`;
         }).join("");
 
+        // The + circle and the title both open the start page.
         return `
             <section class="hn-card" aria-label="${esc(n.title)}">
                 ${noMatch ? `<p class="hn-nomatch">${esc(n.noMatch)}</p>` : ""}
-                <div class="hn-head">
-                    <a class="hn-plus" href="${C.LINKS.startPage}" aria-label="${esc(C.START.pageTitle)}">${C.icon("plus", 20, 2.2)}</a>
-                    <div class="hn-head-text">
-                        <h3 class="hn-title">${esc(n.title)}</h3>
-                        <p class="hn-text">${esc(n.text)}</p>
-                    </div>
-                </div>
-                <div class="hn-chips${collapsed ? " is-fewer" : ""}" id="hnChips">${chips}</div>
-                <button type="button" class="hn-toggle" aria-expanded="${!collapsed}" aria-controls="hnChips"
-                    onclick="HostNudges.toggle(this)">${toggleInnerHtml(collapsed)}</button>
+                <a class="hn-head" href="${C.LINKS.startPage}">
+                    <span class="hn-plus" aria-hidden="true">${C.icon("plus", 18, 2.4)}</span>
+                    <h3 class="hn-title">${esc(n.title)}</h3>
+                </a>
+                <div class="hn-chips${collapsed ? " is-fewer" : ""}" id="hnChips">${chips}<button type="button"
+                    class="hn-chip hn-toggle" aria-expanded="${!collapsed}" aria-controls="hnChips"
+                    onclick="HostNudges.toggle(this)">${toggleInnerHtml(collapsed)}</button></div>
             </section>`;
     }
 
-    // More ideas / Fewer ideas: shows the rest of the chips; remembered per member.
+    // + More / − Less: shows the rest of the chips; remembered per member.
     function toggle(btn) {
         const collapsed = btn.getAttribute("aria-expanded") === "true";
         btn.setAttribute("aria-expanded", String(!collapsed));
